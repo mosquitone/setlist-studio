@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from '@apollo/client'
 
 export const GET_SONGS = gql`
   query GetSongs {
@@ -14,7 +14,7 @@ export const GET_SONGS = gql`
       updatedAt
     }
   }
-`;
+`
 
 export const GET_SONG = gql`
   query GetSong($id: ID!) {
@@ -30,7 +30,7 @@ export const GET_SONG = gql`
       updatedAt
     }
   }
-`;
+`
 
 export const CREATE_SONG = gql`
   mutation CreateSong($input: CreateSongInput!) {
@@ -46,7 +46,7 @@ export const CREATE_SONG = gql`
       updatedAt
     }
   }
-`;
+`
 
 export const UPDATE_SONG = gql`
   mutation UpdateSong($id: ID!, $input: UpdateSongInput!) {
@@ -62,13 +62,13 @@ export const UPDATE_SONG = gql`
       updatedAt
     }
   }
-`;
+`
 
 export const DELETE_SONG = gql`
   mutation DeleteSong($id: ID!) {
     deleteSong(id: $id)
   }
-`;
+`
 
 export const REGISTER = gql`
   mutation Register($input: RegisterInput!) {
@@ -83,7 +83,7 @@ export const REGISTER = gql`
       }
     }
   }
-`;
+`
 
 export const LOGIN = gql`
   mutation Login($input: LoginInput!) {
@@ -98,7 +98,7 @@ export const LOGIN = gql`
       }
     }
   }
-`;
+`
 
 export const GET_SETLISTS = gql`
   query GetSetlists {
@@ -121,7 +121,7 @@ export const GET_SETLISTS = gql`
       }
     }
   }
-`;
+`
 
 export const GET_SETLIST = gql`
   query GetSetlist($id: ID!) {
@@ -144,7 +144,7 @@ export const GET_SETLIST = gql`
       }
     }
   }
-`;
+`
 
 export const CREATE_SETLIST = gql`
   mutation CreateSetlist($input: CreateSetlistInput!) {
@@ -167,7 +167,7 @@ export const CREATE_SETLIST = gql`
       }
     }
   }
-`;
+`
 
 export const UPDATE_SETLIST = gql`
   mutation UpdateSetlist($id: ID!, $input: UpdateSetlistInput!) {
@@ -190,13 +190,13 @@ export const UPDATE_SETLIST = gql`
       }
     }
   }
-`;
+`
 
 export const DELETE_SETLIST = gql`
   mutation DeleteSetlist($id: ID!) {
     deleteSetlist(id: $id)
   }
-`;
+`
 
 export const CREATE_SETLIST_ITEM = gql`
   mutation CreateSetlistItem($input: CreateSetlistItemInput!) {
@@ -208,7 +208,7 @@ export const CREATE_SETLIST_ITEM = gql`
       setlistId
     }
   }
-`;
+`
 
 export const UPDATE_SETLIST_ITEM = gql`
   mutation UpdateSetlistItem($id: ID!, $input: UpdateSetlistItemInput!) {
@@ -220,13 +220,13 @@ export const UPDATE_SETLIST_ITEM = gql`
       setlistId
     }
   }
-`;
+`
 
 export const DELETE_SETLIST_ITEM = gql`
   mutation DeleteSetlistItem($id: ID!) {
     deleteSetlistItem(id: $id)
   }
-`;
+`
 
 export const REORDER_SETLIST_ITEMS = gql`
   mutation ReorderSetlistItems($setlistId: ID!, $itemIds: [ID!]!) {
@@ -238,4 +238,4 @@ export const REORDER_SETLIST_ITEMS = gql`
       setlistId
     }
   }
-`;
+`

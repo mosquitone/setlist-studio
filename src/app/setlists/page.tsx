@@ -1,6 +1,6 @@
-'use client';
+'use client'
 
-import React from 'react';
+import React from 'react'
 import {
   Box,
   Container,
@@ -12,77 +12,77 @@ import {
   IconButton,
   Menu,
   MenuItem,
-} from '@mui/material';
+} from '@mui/material'
 import {
   Add as AddIcon,
   MoreVert as MoreVertIcon,
   CalendarToday as CalendarIcon,
   MusicNote as MusicNoteIcon,
-} from '@mui/icons-material';
-import { useQuery } from '@apollo/client';
-import { GET_SETLISTS } from '@/lib/graphql/queries';
-import { useRouter } from 'next/navigation';
+} from '@mui/icons-material'
+import { useQuery } from '@apollo/client'
+import { GET_SETLISTS } from '@/lib/graphql/queries'
+import { useRouter } from 'next/navigation'
 
 interface SetlistItem {
-  id: string;
-  title: string;
-  note?: string;
-  order: number;
+  id: string
+  title: string
+  note?: string
+  order: number
 }
 
 interface Setlist {
-  id: string;
-  title: string;
-  bandName?: string;
-  eventName?: string;
-  eventDate?: string;
-  openTime?: string;
-  startTime?: string;
-  theme?: string;
-  createdAt: string;
-  updatedAt: string;
-  items: SetlistItem[];
+  id: string
+  title: string
+  bandName?: string
+  eventName?: string
+  eventDate?: string
+  openTime?: string
+  startTime?: string
+  theme?: string
+  createdAt: string
+  updatedAt: string
+  items: SetlistItem[]
 }
 
 export default function SetlistsPage() {
-  const router = useRouter();
-  const { data, loading, error } = useQuery(GET_SETLISTS);
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [selectedSetlist, setSelectedSetlist] = React.useState<string | null>(null);
+  const router = useRouter()
+  const { data, loading, error } = useQuery(GET_SETLISTS)
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
+  const [selectedSetlist, setSelectedSetlist] = React.useState<string | null>(null)
 
   const handleMenuClick = (event: React.MouseEvent<HTMLElement>, setlistId: string) => {
-    setAnchorEl(event.currentTarget);
-    setSelectedSetlist(setlistId);
-  };
+    setAnchorEl(event.currentTarget)
+    setSelectedSetlist(setlistId)
+  }
 
   const handleMenuClose = () => {
-    setAnchorEl(null);
-    setSelectedSetlist(null);
-  };
+    setAnchorEl(null)
+    setSelectedSetlist(null)
+  }
 
   const handleEditSetlist = () => {
     if (selectedSetlist) {
-      router.push(`/setlists/${selectedSetlist}/edit`);
+      router.push(`/setlists/${selectedSetlist}/edit`)
     }
-    handleMenuClose();
-  };
+    handleMenuClose()
+  }
 
   const handleDeleteSetlist = () => {
     if (selectedSetlist) {
       // TODO: Implement delete functionality
-      console.log('Delete setlist:', selectedSetlist);
+      console.log('Delete setlist:', selectedSetlist)
     }
-    handleMenuClose();
-  };
+    handleMenuClose()
+  }
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
+    const date = new Date(dateString)
     return date.toLocaleDateString('ja-JP', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
-    });
-  };
+    })
+  }
 
   const getThemeLabel = (theme: string) => {
     const themes: { [key: string]: string } = {
@@ -90,16 +90,16 @@ export default function SetlistsPage() {
       basic: 'Basic',
       minimal: 'Minimal',
       mqtn2: 'MQTN 2',
-    };
-    return themes[theme] || theme;
-  };
+    }
+    return themes[theme] || theme
+  }
 
   if (loading) {
     return (
       <Container maxWidth="lg" sx={{ py: 4 }}>
         <Typography>読み込み中...</Typography>
       </Container>
-    );
+    )
   }
 
   if (error) {
@@ -107,10 +107,10 @@ export default function SetlistsPage() {
       <Container maxWidth="lg" sx={{ py: 4 }}>
         <Typography color="error">エラーが発生しました: {error.message}</Typography>
       </Container>
-    );
+    )
   }
 
-  const setlists: Setlist[] = data?.setlists || [];
+  const setlists: Setlist[] = data?.setlists || []
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -148,8 +148,14 @@ export default function SetlistsPage() {
           </CardContent>
         </Card>
       ) : (
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }, gap: 3 }}>
-          {setlists.map((setlist) => (
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
+            gap: 3,
+          }}
+        >
+          {setlists.map(setlist => (
             <Card
               key={setlist.id}
               sx={{
@@ -164,15 +170,22 @@ export default function SetlistsPage() {
               onClick={() => router.push(`/setlists/${setlist.id}`)}
             >
               <CardContent sx={{ flexGrow: 1 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                    mb: 2,
+                  }}
+                >
                   <Typography variant="h6" component="h2" noWrap sx={{ flex: 1 }}>
                     {setlist.title}
                   </Typography>
                   <IconButton
                     size="small"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleMenuClick(e, setlist.id);
+                    onClick={e => {
+                      e.stopPropagation()
+                      handleMenuClick(e, setlist.id)
                     }}
                   >
                     <MoreVertIcon />
@@ -208,7 +221,14 @@ export default function SetlistsPage() {
                   </Typography>
                 )}
 
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    mt: 2,
+                  }}
+                >
                   <Chip
                     label={`${setlist.items.length}曲`}
                     size="small"
@@ -216,15 +236,15 @@ export default function SetlistsPage() {
                     variant="outlined"
                   />
                   {setlist.theme && (
-                    <Chip
-                      label={getThemeLabel(setlist.theme)}
-                      size="small"
-                      variant="outlined"
-                    />
+                    <Chip label={getThemeLabel(setlist.theme)} size="small" variant="outlined" />
                   )}
                 </Box>
 
-                <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ mt: 1, display: 'block' }}
+                >
                   作成日: {formatDate(setlist.createdAt)}
                 </Typography>
               </CardContent>
@@ -233,11 +253,7 @@ export default function SetlistsPage() {
         </Box>
       )}
 
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleMenuClose}
-      >
+      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
         <MenuItem onClick={handleEditSetlist}>編集</MenuItem>
         <MenuItem onClick={handleMenuClose}>複製</MenuItem>
         <MenuItem onClick={handleDeleteSetlist} sx={{ color: 'error.main' }}>
@@ -245,5 +261,5 @@ export default function SetlistsPage() {
         </MenuItem>
       </Menu>
     </Container>
-  );
+  )
 }

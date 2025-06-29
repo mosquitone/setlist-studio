@@ -1,27 +1,19 @@
-'use client';
+'use client'
 
-import React from 'react';
-import { Formik, Form } from 'formik';
-import * as Yup from 'yup';
-import {
-  Container,
-  Typography,
-  TextField,
-  Button,
-  Box,
-  Paper,
-  Alert,
-} from '@mui/material';
-import { useMutation } from '@apollo/client';
-import { CREATE_SONG } from '@/lib/graphql/queries';
-import { useRouter } from 'next/navigation';
+import React from 'react'
+import { Formik, Form } from 'formik'
+import * as Yup from 'yup'
+import { Container, Typography, TextField, Button, Box, Paper, Alert } from '@mui/material'
+import { useMutation } from '@apollo/client'
+import { CREATE_SONG } from '@/lib/graphql/queries'
+import { useRouter } from 'next/navigation'
 
 interface SongFormValues {
-  title: string;
-  artist: string;
-  key: string;
-  tempo: string;
-  notes: string;
+  title: string
+  artist: string
+  key: string
+  tempo: string
+  notes: string
 }
 
 const validationSchema = Yup.object({
@@ -30,7 +22,7 @@ const validationSchema = Yup.object({
   key: Yup.string(),
   tempo: Yup.number().typeError('数値を入力してください').nullable(),
   notes: Yup.string(),
-});
+})
 
 const initialValues: SongFormValues = {
   title: '',
@@ -38,15 +30,15 @@ const initialValues: SongFormValues = {
   key: '',
   tempo: '',
   notes: '',
-};
+}
 
 export default function NewSongPage() {
-  const router = useRouter();
-  const [createSong, { loading, error }] = useMutation(CREATE_SONG);
+  const router = useRouter()
+  const [createSong, { loading, error }] = useMutation(CREATE_SONG)
 
   const handleSubmit = async (values: SongFormValues) => {
     try {
-      const tempoVal = values.tempo ? parseInt(values.tempo, 10) : undefined;
+      const tempoVal = values.tempo ? parseInt(values.tempo, 10) : undefined
       const { data } = await createSong({
         variables: {
           input: {
@@ -57,14 +49,14 @@ export default function NewSongPage() {
             notes: values.notes || undefined,
           },
         },
-      });
+      })
       if (data?.createSong?.id) {
-        router.push('/songs');
+        router.push('/songs')
       }
     } catch (err) {
-      console.error(err);
+      console.error(err)
     }
-  };
+  }
 
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
@@ -145,11 +137,7 @@ export default function NewSongPage() {
               <Button disabled={loading} onClick={() => router.back()}>
                 キャンセル
               </Button>
-              <Button
-                type="submit"
-                variant="contained"
-                disabled={loading}
-              >
+              <Button type="submit" variant="contained" disabled={loading}>
                 {loading ? '作成中...' : '作成'}
               </Button>
             </Box>
@@ -157,5 +145,5 @@ export default function NewSongPage() {
         )}
       </Formik>
     </Container>
-  );
+  )
 }

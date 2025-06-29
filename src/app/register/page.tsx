@@ -1,78 +1,73 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import { 
-  Container, 
-  Paper, 
-  TextField, 
-  Button, 
-  Typography, 
-  Box, 
+import { useState } from 'react'
+import {
+  Container,
+  Paper,
+  TextField,
+  Button,
+  Typography,
+  Box,
   Alert,
   IconButton,
-  InputAdornment
-} from '@mui/material';
-import { 
+  InputAdornment,
+} from '@mui/material'
+import {
   PersonAdd as PersonAddIcon,
   Visibility,
   VisibilityOff,
-  ArrowBack as ArrowBackIcon
-} from '@mui/icons-material';
-import { useMutation } from '@apollo/client';
-import { REGISTER } from '@/lib/graphql/queries';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+  ArrowBack as ArrowBackIcon,
+} from '@mui/icons-material'
+import { useMutation } from '@apollo/client'
+import { REGISTER } from '@/lib/graphql/queries'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 export default function RegisterPage() {
-  const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [error, setError] = useState('');
-  const router = useRouter();
+  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [error, setError] = useState('')
+  const router = useRouter()
 
   const [register, { loading }] = useMutation(REGISTER, {
     onCompleted: () => {
       // 新規登録成功後はログイン画面へ遷移
-      router.push('/login?message=新規登録が完了しました。ログインしてください。');
+      router.push('/login?message=新規登録が完了しました。ログインしてください。')
     },
-    onError: (error) => {
-      setError(error.message);
+    onError: error => {
+      setError(error.message)
     },
-  });
+  })
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
+    e.preventDefault()
+    setError('')
 
     if (password !== confirmPassword) {
-      setError('パスワードが一致しません');
-      return;
+      setError('パスワードが一致しません')
+      return
     }
 
     if (password.length < 6) {
-      setError('パスワードは6文字以上で入力してください');
-      return;
+      setError('パスワードは6文字以上で入力してください')
+      return
     }
 
     register({
       variables: {
-        input: { email, username, password }
-      }
-    });
-  };
+        input: { email, username, password },
+      },
+    })
+  }
 
   return (
     <Container maxWidth="sm">
       <Box sx={{ mt: 4, mb: 4 }}>
-        <Button
-          component={Link}
-          href="/"
-          startIcon={<ArrowBackIcon />}
-          sx={{ mb: 3 }}
-        >
+        <Button component={Link} href="/" startIcon={<ArrowBackIcon />} sx={{ mb: 3 }}>
           ホームに戻る
         </Button>
 
@@ -98,7 +93,7 @@ export default function RegisterPage() {
               fullWidth
               label="ユーザー名"
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={e => setUsername(e.target.value)}
               margin="normal"
               required
               autoComplete="username"
@@ -108,7 +103,7 @@ export default function RegisterPage() {
               label="メールアドレス"
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={e => setEmail(e.target.value)}
               margin="normal"
               required
               autoComplete="email"
@@ -118,17 +113,14 @@ export default function RegisterPage() {
               label="パスワード"
               type={showPassword ? 'text' : 'password'}
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={e => setPassword(e.target.value)}
               margin="normal"
               required
               autoComplete="new-password"
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
-                    <IconButton
-                      onClick={() => setShowPassword(!showPassword)}
-                      edge="end"
-                    >
+                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
                   </InputAdornment>
@@ -140,7 +132,7 @@ export default function RegisterPage() {
               label="パスワード確認"
               type={showConfirmPassword ? 'text' : 'password'}
               value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              onChange={e => setConfirmPassword(e.target.value)}
               margin="normal"
               required
               autoComplete="new-password"
@@ -180,5 +172,5 @@ export default function RegisterPage() {
         </Paper>
       </Box>
     </Container>
-  );
+  )
 }

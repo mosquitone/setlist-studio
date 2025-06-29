@@ -1,6 +1,6 @@
-'use client';
+'use client'
 
-import React, { useState } from 'react';
+import React, { useState } from 'react'
 import {
   Box,
   Container,
@@ -19,33 +19,33 @@ import {
   AccordionSummary,
   AccordionDetails,
   Divider,
-} from '@mui/material';
+} from '@mui/material'
 import {
   Add as AddIcon,
   Delete as DeleteIcon,
   DragHandle as DragHandleIcon,
   ExpandMore as ExpandMoreIcon,
-} from '@mui/icons-material';
-import { Formik, Form, FieldArray } from 'formik';
-import * as Yup from 'yup';
-import { useMutation } from '@apollo/client';
-import { CREATE_SETLIST } from '@/lib/graphql/queries';
-import { useRouter } from 'next/navigation';
+} from '@mui/icons-material'
+import { Formik, Form, FieldArray } from 'formik'
+import * as Yup from 'yup'
+import { useMutation } from '@apollo/client'
+import { CREATE_SETLIST } from '@/lib/graphql/queries'
+import { useRouter } from 'next/navigation'
 
 interface SetlistItem {
-  title: string;
-  note: string;
+  title: string
+  note: string
 }
 
 interface SetlistFormValues {
-  title: string;
-  bandName: string;
-  eventName: string;
-  eventDate: string;
-  openTime: string;
-  startTime: string;
-  theme: string;
-  items: SetlistItem[];
+  title: string
+  bandName: string
+  eventName: string
+  eventDate: string
+  openTime: string
+  startTime: string
+  theme: string
+  items: SetlistItem[]
 }
 
 const validationSchema = Yup.object({
@@ -56,13 +56,15 @@ const validationSchema = Yup.object({
   openTime: Yup.string(),
   startTime: Yup.string(),
   theme: Yup.string().required('テーマは必須です'),
-  items: Yup.array().of(
-    Yup.object({
-      title: Yup.string().required('楽曲名は必須です'),
-      note: Yup.string(),
-    })
-  ).min(1, '少なくとも1曲は必要です'),
-});
+  items: Yup.array()
+    .of(
+      Yup.object({
+        title: Yup.string().required('楽曲名は必須です'),
+        note: Yup.string(),
+      }),
+    )
+    .min(1, '少なくとも1曲は必要です'),
+})
 
 const initialValues: SetlistFormValues = {
   title: '',
@@ -73,19 +75,19 @@ const initialValues: SetlistFormValues = {
   startTime: '',
   theme: 'basic',
   items: [{ title: '', note: '' }],
-};
+}
 
 const themes = [
   { value: 'basic', label: 'Basic' },
   { value: 'mqtn', label: 'MQTN' },
   { value: 'minimal', label: 'Minimal' },
   { value: 'mqtn2', label: 'MQTN2' },
-];
+]
 
 export default function NewSetlistPage() {
-  const router = useRouter();
-  const [createSetlist, { loading, error }] = useMutation(CREATE_SETLIST);
-  const [expandedOptions, setExpandedOptions] = useState(false);
+  const router = useRouter()
+  const [createSetlist, { loading, error }] = useMutation(CREATE_SETLIST)
+  const [expandedOptions, setExpandedOptions] = useState(false)
 
   const handleSubmit = async (values: SetlistFormValues) => {
     try {
@@ -106,15 +108,15 @@ export default function NewSetlistPage() {
             })),
           },
         },
-      });
+      })
 
       if (data?.createSetlist) {
-        router.push(`/setlists/${data.createSetlist.id}`);
+        router.push(`/setlists/${data.createSetlist.id}`)
       }
     } catch (err) {
-      console.error('Error creating setlist:', err);
+      console.error('Error creating setlist:', err)
     }
-  };
+  }
 
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
@@ -168,7 +170,7 @@ export default function NewSetlistPage() {
                       onChange={handleChange}
                       label="テーマ"
                     >
-                      {themes.map((theme) => (
+                      {themes.map(theme => (
                         <MenuItem key={theme.value} value={theme.value}>
                           {theme.label}
                         </MenuItem>
@@ -256,11 +258,8 @@ export default function NewSetlistPage() {
                           <IconButton size="small" disabled>
                             <DragHandleIcon />
                           </IconButton>
-                          
-                          <Typography
-                            variant="body2"
-                            sx={{ minWidth: 30, textAlign: 'center' }}
-                          >
+
+                          <Typography variant="body2" sx={{ minWidth: 30, textAlign: 'center' }}>
                             {index + 1}
                           </Typography>
 
@@ -272,12 +271,10 @@ export default function NewSetlistPage() {
                             onChange={handleChange}
                             onBlur={handleBlur}
                             error={
-                              touched.items?.[index]?.title &&
-                              Boolean(errors.items?.[index]?.title)
+                              touched.items?.[index]?.title && Boolean(errors.items?.[index]?.title)
                             }
                             helperText={
-                              touched.items?.[index]?.title &&
-                              errors.items?.[index]?.title
+                              touched.items?.[index]?.title && errors.items?.[index]?.title
                             }
                             size="small"
                           />
@@ -325,19 +322,10 @@ export default function NewSetlistPage() {
             )}
 
             <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
-              <Button
-                variant="outlined"
-                onClick={() => router.back()}
-                disabled={loading}
-              >
+              <Button variant="outlined" onClick={() => router.back()} disabled={loading}>
                 キャンセル
               </Button>
-              <Button
-                type="submit"
-                variant="contained"
-                disabled={loading}
-                size="large"
-              >
+              <Button type="submit" variant="contained" disabled={loading} size="large">
                 {loading ? '作成中...' : 'セットリストを作成'}
               </Button>
             </Box>
@@ -345,5 +333,5 @@ export default function NewSetlistPage() {
         )}
       </Formik>
     </Container>
-  );
+  )
 }

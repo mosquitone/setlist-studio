@@ -1,53 +1,64 @@
-import { Resolver, Query, Mutation, Arg, Ctx, UseMiddleware, InputType, Field, Int, ID } from "type-graphql";
-import { PrismaClient } from "@prisma/client";
-import { Song } from "../types/Song";
-import { AuthMiddleware } from "../middleware/auth";
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Arg,
+  Ctx,
+  UseMiddleware,
+  InputType,
+  Field,
+  Int,
+  ID,
+} from 'type-graphql'
+import { PrismaClient } from '@prisma/client'
+import { Song } from '../types/Song'
+import { AuthMiddleware } from '../middleware/auth'
 
 interface Context {
-  prisma: PrismaClient;
-  userId?: string;
+  prisma: PrismaClient
+  userId?: string
 }
 
 @InputType()
 export class CreateSongInput {
   @Field()
-  title: string;
+  title: string
 
   @Field({ nullable: true })
-  artist?: string;
+  artist?: string
 
   @Field(() => Int, { nullable: true })
-  duration?: number;
+  duration?: number
 
   @Field({ nullable: true })
-  key?: string;
+  key?: string
 
   @Field(() => Int, { nullable: true })
-  tempo?: number;
+  tempo?: number
 
   @Field({ nullable: true })
-  notes?: string;
+  notes?: string
 }
 
 @InputType()
 export class UpdateSongInput {
   @Field({ nullable: true })
-  title?: string;
+  title?: string
 
   @Field({ nullable: true })
-  artist?: string;
+  artist?: string
 
   @Field(() => Int, { nullable: true })
-  duration?: number;
+  duration?: number
 
   @Field({ nullable: true })
-  key?: string;
+  key?: string
 
   @Field(() => Int, { nullable: true })
-  tempo?: number;
+  tempo?: number
 
   @Field({ nullable: true })
-  notes?: string;
+  notes?: string
 }
 
 @Resolver(() => Song)
@@ -59,76 +70,67 @@ export class SongResolver {
       where: { userId: ctx.userId },
       include: { user: true },
       orderBy: { title: 'asc' },
-    }) as Promise<Song[]>;
+    }) as Promise<Song[]>
   }
 
   @Query(() => Song, { nullable: true })
   @UseMiddleware(AuthMiddleware)
-  async song(
-    @Arg("id", () => ID) id: string,
-    @Ctx() ctx: Context
-  ): Promise<Song | null> {
+  async song(@Arg('id', () => ID) id: string, @Ctx() ctx: Context): Promise<Song | null> {
     return ctx.prisma.song.findFirst({
       where: { id, userId: ctx.userId },
       include: { user: true },
-    }) as Promise<Song | null>;
+    }) as Promise<Song | null>
   }
 
   @Mutation(() => Song)
   @UseMiddleware(AuthMiddleware)
-  async createSong(
-    @Arg("input") input: CreateSongInput,
-    @Ctx() ctx: Context
-  ): Promise<Song> {
+  async createSong(@Arg('input') input: CreateSongInput, @Ctx() ctx: Context): Promise<Song> {
     return ctx.prisma.song.create({
       data: {
         ...input,
         userId: ctx.userId!,
       },
       include: { user: true },
-    }) as Promise<Song>;
+    }) as Promise<Song>
   }
 
   @Mutation(() => Song)
   @UseMiddleware(AuthMiddleware)
   async updateSong(
-    @Arg("id", () => ID) id: string,
-    @Arg("input") input: UpdateSongInput,
-    @Ctx() ctx: Context
+    @Arg('id', () => ID) id: string,
+    @Arg('input') input: UpdateSongInput,
+    @Ctx() ctx: Context,
   ): Promise<Song> {
     const song = await ctx.prisma.song.findFirst({
       where: { id, userId: ctx.userId },
-    });
+    })
 
     if (!song) {
-      throw new Error("Song not found");
+      throw new Error('Song not found')
     }
 
     return ctx.prisma.song.update({
       where: { id },
       data: input,
       include: { user: true },
-    }) as Promise<Song>;
+    }) as Promise<Song>
   }
 
   @Mutation(() => Boolean)
   @UseMiddleware(AuthMiddleware)
-  async deleteSong(
-    @Arg("id", () => ID) id: string,
-    @Ctx() ctx: Context
-  ): Promise<boolean> {
+  async deleteSong(@Arg('id', () => ID) id: string, @Ctx() ctx: Context): Promise<boolean> {
     const song = await ctx.prisma.song.findFirst({
       where: { id, userId: ctx.userId },
-    });
+    })
 
     if (!song) {
-      throw new Error("Song not found");
+      throw new Error('Song not found')
     }
 
     await ctx.prisma.song.delete({
       where: { id },
-    });
+    })
 
-    return true;
+    return true
   }
 }

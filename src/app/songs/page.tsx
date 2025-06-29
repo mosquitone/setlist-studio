@@ -1,6 +1,6 @@
-'use client';
+'use client'
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'
 import {
   Container,
   Typography,
@@ -20,75 +20,75 @@ import {
   TextField,
   IconButton,
   CircularProgress,
-  Alert
-} from '@mui/material';
-import { Add as AddIcon, Delete as DeleteIcon, Edit as EditIcon, Home as HomeIcon } from '@mui/icons-material';
-import { useQuery, useMutation } from '@apollo/client';
-import { GET_SONGS, DELETE_SONG, UPDATE_SONG } from '@/lib/graphql/queries';
-import { useRouter } from 'next/navigation';
+  Alert,
+} from '@mui/material'
+import {
+  Add as AddIcon,
+  Delete as DeleteIcon,
+  Edit as EditIcon,
+  Home as HomeIcon,
+} from '@mui/icons-material'
+import { useQuery, useMutation } from '@apollo/client'
+import { GET_SONGS, DELETE_SONG, UPDATE_SONG } from '@/lib/graphql/queries'
+import { useRouter } from 'next/navigation'
 
 interface Song {
-  id: string;
-  title: string;
-  artist: string;
-  key?: string | null;
-  tempo?: number | null;
-  notes?: string | null;
+  id: string
+  title: string
+  artist: string
+  key?: string | null
+  tempo?: number | null
+  notes?: string | null
 }
 
 export default function SongsPage() {
-  const router = useRouter();
-  const { data, loading, error } = useQuery(GET_SONGS, { fetchPolicy: 'network-only' });
-  const [rows, setRows] = useState<Song[]>([]);
-  const [openEdit, setOpenEdit] = useState(false);
-  const [selected, setSelected] = useState<Song | null>(null);
+  const router = useRouter()
+  const { data, loading, error } = useQuery(GET_SONGS, { fetchPolicy: 'network-only' })
+  const [rows, setRows] = useState<Song[]>([])
+  const [openEdit, setOpenEdit] = useState(false)
+  const [selected, setSelected] = useState<Song | null>(null)
   const [formValues, setFormValues] = useState<Omit<Song, 'id'>>({
     title: '',
     artist: '',
     key: '',
     tempo: null,
-    notes: ''
-  });
+    notes: '',
+  })
 
   const [updateSong] = useMutation(UPDATE_SONG, {
-    refetchQueries: [{ query: GET_SONGS }]
-  });
+    refetchQueries: [{ query: GET_SONGS }],
+  })
   const [deleteSong] = useMutation(DELETE_SONG, {
-    refetchQueries: [{ query: GET_SONGS }]
-  });
+    refetchQueries: [{ query: GET_SONGS }],
+  })
 
   useEffect(() => {
     if (data?.songs) {
-      setRows(data.songs);
+      setRows(data.songs)
     }
-  }, [data]);
+  }, [data])
 
   const handleRowClick = (song: Song) => {
-    setSelected(song);
+    setSelected(song)
     setFormValues({
       title: song.title ?? '',
       artist: song.artist ?? '',
       key: song.key ?? '',
       tempo: song.tempo ?? null,
-      notes: song.notes ?? ''
-    });
-    setOpenEdit(true);
-  };
+      notes: song.notes ?? '',
+    })
+    setOpenEdit(true)
+  }
 
   const handleFieldChange = (field: keyof Omit<Song, 'id'>, value: string) => {
     setFormValues(prev => ({
       ...prev,
-      [field]:
-        field === 'tempo'
-          ? value === ''
-            ? null
-            : Number(value)
-          : value
-    }));
-  };
+      [field]: field === 'tempo' ? (value === '' ? null : Number(value)) : value,
+    }))
+  }
 
   const handleSave = async () => {
-    if (!selected) return;
+    if (!selected) return
     try {
       await updateSong({
         variables: {
@@ -98,41 +98,37 @@ export default function SongsPage() {
             artist: formValues.artist || '',
             key: formValues.key || null,
             tempo: formValues.tempo,
-            notes: formValues.notes || null
-          }
-        }
-      });
-      setRows(prev =>
-        prev.map(r =>
-          r.id === selected.id ? { ...r, ...formValues } as Song : r
-        )
-      );
-      setOpenEdit(false);
-      setSelected(null);
+            notes: formValues.notes || null,
+          },
+        },
+      })
+      setRows(prev => prev.map(r => (r.id === selected.id ? ({ ...r, ...formValues } as Song) : r)))
+      setOpenEdit(false)
+      setSelected(null)
     } catch (err) {
-      console.error('Update failed', err);
+      console.error('Update failed', err)
     }
-  };
+  }
 
   const handleDelete = async (id: string) => {
     try {
-      await deleteSong({ variables: { id } });
-      setRows(prev => prev.filter(r => r.id !== id));
+      await deleteSong({ variables: { id } })
+      setRows(prev => prev.filter(r => r.id !== id))
       if (selected?.id === id) {
-        setOpenEdit(false);
-        setSelected(null);
+        setOpenEdit(false)
+        setSelected(null)
       }
     } catch (err) {
-      console.error('Delete failed', err);
+      console.error('Delete failed', err)
     }
-  };
+  }
 
   if (loading) {
     return (
       <Container maxWidth="lg" sx={{ py: 4, textAlign: 'center' }}>
         <CircularProgress />
       </Container>
-    );
+    )
   }
 
   if (error) {
@@ -140,7 +136,7 @@ export default function SongsPage() {
       <Container maxWidth="lg" sx={{ py: 4 }}>
         <Alert severity="error">エラーが発生しました: {error.message}</Alert>
       </Container>
-    );
+    )
   }
 
   return (
@@ -250,5 +246,5 @@ export default function SongsPage() {
         </DialogActions>
       </Dialog>
     </Container>
-  );
+  )
 }

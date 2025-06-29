@@ -1,83 +1,80 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import { 
-  Container, 
-  Paper, 
-  TextField, 
-  Button, 
-  Typography, 
-  Box, 
+import { useState } from 'react'
+import {
+  Container,
+  Paper,
+  TextField,
+  Button,
+  Typography,
+  Box,
   Alert,
   IconButton,
-  InputAdornment
-} from '@mui/material';
-import { 
+  InputAdornment,
+} from '@mui/material'
+import {
   Login as LoginIcon,
   Visibility,
   VisibilityOff,
-  ArrowBack as ArrowBackIcon
-} from '@mui/icons-material';
-import { useMutation } from '@apollo/client';
-import { LOGIN } from '@/lib/graphql/queries';
-import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+  ArrowBack as ArrowBackIcon,
+} from '@mui/icons-material'
+import { useMutation } from '@apollo/client'
+import { LOGIN } from '@/lib/graphql/queries'
+import Link from 'next/link'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const successMessage = searchParams.get('message');
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [error, setError] = useState('')
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const successMessage = searchParams.get('message')
 
   const [login, { loading }] = useMutation(LOGIN, {
-    onCompleted: (data) => {
-      console.log('Login successful:', data);
-      localStorage.setItem('token', data.login.token);
-      
+    onCompleted: data => {
+      console.log('Login successful:', data)
+      localStorage.setItem('token', data.login.token)
+
       // storageイベントを手動で発火してホーム画面の認証状態を更新
-      window.dispatchEvent(new StorageEvent('storage', {
-        key: 'token',
-        newValue: data.login.token,
-        storageArea: localStorage
-      }));
-      
+      window.dispatchEvent(
+        new StorageEvent('storage', {
+          key: 'token',
+          newValue: data.login.token,
+          storageArea: localStorage,
+        }),
+      )
+
       // ホームページにリダイレクト
-      router.push('/');
+      router.push('/')
     },
-    onError: (error) => {
-      console.error('Login error:', error);
-      setError(error.message);
+    onError: error => {
+      console.error('Login error:', error)
+      setError(error.message)
     },
-  });
+  })
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    
+    e.preventDefault()
+    setError('')
+
     try {
-      console.log('Attempting login with:', { email, password: '***' });
+      console.log('Attempting login with:', { email, password: '***' })
       await login({
         variables: {
-          input: { email, password }
-        }
-      });
+          input: { email, password },
+        },
+      })
     } catch (err) {
-      console.error('Login submission error:', err);
+      console.error('Login submission error:', err)
     }
-  };
+  }
 
   return (
     <Container maxWidth="sm">
       <Box sx={{ mt: 4, mb: 4 }}>
-        <Button
-          component={Link}
-          href="/"
-          startIcon={<ArrowBackIcon />}
-          sx={{ mb: 3 }}
-        >
+        <Button component={Link} href="/" startIcon={<ArrowBackIcon />} sx={{ mb: 3 }}>
           ホームに戻る
         </Button>
 
@@ -110,7 +107,7 @@ export default function LoginPage() {
               label="メールアドレス"
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={e => setEmail(e.target.value)}
               margin="normal"
               required
               autoComplete="email"
@@ -120,17 +117,14 @@ export default function LoginPage() {
               label="パスワード"
               type={showPassword ? 'text' : 'password'}
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={e => setPassword(e.target.value)}
               margin="normal"
               required
               autoComplete="current-password"
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
-                    <IconButton
-                      onClick={() => setShowPassword(!showPassword)}
-                      edge="end"
-                    >
+                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
                   </InputAdornment>
@@ -160,5 +154,5 @@ export default function LoginPage() {
         </Paper>
       </Box>
     </Container>
-  );
+  )
 }

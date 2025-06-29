@@ -1,6 +1,6 @@
-'use client';
+'use client'
 
-import React, { useState } from 'react';
+import React, { useState } from 'react'
 import {
   Box,
   Container,
@@ -19,7 +19,7 @@ import {
   AccordionSummary,
   AccordionDetails,
   CircularProgress,
-} from '@mui/material';
+} from '@mui/material'
 import {
   Add as AddIcon,
   Delete as DeleteIcon,
@@ -27,28 +27,28 @@ import {
   ExpandMore as ExpandMoreIcon,
   Save as SaveIcon,
   Cancel as CancelIcon,
-} from '@mui/icons-material';
-import { Formik, Form, FieldArray } from 'formik';
-import * as Yup from 'yup';
-import { useQuery, useMutation } from '@apollo/client';
-import { useParams, useRouter } from 'next/navigation';
-import { GET_SETLIST, UPDATE_SETLIST } from '@/lib/graphql/queries';
+} from '@mui/icons-material'
+import { Formik, Form, FieldArray } from 'formik'
+import * as Yup from 'yup'
+import { useQuery, useMutation } from '@apollo/client'
+import { useParams, useRouter } from 'next/navigation'
+import { GET_SETLIST, UPDATE_SETLIST } from '@/lib/graphql/queries'
 
 interface SetlistItem {
-  id?: string;
-  title: string;
-  note: string;
+  id?: string
+  title: string
+  note: string
 }
 
 interface SetlistFormValues {
-  title: string;
-  bandName: string;
-  eventName: string;
-  eventDate: string;
-  openTime: string;
-  startTime: string;
-  theme: string;
-  items: SetlistItem[];
+  title: string
+  bandName: string
+  eventName: string
+  eventDate: string
+  openTime: string
+  startTime: string
+  theme: string
+  items: SetlistItem[]
 }
 
 const validationSchema = Yup.object({
@@ -59,34 +59,41 @@ const validationSchema = Yup.object({
   openTime: Yup.string(),
   startTime: Yup.string(),
   theme: Yup.string().required('テーマは必須です'),
-  items: Yup.array().of(
-    Yup.object({
-      title: Yup.string().required('楽曲名は必須です'),
-      note: Yup.string(),
-    })
-  ).min(1, '少なくとも1曲は必要です'),
-});
+  items: Yup.array()
+    .of(
+      Yup.object({
+        title: Yup.string().required('楽曲名は必須です'),
+        note: Yup.string(),
+      }),
+    )
+    .min(1, '少なくとも1曲は必要です'),
+})
 
 const themes = [
   { value: 'basic', label: 'Basic' },
   { value: 'mqtn', label: 'MQTN' },
   { value: 'minimal', label: 'Minimal' },
   { value: 'mqtn2', label: 'MQTN2' },
-];
+]
 
 export default function EditSetlistPage() {
-  const params = useParams();
-  const router = useRouter();
-  const setlistId = params.id as string;
-  
-  const [expandedOptions, setExpandedOptions] = useState(false);
+  const params = useParams()
+  const router = useRouter()
+  const setlistId = params.id as string
 
-  const { data, loading: queryLoading, error: queryError } = useQuery(GET_SETLIST, {
+  const [expandedOptions, setExpandedOptions] = useState(false)
+
+  const {
+    data,
+    loading: queryLoading,
+    error: queryError,
+  } = useQuery(GET_SETLIST, {
     variables: { id: setlistId },
     skip: !setlistId,
-  });
+  })
 
-  const [updateSetlist, { loading: updateLoading, error: updateError }] = useMutation(UPDATE_SETLIST);
+  const [updateSetlist, { loading: updateLoading, error: updateError }] =
+    useMutation(UPDATE_SETLIST)
 
   if (queryLoading) {
     return (
@@ -94,21 +101,19 @@ export default function EditSetlistPage() {
         <CircularProgress />
         <Typography sx={{ mt: 2 }}>セットリストを読み込み中...</Typography>
       </Container>
-    );
+    )
   }
 
   if (queryError || !data?.setlist) {
     return (
       <Container maxWidth="md" sx={{ py: 4 }}>
-        <Alert severity="error">
-          セットリストが見つかりません。
-        </Alert>
+        <Alert severity="error">セットリストが見つかりません。</Alert>
       </Container>
-    );
+    )
   }
 
-  const setlist = data.setlist;
-  
+  const setlist = data.setlist
+
   const initialValues: SetlistFormValues = {
     title: setlist.title || '',
     bandName: setlist.bandName || '',
@@ -124,7 +129,7 @@ export default function EditSetlistPage() {
         title: item.title || '',
         note: item.note || '',
       })),
-  };
+  }
 
   const handleSubmit = async (values: SetlistFormValues) => {
     try {
@@ -146,15 +151,15 @@ export default function EditSetlistPage() {
             })),
           },
         },
-      });
+      })
 
       if (data?.updateSetlist) {
-        router.push(`/setlists/${setlistId}`);
+        router.push(`/setlists/${setlistId}`)
       }
     } catch (err) {
-      console.error('Error updating setlist:', err);
+      console.error('Error updating setlist:', err)
     }
-  };
+  }
 
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
@@ -209,7 +214,7 @@ export default function EditSetlistPage() {
                       onChange={handleChange}
                       label="テーマ"
                     >
-                      {themes.map((theme) => (
+                      {themes.map(theme => (
                         <MenuItem key={theme.value} value={theme.value}>
                           {theme.label}
                         </MenuItem>
@@ -297,11 +302,8 @@ export default function EditSetlistPage() {
                           <IconButton size="small" disabled>
                             <DragHandleIcon />
                           </IconButton>
-                          
-                          <Typography
-                            variant="body2"
-                            sx={{ minWidth: 30, textAlign: 'center' }}
-                          >
+
+                          <Typography variant="body2" sx={{ minWidth: 30, textAlign: 'center' }}>
                             {index + 1}
                           </Typography>
 
@@ -313,12 +315,10 @@ export default function EditSetlistPage() {
                             onChange={handleChange}
                             onBlur={handleBlur}
                             error={
-                              touched.items?.[index]?.title &&
-                              Boolean(errors.items?.[index]?.title)
+                              touched.items?.[index]?.title && Boolean(errors.items?.[index]?.title)
                             }
                             helperText={
-                              touched.items?.[index]?.title &&
-                              errors.items?.[index]?.title
+                              touched.items?.[index]?.title && errors.items?.[index]?.title
                             }
                             size="small"
                           />
@@ -388,5 +388,5 @@ export default function EditSetlistPage() {
         )}
       </Formik>
     </Container>
-  );
+  )
 }

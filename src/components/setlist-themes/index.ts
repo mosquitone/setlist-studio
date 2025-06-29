@@ -1,6 +1,6 @@
-export { BasicTheme } from './BasicTheme';
-export { MQTNTheme } from './MQTNTheme';
-export { MinimalTheme } from './MinimalTheme';
-export { MQTN2Theme } from './MQTN2Theme';
-export { SetlistRenderer } from './SetlistRenderer';
-export type { SetlistData, SetlistItem, SetlistThemeProps } from './types';
+export { BasicTheme } from './BasicTheme'
+export { MQTNTheme } from './MQTNTheme'
+export { MinimalTheme } from './MinimalTheme'
+export { MQTN2Theme } from './MQTN2Theme'
+export { SetlistRenderer } from './SetlistRenderer'
+export type { SetlistData, SetlistItem, SetlistThemeProps } from './types'

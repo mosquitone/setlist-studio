@@ -1,67 +1,76 @@
-'use client';
+'use client'
 
-import { useState, useEffect } from 'react';
-import { 
-  Container, 
-  Typography, 
-  Box, 
-  Button, 
-  Stack, 
-  Card, 
+import { useState, useEffect } from 'react'
+import {
+  Container,
+  Typography,
+  Box,
+  Button,
+  Stack,
+  Card,
   CardContent,
   CardActionArea,
   Fade,
   Chip,
-} from '@mui/material';
-import { 
+} from '@mui/material'
+import {
   MusicNote as MusicNoteIcon,
   PlaylistPlay as PlaylistPlayIcon,
   Login as LoginIcon,
   PersonAdd as PersonAddIcon,
   Logout as LogoutIcon,
-  LibraryMusic as LibraryMusicIcon
-} from '@mui/icons-material';
-import Link from 'next/link';
+  LibraryMusic as LibraryMusicIcon,
+} from '@mui/icons-material'
+import Link from 'next/link'
 
 export default function HomePage() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const checkAuth = () => {
       try {
         if (typeof window !== 'undefined') {
-          const token = localStorage.getItem('token');
-          setIsLoggedIn(!!token);
+          const token = localStorage.getItem('token')
+          setIsLoggedIn(!!token)
         }
       } catch {
-        setIsLoggedIn(false);
+        setIsLoggedIn(false)
       } finally {
-        setIsLoading(false);
+        setIsLoading(false)
       }
-    };
-    checkAuth();
-    if (typeof window !== 'undefined') {
-      const handleStorageChange = () => checkAuth();
-      window.addEventListener('storage', handleStorageChange);
-      return () => window.removeEventListener('storage', handleStorageChange);
     }
-  }, []);
+    checkAuth()
+    if (typeof window !== 'undefined') {
+      const handleStorageChange = () => checkAuth()
+      window.addEventListener('storage', handleStorageChange)
+      return () => window.removeEventListener('storage', handleStorageChange)
+    }
+  }, [])
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    setIsLoggedIn(false);
-    window.location.reload();
-  };
+    localStorage.removeItem('token')
+    setIsLoggedIn(false)
+    window.location.reload()
+  }
 
   if (isLoading) {
     return (
       <Container maxWidth="md">
-        <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Typography variant="h6" color="text.secondary">読み込み中...</Typography>
+        <Box
+          sx={{
+            minHeight: '100vh',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Typography variant="h6" color="text.secondary">
+            読み込み中...
+          </Typography>
         </Box>
       </Container>
-    );
+    )
   }
 
   return (
@@ -73,24 +82,33 @@ export default function HomePage() {
             <Box sx={{ mb: 3 }}>
               <MusicNoteIcon sx={{ fontSize: 80, color: 'primary.main', mb: 2 }} />
             </Box>
-            <Typography 
-              variant="h1" 
-              component="h1" 
+            <Typography
+              variant="h1"
+              component="h1"
               gutterBottom
-              sx={{ 
+              sx={{
                 background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
                 backgroundClip: 'text',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
-                mb: 2
+                mb: 2,
               }}
             >
               セットリストジェネレーター v2
             </Typography>
-            <Typography variant="h6" component="p" color="text.secondary" sx={{ mb: 4, maxWidth: 600, mx: 'auto' }}>
+            <Typography
+              variant="h6"
+              component="p"
+              color="text.secondary"
+              sx={{ mb: 4, maxWidth: 600, mx: 'auto' }}
+            >
               あなたの楽曲を管理して、素敵なセットリストを作成しましょう
             </Typography>
-            <Chip label="🎵 プロフェッショナルなセットリスト作成ツール" variant="outlined" sx={{ fontSize: '1rem', py: 2 }} />
+            <Chip
+              label="🎵 プロフェッショナルなセットリスト作成ツール"
+              variant="outlined"
+              sx={{ fontSize: '1rem', py: 2 }}
+            />
           </Box>
         </Fade>
 
@@ -101,26 +119,42 @@ export default function HomePage() {
               主な機能
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 4 }}>
-              <Card sx={{ flex: 1, transition: 'transform 0.2s', '&:hover': { transform: 'translateY(-4px)' } }}>
+              <Card
+                sx={{
+                  flex: 1,
+                  transition: 'transform 0.2s',
+                  '&:hover': { transform: 'translateY(-4px)' },
+                }}
+              >
                 <CardActionArea component={Link} href="/songs">
-                <CardContent sx={{ p: 4 }}>
-                  <LibraryMusicIcon sx={{ fontSize: 48, color: 'primary.main', mb: 2 }} />
-                  <Typography variant="h5" component="h3" gutterBottom>楽曲管理</Typography>
-                  <Typography color="text.secondary">
-                    楽曲の詳細情報（タイトル、アーティスト、キー、テンポ）を登録・管理できます。
-                  </Typography>
-                </CardContent>
+                  <CardContent sx={{ p: 4 }}>
+                    <LibraryMusicIcon sx={{ fontSize: 48, color: 'primary.main', mb: 2 }} />
+                    <Typography variant="h5" component="h3" gutterBottom>
+                      楽曲管理
+                    </Typography>
+                    <Typography color="text.secondary">
+                      楽曲の詳細情報（タイトル、アーティスト、キー、テンポ）を登録・管理できます。
+                    </Typography>
+                  </CardContent>
                 </CardActionArea>
               </Card>
-              <Card sx={{ flex: 1, transition: 'transform 0.2s', '&:hover': { transform: 'translateY(-4px)' } }}>
+              <Card
+                sx={{
+                  flex: 1,
+                  transition: 'transform 0.2s',
+                  '&:hover': { transform: 'translateY(-4px)' },
+                }}
+              >
                 <CardActionArea component={Link} href="/setlists/new">
-                <CardContent sx={{ p: 4 }}>
-                  <PlaylistPlayIcon sx={{ fontSize: 48, color: 'secondary.main', mb: 2 }} />
-                  <Typography variant="h5" component="h3" gutterBottom>セットリスト作成</Typography>
-                  <Typography color="text.secondary">
-                    登録済みの楽曲からセットリストを作成できます。
-                  </Typography>
-                </CardContent>
+                  <CardContent sx={{ p: 4 }}>
+                    <PlaylistPlayIcon sx={{ fontSize: 48, color: 'secondary.main', mb: 2 }} />
+                    <Typography variant="h5" component="h3" gutterBottom>
+                      セットリスト作成
+                    </Typography>
+                    <Typography color="text.secondary">
+                      登録済みの楽曲からセットリストを作成できます。
+                    </Typography>
+                  </CardContent>
                 </CardActionArea>
               </Card>
             </Box>
@@ -130,13 +164,32 @@ export default function HomePage() {
         {/* アクションボタン */}
         <Fade in timeout={1000} style={{ transitionDelay: '400ms' }}>
           <Box sx={{ textAlign: 'center' }}>
-            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} justifyContent="center" alignItems="center">
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              spacing={3}
+              justifyContent="center"
+              alignItems="center"
+            >
               {!isLoggedIn && (
                 <>
-                  <Button variant="outlined" size="large" component={Link} href="/login" startIcon={<LoginIcon />} sx={{ minWidth: 220, py: 1.5 }}>
+                  <Button
+                    variant="outlined"
+                    size="large"
+                    component={Link}
+                    href="/login"
+                    startIcon={<LoginIcon />}
+                    sx={{ minWidth: 220, py: 1.5 }}
+                  >
                     ログイン
                   </Button>
-                  <Button variant="outlined" size="large" component={Link} href="/register" startIcon={<PersonAddIcon />} sx={{ minWidth: 220, py: 1.5 }}>
+                  <Button
+                    variant="outlined"
+                    size="large"
+                    component={Link}
+                    href="/register"
+                    startIcon={<PersonAddIcon />}
+                    sx={{ minWidth: 220, py: 1.5 }}
+                  >
                     新規登録
                   </Button>
                 </>
@@ -148,10 +201,12 @@ export default function HomePage() {
         {/* フッター */}
         <Fade in timeout={1000} style={{ transitionDelay: '600ms' }}>
           <Box sx={{ mt: 8, textAlign: 'center', py: 4 }}>
-            <Typography color="text.secondary" variant="body2">© 2025 mosquitone</Typography>
+            <Typography color="text.secondary" variant="body2">
+              © 2025 mosquitone
+            </Typography>
           </Box>
         </Fade>
       </Box>
     </Container>
-  );
+  )
 }

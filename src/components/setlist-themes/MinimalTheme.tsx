@@ -1,21 +1,21 @@
-import React from 'react';
-import { Box, Typography, Paper } from '@mui/material';
-import { SetlistThemeProps } from './types';
+import React from 'react'
+import { Box, Typography, Paper } from '@mui/material'
+import { SetlistThemeProps } from './types'
 
 export const MinimalTheme: React.FC<SetlistThemeProps> = ({ data, className }) => {
-  const { bandName, eventName, eventDate, openTime, startTime, items, qrCodeURL } = data;
-  
+  const { bandName, eventName, eventDate, openTime, startTime, items, qrCodeURL } = data
+
   // Dynamic font size based on number of songs - Minimal uses larger fonts
   const getFontSize = (count: number): string => {
-    if (count <= 5) return '3.5rem';
-    if (count <= 8) return '2.5rem';
-    if (count <= 12) return '2rem';
-    if (count <= 18) return '1.5rem';
-    if (count <= 25) return '1.2rem';
-    return '1rem';
-  };
+    if (count <= 5) return '3.5rem'
+    if (count <= 8) return '2.5rem'
+    if (count <= 12) return '2rem'
+    if (count <= 18) return '1.5rem'
+    if (count <= 25) return '1.2rem'
+    return '1rem'
+  }
 
-  const fontSize = getFontSize(items.length);
+  const fontSize = getFontSize(items.length)
 
   return (
     <Paper
@@ -166,5 +166,5 @@ export const MinimalTheme: React.FC<SetlistThemeProps> = ({ data, className }) =
         )}
       </Box>
     </Paper>
-  );
-};
+  )
+}

@@ -1,27 +1,27 @@
-import { ObjectType, Field, ID } from "type-graphql";
-import { Song } from "./Song";
-import { Setlist } from "./Setlist";
+import { ObjectType, Field, ID } from 'type-graphql'
+import { Song } from './Song'
+import { Setlist } from './Setlist'
 
 @ObjectType()
 export class User {
   @Field(() => ID)
-  id: string;
+  id: string
 
   @Field()
-  email: string;
+  email: string
 
   @Field()
-  username: string;
+  username: string
 
   @Field()
-  createdAt: Date;
+  createdAt: Date
 
   @Field()
-  updatedAt: Date;
+  updatedAt: Date
 
   @Field(() => [Song])
-  songs: Song[];
+  songs: Song[]
 
   @Field(() => [Setlist])
-  setlists: Setlist[];
+  setlists: Setlist[]
 }

@@ -1,45 +1,45 @@
-import { ObjectType, Field, ID } from "type-graphql";
-import { User } from "./User";
-import { SetlistItem } from "./SetlistItem";
+import { ObjectType, Field, ID } from 'type-graphql'
+import { User } from './User'
+import { SetlistItem } from './SetlistItem'
 
 @ObjectType()
 export class Setlist {
   @Field(() => ID)
-  id: string;
+  id: string
 
   @Field()
-  title: string;
+  title: string
 
   @Field({ nullable: true })
-  bandName?: string;
+  bandName?: string
 
   @Field({ nullable: true })
-  eventName?: string;
+  eventName?: string
 
   @Field({ nullable: true })
-  eventDate?: Date;
+  eventDate?: Date
 
   @Field({ nullable: true })
-  openTime?: string;
+  openTime?: string
 
   @Field({ nullable: true })
-  startTime?: string;
+  startTime?: string
 
   @Field({ nullable: true })
-  theme?: string;
+  theme?: string
 
   @Field()
-  userId: string;
+  userId: string
 
   @Field(() => User)
-  user: User;
+  user: User
 
   @Field(() => [SetlistItem])
-  items: SetlistItem[];
+  items: SetlistItem[]
 
   @Field()
-  createdAt: Date;
+  createdAt: Date
 
   @Field()
-  updatedAt: Date;
+  updatedAt: Date
 }

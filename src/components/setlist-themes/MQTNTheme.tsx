@@ -1,20 +1,20 @@
-import React from 'react';
-import { Box, Typography, Paper } from '@mui/material';
-import { SetlistThemeProps } from './types';
+import React from 'react'
+import { Box, Typography, Paper } from '@mui/material'
+import { SetlistThemeProps } from './types'
 
 export const MQTNTheme: React.FC<SetlistThemeProps> = ({ data, className }) => {
-  const { bandName, eventName, eventDate, openTime, startTime, items, qrCodeURL } = data;
-  
+  const { bandName, eventName, eventDate, openTime, startTime, items, qrCodeURL } = data
+
   // Dynamic font size based on number of songs
   const getFontSize = (count: number): string => {
-    if (count <= 8) return '2em';
-    if (count <= 15) return '1.5em';
-    if (count <= 25) return '1.2em';
-    if (count <= 30) return '1em';
-    return '0.75em';
-  };
+    if (count <= 8) return '2em'
+    if (count <= 15) return '1.5em'
+    if (count <= 25) return '1.2em'
+    if (count <= 30) return '1em'
+    return '0.75em'
+  }
 
-  const fontSize = getFontSize(items.length);
+  const fontSize = getFontSize(items.length)
 
   return (
     <Paper
@@ -187,5 +187,5 @@ export const MQTNTheme: React.FC<SetlistThemeProps> = ({ data, className }) => {
         </Box>
       </Box>
     </Paper>
-  );
-};
+  )
+}
