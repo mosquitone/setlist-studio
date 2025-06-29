@@ -9,9 +9,8 @@ import {
   Stack, 
   Card, 
   CardContent,
-  Grid,
   Fade,
-  Chip
+  Chip,
 } from '@mui/material';
 import { 
   MusicNote as MusicNoteIcon,
@@ -113,7 +112,6 @@ export default function HomePage() {
             <Chip 
               label="🎵 プロフェッショナルなセットリスト作成ツール" 
               variant="outlined" 
-              size="large"
               sx={{ fontSize: '1rem', py: 2 }}
             />
           </Box>
@@ -125,8 +123,8 @@ export default function HomePage() {
             <Typography variant="h4" component="h2" textAlign="center" gutterBottom sx={{ mb: 4 }}>
               主な機能
             </Typography>
-            <Grid container spacing={4}>
-              <Grid item xs={12} md={6}>
+            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 4 }}>
+              <Box sx={{ flex: 1 }}>
                 <Card sx={{ height: '100%', transition: 'transform 0.2s', '&:hover': { transform: 'translateY(-4px)' } }}>
                   <CardContent sx={{ p: 4 }}>
                     <LibraryMusicIcon sx={{ fontSize: 48, color: 'primary.main', mb: 2 }} />
@@ -139,8 +137,8 @@ export default function HomePage() {
                     </Typography>
                   </CardContent>
                 </Card>
-              </Grid>
-              <Grid item xs={12} md={6}>
+              </Box>
+              <Box sx={{ flex: 1 }}>
                 <Card sx={{ height: '100%', transition: 'transform 0.2s', '&:hover': { transform: 'translateY(-4px)' } }}>
                   <CardContent sx={{ p: 4 }}>
                     <PlaylistPlayIcon sx={{ fontSize: 48, color: 'secondary.main', mb: 2 }} />
@@ -153,8 +151,8 @@ export default function HomePage() {
                     </Typography>
                   </CardContent>
                 </Card>
-              </Grid>
-            </Grid>
+              </Box>
+            </Box>
           </Box>
         </Fade>
 
@@ -183,7 +181,7 @@ export default function HomePage() {
                     variant="contained"
                     size="large"
                     component={Link}
-                    href="/setlists"
+                    href="/setlists/new"
                     startIcon={<PlaylistPlayIcon />}
                     sx={{ minWidth: 220, py: 1.5 }}
                   >

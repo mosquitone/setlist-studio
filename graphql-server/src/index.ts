@@ -7,6 +7,8 @@ import { PrismaClient } from "@prisma/client";
 
 import { AuthResolver } from "./resolvers/AuthResolver";
 import { SongResolver } from "./resolvers/SongResolver";
+import { SetlistResolver } from "./resolvers/SetlistResolver";
+import { SetlistItemResolver } from "./resolvers/SetlistItemResolver";
 
 const prisma = new PrismaClient();
 
@@ -14,7 +16,7 @@ async function startServer() {
   const app = express();
 
   const schema = await buildSchema({
-    resolvers: [AuthResolver, SongResolver],
+    resolvers: [AuthResolver, SongResolver, SetlistResolver, SetlistItemResolver],
     validate: false,
   });
 

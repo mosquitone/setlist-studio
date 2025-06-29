@@ -55,14 +55,24 @@ The application uses separate servers during development:
 **Data Models**
 - `User`: Authentication and user management with unique email/username
 - `Song`: Music tracks with metadata (title, artist, key, tempo, duration, notes)
-- `Setlist`: Collections of songs for performances
-- `SetlistItem`: Junction table linking songs to setlists with ordering
+- `Setlist`: Collections of songs for performances with band/venue information
+- `SetlistItem`: Junction table linking songs to setlists with ordering and timing
+
+**Key Features**
+- **Setlist Management**: Create, edit, delete setlists with drag-and-drop song ordering
+- **Image Generation**: Generate professional setlist images in multiple themes
+- **QR Code Integration**: Automatic QR codes linking to setlist pages
+- **Theme System**: Multiple visual themes (Basic, MQTN, MQTN2, Minimal)
+- **Authentication**: JWT-based user system with protected routes
 
 **Frontend Architecture**
 - Provider pattern with separate MUIProvider and ApolloProvider
 - Custom MUI theme with blue/red color scheme and Inter font
 - Apollo Client configured for development (localhost:4000) with auth headers
 - Client-side routing with NextJS App Router
+- Advanced image generation system using html2canvas and QR code integration
+- Multiple setlist themes for different band branding (MQTN, Basic, Minimal)
+- Responsive design with Material-UI components
 
 **GraphQL Integration**
 - Apollo Client automatically includes JWT tokens in authorization headers
@@ -99,21 +109,38 @@ The application uses separate servers during development:
 ```
 /                           # NextJS frontend root
 ├── src/app/                # NextJS App Router
+│   ├── login/             # User authentication pages
+│   ├── register/          # User registration
+│   └── setlists/          # Setlist management pages
+│       ├── [id]/          # Individual setlist view/edit
+│       └── new/           # Create new setlist
 ├── src/components/         # React components
-│   └── providers/          # Context providers (MUI, Apollo)
+│   ├── providers/          # Context providers (MUI, Apollo)
+│   ├── ImageGenerator.tsx  # Setlist image generation component
+│   └── setlist-themes/     # Multiple theme renderers
+│       ├── BasicTheme.tsx
+│       ├── MQTNTheme.tsx
+│       ├── MQTN2Theme.tsx
+│       ├── MinimalTheme.tsx
+│       └── SetlistRenderer.tsx
 ├── src/lib/               # Shared utilities
 │   ├── apollo-client.ts    # GraphQL client configuration
 │   └── graphql/           # GraphQL queries and mutations
 ├── graphql-server/        # Standalone GraphQL server
 │   ├── src/resolvers/     # GraphQL resolvers
+│   │   ├── SetlistResolver.ts
+│   │   └── SetlistItemResolver.ts
 │   ├── src/types/         # GraphQL type definitions
 │   ├── src/middleware/    # Authentication middleware
 │   └── prisma/           # Database schema and migrations
+├── public/               # Static assets including theme logos
 └── docker-compose.yml     # PostgreSQL for local development
 ```
 
 ### Current Status
-- **Database**: PostgreSQL with complete schema applied
-- **Authentication**: Complete GraphQL resolvers for register/login
-- **Frontend**: Beautiful landing page with MUI design system
-- **Development**: Fully functional dual-server setup
+- **Database**: PostgreSQL with complete schema applied via Prisma
+- **Authentication**: Complete GraphQL resolvers for register/login with JWT tokens
+- **Frontend**: Full application with login/register pages, setlist management
+- **Setlist Management**: Complete CRUD operations for setlists and songs
+- **Image Generation**: Advanced setlist image generator with multiple themes
+- **Development**: Fully functional dual-server setup with hot reload

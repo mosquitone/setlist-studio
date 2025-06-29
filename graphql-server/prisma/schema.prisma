@@ -44,10 +44,12 @@ model Song {
 model Setlist {
   id          String @id @default(cuid())
   title       String
-  description String?
+  bandName    String?
   eventName   String?
   eventDate   DateTime?
-  venue       String?
+  openTime    String?
+  startTime   String?
+  theme       String?
   
   userId      String
   user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -62,11 +64,9 @@ model Setlist {
 
 model SetlistItem {
   id       String @id @default(cuid())
+  title    String
+  note     String?
   order    Int
-  notes    String?
-  
-  songId   String
-  song     Song   @relation(fields: [songId], references: [id], onDelete: Cascade)
   
   setlistId String
   setlist   Setlist @relation(fields: [setlistId], references: [id], onDelete: Cascade)

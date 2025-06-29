@@ -99,3 +99,143 @@ export const LOGIN = gql`
     }
   }
 `;
+
+export const GET_SETLISTS = gql`
+  query GetSetlists {
+    setlists {
+      id
+      title
+      bandName
+      eventName
+      eventDate
+      openTime
+      startTime
+      theme
+      createdAt
+      updatedAt
+      items {
+        id
+        title
+        note
+        order
+      }
+    }
+  }
+`;
+
+export const GET_SETLIST = gql`
+  query GetSetlist($id: ID!) {
+    setlist(id: $id) {
+      id
+      title
+      bandName
+      eventName
+      eventDate
+      openTime
+      startTime
+      theme
+      createdAt
+      updatedAt
+      items {
+        id
+        title
+        note
+        order
+      }
+    }
+  }
+`;
+
+export const CREATE_SETLIST = gql`
+  mutation CreateSetlist($input: CreateSetlistInput!) {
+    createSetlist(input: $input) {
+      id
+      title
+      bandName
+      eventName
+      eventDate
+      openTime
+      startTime
+      theme
+      createdAt
+      updatedAt
+      items {
+        id
+        title
+        note
+        order
+      }
+    }
+  }
+`;
+
+export const UPDATE_SETLIST = gql`
+  mutation UpdateSetlist($id: ID!, $input: UpdateSetlistInput!) {
+    updateSetlist(id: $id, input: $input) {
+      id
+      title
+      bandName
+      eventName
+      eventDate
+      openTime
+      startTime
+      theme
+      createdAt
+      updatedAt
+      items {
+        id
+        title
+        note
+        order
+      }
+    }
+  }
+`;
+
+export const DELETE_SETLIST = gql`
+  mutation DeleteSetlist($id: ID!) {
+    deleteSetlist(id: $id)
+  }
+`;
+
+export const CREATE_SETLIST_ITEM = gql`
+  mutation CreateSetlistItem($input: CreateSetlistItemInput!) {
+    createSetlistItem(input: $input) {
+      id
+      title
+      note
+      order
+      setlistId
+    }
+  }
+`;
+
+export const UPDATE_SETLIST_ITEM = gql`
+  mutation UpdateSetlistItem($id: ID!, $input: UpdateSetlistItemInput!) {
+    updateSetlistItem(id: $id, input: $input) {
+      id
+      title
+      note
+      order
+      setlistId
+    }
+  }
+`;
+
+export const DELETE_SETLIST_ITEM = gql`
+  mutation DeleteSetlistItem($id: ID!) {
+    deleteSetlistItem(id: $id)
+  }
+`;
+
+export const REORDER_SETLIST_ITEMS = gql`
+  mutation ReorderSetlistItems($setlistId: ID!, $itemIds: [ID!]!) {
+    reorderSetlistItems(setlistId: $setlistId, itemIds: $itemIds) {
+      id
+      title
+      note
+      order
+      setlistId
+    }
+  }
+`;

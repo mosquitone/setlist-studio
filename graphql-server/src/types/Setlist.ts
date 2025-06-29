@@ -11,7 +11,7 @@ export class Setlist {
   title: string;
 
   @Field({ nullable: true })
-  description?: string;
+  bandName?: string;
 
   @Field({ nullable: true })
   eventName?: string;
@@ -20,7 +20,13 @@ export class Setlist {
   eventDate?: Date;
 
   @Field({ nullable: true })
-  venue?: string;
+  openTime?: string;
+
+  @Field({ nullable: true })
+  startTime?: string;
+
+  @Field({ nullable: true })
+  theme?: string;
 
   @Field()
   userId: string;
