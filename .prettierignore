@@ -1,0 +1,8 @@
+# Ignore build artifacts and dependencies for Prettier
+node_modules
+.build/
+.next
+out
+graphql-server/node_modules
+graphql-server/dist
+postgres_data
