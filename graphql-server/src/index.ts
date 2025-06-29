@@ -1,5 +1,6 @@
 import "reflect-metadata";
 import { ApolloServer } from "apollo-server-express";
+import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
 import express from "express";
 import cors from "cors";
 import { buildSchema } from "type-graphql";
@@ -20,33 +21,41 @@ async function startServer() {
     validate: false,
   });
 
+  const plugins = process.env.NODE_ENV !== "production"
+    ? [ApolloServerPluginLandingPageGraphQLPlayground()]
+    : [];
+
   const server = new ApolloServer({
     schema,
     context: ({ req }) => ({
       req,
       prisma,
     }),
+    plugins,
   });
 
   await server.start();
 
   app.use(
     cors({
-      origin: ["http://localhost:3000", "http://localhost:5173"],
+      origin: [
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "https://studio.apollographql.com"
+      ],
       credentials: true,
     })
   );
 
-  server.applyMiddleware({ 
-    app, 
+  server.applyMiddleware({
+    app: app as any,
     path: "/graphql",
-    cors: false,
   });
 
-  const PORT = process.env.PORT || 4000;
+  const PORT = Number(process.env.PORT) || 4000;
 
-  app.listen(PORT, () => {
-    console.log(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`);
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`🚀 Server ready at http://0.0.0.0:${PORT}${server.graphqlPath}`);
   });
 }
 

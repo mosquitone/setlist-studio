@@ -21,6 +21,9 @@ export default function RootLayout({
         <ApolloProviderWrapper>
           <MUIProvider>
             {children}
+            <footer style={{ textAlign: "center", padding: "1rem", marginTop: "2rem" }}>
+              Powered by mosquitone
+            </footer>
           </MUIProvider>
         </ApolloProviderWrapper>
       </body>

@@ -33,8 +33,6 @@ model Song {
   userId   String
   user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   
-  setlistItems SetlistItem[]
-  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   

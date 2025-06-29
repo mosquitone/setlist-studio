@@ -229,7 +229,7 @@ export default function HomePage() {
         <Fade in timeout={1000} style={{ transitionDelay: '600ms' }}>
           <Box sx={{ mt: 8, textAlign: 'center', py: 4 }}>
             <Typography color="text.secondary" variant="body2">
-              © 2025 セットリストジェネレーター v2. Made with ❤️ for musicians.
+              © 2025 mosquitone
             </Typography>
           </Box>
         </Fade>
