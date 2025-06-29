@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  songs     Song[]
+  setlists  Setlist[]
+  
+  @@map("users")
+}
+
+model Song {
+  id       String @id @default(cuid())
+  title    String
+  artist   String?
+  duration Int?    // duration in seconds
+  key      String?
+  tempo    Int?
+  notes    String?
+  
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  setlistItems SetlistItem[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("songs")
+}
+
+model Setlist {
+  id          String @id @default(cuid())
+  title       String
+  description String?
+  eventName   String?
+  eventDate   DateTime?
+  venue       String?
+  
+  userId      String
+  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  items       SetlistItem[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("setlists")
+}
+
+model SetlistItem {
+  id       String @id @default(cuid())
+  order    Int
+  notes    String?
+  
+  songId   String
+  song     Song   @relation(fields: [songId], references: [id], onDelete: Cascade)
+  
+  setlistId String
+  setlist   Setlist @relation(fields: [setlistId], references: [id], onDelete: Cascade)
+  
+  @@unique([setlistId, order])
+  @@map("setlist_items")
+}
