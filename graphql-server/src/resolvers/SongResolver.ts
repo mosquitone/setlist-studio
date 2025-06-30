@@ -12,7 +12,7 @@ import {
 } from 'type-graphql'
 import { PrismaClient } from '@prisma/client'
 import { Song } from '../types/Song'
-import { AuthMiddleware } from '../middleware/auth'
+import { AuthMiddleware } from '../middleware/jwt-auth-middleware'
 
 interface Context {
   prisma: PrismaClient
