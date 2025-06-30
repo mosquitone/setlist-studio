@@ -1,8 +1,13 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Box, Button, Alert, CircularProgress } from '@mui/material'
-import { Download as DownloadIcon, Image as ImageIcon } from '@mui/icons-material'
+import {
+  Box,
+  Button,
+  Alert,
+  CircularProgress,
+} from '@mui/material'
+import { Image as ImageIcon } from '@mui/icons-material'
 import html2canvas from 'html2canvas'
 import QRCode from 'qrcode'
 import { SetlistData } from './setlist-themes/types'
@@ -10,16 +15,52 @@ import { SetlistRenderer } from './setlist-themes/SetlistRenderer'
 
 interface ImageGeneratorProps {
   data: SetlistData
+  selectedTheme: 'black' | 'white'
+  onDownloadReady?: (downloadFn: () => Promise<void>) => void
+  onPreviewReady?: (imageUrl: string) => void
+  onPreviewGenerationStart?: () => void
   baseUrl?: string
 }
 
 export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
   data,
+  selectedTheme,
+  onDownloadReady,
+  onPreviewReady,
+  onPreviewGenerationStart,
   baseUrl = typeof window !== 'undefined' ? window.location.origin : '',
 }) => {
   const [isGenerating, setIsGenerating] = useState(false)
-  const [generatedImages, setGeneratedImages] = useState<{ [key: string]: string }>({})
   const [error, setError] = useState<string | null>(null)
+  const [previewImage, setPreviewImage] = useState<string | null>(null)
+  const [showDebug, setShowDebug] = useState(false)
+  const [qrCodeURL, setQrCodeURL] = useState('')
+  const isDev = process.env.NODE_ENV === 'development'
+
+  React.useEffect(() => {
+    if (onDownloadReady) {
+      onDownloadReady(handleDownloadImage)
+    }
+  }, [onDownloadReady])
+
+  // Generate QR code for current page
+  React.useEffect(() => {
+    const generateQRForCurrentPage = async () => {
+      if (typeof window !== 'undefined') {
+        const currentUrl = window.location.href
+        const qrCode = await QRCode.toDataURL(currentUrl, {
+          width: 200,
+          margin: 2,
+          color: {
+            dark: '#000000',
+            light: '#FFFFFF',
+          },
+        })
+        setQrCodeURL(qrCode)
+      }
+    }
+    generateQRForCurrentPage()
+  }, [])
 
   const generateQRCode = async (setlistId: string): Promise<string> => {
     const url = `${baseUrl}/setlists/${setlistId}`
@@ -114,109 +155,91 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
     }
   }
 
-  const handleGenerateImage = async (theme: string) => {
-    const imageURL = await generateImage(theme)
+  const handleGeneratePreview = async () => {
+    if (onPreviewGenerationStart) {
+      onPreviewGenerationStart()
+    }
+    const imageURL = await generateImage(selectedTheme)
     if (imageURL) {
-      setGeneratedImages(prev => ({ ...prev, [theme]: imageURL }))
+      setPreviewImage(imageURL)
+      if (onPreviewReady) {
+        onPreviewReady(imageURL)
+      }
     }
   }
 
-  const handleDownloadImage = (theme: string) => {
-    const imageURL = generatedImages[theme]
+  const handleDownloadImage = async () => {
+    const imageURL = await generateImage(selectedTheme)
     if (imageURL) {
       const link = document.createElement('a')
       link.href = imageURL
-      link.download = `setlist-${data.bandName}-${theme}.png`
+      link.download = `setlist-${data.bandName}-${selectedTheme}.png`
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
+      URL.revokeObjectURL(imageURL)
     }
   }
 
-  const handleGenerateAllImages = async () => {
-    const themes = ['basic', 'mqtn', 'minimal', 'mqtn2']
-    setIsGenerating(true)
 
-    try {
-      for (const theme of themes) {
-        await handleGenerateImage(theme)
-      }
-    } finally {
-      setIsGenerating(false)
+  // Auto-generate preview when theme changes (only if not in debug mode)
+  React.useEffect(() => {
+    if (!showDebug) {
+      handleGeneratePreview()
     }
-  }
+  }, [selectedTheme, data.id])
 
-  const themes = [
-    { key: 'basic', label: 'Basic' },
-    { key: 'mqtn', label: 'MQTN' },
-    { key: 'minimal', label: 'Minimal' },
-    { key: 'mqtn2', label: 'MQTN2' },
-  ]
 
   return (
-    <Box sx={{ mt: 4 }}>
+    <Box>
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
           {error}
         </Alert>
       )}
-
-      <Box sx={{ display: 'flex', gap: 2, mb: 3, flexWrap: 'wrap' }}>
+      
+      <Box sx={{ display: 'inline-flex', gap: 1, mb: 2 }}>
         <Button
           variant="contained"
           startIcon={isGenerating ? <CircularProgress size={20} /> : <ImageIcon />}
-          onClick={handleGenerateAllImages}
+          onClick={handleDownloadImage}
           disabled={isGenerating}
-          size="large"
+          size="small"
         >
-          {isGenerating ? '生成中...' : '全テーマの画像を生成'}
+          {isGenerating ? '生成中...' : '画像生成'}
         </Button>
+        
       </Box>
 
-      <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-        {themes.map(theme => (
-          <Box key={theme.key} sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-            <Button
-              variant="outlined"
-              startIcon={<ImageIcon />}
-              onClick={() => handleGenerateImage(theme.key)}
-              disabled={isGenerating}
-              size="small"
-            >
-              {theme.label}を生成
-            </Button>
-
-            {generatedImages[theme.key] && (
-              <Button
-                variant="contained"
-                color="success"
-                startIcon={<DownloadIcon />}
-                onClick={() => handleDownloadImage(theme.key)}
-                size="small"
-              >
-                {theme.label}をダウンロード
-              </Button>
-            )}
+      {/* Preview Section */}
+      <Box sx={{ mt: 2, textAlign: 'center' }}>
+        {showDebug ? (
+          /* DOM Preview */
+          <Box
+            sx={{
+              border: '2px solid red',
+              margin: '1rem 0',
+              transform: 'scale(0.8)',
+              transformOrigin: 'top center',
+            }}
+          >
+            <SetlistRenderer data={{ ...data, qrCodeURL }} />
           </Box>
-        ))}
-      </Box>
-
-      {/* Preview generated images */}
-      <Box sx={{ mt: 4, display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-        {Object.entries(generatedImages).map(([theme, imageURL]) => (
-          <Box key={theme} sx={{ maxWidth: 200 }}>
+        ) : (
+          /* Image Preview */
+          previewImage && (
             <img
-              src={imageURL}
-              alt={`${theme} theme preview`}
+              src={previewImage}
+              alt="Setlist Preview"
               style={{
-                width: '100%',
+                maxWidth: '100%',
                 height: 'auto',
-                border: '1px solid #ccc',
+                border: '1px solid #e0e0e0',
                 borderRadius: '4px',
               }}
             />
-          </Box>
-        ))}
+          )
+        )}
       </Box>
     </Box>
   )

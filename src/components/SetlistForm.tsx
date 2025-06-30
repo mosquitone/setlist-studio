@@ -79,10 +79,8 @@ const validationSchema = Yup.object({
 })
 
 const themes = [
-  { value: 'basic', label: 'Basic' },
-  { value: 'mqtn', label: 'MQTN' },
-  { value: 'minimal', label: 'Minimal' },
-  { value: 'mqtn2', label: 'MQTN2' },
+  { value: 'black', label: 'Black' },
+  { value: 'white', label: 'White' },
 ]
 
 export default function SetlistForm({
@@ -130,16 +128,11 @@ export default function SetlistForm({
           <Autocomplete
             fullWidth
             options={songs}
-            getOptionLabel={option =>
-              typeof option === 'string' ? option : option.title
-            }
+            getOptionLabel={option => (typeof option === 'string' ? option : option.title)}
             value={null}
             inputValue={item.title}
             onChange={(event, newValue) => {
-              const value =
-                typeof newValue === 'string'
-                  ? newValue
-                  : newValue?.title || ''
+              const value = typeof newValue === 'string' ? newValue : newValue?.title || ''
               handleChange({
                 target: {
                   name: `items.${index}.title`,
@@ -161,14 +154,8 @@ export default function SetlistForm({
                 {...params}
                 label="楽曲名"
                 size="small"
-                error={
-                  touched.items?.[index]?.title &&
-                  Boolean(errors.items?.[index]?.title)
-                }
-                helperText={
-                  touched.items?.[index]?.title &&
-                  errors.items?.[index]?.title
-                }
+                error={touched.items?.[index]?.title && Boolean(errors.items?.[index]?.title)}
+                helperText={touched.items?.[index]?.title && errors.items?.[index]?.title}
               />
             )}
           />
@@ -180,12 +167,8 @@ export default function SetlistForm({
             value={item.title}
             onChange={handleChange}
             onBlur={handleBlur}
-            error={
-              touched.items?.[index]?.title && Boolean(errors.items?.[index]?.title)
-            }
-            helperText={
-              touched.items?.[index]?.title && errors.items?.[index]?.title
-            }
+            error={touched.items?.[index]?.title && Boolean(errors.items?.[index]?.title)}
+            helperText={touched.items?.[index]?.title && errors.items?.[index]?.title}
             size="small"
           />
         )}
@@ -424,9 +407,9 @@ export default function SetlistForm({
               )}
 
               <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
-                <Button 
-                  variant="outlined" 
-                  type="button" 
+                <Button
+                  variant="outlined"
+                  type="button"
                   disabled={loading}
                   onClick={() => window.history.back()}
                 >

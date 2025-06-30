@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import {
   Box,
   Container,
@@ -9,21 +9,24 @@ import {
   Paper,
   Alert,
   CircularProgress,
-  Tabs,
-  Tab,
   IconButton,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Divider,
 } from '@mui/material'
 import {
   Edit as EditIcon,
   Delete as DeleteIcon,
   Share as ShareIcon,
-  Print as PrintIcon,
-  Visibility as VisibilityIcon,
-  Image as ImageIcon,
+  Download as DownloadIcon,
+  ContentCopy as DuplicateIcon,
+  ExpandMore as ExpandMoreIcon,
 } from '@mui/icons-material'
 import { useQuery, useMutation } from '@apollo/client'
 import { useParams, useRouter } from 'next/navigation'
@@ -32,25 +35,20 @@ import { SetlistData } from '@/components/setlist-themes/types'
 import { SetlistRenderer } from '@/components/setlist-themes/SetlistRenderer'
 import { ImageGenerator } from '@/components/ImageGenerator'
 
-interface TabPanelProps {
-  children?: React.ReactNode
-  index: number
-  value: number
-}
-
-function TabPanel({ children, value, index }: TabPanelProps) {
-  return (
-    <div hidden={value !== index}>{value === index && <Box sx={{ pt: 3 }}>{children}</Box>}</div>
-  )
-}
 
 export default function SetlistDetailPage() {
   const params = useParams()
   const router = useRouter()
   const setlistId = params.id as string
 
-  const [tabValue, setTabValue] = useState(0)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [selectedTheme, setSelectedTheme] = useState<'black' | 'white'>('black')
+  const [showSuccess, setShowSuccess] = useState(false)
+  const [showDebug, setShowDebug] = useState(false)
+  const [previewImage, setPreviewImage] = useState<string | null>(null)
+  const [isGeneratingPreview, setIsGeneratingPreview] = useState(true)
+  const downloadFunctionRef = useRef<(() => Promise<void>) | null>(null)
+  const isDev = process.env.NODE_ENV === 'development'
 
   const { data, loading, error } = useQuery(GET_SETLIST, {
     variables: { id: setlistId },
@@ -93,9 +91,6 @@ export default function SetlistDetailPage() {
     items: [...setlist.items].sort((a: any, b: any) => a.order - b.order),
   }
 
-  const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
-    setTabValue(newValue)
-  }
 
   const handleEdit = () => {
     router.push(`/setlists/${setlistId}/edit`)
@@ -128,85 +123,173 @@ export default function SetlistDetailPage() {
     }
   }
 
-  const handlePrint = () => {
-    window.print()
+  const handleDownload = async () => {
+    if (downloadFunctionRef.current) {
+      await downloadFunctionRef.current()
+      setShowSuccess(true)
+      setTimeout(() => setShowSuccess(false), 3000)
+    }
+  }
+
+  const handleDownloadReady = (downloadFn: () => Promise<void>) => {
+    downloadFunctionRef.current = downloadFn
+  }
+
+  const handlePreviewReady = (imageUrl: string) => {
+    setPreviewImage(imageUrl)
+    setIsGeneratingPreview(false)
+  }
+
+  const handlePreviewGenerationStart = () => {
+    setIsGeneratingPreview(true)
+  }
+
+  const handleDuplicate = () => {
+    router.push(`/setlists/new?duplicate=${setlistId}`)
   }
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      {/* Header */}
-      <Box sx={{ mb: 4 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'between', alignItems: 'center', mb: 2 }}>
-          <Typography variant="h4" component="h1">
-            {setlist.title}
-          </Typography>
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <IconButton onClick={handleEdit} color="primary">
-              <EditIcon />
-            </IconButton>
-            <IconButton onClick={handleShare} color="primary">
-              <ShareIcon />
-            </IconButton>
-            <IconButton onClick={handlePrint} color="primary">
-              <PrintIcon />
-            </IconButton>
-            <IconButton onClick={() => setDeleteDialogOpen(true)} color="error">
-              <DeleteIcon />
-            </IconButton>
-          </Box>
+      {/* Success Banner */}
+      {showSuccess && (
+        <Alert severity="success" sx={{ mb: 3 }}>
+          Setlist Generated !
+        </Alert>
+      )}
+      
+      {/* Action Buttons Row */}
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Button variant="outlined" startIcon={<EditIcon />} onClick={handleEdit}>
+            Edit
+          </Button>
+          <Button variant="outlined" startIcon={<DownloadIcon />} onClick={handleDownload}>
+            Download
+          </Button>
+          <Button variant="outlined" startIcon={<ShareIcon />} onClick={handleShare}>
+            Share
+          </Button>
+          <Button variant="outlined" startIcon={<DuplicateIcon />} onClick={handleDuplicate}>
+            Duplicate
+          </Button>
         </Box>
-
-        <Typography variant="h6" color="text.secondary">
-          {setlist.bandName}
-        </Typography>
-
-        {setlist.eventName && (
-          <Typography variant="body1" color="text.secondary">
-            {setlist.eventName}
-          </Typography>
-        )}
-
-        {setlist.eventDate && (
-          <Typography variant="body2" color="text.secondary">
-            {setlist.eventDate}
-          </Typography>
-        )}
+        
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+          {isDev && (
+            <Button
+              variant={showDebug ? 'contained' : 'outlined'}
+              onClick={() => setShowDebug(!showDebug)}
+              size="small"
+              sx={{ 
+                minWidth: '60px',
+                fontSize: '0.75rem',
+                color: showDebug ? 'white' : 'text.secondary',
+                borderColor: showDebug ? 'primary.main' : 'grey.400',
+                backgroundColor: showDebug ? 'primary.main' : 'transparent',
+                '&:hover': {
+                  backgroundColor: showDebug ? 'primary.dark' : 'grey.50',
+                }
+              }}
+            >
+              {showDebug ? 'DOM' : 'IMG'}
+            </Button>
+          )}
+          
+          <FormControl size="small">
+            <Select
+              value={selectedTheme}
+              onChange={(e) => {
+                setSelectedTheme(e.target.value as 'black' | 'white')
+                setIsGeneratingPreview(true)
+              }}
+              displayEmpty
+              IconComponent={ExpandMoreIcon}
+              sx={{ minWidth: 140 }}
+              renderValue={(value) => {
+                if (value === 'black') return 'Theme: basic'
+                if (value === 'white') return 'Theme: white'
+                return 'Theme: basic'
+              }}
+            >
+              <MenuItem value="black">basic</MenuItem>
+              <MenuItem value="white">white</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
       </Box>
 
-      {/* Tabs */}
-      <Paper sx={{ width: '100%' }}>
-        <Tabs
-          value={tabValue}
-          onChange={handleTabChange}
-          variant="fullWidth"
-          sx={{ borderBottom: 1, borderColor: 'divider' }}
-        >
-          <Tab icon={<VisibilityIcon />} label="プレビュー" />
-          <Tab icon={<ImageIcon />} label="画像生成" />
-        </Tabs>
-
-        <TabPanel value={tabValue} index={0}>
-          {/* Preview */}
-          <Box sx={{ p: 2, display: 'flex', justifyContent: 'center' }}>
-            <Box sx={{ maxWidth: '100%', overflow: 'auto' }}>
-              <SetlistRenderer data={setlistData} />
+      {/* Preview */}
+      <Paper sx={{ width: '100%', p: 3 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', minHeight: 400 }}>
+          {showDebug ? (
+            /* DOM Preview */
+            <Box
+              sx={{
+                border: '2px solid red',
+                margin: '1rem 0',
+                width: '700px', // A4比率の幅
+                height: '990px', // A4比率の高さ (700 * 1.414)
+                overflow: 'hidden',
+                position: 'relative',
+              }}
+            >
+              <Box sx={{ transform: 'scale(0.88)', transformOrigin: 'top left' }}>
+                <SetlistRenderer data={{ ...setlistData, theme: selectedTheme }} />
+              </Box>
             </Box>
-          </Box>
-        </TabPanel>
-
-        <TabPanel value={tabValue} index={1}>
-          {/* Image Generation */}
-          <Box sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              画像生成
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-              セットリストを画像として生成・ダウンロードできます。
-            </Typography>
-            <ImageGenerator data={setlistData} />
-          </Box>
-        </TabPanel>
+          ) : isGeneratingPreview ? (
+            /* Loading State */
+            <Box sx={{ 
+              display: 'flex', 
+              flexDirection: 'column', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              width: '700px',
+              height: '990px',
+            }}>
+              <CircularProgress />
+              <Typography sx={{ mt: 2, color: 'text.secondary' }}>
+                画像を生成中...
+              </Typography>
+            </Box>
+          ) : previewImage ? (
+            /* Image Preview */
+            <img
+              src={previewImage}
+              alt="Setlist Preview"
+              style={{
+                width: '700px',
+                height: '990px',
+                objectFit: 'contain',
+                border: '1px solid #e0e0e0',
+              }}
+            />
+          ) : (
+            /* Fallback to DOM Preview */
+            <Box sx={{ 
+              width: '700px',
+              height: '990px',
+              overflow: 'hidden',
+              position: 'relative',
+            }}>
+              <Box sx={{ transform: 'scale(0.88)', transformOrigin: 'top left' }}>
+                <SetlistRenderer data={{ ...setlistData, theme: selectedTheme }} />
+              </Box>
+            </Box>
+          )}
+        </Box>
       </Paper>
+
+      {/* Hidden ImageGenerator for download and preview functionality */}
+      <Box sx={{ display: 'none' }}>
+        <ImageGenerator 
+          data={{ ...setlistData, theme: selectedTheme }} 
+          selectedTheme={selectedTheme}
+          onDownloadReady={handleDownloadReady}
+          onPreviewReady={handlePreviewReady}
+          onPreviewGenerationStart={handlePreviewGenerationStart}
+        />
+      </Box>
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>

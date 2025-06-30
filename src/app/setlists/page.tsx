@@ -86,10 +86,8 @@ export default function SetlistsPage() {
 
   const getThemeLabel = (theme: string) => {
     const themes: { [key: string]: string } = {
-      mqtn: 'MQTN',
-      basic: 'Basic',
-      minimal: 'Minimal',
-      mqtn2: 'MQTN 2',
+      black: 'Black',
+      white: 'White',
     }
     return themes[theme] || theme
   }

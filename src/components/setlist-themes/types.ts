@@ -13,7 +13,7 @@ export interface SetlistData {
   eventDate?: string
   openTime?: string
   startTime?: string
-  theme: 'basic' | 'mqtn' | 'minimal' | 'mqtn2'
+  theme: 'black' | 'white'
   items: SetlistItem[]
   qrCodeURL?: string
 }

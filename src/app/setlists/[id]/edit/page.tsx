@@ -1,17 +1,11 @@
 'use client'
 
 import React from 'react'
-import {
-  Container,
-  Alert,
-  CircularProgress,
-  Typography,
-} from '@mui/material'
+import { Container, Alert, CircularProgress, Typography } from '@mui/material'
 import { useQuery, useMutation } from '@apollo/client'
 import { useParams, useRouter } from 'next/navigation'
 import { GET_SETLIST, UPDATE_SETLIST } from '@/lib/graphql/queries'
 import SetlistForm, { SetlistFormValues } from '@/components/SetlistForm'
-
 
 export default function EditSetlistPage() {
   const params = useParams()
@@ -56,7 +50,7 @@ export default function EditSetlistPage() {
     eventDate: setlist.eventDate || '',
     openTime: setlist.openTime || '',
     startTime: setlist.startTime || '',
-    theme: setlist.theme || 'basic',
+    theme: setlist.theme || 'black',
     items: [...setlist.items]
       .sort((a: any, b: any) => a.order - b.order)
       .map((item: any) => ({
@@ -96,7 +90,9 @@ export default function EditSetlistPage() {
     }
   }
 
-  const updateErrorMessage = updateError ? new Error(`セットリストの更新に失敗しました: ${updateError.message}`) : null
+  const updateErrorMessage = updateError
+    ? new Error(`セットリストの更新に失敗しました: ${updateError.message}`)
+    : null
 
   return (
     <SetlistForm

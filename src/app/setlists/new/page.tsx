@@ -1,25 +1,33 @@
 'use client'
 
-import React from 'react'
-import { useMutation } from '@apollo/client'
-import { CREATE_SETLIST } from '@/lib/graphql/queries'
-import { useRouter } from 'next/navigation'
+import React, { useEffect, useState } from 'react'
+import { useMutation, useQuery } from '@apollo/client'
+import { CREATE_SETLIST, GET_SETLIST } from '@/lib/graphql/queries'
+import { useRouter, useSearchParams } from 'next/navigation'
 import SetlistForm, { SetlistFormValues } from '@/components/SetlistForm'
 
-const initialValues: SetlistFormValues = {
-  title: '',
-  bandName: '',
-  eventName: '',
-  eventDate: '',
-  openTime: '',
-  startTime: '',
-  theme: 'basic',
-  items: [{ title: '', note: '' }],
-}
 
 export default function NewSetlistPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const duplicateId = searchParams.get('duplicate')
+  const [initialValues, setInitialValues] = useState<SetlistFormValues>({
+    title: '',
+    bandName: '',
+    eventName: '',
+    eventDate: '',
+    openTime: '',
+    startTime: '',
+    theme: 'black',
+    items: [{ title: '', note: '' }],
+  })
+  
   const [createSetlist, { loading, error }] = useMutation(CREATE_SETLIST)
+  
+  const { data: duplicateData, loading: duplicateLoading } = useQuery(GET_SETLIST, {
+    variables: { id: duplicateId },
+    skip: !duplicateId,
+  })
 
   const handleSubmit = async (values: SetlistFormValues) => {
     try {
@@ -50,14 +58,36 @@ export default function NewSetlistPage() {
     }
   }
 
+  useEffect(() => {
+    if (duplicateData?.setlist) {
+      const setlist = duplicateData.setlist
+      setInitialValues({
+        title: `${setlist.title} (コピー)`,
+        bandName: setlist.bandName,
+        eventName: setlist.eventName || '',
+        eventDate: setlist.eventDate || '',
+        openTime: setlist.openTime || '',
+        startTime: setlist.startTime || '',
+        theme: setlist.theme,
+        items: setlist.items.length > 0 
+          ? [...setlist.items].sort((a: any, b: any) => a.order - b.order).map((item: any) => ({
+              title: item.title,
+              note: item.note || '',
+            }))
+          : [{ title: '', note: '' }],
+      })
+    }
+  }, [duplicateData])
+
   const createError = error ? new Error(`セットリストの作成に失敗しました: ${error.message}`) : null
+  const isLoading = loading || duplicateLoading
 
   return (
     <SetlistForm
-      title="新しいセットリストを作成"
+      title={duplicateId ? "セットリストを複製" : "新しいセットリストを作成"}
       initialValues={initialValues}
       onSubmit={handleSubmit}
-      loading={loading}
+      loading={isLoading}
       error={createError}
       submitButtonText="セットリストを作成"
       loadingButtonText="作成中..."

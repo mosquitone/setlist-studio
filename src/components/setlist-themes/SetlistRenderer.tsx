@@ -1,9 +1,7 @@
 import React from 'react'
 import { SetlistData, SetlistThemeProps } from './types'
-import { BasicTheme } from './BasicTheme'
-import { MQTNTheme } from './MQTNTheme'
-import { MinimalTheme } from './MinimalTheme'
-import { MQTN2Theme } from './MQTN2Theme'
+import { BlackTheme } from './BlackTheme'
+import { WhiteTheme } from './WhiteTheme'
 
 interface SetlistRendererProps {
   data: SetlistData
@@ -14,16 +12,12 @@ export const SetlistRenderer: React.FC<SetlistRendererProps> = ({ data, classNam
   const props: SetlistThemeProps = { data, className }
 
   switch (data.theme) {
-    case 'basic':
-      return <BasicTheme {...props} />
-    case 'mqtn':
-      return <MQTNTheme {...props} />
-    case 'minimal':
-      return <MinimalTheme {...props} />
-    case 'mqtn2':
-      return <MQTN2Theme {...props} />
+    case 'black':
+      return <BlackTheme {...props} />
+    case 'white':
+      return <WhiteTheme {...props} />
     default:
-      return <BasicTheme {...props} />
+      return <BlackTheme {...props} />
   }
 }
 

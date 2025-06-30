@@ -63,10 +63,11 @@ The application uses separate servers during development:
 - `SetlistItem`: Junction table linking songs to setlists with ordering and timing
 
 **Key Features**
-- **Setlist Management**: Create, edit, delete setlists with drag-and-drop song ordering
-- **Image Generation**: Generate professional setlist images in multiple themes
+- **Setlist Management**: Create, edit, delete, duplicate setlists with drag-and-drop song ordering
+- **Image Generation**: Generate professional setlist images with streamlined UI - theme selection + one-click download
 - **QR Code Integration**: Automatic QR codes linking to setlist pages
-- **Theme System**: Multiple visual themes (Basic, MQTN, MQTN2, Minimal)
+- **Theme System**: Black and White themes with dropdown selector
+- **Duplication System**: Clone existing setlists via URL query parameters
 - **Authentication**: JWT-based user system with protected routes
 
 **Frontend Architecture**
@@ -75,7 +76,7 @@ The application uses separate servers during development:
 - Apollo Client configured for development (localhost:4000) with auth headers
 - Client-side routing with NextJS App Router
 - Advanced image generation system using html2canvas and QR code integration
-- Multiple setlist themes for different band branding (MQTN, Basic, Minimal)
+- Simplified theme system with Black/White options for better UX
 - Responsive design with Material-UI components
 
 **GraphQL Integration**
@@ -124,12 +125,10 @@ The application uses separate servers during development:
 │       └── new/           # Create new song
 ├── src/components/         # React components
 │   ├── providers/          # Context providers (MUI, Apollo)
-│   ├── ImageGenerator.tsx  # Setlist image generation component
-│   └── setlist-themes/     # Multiple theme renderers
-│       ├── BasicTheme.tsx
-│       ├── MQTNTheme.tsx
-│       ├── MQTN2Theme.tsx
-│       ├── MinimalTheme.tsx
+│   ├── ImageGenerator.tsx  # Simplified image generation with one-click download
+│   └── setlist-themes/     # Theme renderers
+│       ├── BlackTheme.tsx  # Black/dark theme
+│       ├── WhiteTheme.tsx  # White/light theme
 │       └── SetlistRenderer.tsx
 ├── src/lib/               # Shared utilities
 │   ├── apollo-client.ts    # GraphQL client configuration
@@ -149,7 +148,32 @@ The application uses separate servers during development:
 - **Database**: PostgreSQL with complete schema applied via Prisma
 - **Authentication**: Complete GraphQL resolvers for register/login with JWT tokens
 - **Frontend**: Full application with login/register pages, setlist management
-- **Setlist Management**: Complete CRUD operations for setlists and songs
-- **Image Generation**: Advanced setlist image generator with multiple themes
+- **Setlist Management**: Complete CRUD operations with duplication functionality
+- **User Interface**: Streamlined setlist detail page with action buttons (Edit, Download, Share, Duplicate)
+- **Image Generation**: Simplified one-click download system with theme selection dropdown and debug preview modes
+- **Theme System**: Black and White themes with real-time preview updates and loading states
+- **Duplication Feature**: Clone setlists via query parameters (/setlists/new?duplicate=ID)
 - **Development**: Fully functional dual-server setup with hot reload
 - **Code Quality**: GraphQL resolvers optimized for frontend requirements, all TypeScript warnings resolved
+
+## Recent UI/UX Improvements
+
+### Setlist Detail Page (/setlists/[id])
+- **Simplified Layout**: Removed tabbed interface for cleaner, single-page experience
+- **Action Button Row**: Horizontal layout with Edit, Download, Share, Duplicate buttons
+- **Theme Selector**: Top-right dropdown with "Theme: basic/white" format
+- **Success Notifications**: "Setlist Generated !" banner after successful image downloads
+- **One-Click Downloads**: Direct image generation and download without preview tabs
+
+### Image Generation System
+- **Streamlined Component**: Simplified ImageGenerator to single download button
+- **Real-time Preview**: Theme changes update preview immediately with loading states
+- **Download Integration**: Uses useRef to prevent automatic downloads, only on button click
+- **QR Code Integration**: Automatic QR codes included in generated images
+- **Debug Mode**: Development-only toggle between DOM preview and image preview
+- **Unified Preview Size**: 700px × 990px (A4 ratio) for consistent display across modes
+
+### Duplication Workflow
+- **Query Parameter System**: `/setlists/new?duplicate={id}` for seamless cloning
+- **Auto-populated Forms**: Original setlist data pre-fills form with "(コピー)" suffix
+- **Preserved Structure**: Maintains song order, timing, and all metadata in duplicates
