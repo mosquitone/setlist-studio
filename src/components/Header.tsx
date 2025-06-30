@@ -57,10 +57,28 @@ export default function Header() {
         <Box sx={{ flexGrow: 1 }} />
         <Button
           variant="outlined"
-          color="inherit"
-          sx={{ borderColor: 'inherit', ml: 1 }}
           onClick={handleAuthClick}
           disabled={loading}
+          sx={{
+            borderRadius: 10,
+            px: 4,
+            py: 1.5,
+            borderColor: 'white',
+            color: 'white',
+            fontSize: '16px',
+            fontWeight: 500,
+            textTransform: 'none',
+            border: '2px solid white',
+            ml: 1,
+            '&:hover': {
+              borderColor: 'rgba(255, 255, 255, 0.8)',
+              backgroundColor: 'rgba(255, 255, 255, 0.1)',
+            },
+            '&:disabled': {
+              borderColor: 'rgba(255, 255, 255, 0.5)',
+              color: 'rgba(255, 255, 255, 0.5)',
+            }
+          }}
         >
           {loading ? '読込中…' : token ? 'ログアウト' : 'ログイン'}
         </Button>

@@ -178,6 +178,18 @@ The application uses separate servers during development:
 - **Auto-populated Forms**: Original setlist data pre-fills form with "(コピー)" suffix
 - **Preserved Structure**: Maintains song order, timing, and all metadata in duplicates
 
+### Home Page Enhancements (2025-06-30)
+- **Setlist Dashboard**: Implemented stylish setlist listing on home page for logged-in users
+- **Responsive Grid Layout**: 3-column desktop, 2-column tablet, 1-column mobile responsive design
+- **Theme-aware Cards**: Dynamic gradient backgrounds based on setlist theme (white/black)
+- **Interactive Card Design**: Hover animations with lift effect and enhanced shadows
+- **Unified Card Sizing**: Standardized 278px height for consistent layout across all cards
+- **Action Buttons**: Direct view/edit access buttons at bottom of each card
+- **Empty State Handling**: Friendly message and call-to-action for users with no setlists
+- **Button Design Consistency**: Unified button styling throughout application with rounded corners and proper color scheme
+- **Header Navigation**: Updated header logout button design to match application style
+- **Compact Information Display**: Optimized space usage with smaller icons, reduced padding, and appropriate font sizes
+
 ### Recent Bug Fixes (2025-06-30)
 - **Theme Persistence**: Fixed issue where saved themes from database weren't being displayed on setlist detail pages
 - **Theme Naming Consistency**: Resolved "basic"/"black" naming inconsistency in UI components
@@ -186,3 +198,4 @@ The application uses separate servers during development:
 - **React Hooks Order**: Fixed hooks order violation in SetlistDetailPage that was causing React development errors
 - **Debug Mode Layout**: Corrected debug mode preview dimensions and removed unwanted margins to match image preview sizing
 - **Error Handling**: Replaced confusing fallback DOM preview with proper error message and retry functionality when image generation fails
+- **Grid Layout Issues**: Resolved card height overflow problems by optimizing content spacing and card dimensions

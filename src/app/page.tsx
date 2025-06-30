@@ -12,6 +12,10 @@ import {
   CardActionArea,
   Fade,
   Chip,
+  Grid,
+  IconButton,
+  Divider,
+  Avatar,
 } from '@mui/material'
 import {
   MusicNote as MusicNoteIcon,
@@ -20,12 +24,25 @@ import {
   PersonAdd as PersonAddIcon,
   Logout as LogoutIcon,
   LibraryMusic as LibraryMusicIcon,
+  Edit as EditIcon,
+  Visibility as VisibilityIcon,
+  Add as AddIcon,
+  Event as EventIcon,
+  Schedule as ScheduleIcon,
+  Group as GroupIcon,
 } from '@mui/icons-material'
 import Link from 'next/link'
+import { useQuery } from '@apollo/client'
+import { GET_SETLISTS } from '../lib/graphql/queries'
 
 export default function HomePage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+
+  const { data: setlistsData, loading: setlistsLoading, refetch } = useQuery(GET_SETLISTS, {
+    skip: !isLoggedIn,
+    errorPolicy: 'all'
+  })
 
   useEffect(() => {
     const checkAuth = () => {
@@ -161,42 +178,224 @@ export default function HomePage() {
           </Box>
         </Fade>
 
-        {/* アクションボタン */}
-        <Fade in timeout={1000} style={{ transitionDelay: '400ms' }}>
-          <Box sx={{ textAlign: 'center' }}>
-            <Stack
-              direction={{ xs: 'column', sm: 'row' }}
-              spacing={3}
-              justifyContent="center"
-              alignItems="center"
-            >
-              {!isLoggedIn && (
-                <>
+        {/* セットリスト一覧（ログイン済みユーザー） */}
+        {isLoggedIn && (
+          <Fade in timeout={1000} style={{ transitionDelay: '400ms' }}>
+            <Box sx={{ mb: 8 }}>
+              <Typography variant="h4" component="h2" gutterBottom sx={{ mb: 4 }}>
+                あなたのセットリスト
+              </Typography>
+
+              {setlistsLoading ? (
+                <Box sx={{ textAlign: 'center', py: 8 }}>
+                  <Typography variant="h6" color="text.secondary">
+                    セットリストを読み込み中...
+                  </Typography>
+                </Box>
+              ) : !setlistsData?.setlists?.length ? (
+                <Card sx={{ p: 6, textAlign: 'center', bgcolor: 'grey.50' }}>
+                  <PlaylistPlayIcon sx={{ fontSize: 64, color: 'grey.400', mb: 3 }} />
+                  <Typography variant="h5" gutterBottom color="text.secondary">
+                    まだセットリストがありません
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
+                    最初のセットリストを作成して、素敵な演奏リストを管理しましょう
+                  </Typography>
                   <Button
-                    variant="outlined"
-                    size="large"
+                    variant="contained"
                     component={Link}
-                    href="/login"
-                    startIcon={<LoginIcon />}
-                    sx={{ minWidth: 220, py: 1.5 }}
-                  >
-                    ログイン
-                  </Button>
-                  <Button
-                    variant="outlined"
+                    href="/setlists/new"
+                    startIcon={<AddIcon />}
                     size="large"
-                    component={Link}
-                    href="/register"
-                    startIcon={<PersonAddIcon />}
-                    sx={{ minWidth: 220, py: 1.5 }}
+                    sx={{ borderRadius: 3 }}
                   >
-                    新規登録
+                    セットリストを作成
                   </Button>
-                </>
+                </Card>
+              ) : (
+                <Grid container spacing={2}>
+                  {setlistsData.setlists.map((setlist: any) => (
+                    <Grid item xs={12} sm={6} md={4} key={setlist.id}>
+                      <Card
+                        sx={{
+                          height: 278,
+                          display: 'flex',
+                          flexDirection: 'column',
+                          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                          '&:hover': {
+                            transform: 'translateY(-8px)',
+                            boxShadow: '0 12px 40px rgba(0,0,0,0.15)',
+                          },
+                          borderRadius: 3,
+                          overflow: 'hidden',
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            background: `linear-gradient(135deg, ${
+                              setlist.theme === 'white' ? '#f8fafc 0%, #e2e8f0 100%' : '#1e293b 0%, #0f172a 100%'
+                            })`,
+                            p: 1.5,
+                            color: setlist.theme === 'white' ? 'text.primary' : 'white',
+                            flex: 1,
+                            display: 'flex',
+                            flexDirection: 'column',
+                          }}
+                        >
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5 }}>
+                            <Avatar
+                              sx={{
+                                bgcolor: setlist.theme === 'white' ? 'primary.main' : 'secondary.main',
+                                width: 40,
+                                height: 40,
+                              }}
+                            >
+                              <PlaylistPlayIcon />
+                            </Avatar>
+                            <Chip
+                              label={setlist.theme === 'white' ? 'ホワイト' : 'ブラック'}
+                              size="small"
+                              sx={{
+                                bgcolor: setlist.theme === 'white' ? 'rgba(59, 130, 246, 0.1)' : 'rgba(239, 68, 68, 0.2)',
+                                color: setlist.theme === 'white' ? 'primary.main' : '#ef4444',
+                                fontWeight: 600,
+                              }}
+                            />
+                          </Box>
+                          <Typography variant="h6" component="h3" gutterBottom sx={{ fontWeight: 700, mb: 1 }}>
+                            {setlist.title}
+                          </Typography>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                            <GroupIcon sx={{ fontSize: 14, opacity: 0.7 }} />
+                            <Typography variant="body2" sx={{ opacity: 0.8, fontWeight: 500, fontSize: '0.8rem' }}>
+                              {setlist.bandName || '未設定'}
+                            </Typography>
+                          </Box>
+                          {setlist.eventName && (
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                              <EventIcon sx={{ fontSize: 14, opacity: 0.7 }} />
+                              <Typography variant="body2" sx={{ opacity: 0.8, fontSize: '0.8rem' }}>
+                                {setlist.eventName}
+                              </Typography>
+                            </Box>
+                          )}
+                          {setlist.eventDate && (
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                              <ScheduleIcon sx={{ fontSize: 14, opacity: 0.7 }} />
+                              <Typography variant="body2" sx={{ opacity: 0.8, fontSize: '0.8rem' }}>
+                                {new Date(setlist.eventDate).toLocaleDateString('ja-JP')}
+                              </Typography>
+                            </Box>
+                          )}
+                          <Box sx={{ flex: 1 }} />
+                          <Divider sx={{ my: 1, opacity: 0.3 }} />
+                          <Typography variant="body2" sx={{ opacity: 0.7, fontSize: '0.8rem' }}>
+                            {setlist.items?.length || 0} 曲
+                          </Typography>
+                        </Box>
+                        <Box sx={{ display: 'flex' }}>
+                          <Button
+                            component={Link}
+                            href={`/setlists/${setlist.id}`}
+                            sx={{
+                              flex: 1,
+                              py: 1.5,
+                              borderRadius: 0,
+                              borderRight: '1px solid',
+                              borderColor: 'divider',
+                              '&:hover': { bgcolor: 'primary.main', color: 'white' },
+                            }}
+                            startIcon={<VisibilityIcon />}
+                          >
+                            表示
+                          </Button>
+                          <Button
+                            component={Link}
+                            href={`/setlists/${setlist.id}/edit`}
+                            sx={{
+                              flex: 1,
+                              py: 1.5,
+                              borderRadius: 0,
+                              '&:hover': { bgcolor: 'secondary.main', color: 'white' },
+                            }}
+                            startIcon={<EditIcon />}
+                          >
+                            編集
+                          </Button>
+                        </Box>
+                      </Card>
+                    </Grid>
+                  ))}
+                </Grid>
               )}
-            </Stack>
-          </Box>
-        </Fade>
+            </Box>
+          </Fade>
+        )}
+
+        {/* アクションボタン（未ログインユーザー） */}
+        {!isLoggedIn && (
+          <Fade in timeout={1000} style={{ transitionDelay: '400ms' }}>
+            <Box sx={{ textAlign: 'center' }}>
+              <Stack
+                direction={{ xs: 'column', sm: 'row' }}
+                spacing={3}
+                justifyContent="center"
+                alignItems="center"
+              >
+                <Button
+                  variant="outlined"
+                  size="large"
+                  component={Link}
+                  href="/login"
+                  startIcon={<LoginIcon />}
+                  sx={{ 
+                    minWidth: 220, 
+                    borderRadius: 10,
+                    px: 4,
+                    py: 2,
+                    borderColor: '#3b82f6',
+                    color: '#3b82f6',
+                    fontSize: '16px',
+                    fontWeight: 500,
+                    textTransform: 'none',
+                    border: '2px solid #3b82f6',
+                    '&:hover': {
+                      borderColor: '#2563eb',
+                      backgroundColor: 'rgba(59, 130, 246, 0.04)',
+                    }
+                  }}
+                >
+                  ログイン
+                </Button>
+                <Button
+                  variant="outlined"
+                  size="large"
+                  component={Link}
+                  href="/register"
+                  startIcon={<PersonAddIcon />}
+                  sx={{ 
+                    minWidth: 220, 
+                    borderRadius: 10,
+                    px: 4,
+                    py: 2,
+                    borderColor: '#3b82f6',
+                    color: '#3b82f6',
+                    fontSize: '16px',
+                    fontWeight: 500,
+                    textTransform: 'none',
+                    border: '2px solid #3b82f6',
+                    '&:hover': {
+                      borderColor: '#2563eb',
+                      backgroundColor: 'rgba(59, 130, 246, 0.04)',
+                    }
+                  }}
+                >
+                  新規登録
+                </Button>
+              </Stack>
+            </Box>
+          </Fade>
+        )}
 
         {/* フッター */}
         <Fade in timeout={1000} style={{ transitionDelay: '600ms' }}>
