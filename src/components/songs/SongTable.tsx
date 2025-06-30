@@ -107,7 +107,7 @@ export function SongTable({ songs, loading, onEdit, onDelete }: SongTableProps) 
                 </IconButton>
               </TableCell>
             </TableRow>
-          ))
+          ))}
         </TableBody>
       </Table>
     </TableContainer>

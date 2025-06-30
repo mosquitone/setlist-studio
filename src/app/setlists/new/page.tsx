@@ -66,12 +66,12 @@ export default function NewSetlistPage() {
       const setlist = duplicateData.setlist
       setInitialValues({
         title: `${setlist.title} (コピー)`,
-        bandName: setlist.bandName,
+        bandName: setlist.bandName || '',
         eventName: setlist.eventName || '',
         eventDate: setlist.eventDate || '',
         openTime: setlist.openTime || '',
         startTime: setlist.startTime || '',
-        theme: setlist.theme,
+        theme: setlist.theme || 'white',
         items:
           setlist.items.length > 0
             ? [...setlist.items]

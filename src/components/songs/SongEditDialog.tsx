@@ -25,6 +25,7 @@ export function SongEditDialog({ open, song, onClose, onSave }: SongEditDialogPr
     artist: '',
     key: '',
     tempo: null,
+    duration: null,
     notes: '',
   })
   const titleRef = useRef<HTMLInputElement>(null)
@@ -36,6 +37,7 @@ export function SongEditDialog({ open, song, onClose, onSave }: SongEditDialogPr
         artist: song.artist ?? '',
         key: song.key ?? '',
         tempo: song.tempo ?? null,
+        duration: song.duration ?? null,
         notes: song.notes ?? '',
       })
     }
