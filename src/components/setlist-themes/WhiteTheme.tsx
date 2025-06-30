@@ -138,7 +138,7 @@ export const WhiteTheme: React.FC<SetlistThemeProps> = ({ data, className }) => 
           gap: 3.5,
         }}
       >
-        {items.map((item, index) => (
+        {items.map(item => (
           <Box key={item.id} sx={{}}>
             <Typography
               sx={{

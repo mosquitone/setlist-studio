@@ -24,10 +24,13 @@ export default function NewSetlistPage() {
 
   const [createSetlist, { loading, error }] = useMutation(CREATE_SETLIST)
 
-  const { data: duplicateData, loading: duplicateLoading } = useQuery<GetSetlistResponse>(GET_SETLIST, {
-    variables: { id: duplicateId },
-    skip: !duplicateId,
-  })
+  const { data: duplicateData, loading: duplicateLoading } = useQuery<GetSetlistResponse>(
+    GET_SETLIST,
+    {
+      variables: { id: duplicateId },
+      skip: !duplicateId,
+    },
+  )
 
   const handleSubmit = async (values: SetlistFormValues) => {
     try {
