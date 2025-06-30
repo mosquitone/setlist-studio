@@ -42,12 +42,13 @@ The application uses separate servers during development:
 - React 19.0.0 with strict mode
 
 **Backend (GraphQL + Prisma)**
-- Standalone Apollo Server Express 3.12.0 (GraphQL 15.8.0 for Type-GraphQL compatibility)
+- Apollo Server v4.12.2 with modern Express4 middleware integration
 - Type-GraphQL 1.1.1 for schema-first API development
 - Prisma 6.2.0 as ORM with PostgreSQL
 - JWT-based authentication with bcryptjs 2.4.3
 - CORS enabled for frontend communication
 - TypeScript with strictPropertyInitialization disabled for Type-GraphQL compatibility
+- Security enhancements: query depth limiting, request size limiting, introspection control
 
 **Database**
 - PostgreSQL 15 running in Docker container
@@ -169,6 +170,7 @@ The application uses separate servers during development:
 - **Duplication Feature**: Clone setlists via query parameters (/setlists/new?duplicate=ID)
 - **Development**: Fully functional dual-server setup with hot reload
 - **Code Quality**: GraphQL resolvers optimized for frontend requirements, all TypeScript warnings resolved
+- **Security**: Apollo Server v4 migration completed with enhanced security features and EOL vulnerability fixes
 
 ## Recent UI/UX Improvements
 
@@ -228,3 +230,10 @@ The application uses separate servers during development:
 - **Plugin Dependencies**: Added missing `@next/eslint-plugin-next` dependency to resolve plugin loading issues
 - **Warning Resolution**: Eliminated ESLintIgnoreWarning about deprecated .eslintignore file
 - **Code Quality**: Auto-fixed formatting issues with `pnpm lint:fix` while maintaining existing code structure
+
+### Apollo Server v4 Security Migration (2025-06-30)
+- **Version Upgrade**: Migrated from deprecated Apollo Server v3 (EOL) to Apollo Server v4.12.2
+- **Security Enhancements**: Added query depth limiting (max 10 levels), request size limiting (50MB), and production introspection controls
+- **Architecture Modernization**: Replaced legacy apollo-server-express with @apollo/server and expressMiddleware pattern
+- **Validation Integration**: Added class-validator decorators to LoginInput and RegisterInput types for proper argument validation
+- **Vulnerability Resolution**: Eliminated all known security vulnerabilities from deprecated Apollo Server v3 dependencies

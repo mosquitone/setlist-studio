@@ -32,7 +32,7 @@
 - **Apollo Client** - GraphQL状態管理
 
 ### バックエンド
-- **Apollo Server Express** - GraphQL API
+- **Apollo Server v4** - 最新のGraphQL API (セキュリティ強化済み)
 - **Type-GraphQL** - スキーマファーストAPI
 - **Prisma** - データベースORM
 - **PostgreSQL** - データベース
