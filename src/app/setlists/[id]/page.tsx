@@ -86,6 +86,13 @@ export default function SetlistDetailPage() {
     items: [...setlist.items].sort((a: any, b: any) => a.order - b.order),
   }
 
+  // Initialize selectedTheme with the saved theme from database
+  React.useEffect(() => {
+    if (setlist.theme && (setlist.theme === 'black' || setlist.theme === 'white')) {
+      setSelectedTheme(setlist.theme)
+    }
+  }, [setlist.theme])
+
   const handleThemeChange = (theme: 'black' | 'white') => {
     setSelectedTheme(theme)
   }

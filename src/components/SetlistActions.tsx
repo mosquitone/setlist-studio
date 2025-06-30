@@ -79,12 +79,12 @@ export function SetlistActions({
             IconComponent={ExpandMoreIcon}
             sx={{ minWidth: 140 }}
             renderValue={value => {
-              if (value === 'black') return 'Theme: basic'
+              if (value === 'black') return 'Theme: black'
               if (value === 'white') return 'Theme: white'
-              return 'Theme: basic'
+              return 'Theme: black'
             }}
           >
-            <MenuItem value="black">basic</MenuItem>
+            <MenuItem value="black">black</MenuItem>
             <MenuItem value="white">white</MenuItem>
           </Select>
         </FormControl>

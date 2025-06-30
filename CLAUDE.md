@@ -151,7 +151,7 @@ The application uses separate servers during development:
 - **Setlist Management**: Complete CRUD operations with duplication functionality
 - **User Interface**: Streamlined setlist detail page with action buttons (Edit, Download, Share, Duplicate)
 - **Image Generation**: Simplified one-click download system with theme selection dropdown and debug preview modes
-- **Theme System**: Black and White themes with real-time preview updates and loading states
+- **Theme System**: Black and White themes with real-time preview updates, loading states, and proper theme persistence
 - **Duplication Feature**: Clone setlists via query parameters (/setlists/new?duplicate=ID)
 - **Development**: Fully functional dual-server setup with hot reload
 - **Code Quality**: GraphQL resolvers optimized for frontend requirements, all TypeScript warnings resolved
@@ -177,3 +177,8 @@ The application uses separate servers during development:
 - **Query Parameter System**: `/setlists/new?duplicate={id}` for seamless cloning
 - **Auto-populated Forms**: Original setlist data pre-fills form with "(コピー)" suffix
 - **Preserved Structure**: Maintains song order, timing, and all metadata in duplicates
+
+### Recent Bug Fixes (2025-06-30)
+- **Theme Persistence**: Fixed issue where saved themes from database weren't being displayed on setlist detail pages
+- **Theme Naming Consistency**: Resolved "basic"/"black" naming inconsistency in UI components
+- **Database Integration**: Improved theme selection to properly initialize from stored setlist data
