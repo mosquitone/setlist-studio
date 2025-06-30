@@ -2,8 +2,8 @@
 
 import React from 'react'
 import { Box, Paper, CircularProgress, Typography, Button } from '@mui/material'
-import { SetlistData } from './setlist-themes/types'
-import { SetlistRenderer } from './setlist-themes/SetlistRenderer'
+import { SetlistData } from '../setlist-themes/types'
+import { SetlistRenderer } from '../setlist-themes/SetlistRenderer'
 
 interface SetlistPreviewProps {
   data: SetlistData

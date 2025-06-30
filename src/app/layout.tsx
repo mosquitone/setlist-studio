@@ -2,7 +2,8 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import MUIProvider from '@/components/providers/MUIProvider'
 import ApolloProviderWrapper from '@/components/providers/ApolloProvider'
-import Header from '@/components/Header'
+import Header from '@/components/common/Header'
+import Footer from '@/components/common/Footer'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -23,9 +24,7 @@ export default function RootLayout({
           <MUIProvider>
             <Header />
             {children}
-            <footer style={{ textAlign: 'center', padding: '1rem', marginTop: '2rem' }}>
-              Powered by mosquitone
-            </footer>
+            <Footer />
           </MUIProvider>
         </ApolloProviderWrapper>
       </body>

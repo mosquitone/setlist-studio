@@ -5,8 +5,8 @@ import { Box, Button, Alert, CircularProgress } from '@mui/material'
 import { Image as ImageIcon } from '@mui/icons-material'
 import html2canvas from 'html2canvas'
 import QRCode from 'qrcode'
-import { SetlistData } from './setlist-themes/types'
-import { SetlistRenderer } from './setlist-themes/SetlistRenderer'
+import { SetlistData } from '../setlist-themes/types'
+import { SetlistRenderer } from '../setlist-themes/SetlistRenderer'
 
 interface ImageGeneratorProps {
   data: SetlistData

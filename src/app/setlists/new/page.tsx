@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { useMutation, useQuery } from '@apollo/client'
 import { CREATE_SETLIST, GET_SETLIST } from '@/lib/graphql/apollo-operations'
 import { useRouter, useSearchParams } from 'next/navigation'
-import SetlistForm, { SetlistFormValues } from '@/components/SetlistForm'
+import SetlistForm, { SetlistFormValues } from '@/components/forms/SetlistForm'
 
 export default function NewSetlistPage() {
   const router = useRouter()

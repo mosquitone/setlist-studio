@@ -124,8 +124,18 @@ The application uses separate servers during development:
 │   └── songs/             # Song management pages
 │       └── new/           # Create new song
 ├── src/components/         # React components
+│   ├── common/             # Common UI components
+│   │   ├── Header.tsx      # Application header component
+│   │   └── Footer.tsx      # Application footer component
+│   ├── forms/              # Form-related components
+│   │   ├── SetlistForm.tsx # Main setlist form with validation
+│   │   ├── SetlistFormFields.tsx # Form field components
+│   │   └── SongItemInput.tsx # Individual song input component
+│   ├── setlist/            # Setlist-specific components
+│   │   ├── ImageGenerator.tsx # Simplified image generation with one-click download
+│   │   ├── SetlistActions.tsx # Action buttons (Edit, Download, etc.)
+│   │   └── SetlistPreview.tsx # Setlist preview display
 │   ├── providers/          # Context providers (MUI, Apollo)
-│   ├── ImageGenerator.tsx  # Simplified image generation with one-click download
 │   └── setlist-themes/     # Theme renderers
 │       ├── BlackTheme.tsx  # Black/dark theme
 │       ├── WhiteTheme.tsx  # White/light theme
