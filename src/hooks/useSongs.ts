@@ -41,9 +41,9 @@ export function useSongs() {
           input: songData,
         },
       })
-    } catch (err) {
-      console.error('Failed to update song:', err)
-      throw err
+    } catch (error) {
+      console.error('[useSongs] update failed:', error)
+      throw error
     }
   }
 
@@ -51,9 +51,9 @@ export function useSongs() {
     if (window.confirm('この楽曲を削除してもよろしいですか？')) {
       try {
         await deleteSong({ variables: { id } })
-      } catch (err) {
-        console.error('Failed to delete song:', err)
-        throw err
+      } catch (error) {
+        console.error('[useSongs] delete failed:', error)
+        throw error
       }
     }
   }

@@ -60,22 +60,54 @@ export function SongTable({ songs, loading, onEdit, onDelete }: SongTableProps) 
         </TableHead>
         <TableBody>
           {songs.map(song => (
-            <TableRow key={song.id} hover>
+            <TableRow 
+              key={song.id} 
+              hover
+              tabIndex={0}
+              sx={{
+                '&:focus': {
+                  backgroundColor: 'action.focus',
+                  outline: '2px solid',
+                  outlineColor: 'primary.main',
+                  outlineOffset: '-2px'
+                }
+              }}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault()
+                  onEdit(song)
+                } else if (event.key === 'Delete') {
+                  event.preventDefault()
+                  onDelete(song.id)
+                }
+              }}
+              aria-label={`楽曲: ${song.title}。Enterで編集、Deleteで削除`}
+            >
               <TableCell>{song.title}</TableCell>
               <TableCell>{song.artist}</TableCell>
               <TableCell>{song.key || '-'}</TableCell>
               <TableCell>{song.tempo || '-'}</TableCell>
               <TableCell>{song.notes || '-'}</TableCell>
               <TableCell align="right">
-                <IconButton onClick={() => onEdit(song)} color="primary" size="small">
+                <IconButton 
+                  onClick={() => onEdit(song)} 
+                  color="primary" 
+                  size="small"
+                  aria-label={`${song.title}を編集`}
+                >
                   <EditIcon />
                 </IconButton>
-                <IconButton onClick={() => onDelete(song.id)} color="error" size="small">
+                <IconButton 
+                  onClick={() => onDelete(song.id)} 
+                  color="error" 
+                  size="small"
+                  aria-label={`${song.title}を削除`}
+                >
                   <DeleteIcon />
                 </IconButton>
               </TableCell>
             </TableRow>
-          ))}
+          ))
         </TableBody>
       </Table>
     </TableContainer>

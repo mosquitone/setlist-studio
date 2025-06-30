@@ -14,6 +14,8 @@ interface SongItemInputProps {
   songs: Array<{ id: string; title: string }>
   enableDragAndDrop: boolean
   isDragDisabled?: boolean
+  onMoveUp?: (index: number) => void
+  onMoveDown?: (index: number) => void
 }
 
 export function SongItemInput({
@@ -24,8 +26,20 @@ export function SongItemInput({
   songs,
   enableDragAndDrop,
   isDragDisabled = false,
+  onMoveUp,
+  onMoveDown,
 }: SongItemInputProps) {
   const { values, errors, touched, handleChange, handleBlur } = formik
+
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'ArrowUp' && event.ctrlKey && onMoveUp) {
+      event.preventDefault()
+      onMoveUp(index)
+    } else if (event.key === 'ArrowDown' && event.ctrlKey && onMoveDown) {
+      event.preventDefault()
+      onMoveDown(index)
+    }
+  }
 
   return (
     <Paper
@@ -37,7 +51,13 @@ export function SongItemInput({
         gap: 2,
       }}
     >
-      <IconButton size="small" disabled={isDragDisabled}>
+      <IconButton 
+        size="small" 
+        disabled={isDragDisabled}
+        aria-label={`楽曲 ${index + 1} をドラッグして移動。Ctrl+矢印キーでキーボード操作可能`}
+        onKeyDown={handleKeyDown}
+        tabIndex={0}
+      >
         <DragHandleIcon />
       </IconButton>
 
@@ -137,6 +157,7 @@ export function SongItemInput({
         onClick={() => onRemove(index)}
         disabled={values.items.length <= 1}
         size="small"
+        aria-label={`楽曲 ${index + 1} を削除`}
       >
         <DeleteIcon />
       </IconButton>

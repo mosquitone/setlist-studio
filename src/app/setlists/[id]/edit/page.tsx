@@ -22,7 +22,11 @@ export default function EditSetlistPage() {
   })
 
   const [updateSetlist, { loading: updateLoading, error: updateError }] =
-    useMutation(UPDATE_SETLIST)
+    useMutation(UPDATE_SETLIST, {
+      onError: (err) => {
+        console.error('[EditSetlistPage] update setlist failed:', err)
+      }
+    })
 
   if (queryLoading) {
     return (
@@ -61,32 +65,28 @@ export default function EditSetlistPage() {
   }
 
   const handleSubmit = async (values: SetlistFormValues) => {
-    try {
-      const { data } = await updateSetlist({
-        variables: {
-          id: setlistId,
-          input: {
-            title: values.title,
-            bandName: values.bandName,
-            eventName: values.eventName || undefined,
-            eventDate: values.eventDate || undefined,
-            openTime: values.openTime || undefined,
-            startTime: values.startTime || undefined,
-            theme: values.theme,
-            items: values.items.map((item, index) => ({
-              title: item.title,
-              note: item.note || undefined,
-              order: index,
-            })),
-          },
+    const { data } = await updateSetlist({
+      variables: {
+        id: setlistId,
+        input: {
+          title: values.title,
+          bandName: values.bandName,
+          eventName: values.eventName || undefined,
+          eventDate: values.eventDate || undefined,
+          openTime: values.openTime || undefined,
+          startTime: values.startTime || undefined,
+          theme: values.theme,
+          items: values.items.map((item, index) => ({
+            title: item.title,
+            note: item.note || undefined,
+            order: index,
+          })),
         },
-      })
+      },
+    })
 
-      if (data?.updateSetlist) {
-        router.push(`/setlists/${setlistId}`)
-      }
-    } catch (err) {
-      console.error('Error updating setlist:', err)
+    if (data?.updateSetlist) {
+      router.push(`/setlists/${setlistId}`)
     }
   }
 

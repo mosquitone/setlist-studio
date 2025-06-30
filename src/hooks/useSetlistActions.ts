@@ -28,8 +28,8 @@ export function useSetlistActions({ setlistId, setlist }: UseSetlistActionsProps
   const handleDelete = async () => {
     try {
       await deleteSetlist({ variables: { id: setlistId } })
-    } catch {
-      console.error('Error deleting setlist')
+    } catch (error) {
+      console.error('[useSetlistActions] delete failed:', error)
     }
   }
 

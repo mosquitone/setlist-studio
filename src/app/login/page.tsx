@@ -41,7 +41,7 @@ export default function LoginPage() {
       router.push('/')
     },
     onError: error => {
-      console.error('Login error:', error)
+      console.error('[LoginPage] login failed:', error)
       setError(error.message)
     },
   })
@@ -50,16 +50,12 @@ export default function LoginPage() {
     e.preventDefault()
     setError('')
 
-    try {
-      console.log('Attempting login with:', { email, password: '***' })
-      await loginMutation({
-        variables: {
-          input: { email, password },
-        },
-      })
-    } catch (err) {
-      console.error('Login submission error:', err)
-    }
+    console.log('Attempting login with:', { email, password: '***' })
+    await loginMutation({
+      variables: {
+        input: { email, password },
+      },
+    })
   }
 
   return (

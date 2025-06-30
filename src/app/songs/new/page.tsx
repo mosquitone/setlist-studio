@@ -34,27 +34,27 @@ const initialValues: SongFormValues = {
 
 export default function NewSongPage() {
   const router = useRouter()
-  const [createSong, { loading, error }] = useMutation(CREATE_SONG)
+  const [createSong, { loading, error }] = useMutation(CREATE_SONG, {
+    onError: (err) => {
+      console.error('[NewSongPage] create song failed:', err)
+    }
+  })
 
   const handleSubmit = async (values: SongFormValues) => {
-    try {
-      const tempoVal = values.tempo ? parseInt(values.tempo, 10) : undefined
-      const { data } = await createSong({
-        variables: {
-          input: {
-            title: values.title,
-            artist: values.artist,
-            key: values.key || undefined,
-            tempo: tempoVal,
-            notes: values.notes || undefined,
-          },
+    const tempoVal = values.tempo ? parseInt(values.tempo, 10) : undefined
+    const { data } = await createSong({
+      variables: {
+        input: {
+          title: values.title,
+          artist: values.artist,
+          key: values.key || undefined,
+          tempo: tempoVal,
+          notes: values.notes || undefined,
         },
-      })
-      if (data?.createSong?.id) {
-        router.push('/songs')
-      }
-    } catch (err) {
-      console.error(err)
+      },
+    })
+    if (data?.createSong?.id) {
+      router.push('/songs')
     }
   }
 

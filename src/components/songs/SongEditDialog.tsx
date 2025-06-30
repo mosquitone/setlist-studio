@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import {
   Dialog,
   DialogTitle,
@@ -27,6 +27,7 @@ export function SongEditDialog({ open, song, onClose, onSave }: SongEditDialogPr
     tempo: null,
     notes: '',
   })
+  const titleRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (song) {
@@ -39,6 +40,12 @@ export function SongEditDialog({ open, song, onClose, onSave }: SongEditDialogPr
       })
     }
   }, [song])
+
+  useEffect(() => {
+    if (open && titleRef.current) {
+      setTimeout(() => titleRef.current?.focus(), 100)
+    }
+  }, [open])
 
   const handleFieldChange = (field: keyof typeof formValues, value: string) => {
     setFormValues(prev => ({
@@ -58,6 +65,7 @@ export function SongEditDialog({ open, song, onClose, onSave }: SongEditDialogPr
       <DialogContent>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
           <TextField
+            ref={titleRef}
             label="タイトル"
             value={formValues.title}
             onChange={e => handleFieldChange('title', e.target.value)}

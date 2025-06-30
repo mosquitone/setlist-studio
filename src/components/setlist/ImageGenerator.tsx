@@ -43,8 +43,8 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
           },
         })
         return qrCodeDataURL
-      } catch (err) {
-        console.error('Error generating QR code:', err)
+      } catch (error) {
+        console.error('[ImageGenerator] QR code generation failed:', error)
         return ''
       }
     },
@@ -118,9 +118,9 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
         document.body.removeChild(container)
 
         return imageURL
-      } catch (err) {
-        console.error('Error generating image:', err)
-        setError(`画像生成エラー: ${err instanceof Error ? err.message : 'Unknown error'}`)
+      } catch (error) {
+        console.error('[ImageGenerator] image generation failed:', error)
+        setError(`画像生成エラー: ${error instanceof Error ? error.message : 'Unknown error'}`)
         return null
       } finally {
         setIsGenerating(false)

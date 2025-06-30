@@ -22,7 +22,11 @@ export default function NewSetlistPage() {
     items: [{ title: '', note: '' }],
   })
 
-  const [createSetlist, { loading, error }] = useMutation(CREATE_SETLIST)
+  const [createSetlist, { loading, error }] = useMutation(CREATE_SETLIST, {
+    onError: (err) => {
+      console.error('[NewSetlistPage] create setlist failed:', err)
+    }
+  })
 
   const { data: duplicateData, loading: duplicateLoading } = useQuery<GetSetlistResponse>(
     GET_SETLIST,
@@ -33,31 +37,27 @@ export default function NewSetlistPage() {
   )
 
   const handleSubmit = async (values: SetlistFormValues) => {
-    try {
-      const { data } = await createSetlist({
-        variables: {
-          input: {
-            title: values.title,
-            bandName: values.bandName,
-            eventName: values.eventName || undefined,
-            eventDate: values.eventDate || undefined,
-            openTime: values.openTime || undefined,
-            startTime: values.startTime || undefined,
-            theme: values.theme,
-            items: values.items.map((item, index) => ({
-              title: item.title,
-              note: item.note || undefined,
-              order: index,
-            })),
-          },
+    const { data } = await createSetlist({
+      variables: {
+        input: {
+          title: values.title,
+          bandName: values.bandName,
+          eventName: values.eventName || undefined,
+          eventDate: values.eventDate || undefined,
+          openTime: values.openTime || undefined,
+          startTime: values.startTime || undefined,
+          theme: values.theme,
+          items: values.items.map((item, index) => ({
+            title: item.title,
+            note: item.note || undefined,
+            order: index,
+          })),
         },
-      })
+      },
+    })
 
-      if (data?.createSetlist) {
-        router.push(`/setlists/${data.createSetlist.id}`)
-      }
-    } catch (err) {
-      console.error('Error creating setlist:', err)
+    if (data?.createSetlist) {
+      router.push(`/setlists/${data.createSetlist.id}`)
     }
   }
 
