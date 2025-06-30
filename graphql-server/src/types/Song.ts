@@ -4,10 +4,10 @@ import { User } from './User'
 @ObjectType()
 export class Song {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title!: string
 
   @Field({ nullable: true })
   artist?: string
@@ -25,14 +25,15 @@ export class Song {
   notes?: string
 
   @Field()
-  userId: string
+  userId!: string
 
-  @Field(() => User)
-  user: User
-
-  @Field()
-  createdAt: Date
+  // Optional relation - not used by frontend queries
+  @Field(() => User, { nullable: true })
+  user?: User
 
   @Field()
-  updatedAt: Date
+  createdAt!: Date
+
+  @Field()
+  updatedAt!: Date
 }

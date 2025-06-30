@@ -65,7 +65,6 @@ export class SetlistItemResolver {
 
     return ctx.prisma.setlistItem.findMany({
       where: { setlistId },
-      include: { setlist: true },
       orderBy: { order: 'asc' },
     }) as Promise<SetlistItem[]>
   }
@@ -76,21 +75,25 @@ export class SetlistItemResolver {
     @Arg('id', () => ID) id: string,
     @Ctx() ctx: Context,
   ): Promise<SetlistItem | null> {
-    const setlistItem = await ctx.prisma.setlistItem.findUnique({
+    // First get the item with setlist relation for auth check
+    const setlistItemWithSetlist = await ctx.prisma.setlistItem.findUnique({
       where: { id },
       include: { setlist: true },
     })
 
-    if (!setlistItem) {
+    if (!setlistItemWithSetlist) {
       return null
     }
 
     // Verify that the setlist belongs to the authenticated user
-    if (setlistItem.setlist.userId !== ctx.userId) {
+    if (setlistItemWithSetlist.setlist.userId !== ctx.userId) {
       throw new Error('Setlist item not found')
     }
 
-    return setlistItem as SetlistItem
+    // Return the item without setlist relation to match GraphQL type
+    return ctx.prisma.setlistItem.findUnique({
+      where: { id },
+    }) as Promise<SetlistItem | null>
   }
 
   @Mutation(() => SetlistItem)
@@ -110,7 +113,6 @@ export class SetlistItemResolver {
 
     return ctx.prisma.setlistItem.create({
       data: input,
-      include: { setlist: true },
     }) as Promise<SetlistItem>
   }
 
@@ -121,41 +123,42 @@ export class SetlistItemResolver {
     @Arg('input') input: UpdateSetlistItemInput,
     @Ctx() ctx: Context,
   ): Promise<SetlistItem> {
-    const setlistItem = await ctx.prisma.setlistItem.findUnique({
+    // First get the item with setlist relation for auth check
+    const setlistItemWithSetlist = await ctx.prisma.setlistItem.findUnique({
       where: { id },
       include: { setlist: true },
     })
 
-    if (!setlistItem) {
+    if (!setlistItemWithSetlist) {
       throw new Error('Setlist item not found')
     }
 
     // Verify that the setlist belongs to the authenticated user
-    if (setlistItem.setlist.userId !== ctx.userId) {
+    if (setlistItemWithSetlist.setlist.userId !== ctx.userId) {
       throw new Error('Setlist item not found')
     }
 
     return ctx.prisma.setlistItem.update({
       where: { id },
       data: input,
-      include: { setlist: true },
     }) as Promise<SetlistItem>
   }
 
   @Mutation(() => Boolean)
   @UseMiddleware(AuthMiddleware)
   async deleteSetlistItem(@Arg('id', () => ID) id: string, @Ctx() ctx: Context): Promise<boolean> {
-    const setlistItem = await ctx.prisma.setlistItem.findUnique({
+    // First get the item with setlist relation for auth check
+    const setlistItemWithSetlist = await ctx.prisma.setlistItem.findUnique({
       where: { id },
       include: { setlist: true },
     })
 
-    if (!setlistItem) {
+    if (!setlistItemWithSetlist) {
       throw new Error('Setlist item not found')
     }
 
     // Verify that the setlist belongs to the authenticated user
-    if (setlistItem.setlist.userId !== ctx.userId) {
+    if (setlistItemWithSetlist.setlist.userId !== ctx.userId) {
       throw new Error('Setlist item not found')
     }
 
@@ -195,7 +198,6 @@ export class SetlistItemResolver {
     // Return the reordered items
     return ctx.prisma.setlistItem.findMany({
       where: { setlistId },
-      include: { setlist: true },
       orderBy: { order: 'asc' },
     }) as Promise<SetlistItem[]>
   }

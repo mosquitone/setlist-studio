@@ -4,20 +4,21 @@ import { Setlist } from './Setlist'
 @ObjectType()
 export class SetlistItem {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title!: string
 
   @Field({ nullable: true })
   note?: string
 
   @Field(() => Int)
-  order: number
+  order!: number
 
   @Field()
-  setlistId: string
+  setlistId!: string
 
-  @Field(() => Setlist)
-  setlist: Setlist
+  // Optional relation - not used by frontend queries
+  @Field(() => Setlist, { nullable: true })
+  setlist?: Setlist
 }

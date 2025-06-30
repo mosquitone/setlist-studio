@@ -31,10 +31,6 @@ export class AuthResolver {
         username: input.username,
         password: hashedPassword,
       },
-      include: {
-        songs: true,
-        setlists: true,
-      },
     })
 
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET || 'fallback-secret', {
@@ -43,7 +39,7 @@ export class AuthResolver {
 
     return {
       token,
-      user: user as User,
+      user,
     }
   }
 
@@ -51,10 +47,6 @@ export class AuthResolver {
   async login(@Arg('input') input: LoginInput, @Ctx() ctx: Context): Promise<AuthPayload> {
     const user = await ctx.prisma.user.findUnique({
       where: { email: input.email },
-      include: {
-        songs: true,
-        setlists: true,
-      },
     })
 
     if (!user) {
@@ -72,7 +64,7 @@ export class AuthResolver {
 
     return {
       token,
-      user: user as User,
+      user,
     }
   }
 }

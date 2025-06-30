@@ -5,10 +5,10 @@ import { SetlistItem } from './SetlistItem'
 @ObjectType()
 export class Setlist {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title!: string
 
   @Field({ nullable: true })
   bandName?: string
@@ -29,17 +29,18 @@ export class Setlist {
   theme?: string
 
   @Field()
-  userId: string
+  userId!: string
 
-  @Field(() => User)
-  user: User
+  // Optional relation - not always needed
+  @Field(() => User, { nullable: true })
+  user?: User
 
   @Field(() => [SetlistItem])
-  items: SetlistItem[]
+  items!: SetlistItem[]
 
   @Field()
-  createdAt: Date
+  createdAt!: Date
 
   @Field()
-  updatedAt: Date
+  updatedAt!: Date
 }

@@ -13,6 +13,8 @@ This is a modern setlist generator application built for music bands, featuring 
 - **Start GraphQL server**: `cd graphql-server && pnpm dev` (runs on http://localhost:4000/graphql)
 - **Build frontend**: `pnpm build`
 - **Lint frontend**: `pnpm lint`
+- **Fix lint issues**: `pnpm lint:fix`
+- **TypeScript type check**: `cd graphql-server && npx tsc --noEmit` (check server types without compilation)
 
 ### Database Operations
 - **Start PostgreSQL**: `docker-compose up -d postgres`
@@ -34,16 +36,18 @@ The application uses separate servers during development:
 
 **Frontend (NextJS 15.3.4)**
 - Next.js App Router with TypeScript
-- Material-UI v7 for component library with custom theme
-- Apollo Client for GraphQL state management
+- Material-UI v5.17.1 for component library with custom theme
+- Apollo Client 3.13.8 for GraphQL state management
 - Client-side authentication state management
+- React 19.0.0 with strict mode
 
 **Backend (GraphQL + Prisma)**
-- Standalone Apollo Server Express (GraphQL 15.x for Type-GraphQL compatibility)
-- Type-GraphQL for schema-first API development
-- Prisma as ORM with PostgreSQL
-- JWT-based authentication with bcryptjs
+- Standalone Apollo Server Express 3.12.0 (GraphQL 15.8.0 for Type-GraphQL compatibility)
+- Type-GraphQL 1.1.1 for schema-first API development
+- Prisma 6.2.0 as ORM with PostgreSQL
+- JWT-based authentication with bcryptjs 2.4.3
 - CORS enabled for frontend communication
+- TypeScript with strictPropertyInitialization disabled for Type-GraphQL compatibility
 
 **Database**
 - PostgreSQL 15 running in Docker container
@@ -88,15 +92,16 @@ The application uses separate servers during development:
 ## Important Configuration Notes
 
 ### GraphQL Version Compatibility
-- Frontend uses GraphQL 16.x (required by Apollo Client 3.x)
-- GraphQL server uses GraphQL 15.x (required by Type-GraphQL 1.x)
-- Server package.json includes pnpm override to enforce GraphQL 15.x
+- Frontend uses GraphQL 16.11.0 (required by Apollo Client 3.13.8)
+- GraphQL server uses GraphQL 15.8.0 (required by Type-GraphQL 1.1.1)
+- Server package.json includes pnpm override to enforce GraphQL 15.8.0
 - This dual-version setup is intentional for library compatibility
 
 ### Package Management
-- Uses pnpm for package management with specific Node.js 20.11.1 requirement
+- Uses pnpm 10.12.1 for package management with specific Node.js 20.11.1 requirement
 - Both root and graphql-server have separate package.json files
 - GraphQL server has isolated dependencies to avoid version conflicts
+- ESLint 9.x with TypeScript 8.35.0 parser and Prettier 3.6.2 for code formatting
 
 ### Development Workflow
 1. Start PostgreSQL: `docker-compose up -d postgres`
@@ -111,9 +116,12 @@ The application uses separate servers during development:
 ├── src/app/                # NextJS App Router
 │   ├── login/             # User authentication pages
 │   ├── register/          # User registration
-│   └── setlists/          # Setlist management pages
-│       ├── [id]/          # Individual setlist view/edit
-│       └── new/           # Create new setlist
+│   ├── setlists/          # Setlist management pages
+│   │   ├── [id]/          # Individual setlist view/edit
+│   │   │   └── edit/      # Edit setlist page
+│   │   └── new/           # Create new setlist
+│   └── songs/             # Song management pages
+│       └── new/           # Create new song
 ├── src/components/         # React components
 │   ├── providers/          # Context providers (MUI, Apollo)
 │   ├── ImageGenerator.tsx  # Setlist image generation component
@@ -144,3 +152,4 @@ The application uses separate servers during development:
 - **Setlist Management**: Complete CRUD operations for setlists and songs
 - **Image Generation**: Advanced setlist image generator with multiple themes
 - **Development**: Fully functional dual-server setup with hot reload
+- **Code Quality**: GraphQL resolvers optimized for frontend requirements, all TypeScript warnings resolved

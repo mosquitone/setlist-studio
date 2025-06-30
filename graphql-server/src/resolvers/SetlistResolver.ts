@@ -8,6 +8,7 @@ import {
   InputType,
   Field,
   ID,
+  Int,
 } from 'type-graphql'
 import { PrismaClient } from '@prisma/client'
 import { Setlist } from '../types/Setlist'
@@ -19,12 +20,24 @@ interface Context {
 }
 
 @InputType()
-export class CreateSetlistInput {
+export class CreateSetlistItemForSetlistInput {
   @Field()
   title: string
 
   @Field({ nullable: true })
-  bandName?: string
+  note?: string
+
+  @Field(() => Int)
+  order: number
+}
+
+@InputType()
+export class CreateSetlistInput {
+  @Field()
+  title: string
+
+  @Field()
+  bandName: string
 
   @Field({ nullable: true })
   eventName?: string
@@ -38,8 +51,11 @@ export class CreateSetlistInput {
   @Field({ nullable: true })
   startTime?: string
 
-  @Field({ nullable: true })
-  theme?: string
+  @Field()
+  theme: string
+
+  @Field(() => [CreateSetlistItemForSetlistInput], { nullable: true })
+  items?: CreateSetlistItemForSetlistInput[]
 }
 
 @InputType()
@@ -64,6 +80,9 @@ export class UpdateSetlistInput {
 
   @Field({ nullable: true })
   theme?: string
+
+  @Field(() => [CreateSetlistItemForSetlistInput], { nullable: true })
+  items?: CreateSetlistItemForSetlistInput[]
 }
 
 @Resolver(() => Setlist)
@@ -74,7 +93,6 @@ export class SetlistResolver {
     return ctx.prisma.setlist.findMany({
       where: { userId: ctx.userId },
       include: {
-        user: true,
         items: {
           orderBy: { order: 'asc' },
         },
@@ -89,7 +107,6 @@ export class SetlistResolver {
     return ctx.prisma.setlist.findFirst({
       where: { id, userId: ctx.userId },
       include: {
-        user: true,
         items: {
           orderBy: { order: 'asc' },
         },
@@ -103,18 +120,30 @@ export class SetlistResolver {
     @Arg('input') input: CreateSetlistInput,
     @Ctx() ctx: Context,
   ): Promise<Setlist> {
-    return ctx.prisma.setlist.create({
+    const { items, ...setlistData } = input
+
+    const setlist = await ctx.prisma.setlist.create({
       data: {
-        ...input,
+        ...setlistData,
         userId: ctx.userId!,
+        items: items
+          ? {
+              create: items.map(item => ({
+                title: item.title,
+                note: item.note,
+                order: item.order,
+              })),
+            }
+          : undefined,
       },
       include: {
-        user: true,
         items: {
           orderBy: { order: 'asc' },
         },
       },
-    }) as Promise<Setlist>
+    })
+
+    return setlist as Setlist
   }
 
   @Mutation(() => Setlist)
@@ -132,16 +161,32 @@ export class SetlistResolver {
       throw new Error('Setlist not found')
     }
 
-    return ctx.prisma.setlist.update({
+    const { items, ...setlistData } = input
+
+    // Update setlist and handle items
+    const updatedSetlist = await ctx.prisma.setlist.update({
       where: { id },
-      data: input,
+      data: {
+        ...setlistData,
+        items: items
+          ? {
+              deleteMany: {}, // Delete all existing items
+              create: items.map(item => ({
+                title: item.title,
+                note: item.note,
+                order: item.order,
+              })),
+            }
+          : undefined,
+      },
       include: {
-        user: true,
         items: {
           orderBy: { order: 'asc' },
         },
       },
-    }) as Promise<Setlist>
+    })
+
+    return updatedSetlist as Setlist
   }
 
   @Mutation(() => Boolean)

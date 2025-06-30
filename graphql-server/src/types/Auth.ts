@@ -4,29 +4,29 @@ import { User } from './User'
 @ObjectType()
 export class AuthPayload {
   @Field()
-  token: string
+  token!: string
 
   @Field(() => User)
-  user: User
+  user!: User
 }
 
 @InputType()
 export class RegisterInput {
   @Field()
-  email: string
+  email!: string
 
   @Field()
-  username: string
+  username!: string
 
   @Field()
-  password: string
+  password!: string
 }
 
 @InputType()
 export class LoginInput {
   @Field()
-  email: string
+  email!: string
 
   @Field()
-  password: string
+  password!: string
 }

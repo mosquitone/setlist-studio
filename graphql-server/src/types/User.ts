@@ -5,23 +5,24 @@ import { Setlist } from './Setlist'
 @ObjectType()
 export class User {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  email: string
+  email!: string
 
   @Field()
-  username: string
+  username!: string
 
   @Field()
-  createdAt: Date
+  createdAt!: Date
 
   @Field()
-  updatedAt: Date
+  updatedAt!: Date
 
-  @Field(() => [Song])
-  songs: Song[]
+  // Optional relations - not used by frontend queries
+  @Field(() => [Song], { nullable: true })
+  songs?: Song[]
 
-  @Field(() => [Setlist])
-  setlists: Setlist[]
+  @Field(() => [Setlist], { nullable: true })
+  setlists?: Setlist[]
 }

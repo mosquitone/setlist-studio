@@ -68,7 +68,6 @@ export class SongResolver {
   async songs(@Ctx() ctx: Context): Promise<Song[]> {
     return ctx.prisma.song.findMany({
       where: { userId: ctx.userId },
-      include: { user: true },
       orderBy: { title: 'asc' },
     }) as Promise<Song[]>
   }
@@ -78,7 +77,6 @@ export class SongResolver {
   async song(@Arg('id', () => ID) id: string, @Ctx() ctx: Context): Promise<Song | null> {
     return ctx.prisma.song.findFirst({
       where: { id, userId: ctx.userId },
-      include: { user: true },
     }) as Promise<Song | null>
   }
 
@@ -90,7 +88,6 @@ export class SongResolver {
         ...input,
         userId: ctx.userId!,
       },
-      include: { user: true },
     }) as Promise<Song>
   }
 
@@ -112,7 +109,6 @@ export class SongResolver {
     return ctx.prisma.song.update({
       where: { id },
       data: input,
-      include: { user: true },
     }) as Promise<Song>
   }
 
