@@ -49,7 +49,7 @@
 
 1. リポジトリをクローン:
 ```bash
-git clone git@github.com:mosquitone/setlist-generator-next.git
+git clone git@github.com:mosquitone/setlist-studio.git
 cd setlist-studio
 ```
 
