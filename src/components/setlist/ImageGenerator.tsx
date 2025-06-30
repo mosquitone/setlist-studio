@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Box, Button, Alert, CircularProgress } from '@mui/material'
 import { Image as ImageIcon } from '@mui/icons-material'
 import html2canvas from 'html2canvas'
@@ -135,7 +135,13 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
     }
     const imageURL = await generateImage(selectedTheme)
     if (imageURL) {
-      setPreviewImage(imageURL)
+      // Clean up previous preview image URL
+      setPreviewImage(prevUrl => {
+        if (prevUrl) {
+          URL.revokeObjectURL(prevUrl)
+        }
+        return imageURL
+      })
       if (onPreviewReady) {
         onPreviewReady(imageURL)
       }
@@ -166,8 +172,22 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
   // Reset generation flag when theme changes
   React.useEffect(() => {
     setHasGenerated(false)
-    setPreviewImage(null)
+    setPreviewImage(prevUrl => {
+      if (prevUrl) {
+        URL.revokeObjectURL(prevUrl)
+      }
+      return null
+    })
   }, [selectedTheme, data.id])
+
+  // Cleanup preview image on unmount
+  useEffect(() => {
+    return () => {
+      if (previewImage) {
+        URL.revokeObjectURL(previewImage)
+      }
+    }
+  }, [previewImage])
 
   // Auto-generate preview when not generated yet
   React.useEffect(() => {

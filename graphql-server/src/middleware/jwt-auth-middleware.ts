@@ -19,9 +19,13 @@ export const AuthMiddleware: MiddlewareFn<Context> = async ({ context }, next) =
 
   try {
     const token = authorization.replace('Bearer ', '')
-    const payload = jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret') as any
+    const jwtSecret = process.env.JWT_SECRET
+    if (!jwtSecret) {
+      throw new Error('JWT_SECRET environment variable is not configured')
+    }
+    const payload = jwt.verify(token, jwtSecret) as { userId: string }
     context.userId = payload.userId
-  } catch (err) {
+  } catch {
     throw new Error('Not authenticated')
   }
 

@@ -3,7 +3,6 @@ import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { AuthPayload, RegisterInput, LoginInput } from '../types/Auth'
-import { User } from '../types/User'
 
 interface Context {
   prisma: PrismaClient
@@ -33,7 +32,11 @@ export class AuthResolver {
       },
     })
 
-    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET || 'fallback-secret', {
+    const jwtSecret = process.env.JWT_SECRET
+    if (!jwtSecret) {
+      throw new Error('JWT_SECRET environment variable is not configured')
+    }
+    const token = jwt.sign({ userId: user.id }, jwtSecret, {
       expiresIn: '7d',
     })
 
@@ -58,7 +61,11 @@ export class AuthResolver {
       throw new Error('Invalid email or password')
     }
 
-    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET || 'fallback-secret', {
+    const jwtSecret = process.env.JWT_SECRET
+    if (!jwtSecret) {
+      throw new Error('JWT_SECRET environment variable is not configured')
+    }
+    const token = jwt.sign({ userId: user.id }, jwtSecret, {
       expiresIn: '7d',
     })
 

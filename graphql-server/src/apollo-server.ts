@@ -18,7 +18,6 @@ async function startServer() {
 
   const schema = await buildSchema({
     resolvers: [AuthResolver, SongResolver, SetlistResolver, SetlistItemResolver],
-    validate: false,
   })
 
   const plugins =
@@ -47,7 +46,7 @@ async function startServer() {
   )
 
   server.applyMiddleware({
-    app: app as any,
+    app: app as any, // Apollo Server Express compatibility
     path: '/graphql',
   })
 

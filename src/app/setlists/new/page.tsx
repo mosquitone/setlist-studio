@@ -5,6 +5,7 @@ import { useMutation, useQuery } from '@apollo/client'
 import { CREATE_SETLIST, GET_SETLIST } from '@/lib/graphql/apollo-operations'
 import { useRouter, useSearchParams } from 'next/navigation'
 import SetlistForm, { SetlistFormValues } from '@/components/forms/SetlistForm'
+import { GetSetlistResponse, SetlistItem } from '@/types/graphql'
 
 export default function NewSetlistPage() {
   const router = useRouter()
@@ -23,7 +24,7 @@ export default function NewSetlistPage() {
 
   const [createSetlist, { loading, error }] = useMutation(CREATE_SETLIST)
 
-  const { data: duplicateData, loading: duplicateLoading } = useQuery(GET_SETLIST, {
+  const { data: duplicateData, loading: duplicateLoading } = useQuery<GetSetlistResponse>(GET_SETLIST, {
     variables: { id: duplicateId },
     skip: !duplicateId,
   })
@@ -71,8 +72,8 @@ export default function NewSetlistPage() {
         items:
           setlist.items.length > 0
             ? [...setlist.items]
-                .sort((a: any, b: any) => a.order - b.order)
-                .map((item: any) => ({
+                .sort((a: SetlistItem, b: SetlistItem) => a.order - b.order)
+                .map((item: SetlistItem) => ({
                   title: item.title,
                   note: item.note || '',
                 }))

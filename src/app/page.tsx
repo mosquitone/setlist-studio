@@ -34,6 +34,7 @@ import {
 import Link from 'next/link'
 import { useQuery } from '@apollo/client'
 import { GET_SETLISTS } from '../lib/graphql/apollo-operations'
+import { GetSetlistsResponse, Setlist } from '../types/graphql'
 
 export default function HomePage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -43,7 +44,7 @@ export default function HomePage() {
     data: setlistsData,
     loading: setlistsLoading,
     refetch,
-  } = useQuery(GET_SETLISTS, {
+  } = useQuery<GetSetlistsResponse>(GET_SETLISTS, {
     skip: !isLoggedIn,
     errorPolicy: 'all',
   })
@@ -218,7 +219,7 @@ export default function HomePage() {
                 </Card>
               ) : (
                 <Grid container spacing={2}>
-                  {setlistsData.setlists.map((setlist: any) => (
+                  {setlistsData.setlists.map((setlist: Setlist) => (
                     <Grid item xs={12} sm={6} md={4} key={setlist.id}>
                       <Card
                         sx={{
