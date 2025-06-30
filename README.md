@@ -28,7 +28,7 @@
 ### フロントエンド
 - **Next.js 15** - React フレームワーク
 - **TypeScript** - 型安全性
-- **Material-UI v7** - モダンなUIコンポーネント
+- **Material-UI v5** - モダンなUIコンポーネント
 - **Apollo Client** - GraphQL状態管理
 
 ### バックエンド
