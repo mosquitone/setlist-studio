@@ -10,6 +10,7 @@ import {
   Int,
   ID,
 } from 'type-graphql'
+import { IsOptional, IsString, IsInt, Min, Max } from 'class-validator'
 import { PrismaClient } from '@prisma/client'
 import { Song } from '../types/Song'
 import { AuthMiddleware } from '../middleware/jwt-auth-middleware'
@@ -22,42 +23,71 @@ interface Context {
 @InputType()
 export class CreateSongInput {
   @Field()
+  @IsString()
   title: string
 
   @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
   artist?: string
 
   @Field(() => Int, { nullable: true })
+  @IsOptional()
+  @IsInt()
+  @Min(1)
   duration?: number
 
   @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
   key?: string
 
   @Field(() => Int, { nullable: true })
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(300)
   tempo?: number
 
   @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
   notes?: string
 }
 
 @InputType()
 export class UpdateSongInput {
   @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
   title?: string
 
   @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
   artist?: string
 
   @Field(() => Int, { nullable: true })
+  @IsOptional()
+  @IsInt()
+  @Min(1)
   duration?: number
 
   @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
   key?: string
 
   @Field(() => Int, { nullable: true })
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(300)
   tempo?: number
 
   @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
   notes?: string
 }
 
