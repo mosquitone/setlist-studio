@@ -22,6 +22,7 @@ import {
 import { useQuery } from '@apollo/client'
 import { GET_SETLISTS } from '@/lib/graphql/queries'
 import { useRouter } from 'next/navigation'
+import { formatDateJST } from '@/lib/dateUtils'
 
 interface SetlistItem {
   id: string
@@ -75,14 +76,6 @@ export default function SetlistsPage() {
     handleMenuClose()
   }
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('ja-JP', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    })
-  }
 
   const getThemeLabel = (theme: string) => {
     const themes: { [key: string]: string } = {
@@ -206,7 +199,7 @@ export default function SetlistsPage() {
                   <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                     <CalendarIcon sx={{ fontSize: 16, mr: 0.5, color: 'action.active' }} />
                     <Typography variant="body2" color="text.secondary">
-                      {formatDate(setlist.eventDate)}
+                      {formatDateJST(setlist.eventDate)}
                     </Typography>
                   </Box>
                 )}
@@ -243,7 +236,7 @@ export default function SetlistsPage() {
                   color="text.secondary"
                   sx={{ mt: 1, display: 'block' }}
                 >
-                  作成日: {formatDate(setlist.createdAt)}
+                  作成日: {formatDateJST(setlist.createdAt)}
                 </Typography>
               </CardContent>
             </Card>

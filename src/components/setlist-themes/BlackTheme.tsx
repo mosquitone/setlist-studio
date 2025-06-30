@@ -1,6 +1,7 @@
 import React from 'react'
 import { Box, Typography, Paper } from '@mui/material'
 import { SetlistThemeProps } from './types'
+import { formatEventDateJST } from '@/lib/dateUtils'
 
 export const BlackTheme: React.FC<SetlistThemeProps> = ({ data, className }) => {
   const { bandName, eventName, eventDate, openTime, startTime, items, qrCodeURL } = data
@@ -76,7 +77,7 @@ export const BlackTheme: React.FC<SetlistThemeProps> = ({ data, className }) => 
         {/* Event Details */}
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
           {eventDate && (
-            <Typography sx={{ fontSize: '16px', color: '#ffffff', fontWeight: 400 }}>{eventDate}</Typography>
+            <Typography sx={{ fontSize: '16px', color: '#ffffff', fontWeight: 400 }}>{formatEventDateJST(eventDate)}</Typography>
           )}
           <Box sx={{ display: 'flex', gap: 2 }}>
             {openTime && (
