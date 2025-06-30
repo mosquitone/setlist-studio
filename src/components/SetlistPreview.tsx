@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { Box, Paper, CircularProgress, Typography } from '@mui/material'
+import { Box, Paper, CircularProgress, Typography, Button } from '@mui/material'
 import { SetlistData } from './setlist-themes/types'
 import { SetlistRenderer } from './setlist-themes/SetlistRenderer'
 
@@ -29,7 +29,7 @@ export function SetlistPreview({
         <Box
           sx={{
             border: '2px solid red',
-            margin: '1rem 0',
+            margin: 0,
             width: '700px',
             height: '990px',
             overflow: 'hidden',
@@ -78,19 +78,26 @@ export function SetlistPreview({
       )
     }
 
-    // Fallback to DOM Preview
+    // Error state - image generation failed
     return (
       <Box
         sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
           width: '700px',
           height: '990px',
-          overflow: 'hidden',
-          position: 'relative',
+          border: '1px solid #e0e0e0',
+          backgroundColor: '#f5f5f5',
         }}
       >
-        <Box sx={{ transform: 'scale(0.88)', transformOrigin: 'top left' }}>
-          <SetlistRenderer data={{ ...data, theme: selectedTheme, qrCodeURL }} />
-        </Box>
+        <Typography variant="h6" sx={{ mb: 2, color: 'text.secondary' }}>
+          画像が生成されませんでした
+        </Typography>
+        <Button variant="contained" onClick={() => window.location.reload()} sx={{ mt: 1 }}>
+          画像生成を再試行
+        </Button>
       </Box>
     )
   }

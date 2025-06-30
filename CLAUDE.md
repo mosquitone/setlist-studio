@@ -182,3 +182,7 @@ The application uses separate servers during development:
 - **Theme Persistence**: Fixed issue where saved themes from database weren't being displayed on setlist detail pages
 - **Theme Naming Consistency**: Resolved "basic"/"black" naming inconsistency in UI components
 - **Database Integration**: Improved theme selection to properly initialize from stored setlist data
+- **Theme Layout Improvements**: Updated font sizes and spacing to match reference design - larger band names (48px), improved song list readability (20-32px), cleaner layout without numbered songs
+- **React Hooks Order**: Fixed hooks order violation in SetlistDetailPage that was causing React development errors
+- **Debug Mode Layout**: Corrected debug mode preview dimensions and removed unwanted margins to match image preview sizing
+- **Error Handling**: Replaced confusing fallback DOM preview with proper error message and retry functionality when image generation fails

@@ -56,6 +56,13 @@ export default function SetlistDetailPage() {
     },
   })
 
+  // Initialize selectedTheme with the saved theme from database
+  React.useEffect(() => {
+    if (data?.setlist?.theme && (data.setlist.theme === 'black' || data.setlist.theme === 'white')) {
+      setSelectedTheme(data.setlist.theme)
+    }
+  }, [data?.setlist?.theme])
+
   if (loading) {
     return (
       <Container maxWidth="lg" sx={{ py: 4, textAlign: 'center' }}>
@@ -85,13 +92,6 @@ export default function SetlistDetailPage() {
     theme: setlist.theme,
     items: [...setlist.items].sort((a: any, b: any) => a.order - b.order),
   }
-
-  // Initialize selectedTheme with the saved theme from database
-  React.useEffect(() => {
-    if (setlist.theme && (setlist.theme === 'black' || setlist.theme === 'white')) {
-      setSelectedTheme(setlist.theme)
-    }
-  }, [setlist.theme])
 
   const handleThemeChange = (theme: 'black' | 'white') => {
     setSelectedTheme(theme)

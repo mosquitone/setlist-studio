@@ -11,11 +11,11 @@ export const WhiteTheme: React.FC<SetlistThemeProps> = ({ data, className }) => 
 
   // Dynamic font size based on number of songs for A4 compatibility
   const getFontSize = (count: number): string => {
-    if (count <= 8) return '24px'
-    if (count <= 15) return '20px'
-    if (count <= 25) return '18px'
-    if (count <= 30) return '16px'
-    return '14px'
+    if (count <= 8) return '32px'
+    if (count <= 12) return '28px'
+    if (count <= 18) return '24px'
+    if (count <= 25) return '22px'
+    return '20px'
   }
 
   const fontSize = getFontSize(items.length)
@@ -41,17 +41,18 @@ export const WhiteTheme: React.FC<SetlistThemeProps> = ({ data, className }) => 
       }}
     >
       {/* Header Section */}
-      <Box sx={{ textAlign: 'center', mb: 4 }}>
+      <Box sx={{ textAlign: 'left', mb: 6, pl: 2 }}>
         <Typography
           variant="h1"
           component="h1"
           sx={{
-            fontSize: '32px',
+            fontSize: '48px',
             fontWeight: 700,
             color: '#000000',
-            mb: 2,
-            letterSpacing: '1px',
-            textTransform: 'uppercase',
+            mb: 1,
+            letterSpacing: '2px',
+            textTransform: 'lowercase',
+            lineHeight: 1.1,
           }}
         >
           {bandName}
@@ -61,10 +62,12 @@ export const WhiteTheme: React.FC<SetlistThemeProps> = ({ data, className }) => 
           <Typography
             variant="h2"
             sx={{
-              fontSize: '20px',
-              color: '#333333',
-              mb: 1,
+              fontSize: '18px',
+              color: '#666666',
+              mb: 3,
               fontWeight: 400,
+              textTransform: 'uppercase',
+              letterSpacing: '1px',
             }}
           >
             {eventName}
@@ -72,16 +75,18 @@ export const WhiteTheme: React.FC<SetlistThemeProps> = ({ data, className }) => 
         )}
 
         {/* Event Details */}
-        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 3, mt: 2 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
           {eventDate && (
-            <Typography sx={{ fontSize: '14px', color: '#666666' }}>{eventDate}</Typography>
+            <Typography sx={{ fontSize: '16px', color: '#000000', fontWeight: 400 }}>{eventDate}</Typography>
           )}
-          {openTime && (
-            <Typography sx={{ fontSize: '14px', color: '#666666' }}>Open: {openTime}</Typography>
-          )}
-          {startTime && (
-            <Typography sx={{ fontSize: '14px', color: '#666666' }}>Start: {startTime}</Typography>
-          )}
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            {openTime && (
+              <Typography sx={{ fontSize: '16px', color: '#000000', fontWeight: 400 }}>OPEN {openTime}</Typography>
+            )}
+            {startTime && (
+              <Typography sx={{ fontSize: '16px', color: '#000000', fontWeight: 400 }}>START: {startTime}</Typography>
+            )}
+          </Box>
         </Box>
       </Box>
 
@@ -112,54 +117,23 @@ export const WhiteTheme: React.FC<SetlistThemeProps> = ({ data, className }) => 
         </Box>
       )}
 
-      {/* Setlist Title */}
-      <Box sx={{ mb: 3 }}>
-        <Typography
-          sx={{
-            fontSize: '18px',
-            fontWeight: 600,
-            color: '#000000',
-            textAlign: 'center',
-            borderBottom: '2px solid #e0e0e0',
-            paddingBottom: '8px',
-            marginBottom: '20px',
-          }}
-        >
-          SETLIST
-        </Typography>
-      </Box>
 
       {/* Songs List */}
-      <Box sx={{ flex: 1, overflow: 'hidden' }}>
+      <Box sx={{ flex: 1, overflow: 'hidden', pl: 2 }}>
         {items.map((item, index) => (
           <Box
             key={item.id}
             sx={{
-              display: 'flex',
-              alignItems: 'center',
-              mb: 2,
-              padding: '8px 0',
-              borderBottom: '1px solid #f0f0f0',
+              mb: 3.5,
             }}
           >
             <Typography
               sx={{
                 fontSize: fontSize,
-                fontWeight: 600,
                 color: '#000000',
-                minWidth: '40px',
-                textAlign: 'right',
-                marginRight: '20px',
-              }}
-            >
-              {(index + 1).toString().padStart(2, '0')}
-            </Typography>
-            <Typography
-              sx={{
-                fontSize: fontSize,
-                color: '#000000',
-                flex: 1,
                 fontWeight: 400,
+                lineHeight: 1.2,
+                mb: item.note ? 0.5 : 0,
               }}
             >
               {item.title}
@@ -167,10 +141,10 @@ export const WhiteTheme: React.FC<SetlistThemeProps> = ({ data, className }) => 
             {item.note && (
               <Typography
                 sx={{
-                  fontSize: `${parseInt(fontSize) - 2}px`,
+                  fontSize: '16px',
                   color: '#666666',
-                  fontStyle: 'italic',
-                  marginLeft: '10px',
+                  fontWeight: 300,
+                  pl: 0,
                 }}
               >
                 {item.note}
