@@ -1,37 +1,31 @@
 import { useState, useEffect } from 'react'
+import { TokenManager, createStorageListener } from '../lib/auth-utils'
 
 export function useAuth() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const checkAuth = () => {
-      try {
-        if (typeof window !== 'undefined') {
-          const token = localStorage.getItem('token')
-          setIsLoggedIn(!!token)
-        }
-      } catch {
-        setIsLoggedIn(false)
-      } finally {
-        setIsLoading(false)
-      }
-    }
+    setIsLoggedIn(TokenManager.isValid())
+    setIsLoading(false)
 
-    checkAuth()
+    const cleanup = createStorageListener(token => {
+      setIsLoggedIn(!!token)
+    })
 
-    if (typeof window !== 'undefined') {
-      const handleStorageChange = () => checkAuth()
-      window.addEventListener('storage', handleStorageChange)
-      return () => window.removeEventListener('storage', handleStorageChange)
-    }
+    return cleanup
   }, [])
 
+  const login = (token: string) => {
+    TokenManager.set(token)
+    setIsLoggedIn(true)
+  }
+
   const logout = () => {
-    localStorage.removeItem('token')
+    TokenManager.remove()
     setIsLoggedIn(false)
     window.location.reload()
   }
 
-  return { isLoggedIn, isLoading, logout }
+  return { isLoggedIn, isLoading, login, logout }
 }

@@ -22,6 +22,7 @@ import { useMutation } from '@apollo/client'
 import { LOGIN } from '@/lib/graphql/apollo-operations'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { useAuth } from '@/hooks/useAuth'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -31,22 +32,12 @@ export default function LoginPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const successMessage = searchParams.get('message')
+  const { login: authLogin } = useAuth()
 
-  const [login, { loading }] = useMutation(LOGIN, {
+  const [loginMutation, { loading }] = useMutation(LOGIN, {
     onCompleted: data => {
       console.log('Login successful:', data)
-      localStorage.setItem('token', data.login.token)
-
-      // storageイベントを手動で発火してホーム画面の認証状態を更新
-      window.dispatchEvent(
-        new StorageEvent('storage', {
-          key: 'token',
-          newValue: data.login.token,
-          storageArea: localStorage,
-        }),
-      )
-
-      // ホームページにリダイレクト
+      authLogin(data.login.token)
       router.push('/')
     },
     onError: error => {
@@ -61,7 +52,7 @@ export default function LoginPage() {
 
     try {
       console.log('Attempting login with:', { email, password: '***' })
-      await login({
+      await loginMutation({
         variables: {
           input: { email, password },
         },

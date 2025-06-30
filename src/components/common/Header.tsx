@@ -1,43 +1,20 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Link from 'next/link'
+import { useAuth } from '../../hooks/useAuth'
 
 export default function Header() {
-  const [token, setToken] = useState<string | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { isLoggedIn, isLoading, logout } = useAuth()
   const router = useRouter()
 
-  useEffect(() => {
-    const stored = localStorage.getItem('token')
-    setToken(stored)
-    setLoading(false)
-
-    const handleStorage = (e: StorageEvent) => {
-      if (e.key === 'token') {
-        setToken(e.newValue)
-      }
-    }
-    window.addEventListener('storage', handleStorage)
-    return () => window.removeEventListener('storage', handleStorage)
-  }, [])
-
   const handleAuthClick = () => {
-    if (token) {
-      localStorage.removeItem('token')
-      window.dispatchEvent(
-        new StorageEvent('storage', {
-          key: 'token',
-          newValue: null,
-          storageArea: localStorage,
-        }),
-      )
-      router.push('/')
+    if (isLoggedIn) {
+      logout()
     } else {
       router.push('/login')
     }
@@ -58,7 +35,7 @@ export default function Header() {
         <Button
           variant="outlined"
           onClick={handleAuthClick}
-          disabled={loading}
+          disabled={isLoading}
           sx={{
             borderRadius: 10,
             px: 4,
@@ -80,7 +57,7 @@ export default function Header() {
             },
           }}
         >
-          {loading ? '読込中…' : token ? 'ログアウト' : 'ログイン'}
+          {isLoading ? '読込中…' : isLoggedIn ? 'ログアウト' : 'ログイン'}
         </Button>
       </Toolbar>
     </AppBar>
