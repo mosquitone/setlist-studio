@@ -1,7 +1,7 @@
 {
   "name": "setlist-studio-graphql-server",
   "version": "1.0.0",
-  "description": "GraphQL server for setlist studio",
+  "description": "GraphQL server for mosquitone Emotional Setlist Studio",
   "main": "dist/apollo-server.js",
   "scripts": {
     "start": "node dist/apollo-server.js",

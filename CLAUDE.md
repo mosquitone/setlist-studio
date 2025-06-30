@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a modern setlist generator application built for music bands, featuring user authentication, song management, and setlist creation. The application uses a dual-server architecture with NextJS frontend and a standalone GraphQL server for development, designed for potential Vercel deployment.
+This is mosquitone Emotional Setlist Studio, a modern setlist generator application built for music bands, featuring user authentication, song management, and setlist creation. The application uses a dual-server architecture with NextJS frontend and a standalone GraphQL server for development, designed for potential Vercel deployment.
 
 ## Development Commands
 
@@ -141,7 +141,7 @@ The application uses separate servers during development:
 │   │   └── SetlistItemResolver.ts
 │   ├── src/types/         # GraphQL type definitions
 │   ├── src/middleware/    # Authentication middleware
-│   │   └── auth.ts        # JWT authentication middleware
+│   │   └── jwt-auth-middleware.ts  # JWT authentication middleware
 │   └── prisma/           # Database schema and migrations
 ├── public/               # Static assets including theme logos
 └── docker-compose.yml     # PostgreSQL for local development
@@ -206,6 +206,7 @@ The application uses separate servers during development:
 ### Semantic File Organization (2025-06-30)
 - **GraphQL Server Entry Point**: Renamed `src/index.ts` to `src/apollo-server.ts` for better semantic clarity
 - **GraphQL Operations**: Renamed `src/lib/graphql/queries.ts` to `apollo-operations.ts` to reflect it contains both queries and mutations
-- **Import Path Updates**: Updated all 11 frontend files to use new `apollo-operations` import path
+- **Authentication Middleware**: Renamed `src/middleware/auth.ts` to `jwt-auth-middleware.ts` for clearer purpose indication
+- **Import Path Updates**: Updated all frontend files to use new `apollo-operations` import path and all GraphQL resolvers to use new middleware path
 - **Package.json Updates**: Updated GraphQL server scripts and main entry point to reflect apollo-server.ts naming
 - **Build Compatibility**: Verified all changes work correctly with both local development and Vercel deployment

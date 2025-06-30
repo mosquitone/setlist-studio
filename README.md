@@ -1,6 +1,6 @@
-# Setlist Studio
+# mosquitone Emotional Setlist Studio
 
-🎵 プロフェッショナルなセットリスト作成ツール
+🎵 エモーショナルなセットリスト作成ツール
 
 ## 概要
 
