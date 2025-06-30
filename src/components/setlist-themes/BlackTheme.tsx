@@ -12,11 +12,14 @@ export const BlackTheme: React.FC<SetlistThemeProps> = ({ data, className }) => 
 
   // Dynamic font size based on number of songs for A4 compatibility
   const getFontSize = (count: number): string => {
-    if (count <= 8) return '32px'
-    if (count <= 12) return '28px'
-    if (count <= 18) return '24px'
-    if (count <= 25) return '22px'
-    return '20px'
+    if (count <= 6) return '40px'
+    if (count <= 8) return '34px'
+    if (count <= 10) return '30px'
+    if (count <= 12) return '26px'
+    if (count <= 15) return '24px'
+    if (count <= 18) return '22px'
+    if (count <= 25) return '20px'
+    return '18px'
   }
 
   const fontSize = getFontSize(items.length)
@@ -118,13 +121,11 @@ export const BlackTheme: React.FC<SetlistThemeProps> = ({ data, className }) => 
 
 
       {/* Songs List */}
-      <Box sx={{ flex: 1, overflow: 'hidden', pl: 2 }}>
+      <Box sx={{ flex: 1, overflow: 'hidden', pl: 2, display: 'flex', flexDirection: 'column', gap: 3.5 }}>
         {items.map((item, index) => (
           <Box
             key={item.id}
-            sx={{
-              mb: 3.5,
-            }}
+            sx={{}}
           >
             <Typography
               sx={{
