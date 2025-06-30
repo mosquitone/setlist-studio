@@ -4,7 +4,7 @@
 
 export const formatDateJST = (dateString: string | null | undefined): string => {
   if (!dateString) return ''
-  
+
   const date = new Date(dateString)
   return date.toLocaleDateString('ja-JP', {
     timeZone: 'Asia/Tokyo',
@@ -16,7 +16,7 @@ export const formatDateJST = (dateString: string | null | undefined): string => 
 
 export const formatDateTimeJST = (dateString: string | null | undefined): string => {
   if (!dateString) return ''
-  
+
   const date = new Date(dateString)
   return date.toLocaleString('ja-JP', {
     timeZone: 'Asia/Tokyo',
@@ -30,7 +30,7 @@ export const formatDateTimeJST = (dateString: string | null | undefined): string
 
 export const formatEventDateJST = (dateString: string | null | undefined): string => {
   if (!dateString) return ''
-  
+
   const date = new Date(dateString)
   return date.toLocaleDateString('ja-JP', {
     timeZone: 'Asia/Tokyo',

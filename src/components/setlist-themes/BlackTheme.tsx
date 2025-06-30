@@ -80,14 +80,20 @@ export const BlackTheme: React.FC<SetlistThemeProps> = ({ data, className }) => 
         {/* Event Details */}
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
           {eventDate && (
-            <Typography sx={{ fontSize: '16px', color: '#ffffff', fontWeight: 400 }}>{formatEventDateJST(eventDate)}</Typography>
+            <Typography sx={{ fontSize: '16px', color: '#ffffff', fontWeight: 400 }}>
+              {formatEventDateJST(eventDate)}
+            </Typography>
           )}
           <Box sx={{ display: 'flex', gap: 2 }}>
             {openTime && (
-              <Typography sx={{ fontSize: '16px', color: '#ffffff', fontWeight: 400 }}>OPEN {openTime}</Typography>
+              <Typography sx={{ fontSize: '16px', color: '#ffffff', fontWeight: 400 }}>
+                OPEN {openTime}
+              </Typography>
             )}
             {startTime && (
-              <Typography sx={{ fontSize: '16px', color: '#ffffff', fontWeight: 400 }}>START: {startTime}</Typography>
+              <Typography sx={{ fontSize: '16px', color: '#ffffff', fontWeight: 400 }}>
+                START: {startTime}
+              </Typography>
             )}
           </Box>
         </Box>
@@ -119,14 +125,19 @@ export const BlackTheme: React.FC<SetlistThemeProps> = ({ data, className }) => 
         </Box>
       )}
 
-
       {/* Songs List */}
-      <Box sx={{ flex: 1, overflow: 'hidden', pl: 2, display: 'flex', flexDirection: 'column', gap: 3.5 }}>
+      <Box
+        sx={{
+          flex: 1,
+          overflow: 'hidden',
+          pl: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 3.5,
+        }}
+      >
         {items.map((item, index) => (
-          <Box
-            key={item.id}
-            sx={{}}
-          >
+          <Box key={item.id} sx={{}}>
             <Typography
               sx={{
                 fontSize: fontSize,

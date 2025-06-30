@@ -76,7 +76,6 @@ export default function SetlistsPage() {
     handleMenuClose()
   }
 
-
   const getThemeLabel = (theme: string) => {
     const themes: { [key: string]: string } = {
       black: 'Black',

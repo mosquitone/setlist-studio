@@ -8,6 +8,18 @@ const __dirname = dirname(__filename)
 const compat = new FlatCompat({ baseDirectory: __dirname })
 
 export default [
+  // ESLint ignore patterns (migrated from .eslintignore)
+  {
+    ignores: [
+      'node_modules',
+      '.next',
+      'out',
+      'build',
+      'graphql-server/node_modules',
+      'graphql-server/dist',
+      'postgres_data',
+    ],
+  },
   // Core Next.js + TypeScript rules
   ...compat.extends(
     'next/core-web-vitals',

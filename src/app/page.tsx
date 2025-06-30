@@ -39,9 +39,13 @@ export default function HomePage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
 
-  const { data: setlistsData, loading: setlistsLoading, refetch } = useQuery(GET_SETLISTS, {
+  const {
+    data: setlistsData,
+    loading: setlistsLoading,
+    refetch,
+  } = useQuery(GET_SETLISTS, {
     skip: !isLoggedIn,
-    errorPolicy: 'all'
+    errorPolicy: 'all',
   })
 
   useEffect(() => {
@@ -233,7 +237,9 @@ export default function HomePage() {
                         <Box
                           sx={{
                             background: `linear-gradient(135deg, ${
-                              setlist.theme === 'white' ? '#f8fafc 0%, #e2e8f0 100%' : '#1e293b 0%, #0f172a 100%'
+                              setlist.theme === 'white'
+                                ? '#f8fafc 0%, #e2e8f0 100%'
+                                : '#1e293b 0%, #0f172a 100%'
                             })`,
                             p: 1.5,
                             color: setlist.theme === 'white' ? 'text.primary' : 'white',
@@ -242,10 +248,18 @@ export default function HomePage() {
                             flexDirection: 'column',
                           }}
                         >
-                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5 }}>
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'flex-start',
+                              mb: 1.5,
+                            }}
+                          >
                             <Avatar
                               sx={{
-                                bgcolor: setlist.theme === 'white' ? 'primary.main' : 'secondary.main',
+                                bgcolor:
+                                  setlist.theme === 'white' ? 'primary.main' : 'secondary.main',
                                 width: 40,
                                 height: 40,
                               }}
@@ -256,18 +270,29 @@ export default function HomePage() {
                               label={setlist.theme === 'white' ? 'ホワイト' : 'ブラック'}
                               size="small"
                               sx={{
-                                bgcolor: setlist.theme === 'white' ? 'rgba(59, 130, 246, 0.1)' : 'rgba(239, 68, 68, 0.2)',
+                                bgcolor:
+                                  setlist.theme === 'white'
+                                    ? 'rgba(59, 130, 246, 0.1)'
+                                    : 'rgba(239, 68, 68, 0.2)',
                                 color: setlist.theme === 'white' ? 'primary.main' : '#ef4444',
                                 fontWeight: 600,
                               }}
                             />
                           </Box>
-                          <Typography variant="h6" component="h3" gutterBottom sx={{ fontWeight: 700, mb: 1 }}>
+                          <Typography
+                            variant="h6"
+                            component="h3"
+                            gutterBottom
+                            sx={{ fontWeight: 700, mb: 1 }}
+                          >
                             {setlist.title}
                           </Typography>
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
                             <GroupIcon sx={{ fontSize: 14, opacity: 0.7 }} />
-                            <Typography variant="body2" sx={{ opacity: 0.8, fontWeight: 500, fontSize: '0.8rem' }}>
+                            <Typography
+                              variant="body2"
+                              sx={{ opacity: 0.8, fontWeight: 500, fontSize: '0.8rem' }}
+                            >
                               {setlist.bandName || '未設定'}
                             </Typography>
                           </Box>
@@ -348,8 +373,8 @@ export default function HomePage() {
                   component={Link}
                   href="/login"
                   startIcon={<LoginIcon />}
-                  sx={{ 
-                    minWidth: 220, 
+                  sx={{
+                    minWidth: 220,
                     borderRadius: 10,
                     px: 4,
                     py: 2,
@@ -362,7 +387,7 @@ export default function HomePage() {
                     '&:hover': {
                       borderColor: '#2563eb',
                       backgroundColor: 'rgba(59, 130, 246, 0.04)',
-                    }
+                    },
                   }}
                 >
                   ログイン
@@ -373,8 +398,8 @@ export default function HomePage() {
                   component={Link}
                   href="/register"
                   startIcon={<PersonAddIcon />}
-                  sx={{ 
-                    minWidth: 220, 
+                  sx={{
+                    minWidth: 220,
                     borderRadius: 10,
                     px: 4,
                     py: 2,
@@ -387,7 +412,7 @@ export default function HomePage() {
                     '&:hover': {
                       borderColor: '#2563eb',
                       backgroundColor: 'rgba(59, 130, 246, 0.04)',
-                    }
+                    },
                   }}
                 >
                   新規登録

@@ -77,7 +77,7 @@ export default function Header() {
             '&:disabled': {
               borderColor: 'rgba(255, 255, 255, 0.5)',
               color: 'rgba(255, 255, 255, 0.5)',
-            }
+            },
           }}
         >
           {loading ? '読込中…' : token ? 'ログアウト' : 'ログイン'}

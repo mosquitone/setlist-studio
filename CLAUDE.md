@@ -103,6 +103,7 @@ The application uses separate servers during development:
 - Both root and graphql-server have separate package.json files
 - GraphQL server has isolated dependencies to avoid version conflicts
 - ESLint 9.x with TypeScript 8.35.0 parser and Prettier 3.6.2 for code formatting
+- **ESLint Configuration**: Uses flat config format (eslint.config.mjs) with ignores property instead of deprecated .eslintignore
 
 ### Development Workflow
 1. Start PostgreSQL: `docker-compose up -d postgres`
@@ -220,3 +221,10 @@ The application uses separate servers during development:
 - **Import Path Updates**: Updated all frontend files to use new `apollo-operations` import path and all GraphQL resolvers to use new middleware path
 - **Package.json Updates**: Updated GraphQL server scripts and main entry point to reflect apollo-server.ts naming
 - **Build Compatibility**: Verified all changes work correctly with both local development and Vercel deployment
+
+### ESLint Configuration Migration (2025-06-30)
+- **Flat Config Migration**: Migrated from deprecated `.eslintignore` file to modern flat config format
+- **Ignore Patterns**: Moved all ignore patterns to `ignores` property in `eslint.config.mjs`
+- **Plugin Dependencies**: Added missing `@next/eslint-plugin-next` dependency to resolve plugin loading issues
+- **Warning Resolution**: Eliminated ESLintIgnoreWarning about deprecated .eslintignore file
+- **Code Quality**: Auto-fixed formatting issues with `pnpm lint:fix` while maintaining existing code structure

@@ -30,23 +30,26 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
   const [previewImage, setPreviewImage] = useState<string | null>(null)
   const [hasGenerated, setHasGenerated] = useState(false)
 
-  const generateQRCode = React.useCallback(async (setlistId: string): Promise<string> => {
-    const url = `${baseUrl}/setlists/${setlistId}`
-    try {
-      const qrCodeDataURL = await QRCode.toDataURL(url, {
-        width: 200,
-        margin: 2,
-        color: {
-          dark: '#000000',
-          light: '#FFFFFF',
-        },
-      })
-      return qrCodeDataURL
-    } catch (err) {
-      console.error('Error generating QR code:', err)
-      return ''
-    }
-  }, [baseUrl])
+  const generateQRCode = React.useCallback(
+    async (setlistId: string): Promise<string> => {
+      const url = `${baseUrl}/setlists/${setlistId}`
+      try {
+        const qrCodeDataURL = await QRCode.toDataURL(url, {
+          width: 200,
+          margin: 2,
+          color: {
+            dark: '#000000',
+            light: '#FFFFFF',
+          },
+        })
+        return qrCodeDataURL
+      } catch (err) {
+        console.error('Error generating QR code:', err)
+        return ''
+      }
+    },
+    [baseUrl],
+  )
 
   const generateImage = React.useCallback(
     async (theme: string): Promise<string | null> => {

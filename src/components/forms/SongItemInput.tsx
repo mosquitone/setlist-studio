@@ -75,8 +75,22 @@ export function SongItemInput({
               {...params}
               label="楽曲名"
               size="small"
-              error={touched.items?.[index]?.title && Boolean(errors.items?.[index] && typeof errors.items[index] === 'object' && 'title' in errors.items[index])}
-              helperText={touched.items?.[index]?.title && errors.items?.[index] && typeof errors.items[index] === 'object' && 'title' in errors.items[index] ? String(errors.items[index].title) : ''}
+              error={
+                touched.items?.[index]?.title &&
+                Boolean(
+                  errors.items?.[index] &&
+                    typeof errors.items[index] === 'object' &&
+                    'title' in errors.items[index],
+                )
+              }
+              helperText={
+                touched.items?.[index]?.title &&
+                errors.items?.[index] &&
+                typeof errors.items[index] === 'object' &&
+                'title' in errors.items[index]
+                  ? String(errors.items[index].title)
+                  : ''
+              }
             />
           )}
         />
@@ -88,8 +102,22 @@ export function SongItemInput({
           value={item.title}
           onChange={handleChange}
           onBlur={handleBlur}
-          error={touched.items?.[index]?.title && Boolean(errors.items?.[index] && typeof errors.items[index] === 'object' && 'title' in errors.items[index])}
-          helperText={touched.items?.[index]?.title && errors.items?.[index] && typeof errors.items[index] === 'object' && 'title' in errors.items[index] ? String(errors.items[index].title) : ''}
+          error={
+            touched.items?.[index]?.title &&
+            Boolean(
+              errors.items?.[index] &&
+                typeof errors.items[index] === 'object' &&
+                'title' in errors.items[index],
+            )
+          }
+          helperText={
+            touched.items?.[index]?.title &&
+            errors.items?.[index] &&
+            typeof errors.items[index] === 'object' &&
+            'title' in errors.items[index]
+              ? String(errors.items[index].title)
+              : ''
+          }
           size="small"
         />
       )}
