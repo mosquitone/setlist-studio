@@ -19,7 +19,7 @@ import {
   ArrowBack as ArrowBackIcon,
 } from '@mui/icons-material'
 import { useMutation } from '@apollo/client'
-import { REGISTER } from '@/lib/graphql/queries'
+import { REGISTER } from '@/lib/graphql/apollo-operations'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 

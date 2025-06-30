@@ -29,7 +29,7 @@ import {
   Home as HomeIcon,
 } from '@mui/icons-material'
 import { useQuery, useMutation } from '@apollo/client'
-import { GET_SONGS, DELETE_SONG, UPDATE_SONG } from '@/lib/graphql/queries'
+import { GET_SONGS, DELETE_SONG, UPDATE_SONG } from '@/lib/graphql/apollo-operations'
 import { useRouter } from 'next/navigation'
 
 interface Song {

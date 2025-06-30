@@ -1,4 +1,4 @@
-# セットリストジェネレーター v2
+# Setlist Studio
 
 🎵 プロフェッショナルなセットリスト作成ツール
 
@@ -49,8 +49,8 @@
 
 1. リポジトリをクローン:
 ```bash
-git clone git@github.com:chikarautsumi/setlist-generator-next.git
-cd setlist-generator-next
+git clone git@github.com:mosquitone/setlist-generator-next.git
+cd setlist-studio
 ```
 
 2. 依存関係をインストール:

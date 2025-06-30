@@ -15,7 +15,7 @@ import {
 } from '@mui/material'
 import { useQuery } from '@apollo/client'
 import { useParams } from 'next/navigation'
-import { GET_SETLIST } from '@/lib/graphql/queries'
+import { GET_SETLIST } from '@/lib/graphql/apollo-operations'
 import { SetlistData } from '@/components/setlist-themes/types'
 import { ImageGenerator } from '@/components/ImageGenerator'
 import { SetlistActions } from '@/components/SetlistActions'

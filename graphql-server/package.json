@@ -1,11 +1,11 @@
 {
-  "name": "setlist-generator-graphql-server",
+  "name": "setlist-studio-graphql-server",
   "version": "1.0.0",
-  "description": "GraphQL server for setlist generator",
-  "main": "dist/index.js",
+  "description": "GraphQL server for setlist studio",
+  "main": "dist/apollo-server.js",
   "scripts": {
-    "start": "node dist/index.js",
-    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "start": "node dist/apollo-server.js",
+    "dev": "ts-node-dev --respawn --transpile-only src/apollo-server.ts",
     "build": "tsc",
     "generate": "prisma generate",
     "db:push": "prisma db push",

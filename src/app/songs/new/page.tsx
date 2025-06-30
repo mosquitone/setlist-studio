@@ -5,7 +5,7 @@ import { Formik, Form } from 'formik'
 import * as Yup from 'yup'
 import { Container, Typography, TextField, Button, Box, Paper, Alert } from '@mui/material'
 import { useMutation } from '@apollo/client'
-import { CREATE_SONG } from '@/lib/graphql/queries'
+import { CREATE_SONG } from '@/lib/graphql/apollo-operations'
 import { useRouter } from 'next/navigation'
 
 interface SongFormValues {

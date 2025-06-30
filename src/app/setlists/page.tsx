@@ -20,7 +20,7 @@ import {
   MusicNote as MusicNoteIcon,
 } from '@mui/icons-material'
 import { useQuery } from '@apollo/client'
-import { GET_SETLISTS } from '@/lib/graphql/queries'
+import { GET_SETLISTS } from '@/lib/graphql/apollo-operations'
 import { useRouter } from 'next/navigation'
 import { formatDateJST } from '@/lib/dateUtils'
 

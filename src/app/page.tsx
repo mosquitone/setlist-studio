@@ -33,7 +33,7 @@ import {
 } from '@mui/icons-material'
 import Link from 'next/link'
 import { useQuery } from '@apollo/client'
-import { GET_SETLISTS } from '../lib/graphql/queries'
+import { GET_SETLISTS } from '../lib/graphql/apollo-operations'
 
 export default function HomePage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)

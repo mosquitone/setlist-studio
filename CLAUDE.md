@@ -133,12 +133,15 @@ The application uses separate servers during development:
 ├── src/lib/               # Shared utilities
 │   ├── apollo-client.ts    # GraphQL client configuration
 │   └── graphql/           # GraphQL queries and mutations
+│       └── apollo-operations.ts  # All GraphQL queries, mutations, and subscriptions
 ├── graphql-server/        # Standalone GraphQL server
+│   ├── src/apollo-server.ts      # Main Apollo GraphQL server entry point
 │   ├── src/resolvers/     # GraphQL resolvers
 │   │   ├── SetlistResolver.ts
 │   │   └── SetlistItemResolver.ts
 │   ├── src/types/         # GraphQL type definitions
 │   ├── src/middleware/    # Authentication middleware
+│   │   └── auth.ts        # JWT authentication middleware
 │   └── prisma/           # Database schema and migrations
 ├── public/               # Static assets including theme logos
 └── docker-compose.yml     # PostgreSQL for local development
@@ -199,3 +202,10 @@ The application uses separate servers during development:
 - **Debug Mode Layout**: Corrected debug mode preview dimensions and removed unwanted margins to match image preview sizing
 - **Error Handling**: Replaced confusing fallback DOM preview with proper error message and retry functionality when image generation fails
 - **Grid Layout Issues**: Resolved card height overflow problems by optimizing content spacing and card dimensions
+
+### Semantic File Organization (2025-06-30)
+- **GraphQL Server Entry Point**: Renamed `src/index.ts` to `src/apollo-server.ts` for better semantic clarity
+- **GraphQL Operations**: Renamed `src/lib/graphql/queries.ts` to `apollo-operations.ts` to reflect it contains both queries and mutations
+- **Import Path Updates**: Updated all 11 frontend files to use new `apollo-operations` import path
+- **Package.json Updates**: Updated GraphQL server scripts and main entry point to reflect apollo-server.ts naming
+- **Build Compatibility**: Verified all changes work correctly with both local development and Vercel deployment
