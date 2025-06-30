@@ -90,7 +90,7 @@ export default function SetlistDetailPage() {
     openTime: setlist.openTime,
     startTime: setlist.startTime,
     theme: setlist.theme,
-    items: setlist.items.sort((a: any, b: any) => a.order - b.order),
+    items: [...setlist.items].sort((a: any, b: any) => a.order - b.order),
   }
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {

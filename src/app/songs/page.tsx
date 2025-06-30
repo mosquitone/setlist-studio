@@ -180,7 +180,26 @@ export default function SongsPage() {
               <TableRow
                 key={row.id}
                 hover
-                sx={{ cursor: 'pointer' }}
+                sx={{
+                  cursor: 'pointer',
+                  '&:hover': {
+                    backgroundColor: '#2563eb !important',
+                    color: '#ffffff',
+                    transform: 'scale(1.01)',
+                    transition: 'all 0.2s ease-in-out',
+                    boxShadow: '0 2px 8px rgba(37, 99, 235, 0.3)',
+                    '& .MuiTableCell-root': {
+                      color: '#ffffff !important',
+                    },
+                    '& .MuiIconButton-root': {
+                      color: '#ffffff !important',
+                      '&:hover': {
+                        backgroundColor: 'rgba(255,255,255,0.1) !important',
+                      },
+                    },
+                  },
+                  transition: 'all 0.2s ease-in-out',
+                }}
                 onClick={() => handleRowClick(row)}
               >
                 <TableCell>{row.title ?? ''}</TableCell>
