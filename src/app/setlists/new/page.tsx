@@ -23,9 +23,9 @@ export default function NewSetlistPage() {
   })
 
   const [createSetlist, { loading, error }] = useMutation(CREATE_SETLIST, {
-    onError: (err) => {
+    onError: err => {
       console.error('[NewSetlistPage] create setlist failed:', err)
-    }
+    },
   })
 
   const { data: duplicateData, loading: duplicateLoading } = useQuery<GetSetlistResponse>(

@@ -7,6 +7,7 @@ import html2canvas from 'html2canvas'
 import QRCode from 'qrcode'
 import { SetlistData } from '../setlist-themes/types'
 import { SetlistRenderer } from '../setlist-themes/SetlistRenderer'
+import { isValidUrl } from '@/lib/security'
 
 interface ImageGeneratorProps {
   data: SetlistData
@@ -33,6 +34,13 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
   const generateQRCode = React.useCallback(
     async (setlistId: string): Promise<string> => {
       const url = `${baseUrl}/setlists/${setlistId}`
+
+      // Validate the URL before generating QR code
+      if (!isValidUrl(url)) {
+        console.error('[ImageGenerator] Invalid URL for QR code:', url)
+        return ''
+      }
+
       try {
         const qrCodeDataURL = await QRCode.toDataURL(url, {
           width: 200,
@@ -42,6 +50,13 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
             light: '#FFFFFF',
           },
         })
+
+        // Additional validation for the generated data URL
+        if (!qrCodeDataURL.startsWith('data:image/')) {
+          console.error('[ImageGenerator] Invalid QR code data URL generated')
+          return ''
+        }
+
         return qrCodeDataURL
       } catch (error) {
         console.error('[ImageGenerator] QR code generation failed:', error)

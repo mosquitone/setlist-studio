@@ -21,12 +21,14 @@ export default function EditSetlistPage() {
     skip: !setlistId,
   })
 
-  const [updateSetlist, { loading: updateLoading, error: updateError }] =
-    useMutation(UPDATE_SETLIST, {
-      onError: (err) => {
+  const [updateSetlist, { loading: updateLoading, error: updateError }] = useMutation(
+    UPDATE_SETLIST,
+    {
+      onError: err => {
         console.error('[EditSetlistPage] update setlist failed:', err)
-      }
-    })
+      },
+    },
+  )
 
   if (queryLoading) {
     return (

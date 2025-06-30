@@ -51,8 +51,8 @@ export function SongItemInput({
         gap: 2,
       }}
     >
-      <IconButton 
-        size="small" 
+      <IconButton
+        size="small"
         disabled={isDragDisabled}
         aria-label={`楽曲 ${index + 1} をドラッグして移動。Ctrl+矢印キーでキーボード操作可能`}
         onKeyDown={handleKeyDown}

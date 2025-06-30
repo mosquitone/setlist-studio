@@ -29,7 +29,9 @@ async function startServer() {
   })
 
   const plugins =
-    process.env.NODE_ENV !== 'production' ? [ApolloServerPluginLandingPageLocalDefault({ embed: true })] : []
+    process.env.NODE_ENV !== 'production'
+      ? [ApolloServerPluginLandingPageLocalDefault({ embed: true })]
+      : []
 
   const server = new ApolloServer<Context>({
     schema,

@@ -60,8 +60,8 @@ export function SongTable({ songs, loading, onEdit, onDelete }: SongTableProps) 
         </TableHead>
         <TableBody>
           {songs.map(song => (
-            <TableRow 
-              key={song.id} 
+            <TableRow
+              key={song.id}
               hover
               tabIndex={0}
               sx={{
@@ -69,10 +69,10 @@ export function SongTable({ songs, loading, onEdit, onDelete }: SongTableProps) 
                   backgroundColor: 'action.focus',
                   outline: '2px solid',
                   outlineColor: 'primary.main',
-                  outlineOffset: '-2px'
-                }
+                  outlineOffset: '-2px',
+                },
               }}
-              onKeyDown={(event) => {
+              onKeyDown={event => {
                 if (event.key === 'Enter' || event.key === ' ') {
                   event.preventDefault()
                   onEdit(song)
@@ -89,17 +89,17 @@ export function SongTable({ songs, loading, onEdit, onDelete }: SongTableProps) 
               <TableCell>{song.tempo || '-'}</TableCell>
               <TableCell>{song.notes || '-'}</TableCell>
               <TableCell align="right">
-                <IconButton 
-                  onClick={() => onEdit(song)} 
-                  color="primary" 
+                <IconButton
+                  onClick={() => onEdit(song)}
+                  color="primary"
                   size="small"
                   aria-label={`${song.title}を編集`}
                 >
                   <EditIcon />
                 </IconButton>
-                <IconButton 
-                  onClick={() => onDelete(song.id)} 
-                  color="error" 
+                <IconButton
+                  onClick={() => onDelete(song.id)}
+                  color="error"
                   size="small"
                   aria-label={`${song.title}を削除`}
                 >

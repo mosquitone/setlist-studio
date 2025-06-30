@@ -2,6 +2,7 @@ import React from 'react'
 import { Box, Typography, Paper } from '@mui/material'
 import { SetlistThemeProps } from './types'
 import { formatEventDateJST } from '@/lib/dateUtils'
+import { isValidUrl } from '@/lib/security'
 
 export const BlackTheme: React.FC<SetlistThemeProps> = ({ data, className }) => {
   const { bandName, eventName, eventDate, openTime, startTime, items, qrCodeURL } = data
@@ -100,7 +101,7 @@ export const BlackTheme: React.FC<SetlistThemeProps> = ({ data, className }) => 
       </Box>
 
       {/* QR Code */}
-      {qrCodeURL && (
+      {qrCodeURL && isValidUrl(qrCodeURL) && (
         <Box
           sx={{
             position: 'absolute',

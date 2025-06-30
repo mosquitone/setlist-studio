@@ -10,6 +10,7 @@ import { GET_SONGS } from '@/lib/graphql/apollo-operations'
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd'
 import { SetlistFormFields } from './SetlistFormFields'
 import { SongItemInput } from './SongItemInput'
+import { validateAndSanitizeInput } from '@/lib/security'
 
 export interface SetlistItem {
   id?: string
@@ -40,9 +41,41 @@ interface SetlistFormProps {
 }
 
 const validationSchema = Yup.object({
-  title: Yup.string().required('セットリスト名は必須です'),
-  bandName: Yup.string().required('バンド名は必須です'),
-  eventName: Yup.string(),
+  title: Yup.string()
+    .required('セットリスト名は必須です')
+    .max(100, 'セットリスト名は100文字以下にしてください')
+    .test('sanitize', 'セットリスト名に無効な文字が含まれています', function (value) {
+      if (!value) return true
+      try {
+        validateAndSanitizeInput(value, 100)
+        return true
+      } catch {
+        return false
+      }
+    }),
+  bandName: Yup.string()
+    .required('バンド名は必須です')
+    .max(100, 'バンド名は100文字以下にしてください')
+    .test('sanitize', 'バンド名に無効な文字が含まれています', function (value) {
+      if (!value) return true
+      try {
+        validateAndSanitizeInput(value, 100)
+        return true
+      } catch {
+        return false
+      }
+    }),
+  eventName: Yup.string()
+    .max(200, 'イベント名は200文字以下にしてください')
+    .test('sanitize', 'イベント名に無効な文字が含まれています', function (value) {
+      if (!value) return true
+      try {
+        validateAndSanitizeInput(value, 200)
+        return true
+      } catch {
+        return false
+      }
+    }),
   eventDate: Yup.string(),
   openTime: Yup.string(),
   startTime: Yup.string(),
@@ -50,8 +83,29 @@ const validationSchema = Yup.object({
   items: Yup.array()
     .of(
       Yup.object({
-        title: Yup.string().required('楽曲名は必須です'),
-        note: Yup.string(),
+        title: Yup.string()
+          .required('楽曲名は必須です')
+          .max(200, '楽曲名は200文字以下にしてください')
+          .test('sanitize', '楽曲名に無効な文字が含まれています', function (value) {
+            if (!value) return true
+            try {
+              validateAndSanitizeInput(value, 200)
+              return true
+            } catch {
+              return false
+            }
+          }),
+        note: Yup.string()
+          .max(500, 'ノートは500文字以下にしてください')
+          .test('sanitize', 'ノートに無効な文字が含まれています', function (value) {
+            if (!value) return true
+            try {
+              validateAndSanitizeInput(value, 500)
+              return true
+            } catch {
+              return false
+            }
+          }),
       }),
     )
     .min(1, '少なくとも1曲は必要です'),
