@@ -1,36 +1,15 @@
 'use client'
 
 import React, { useState } from 'react'
-import {
-  Box,
-  Container,
-  Typography,
-  TextField,
-  Button,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  IconButton,
-  Paper,
-  Grid,
-  Alert,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Autocomplete,
-} from '@mui/material'
-import {
-  Add as AddIcon,
-  Delete as DeleteIcon,
-  DragHandle as DragHandleIcon,
-  ExpandMore as ExpandMoreIcon,
-} from '@mui/icons-material'
-import { Formik, Form, FieldArray, FormikProps } from 'formik'
+import { Box, Container, Typography, Button, Paper, Alert } from '@mui/material'
+import { Add as AddIcon } from '@mui/icons-material'
+import { Formik, Form, FieldArray } from 'formik'
 import * as Yup from 'yup'
 import { useQuery } from '@apollo/client'
 import { GET_SONGS } from '@/lib/graphql/queries'
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd'
+import { SetlistFormFields } from './SetlistFormFields'
+import { SongItemInput } from './SongItemInput'
 
 export interface SetlistItem {
   id?: string
@@ -78,11 +57,6 @@ const validationSchema = Yup.object({
     .min(1, '少なくとも1曲は必要です'),
 })
 
-const themes = [
-  { value: 'black', label: 'Black' },
-  { value: 'white', label: 'White' },
-]
-
 export default function SetlistForm({
   title,
   initialValues,
@@ -97,104 +71,6 @@ export default function SetlistForm({
   const { data: songsData } = useQuery(GET_SONGS)
   const songs = songsData?.songs || []
 
-  const renderSongItem = (
-    item: SetlistItem,
-    index: number,
-    formik: FormikProps<SetlistFormValues>,
-    remove: (index: number) => void,
-    isDragDisabled = false,
-  ) => {
-    const { values, errors, touched, handleChange, handleBlur } = formik
-
-    return (
-      <Paper
-        variant="outlined"
-        sx={{
-          p: 2,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 2,
-        }}
-      >
-        <IconButton size="small" disabled={isDragDisabled}>
-          <DragHandleIcon />
-        </IconButton>
-
-        <Typography variant="body2" sx={{ minWidth: 30, textAlign: 'center' }}>
-          {index + 1}
-        </Typography>
-
-        {enableDragAndDrop ? (
-          <Autocomplete
-            fullWidth
-            options={songs}
-            getOptionLabel={option => (typeof option === 'string' ? option : option.title)}
-            value={null}
-            inputValue={item.title}
-            onChange={(event, newValue) => {
-              const value = typeof newValue === 'string' ? newValue : newValue?.title || ''
-              handleChange({
-                target: {
-                  name: `items.${index}.title`,
-                  value: value,
-                },
-              })
-            }}
-            onInputChange={(event, newInputValue) => {
-              handleChange({
-                target: {
-                  name: `items.${index}.title`,
-                  value: newInputValue,
-                },
-              })
-            }}
-            freeSolo
-            renderInput={params => (
-              <TextField
-                {...params}
-                label="楽曲名"
-                size="small"
-                error={touched.items?.[index]?.title && Boolean(errors.items?.[index]?.title)}
-                helperText={touched.items?.[index]?.title && errors.items?.[index]?.title}
-              />
-            )}
-          />
-        ) : (
-          <TextField
-            fullWidth
-            name={`items.${index}.title`}
-            label="楽曲名"
-            value={item.title}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            error={touched.items?.[index]?.title && Boolean(errors.items?.[index]?.title)}
-            helperText={touched.items?.[index]?.title && errors.items?.[index]?.title}
-            size="small"
-          />
-        )}
-
-        <TextField
-          fullWidth
-          name={`items.${index}.note`}
-          label="メモ"
-          value={item.note}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          size="small"
-        />
-
-        <IconButton
-          color="error"
-          onClick={() => remove(index)}
-          disabled={values.items.length <= 1}
-          size="small"
-        >
-          <DeleteIcon />
-        </IconButton>
-      </Paper>
-    )
-  }
-
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
       <Typography variant="h4" component="h1" gutterBottom>
@@ -208,118 +84,16 @@ export default function SetlistForm({
         enableReinitialize
       >
         {formik => {
-          const { values, errors, touched, handleChange, handleBlur } = formik
+          const { values } = formik
 
           return (
             <Form>
               <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
-                <Grid container spacing={3}>
-                  <Grid item xs={12}>
-                    <TextField
-                      fullWidth
-                      name="title"
-                      label="セットリスト名"
-                      value={values.title}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      error={touched.title && Boolean(errors.title)}
-                      helperText={touched.title && errors.title}
-                      required
-                    />
-                  </Grid>
-
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      fullWidth
-                      name="bandName"
-                      label="バンド名"
-                      value={values.bandName}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      error={touched.bandName && Boolean(errors.bandName)}
-                      helperText={touched.bandName && errors.bandName}
-                      required
-                    />
-                  </Grid>
-
-                  <Grid item xs={12} sm={6}>
-                    <FormControl fullWidth>
-                      <InputLabel>テーマ</InputLabel>
-                      <Select
-                        name="theme"
-                        value={values.theme}
-                        onChange={handleChange}
-                        label="テーマ"
-                      >
-                        {themes.map(theme => (
-                          <MenuItem key={theme.value} value={theme.value}>
-                            {theme.label}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                </Grid>
-
-                <Accordion
-                  expanded={expandedOptions}
-                  onChange={() => setExpandedOptions(!expandedOptions)}
-                  sx={{ mt: 2 }}
-                >
-                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography>オプション設定</Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    <Grid container spacing={2}>
-                      <Grid item xs={12} sm={6}>
-                        <TextField
-                          fullWidth
-                          name="eventName"
-                          label="イベント名"
-                          value={values.eventName}
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <TextField
-                          fullWidth
-                          name="eventDate"
-                          label="開催日"
-                          type="date"
-                          value={values.eventDate}
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          InputLabelProps={{ shrink: true }}
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <TextField
-                          fullWidth
-                          name="openTime"
-                          label="開場時間"
-                          type="time"
-                          value={values.openTime}
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          InputLabelProps={{ shrink: true }}
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <TextField
-                          fullWidth
-                          name="startTime"
-                          label="開演時間"
-                          type="time"
-                          value={values.startTime}
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          InputLabelProps={{ shrink: true }}
-                        />
-                      </Grid>
-                    </Grid>
-                  </AccordionDetails>
-                </Accordion>
+                <SetlistFormFields
+                  formik={formik}
+                  expandedOptions={expandedOptions}
+                  onToggleOptions={() => setExpandedOptions(!expandedOptions)}
+                />
               </Paper>
 
               <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
@@ -366,7 +140,14 @@ export default function SetlistForm({
                                             }}
                                             {...provided.dragHandleProps}
                                           >
-                                            {renderSongItem(item, index, formik, remove)}
+                                            <SongItemInput
+                                              item={item}
+                                              index={index}
+                                              formik={formik}
+                                              onRemove={remove}
+                                              songs={songs}
+                                              enableDragAndDrop={enableDragAndDrop}
+                                            />
                                           </Box>
                                         </Box>
                                       )}
@@ -380,7 +161,15 @@ export default function SetlistForm({
                         ) : (
                           values.items.map((item, index) => (
                             <Box key={index} sx={{ mb: 2 }}>
-                              {renderSongItem(item, index, formik, remove, true)}
+                              <SongItemInput
+                                item={item}
+                                index={index}
+                                formik={formik}
+                                onRemove={remove}
+                                songs={songs}
+                                enableDragAndDrop={enableDragAndDrop}
+                                isDragDisabled={true}
+                              />
                             </Box>
                           ))
                         )}

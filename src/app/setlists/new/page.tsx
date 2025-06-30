@@ -6,7 +6,6 @@ import { CREATE_SETLIST, GET_SETLIST } from '@/lib/graphql/queries'
 import { useRouter, useSearchParams } from 'next/navigation'
 import SetlistForm, { SetlistFormValues } from '@/components/SetlistForm'
 
-
 export default function NewSetlistPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -21,9 +20,9 @@ export default function NewSetlistPage() {
     theme: 'black',
     items: [{ title: '', note: '' }],
   })
-  
+
   const [createSetlist, { loading, error }] = useMutation(CREATE_SETLIST)
-  
+
   const { data: duplicateData, loading: duplicateLoading } = useQuery(GET_SETLIST, {
     variables: { id: duplicateId },
     skip: !duplicateId,
@@ -69,12 +68,15 @@ export default function NewSetlistPage() {
         openTime: setlist.openTime || '',
         startTime: setlist.startTime || '',
         theme: setlist.theme,
-        items: setlist.items.length > 0 
-          ? [...setlist.items].sort((a: any, b: any) => a.order - b.order).map((item: any) => ({
-              title: item.title,
-              note: item.note || '',
-            }))
-          : [{ title: '', note: '' }],
+        items:
+          setlist.items.length > 0
+            ? [...setlist.items]
+                .sort((a: any, b: any) => a.order - b.order)
+                .map((item: any) => ({
+                  title: item.title,
+                  note: item.note || '',
+                }))
+            : [{ title: '', note: '' }],
       })
     }
   }, [duplicateData])
@@ -84,7 +86,7 @@ export default function NewSetlistPage() {
 
   return (
     <SetlistForm
-      title={duplicateId ? "セットリストを複製" : "新しいセットリストを作成"}
+      title={duplicateId ? 'セットリストを複製' : '新しいセットリストを作成'}
       initialValues={initialValues}
       onSubmit={handleSubmit}
       loading={isLoading}
