@@ -125,8 +125,11 @@ export class SetlistResolver {
       return null
     }
 
-    // For ISR, always return the setlist data (access control will be handled on client-side)
-    // This allows proper SSR/ISR generation while maintaining security on the frontend
+    // セキュリティチェック: 公開Setlistまたは所有者のみアクセス可能
+    if (!setlist.isPublic && setlist.userId !== ctx.userId) {
+      throw new Error('Unauthorized access to private setlist')
+    }
+
     return setlist as Setlist
   }
 

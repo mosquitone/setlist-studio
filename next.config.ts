@@ -8,8 +8,20 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: 'Content-Security-Policy',
-            value:
-              "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' data:; connect-src 'self' https:; frame-ancestors 'none';",
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'wasm-unsafe-eval'", // WebAssemblyサポート、unsafe-evalは除去
+              "style-src 'self' 'unsafe-inline'", // Material-UIのため一時的に保持
+              "img-src 'self' data: https: blob:", // 画像生成とQRコードのため
+              "font-src 'self' data:",
+              "connect-src 'self'", // API通信を自身のドメインに制限
+              "object-src 'none'", // プラグイン無効化
+              "base-uri 'self'", // base要素制限
+              "form-action 'self'", // フォーム送信先制限
+              "frame-ancestors 'none'", // クリックジャッキング対策
+              "block-all-mixed-content", // HTTPS強制
+              "upgrade-insecure-requests" // HTTP→HTTPS自動アップグレード
+            ].join('; '),
           },
           {
             key: 'X-Frame-Options',
@@ -26,6 +38,10 @@ const nextConfig: NextConfig = {
           {
             key: 'X-XSS-Protection',
             value: '1; mode=block',
+          },
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()',
           },
         ],
       },

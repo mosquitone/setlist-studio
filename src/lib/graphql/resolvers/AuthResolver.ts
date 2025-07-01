@@ -19,7 +19,7 @@ export class AuthResolver {
     })
 
     if (existingUser) {
-      throw new Error('User with this email or username already exists')
+      throw new Error('登録に失敗しました。入力内容を確認してください')
     }
 
     const hashedPassword = await bcrypt.hash(input.password, 12)
@@ -53,12 +53,12 @@ export class AuthResolver {
     })
 
     if (!user) {
-      throw new Error('Invalid email or password')
+      throw new Error('メールアドレスまたはパスワードが正しくありません')
     }
 
     const isValidPassword = await bcrypt.compare(input.password, user.password)
     if (!isValidPassword) {
-      throw new Error('Invalid email or password')
+      throw new Error('メールアドレスまたはパスワードが正しくありません')
     }
 
     const jwtSecret = process.env.JWT_SECRET
