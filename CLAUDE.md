@@ -24,9 +24,26 @@ This is mosquitone Emotional Setlist Studio, a modern setlist generator applicat
 
 ### Environment Setup
 - **Install dependencies**: `pnpm install`
-- **Required environment variables** (in `.env` and `.env.local`):
+- **Environment variables setup**: `cp .env.example .env.local`
+- **Required environment variables** (in `.env.local`):
   - `DATABASE_URL`: PostgreSQL connection string
-  - `JWT_SECRET`: Secret key for JWT token generation
+  - `JWT_SECRET`: Secret key for JWT token generation (32+ chars)
+  - `CSRF_SECRET`: CSRF protection secret, different from JWT_SECRET (32+ chars)
+  - `IP_HASH_SALT`: Salt for IP address hashing (16+ chars)
+  - `CRON_SECRET`: Secret for Vercel cron job authentication (32+ chars)
+  - `POSTGRES_PASSWORD`: PostgreSQL password for Docker (local development only)
+
+### Environment Variables Details
+
+| Variable | Purpose | Local Development | Production (Vercel) | Generation |
+|----------|---------|-------------------|---------------------|------------|
+| `DATABASE_URL` | Database connection | `postgresql://postgres:postgres@localhost:5432/setlist_generator` | Managed DB connection string | Provider gives this |
+| `JWT_SECRET` | JWT token signing | Any 32+ char string | Strong random string | `openssl rand -base64 32` |
+| `CSRF_SECRET` | CSRF token signing | Any 32+ char string | Different from JWT_SECRET | `openssl rand -base64 32` |
+| `IP_HASH_SALT` | IP anonymization | Any 16+ char string | Strong random string | `openssl rand -base64 16` |
+| `CRON_SECRET` | Cron job auth | Any 32+ char string | Strong random string | `openssl rand -base64 32` |
+| `POSTGRES_PASSWORD` | Docker PostgreSQL | `postgres` | Not used (managed DB) | N/A |
+| `NODE_ENV` | Environment mode | `development` | Auto-set by Vercel | N/A |
 
 ## Architecture Overview
 
@@ -102,11 +119,41 @@ The application uses a modern, streamlined architecture:
 - ESLint 9.x with TypeScript 8.35.0 parser and Prettier 3.6.2 for code formatting
 - **ESLint Configuration**: Uses flat config format (eslint.config.mjs) with ignores property
 
-### Development Workflow
-1. Start PostgreSQL: `docker-compose up -d postgres`
-2. Install dependencies: `pnpm install`
-3. Set up database schema: `pnpm db:push`
-4. Start development server: `pnpm dev`
+### Development Workflow (Local)
+1. Install dependencies: `pnpm install`
+2. Start PostgreSQL (初回セットアップ):
+   ```bash
+   # セキュリティ設定を一時的に無効化
+   sed -i.bak 's/user: "999:999"/# user: "999:999"/' docker-compose.yml
+   sed -i.bak 's/read_only: true/# read_only: true/' docker-compose.yml
+   
+   # PostgreSQL起動と初期化
+   docker-compose down -v && docker-compose up -d postgres
+   sleep 10 && pnpm db:push
+   
+   # セキュリティ設定を再有効化
+   sed -i.bak 's/# user: "999:999"/user: "999:999"/' docker-compose.yml
+   sed -i.bak 's/# read_only: true/read_only: true/' docker-compose.yml
+   docker-compose up -d postgres
+   ```
+3. Start development server: `pnpm dev`
+4. 以降の起動: `docker-compose up -d postgres && pnpm dev`
+
+### Production Deployment (Vercel)
+- **Database**: Use Vercel Postgres or external managed database service (Supabase, Neon, Railway)
+- **Environment Variables**: Set in Vercel Dashboard (all are required):
+  - `DATABASE_URL`: Connection string to production database (with SSL)
+  - `JWT_SECRET`: Strong production secret (32+ chars, unique)
+  - `CSRF_SECRET`: Different from JWT_SECRET (32+ chars, unique)
+  - `IP_HASH_SALT`: For IP address anonymization (16+ chars, unique)
+  - `CRON_SECRET`: For cron job authentication (32+ chars, unique)
+- **Cron Jobs**: Configure in Vercel Dashboard
+  - Path: `/api/cron/cleanup`
+  - Schedule: `0 2 * * *` (daily at 2 AM)
+- **Security Headers**: Automatically applied via vercel.json
+- **Note**: docker-compose.yml is for local development only, not used in Vercel
+
+For detailed deployment instructions, see [VERCEL_DEPLOYMENT_GUIDE.md](./VERCEL_DEPLOYMENT_GUIDE.md)
 
 ### Project Structure
 ```

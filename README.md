@@ -70,13 +70,30 @@ pnpm install
 
 3. 環境変数を設定:
 ```bash
-# .env と .env.local
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/setlist_generator"
-JWT_SECRET="your-super-secret-jwt-key-change-this-in-production"
-CSRF_SECRET="your-csrf-secret-key-different-from-jwt"
+cp .env.example .env.local
 ```
 
-> **セキュリティ注意**: 本番環境では必ず強力で異なる秘密鍵を設定してください
+環境変数ファイル（`.env.local`）を編集:
+```bash
+# データベース接続
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/setlist_generator"
+
+# 認証用シークレット（32文字以上の強力なランダム文字列に変更）
+JWT_SECRET="your-super-secret-jwt-key-change-this-in-production"
+
+# セキュリティ用シークレット（全て異なる値に設定）
+CSRF_SECRET="your-csrf-secret-key-different-from-jwt"
+IP_HASH_SALT="unique-salt-for-ip-address-hashing"
+CRON_SECRET="secret-for-vercel-cron-job-authentication"
+
+# Docker PostgreSQL パスワード（ローカル開発用）
+POSTGRES_PASSWORD="postgres"
+```
+
+> **セキュリティ注意**: 
+> - 本番環境では必ず強力で異なる秘密鍵を設定してください
+> - JWT_SECRET、CSRF_SECRET、IP_HASH_SALT、CRON_SECRETは全て異なる値にしてください
+> - シークレット生成方法: `openssl rand -base64 32`
 
 4. データベースを起動:
 ```bash
@@ -132,6 +149,40 @@ pnpm generate     # Prismaクライアント生成
 
 詳細なセキュリティ仕様は [CLAUDE.md](./CLAUDE.md#security-architecture-2025-07-01) を参照してください。
 
+## 本番デプロイ（Vercel）
+
+### デプロイ手順
+
+詳細なデプロイ手順は [VERCEL_DEPLOYMENT_GUIDE.md](./VERCEL_DEPLOYMENT_GUIDE.md) を参照してください。
+
+### 必要な環境変数
+
+| 環境変数名 | 説明 | 必須 | 生成方法 |
+|-----------|------|------|----------|
+| `DATABASE_URL` | PostgreSQL接続文字列 | ✅ | データベースプロバイダーから取得 |
+| `JWT_SECRET` | JWT認証用シークレット | ✅ | `openssl rand -base64 32` |
+| `CSRF_SECRET` | CSRF保護用シークレット | ✅ | `openssl rand -base64 32` |
+| `IP_HASH_SALT` | IPアドレスハッシュ用ソルト | ✅ | `openssl rand -base64 16` |
+| `CRON_SECRET` | Cronジョブ認証用シークレット | ✅ | `openssl rand -base64 32` |
+| `NODE_ENV` | 実行環境 | ❌ | Vercelが自動設定 |
+
+### データベース選択肢
+- **Vercel Postgres**: Vercel統合が最も簡単（推奨）
+- **Supabase**: 無料枠が充実
+- **Neon**: サーバーレスPostgreSQL
+- **Railway**: シンプルな管理画面
+
+### セキュリティチェックリスト
+- [ ] 全ての環境変数が異なる値に設定されている
+- [ ] シークレットが32文字以上（IP_HASH_SALTは16文字以上）
+- [ ] データベース接続がSSL/TLSを使用している
+- [ ] Vercel Cron Jobsが設定されている（`/api/cron/cleanup`）
+
+### 注意事項
+- `docker-compose.yml`はローカル開発専用
+- 本番環境ではマネージドデータベースサービスを使用
+- セキュリティ設定は全てデータベースベースで動作
+- 環境変数の合計サイズは64KB以下に収める
 ## ライセンス
 
 MIT License
