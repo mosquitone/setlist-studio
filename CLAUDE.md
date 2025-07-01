@@ -396,6 +396,14 @@ ThreatActivity: ipAddress, activityType, userId, timestamp, metadata
 ### Repository Management
 - **Claude.mdとReadme.mdを必要に応じて更新**: Added task to keep documentation files updated as part of ongoing project maintenance
 
+### GraphQL Architecture Documentation (2025-07-01)
+- **GraphQL-Architecture-Guide.md作成**: Created comprehensive GraphQL architecture guide with restaurant metaphor
+- **Resolver詳細解説**: Added detailed explanation of GraphQL Resolvers as "specialized chefs"
+- **レストラン比喩拡張**: Extended restaurant metaphor to include complete data flow from React to Database
+- **初心者向けセクション**: Added beginner-friendly explanations comparing REST API vs GraphQL
+- **実践的コード例**: Included real Setlist Studio code examples for all architecture layers
+- **プロジェクト構造図**: Visual representation of file relationships and responsibilities
+
 ### Library Structure Reorganization (2025-07-01)
 - **Hierarchical Organization**: Reorganized src/lib directory into functional categories (client, server, security, shared)
 - **Client Directory**: Moved apollo-client.ts, auth-utils.ts, secure-auth-client.ts to client/ subdirectory
