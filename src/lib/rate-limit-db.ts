@@ -3,7 +3,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
 import { generateRateLimitKey } from './security-utils'
-import { logRateLimitExceeded } from './security-logger'
+import { logRateLimitExceededDB } from './security-logger-db'
 
 interface RateLimitOptions {
   windowMs: number
@@ -148,8 +148,9 @@ export function createDatabaseRateLimit(
     const result = await rateLimiter.checkRateLimit(rateLimitKey, options)
 
     if (!result.success) {
-      // レート制限違反をログに記録
-      await logRateLimitExceeded(
+      // レート制限違反をログに記録（データベースベース）
+      await logRateLimitExceededDB(
+        prisma,
         rateLimitKey, 
         request.url, 
         request.headers.get('user-agent') || undefined

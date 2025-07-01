@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
   }
 
   // Apply CSRF protection for state-changing operations
-  const csrfResponse = await csrfProtection(request)
+  const csrfResponse = await csrfProtection(request, prisma)
   if (csrfResponse) {
     return csrfResponse
   }

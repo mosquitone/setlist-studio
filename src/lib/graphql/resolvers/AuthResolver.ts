@@ -3,8 +3,8 @@ import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { AuthPayload, RegisterInput, LoginInput, PasswordResetRequestInput, PasswordResetInput, PasswordResetResponse } from '../types/Auth'
-import { logAuthSuccess, logAuthFailure, SecurityEventType, SecurityEventSeverity, logSecurityEvent } from '../../security-logger'
-import { analyzeLoginAttempt } from '../../threat-detection'
+import { logAuthSuccessDB, logAuthFailureDB, SecurityEventType, SecurityEventSeverity, logSecurityEventDB } from '../../security-logger-db'
+import { DatabaseThreatDetection } from '../../threat-detection-db'
 // import { createPasswordResetRequest, executePasswordReset } from '../../password-reset' // 削除済み
 
 interface Context {
@@ -40,8 +40,8 @@ export class AuthResolver {
     })
 
     if (existingUser) {
-      // 登録失敗をログに記録
-      await logSecurityEvent({
+      // 登録失敗をログに記録（データベースベース）
+      await logSecurityEventDB(ctx.prisma, {
         type: SecurityEventType.REGISTER_FAILURE,
         severity: SecurityEventSeverity.MEDIUM,
         ipAddress: getClientIP(ctx),
@@ -73,8 +73,8 @@ export class AuthResolver {
       expiresIn: '7d',
     })
 
-    // 登録成功をログに記録
-    await logSecurityEvent({
+    // 登録成功をログに記録（データベースベース）
+    await logSecurityEventDB(ctx.prisma, {
       type: SecurityEventType.REGISTER_SUCCESS,
       severity: SecurityEventSeverity.LOW,
       userId: user.id,
@@ -99,11 +99,12 @@ export class AuthResolver {
     })
 
     if (!user) {
-      // ログイン失敗をログに記録
-      await logAuthFailure(input.email, 'user_not_found', getClientIP(ctx), ctx.req?.headers['user-agent'])
+      // ログイン失敗をログに記録（データベースベース）
+      await logAuthFailureDB(ctx.prisma, input.email, 'user_not_found', getClientIP(ctx), ctx.req?.headers['user-agent'])
       
-      // 脅威検知分析
-      const threats = analyzeLoginAttempt(
+      // 脅威検知分析（データベースベース）
+      const threatDetection = new DatabaseThreatDetection(ctx.prisma)
+      const threats = await threatDetection.analyzeLoginAttempt(
         input.email,
         false,
         getClientIP(ctx),
@@ -115,11 +116,12 @@ export class AuthResolver {
 
     const isValidPassword = await bcrypt.compare(input.password, user.password)
     if (!isValidPassword) {
-      // パスワード不正をログに記録
-      await logAuthFailure(input.email, 'invalid_password', getClientIP(ctx), ctx.req?.headers['user-agent'])
+      // パスワード不正をログに記録（データベースベース）
+      await logAuthFailureDB(ctx.prisma, input.email, 'invalid_password', getClientIP(ctx), ctx.req?.headers['user-agent'])
       
-      // 脅威検知分析
-      const threats = analyzeLoginAttempt(
+      // 脅威検知分析（データベースベース）
+      const threatDetection = new DatabaseThreatDetection(ctx.prisma)
+      const threats = await threatDetection.analyzeLoginAttempt(
         input.email,
         false,
         getClientIP(ctx),
@@ -137,11 +139,12 @@ export class AuthResolver {
       expiresIn: '7d',
     })
 
-    // ログイン成功をログに記録
-    await logAuthSuccess(user.id, getClientIP(ctx), ctx.req?.headers['user-agent'])
+    // ログイン成功をログに記録（データベースベース）
+    await logAuthSuccessDB(ctx.prisma, user.id, getClientIP(ctx), ctx.req?.headers['user-agent'])
     
     // 成功時の脅威検知分析（異常なパターンがないかチェック）
-    const threats = analyzeLoginAttempt(
+    const threatDetection = new DatabaseThreatDetection(ctx.prisma)
+    const threats = await threatDetection.analyzeLoginAttempt(
       input.email,
       true,
       getClientIP(ctx),
