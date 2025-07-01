@@ -6,7 +6,7 @@ import { buildSchema } from 'type-graphql'
 import { PrismaClient } from '@prisma/client'
 import { GraphQLSchema } from 'graphql'
 import depthLimit from 'graphql-depth-limit'
-import { apiRateLimit, authRateLimit } from '../../../lib/rate-limit'
+import { createApiRateLimit, createAuthRateLimit } from '../../../lib/rate-limit-db'
 import { csrfProtection } from '../../../lib/csrf-protection'
 
 // Import resolvers
@@ -81,7 +81,8 @@ function createSecureContext(req: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
-  // Apply rate limiting
+  // Apply database-based rate limiting
+  const apiRateLimit = createApiRateLimit(prisma)
   const rateLimitResponse = await apiRateLimit(request)
   if (rateLimitResponse) {
     return rateLimitResponse
@@ -100,10 +101,11 @@ export async function POST(request: NextRequest) {
   const body = await requestClone.text()
   const isAuthRequest = body.includes('login') || body.includes('register')
   
-  // Apply appropriate rate limiting
-  const rateLimitResponse = isAuthRequest 
-    ? await authRateLimit(request)
-    : await apiRateLimit(request)
+  // Apply appropriate database-based rate limiting
+  const rateLimitFunction = isAuthRequest 
+    ? createAuthRateLimit(prisma)
+    : createApiRateLimit(prisma)
+  const rateLimitResponse = await rateLimitFunction(request)
   
   if (rateLimitResponse) {
     return rateLimitResponse

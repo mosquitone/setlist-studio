@@ -73,3 +73,50 @@ model SetlistItem {
   @@unique([setlistId, order])
   @@map("setlist_items")
 }
+
+// セキュリティ関連テーブル（Vercel対応）
+
+model RateLimitEntry {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  count     Int      @default(1)
+  resetTime DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("rate_limit_entries")
+  @@index([resetTime])
+}
+
+model SecurityEvent {
+  id          String   @id @default(cuid())
+  type        String
+  severity    String
+  timestamp   DateTime @default(now())
+  userId      String?
+  ipAddress   String?
+  userAgent   String?
+  resource    String?
+  details     Json?
+  
+  @@map("security_events")
+  @@index([timestamp])
+  @@index([ipAddress])
+  @@index([type])
+  @@index([severity])
+}
+
+model ThreatActivity {
+  id              String   @id @default(cuid())
+  ipAddress       String
+  activityType    String   // 'login_attempt', 'failed_login', 'rate_limit_hit'
+  userId          String?
+  userAgent       String?
+  timestamp       DateTime @default(now())
+  metadata        Json?
+  
+  @@map("threat_activities")
+  @@index([ipAddress, timestamp])
+  @@index([activityType])
+  @@index([timestamp])
+}

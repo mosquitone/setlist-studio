@@ -101,6 +101,7 @@ class SecurityLogger {
       id: this.generateEventId(),
       timestamp: new Date(),
       ...sanitizedEvent,
+      details: sanitizedEvent.details || {}, // undefinedを避ける
     }
 
     // 重要度フィルタリング
