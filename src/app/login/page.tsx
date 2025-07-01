@@ -36,12 +36,10 @@ export default function LoginPage() {
 
   const [loginMutation, { loading }] = useMutation(LOGIN, {
     onCompleted: data => {
-      console.log('Login successful:', data)
-      authLogin(data.login.token)
+      authLogin(data.login.token, data.login.user)
       router.push('/')
     },
     onError: error => {
-      console.error('[LoginPage] login failed:', error)
       setError(error.message)
     },
   })
@@ -50,7 +48,6 @@ export default function LoginPage() {
     e.preventDefault()
     setError('')
 
-    console.log('Attempting login with:', { email, password: '***' })
     await loginMutation({
       variables: {
         input: { email, password },
