@@ -34,11 +34,7 @@ const initialValues: SongFormValues = {
 
 export default function NewSongPage() {
   const router = useRouter()
-  const [createSong, { loading, error }] = useMutation(CREATE_SONG, {
-    onError: err => {
-      console.error('[NewSongPage] create song failed:', err)
-    },
-  })
+  const [createSong, { loading, error }] = useMutation(CREATE_SONG)
 
   const handleSubmit = async (values: SongFormValues) => {
     const tempoVal = values.tempo ? parseInt(values.tempo, 10) : undefined
