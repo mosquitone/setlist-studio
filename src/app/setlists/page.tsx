@@ -71,7 +71,6 @@ export default function SetlistsPage() {
   const handleDeleteSetlist = () => {
     if (selectedSetlist) {
       // TODO: Implement delete functionality
-      console.log('Delete setlist:', selectedSetlist)
     }
     handleMenuClose()
   }
