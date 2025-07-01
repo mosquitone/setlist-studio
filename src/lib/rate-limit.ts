@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logRateLimitExceeded } from './security-logger'
 
 interface RateLimitStore {
   [key: string]: {
@@ -51,6 +52,9 @@ export function rateLimit(options: RateLimitOptions) {
 
     // Check if rate limit exceeded
     if (store[ip].count > maxRequests) {
+      // レート制限違反をログに記録
+      logRateLimitExceeded(ip, request.url, request.headers.get('user-agent') || undefined)
+      
       return NextResponse.json(
         { 
           error: message,
