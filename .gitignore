@@ -43,10 +43,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# GraphQL server
-graphql-server/node_modules
-graphql-server/dist
-graphql-server/.env
 
 # Database
 postgres_data/

@@ -1,5 +1,4 @@
 import { ObjectType, Field, ID, Int } from 'type-graphql'
-import { User } from './User'
 
 @ObjectType()
 export class Song {
@@ -27,13 +26,12 @@ export class Song {
   @Field()
   userId!: string
 
-  // Optional relation - not used by frontend queries
-  @Field(() => User, { nullable: true })
-  user?: User
-
   @Field()
   createdAt!: Date
 
   @Field()
   updatedAt!: Date
+
+  // Note: User relation removed to avoid circular dependencies
+  // Would be resolved through GraphQL resolvers if needed
 }

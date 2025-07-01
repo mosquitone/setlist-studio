@@ -25,18 +25,18 @@
 
 ## 技術スタック
 
-### フロントエンド
-- **Next.js 15** - React フレームワーク
+### フロントエンド・バックエンド統合
+- **Next.js 15** - React フレームワーク（App Router使用）
 - **TypeScript** - 型安全性
 - **Material-UI v5** - モダンなUIコンポーネント
 - **Apollo Client** - GraphQL状態管理
 
-### バックエンド
-- **Apollo Server v4** - 最新のGraphQL API (セキュリティ強化済み)
-- **Type-GraphQL** - スキーマファーストAPI
+### GraphQL API (Vercel Functions)
+- **Apollo Server v4** - Next.js API Routesで動作するGraphQL API
+- **Type-GraphQL** - スキーマファーストAPI開発
 - **Prisma** - データベースORM
 - **PostgreSQL** - データベース
-- **JWT** - 認証
+- **JWT** - 認証システム
 
 ## セットアップ
 
@@ -56,12 +56,11 @@ cd setlist-studio
 2. 依存関係をインストール:
 ```bash
 pnpm install
-cd graphql-server && pnpm install
 ```
 
 3. 環境変数を設定:
 ```bash
-# graphql-server/.env
+# .env と .env.local
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/setlist_generator"
 JWT_SECRET="your-super-secret-jwt-key-change-this-in-production"
 ```
@@ -73,42 +72,34 @@ docker-compose up -d postgres
 
 5. データベーススキーマを適用:
 ```bash
-cd graphql-server && pnpm db:push
+pnpm db:push
 ```
 
 ### 開発サーバー起動
 
-1. GraphQLサーバーを起動:
-```bash
-cd graphql-server && pnpm dev
-```
-
-2. フロントエンドを起動:
 ```bash
 pnpm dev
 ```
 
-- フロントエンド: http://localhost:3000
-- GraphQL Playground: http://localhost:4000/graphql
+- アプリケーション: http://localhost:3000
+- GraphQL API: http://localhost:3000/api/graphql
 
 ## 開発
 
 ### よく使用するコマンド
 
 ```bash
-# フロントエンド開発
-pnpm dev          # 開発サーバー起動
+# 開発
+pnpm dev          # 開発サーバー起動（Next.js + GraphQL API）
 pnpm build        # プロダクションビルド
 pnpm lint         # ESLint実行
+pnpm lint:fix     # ESLint自動修正
 
 # データベース
 docker-compose up -d postgres  # PostgreSQL起動
-cd graphql-server && pnpm db:studio  # Prisma Studio起動
-cd graphql-server && pnpm db:push    # スキーマ適用
-
-# GraphQLサーバー
-cd graphql-server && pnpm dev     # 開発サーバー起動
-cd graphql-server && pnpm build   # ビルド
+pnpm db:studio    # Prisma Studio起動
+pnpm db:push      # スキーマ適用
+pnpm generate     # Prismaクライアント生成
 ```
 
 ### アーキテクチャ

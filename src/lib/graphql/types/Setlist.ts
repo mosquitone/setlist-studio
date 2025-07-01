@@ -1,6 +1,4 @@
 import { ObjectType, Field, ID } from 'type-graphql'
-import { User } from './User'
-import { SetlistItem } from './SetlistItem'
 
 @ObjectType()
 export class Setlist {
@@ -31,16 +29,12 @@ export class Setlist {
   @Field()
   userId!: string
 
-  // Optional relation - not always needed
-  @Field(() => User, { nullable: true })
-  user?: User
-
-  @Field(() => [SetlistItem])
-  items!: SetlistItem[]
-
   @Field()
   createdAt!: Date
 
   @Field()
   updatedAt!: Date
+
+  // Note: Relations removed to avoid circular dependencies
+  // These would be resolved through GraphQL resolvers if needed
 }

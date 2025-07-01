@@ -7,6 +7,7 @@ interface Context {
       authorization?: string
     }
   }
+  prisma: any
   userId?: string
 }
 
