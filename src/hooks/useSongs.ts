@@ -42,7 +42,6 @@ export function useSongs() {
         },
       })
     } catch (error) {
-      console.error('[useSongs] update failed:', error)
       throw error
     }
   }
@@ -52,7 +51,6 @@ export function useSongs() {
       try {
         await deleteSong({ variables: { id } })
       } catch (error) {
-        console.error('[useSongs] delete failed:', error)
         throw error
       }
     }

@@ -28,8 +28,8 @@ export function useSetlistActions({ setlistId, setlist }: UseSetlistActionsProps
   const handleDelete = async () => {
     try {
       await deleteSetlist({ variables: { id: setlistId } })
-    } catch (error) {
-      console.error('[useSetlistActions] delete failed:', error)
+    } catch {
+      // Handle error silently or show user notification
     }
   }
 
@@ -46,8 +46,8 @@ export function useSetlistActions({ setlistId, setlist }: UseSetlistActionsProps
       try {
         await navigator.clipboard.writeText(url)
         alert('URLをクリップボードにコピーしました')
-      } catch (clipboardErr) {
-        console.error('Error sharing/copying:', clipboardErr)
+      } catch {
+        // Handle clipboard/sharing error silently
       }
     }
   }

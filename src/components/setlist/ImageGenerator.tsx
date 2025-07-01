@@ -37,7 +37,6 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
 
       // Validate the URL before generating QR code
       if (!isValidUrl(url)) {
-        console.error('[ImageGenerator] Invalid URL for QR code:', url)
         return ''
       }
 
@@ -53,13 +52,11 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
 
         // Additional validation for the generated data URL
         if (!qrCodeDataURL.startsWith('data:image/')) {
-          console.error('[ImageGenerator] Invalid QR code data URL generated')
           return ''
         }
 
         return qrCodeDataURL
-      } catch (error) {
-        console.error('[ImageGenerator] QR code generation failed:', error)
+      } catch {
         return ''
       }
     },
@@ -134,7 +131,6 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
 
         return imageURL
       } catch (error) {
-        console.error('[ImageGenerator] image generation failed:', error)
         setError(`画像生成エラー: ${error instanceof Error ? error.message : 'Unknown error'}`)
         return null
       } finally {

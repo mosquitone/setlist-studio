@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import {
   Container,
   Paper,
@@ -11,6 +11,7 @@ import {
   Alert,
   IconButton,
   InputAdornment,
+  CircularProgress,
 } from '@mui/material'
 import {
   Login as LoginIcon,
@@ -24,7 +25,7 @@ import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 
-export default function LoginPage() {
+function LoginContent() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -138,5 +139,19 @@ export default function LoginPage() {
         </Paper>
       </Box>
     </Container>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <Container maxWidth="sm" sx={{ mt: 4, mb: 4, textAlign: 'center' }}>
+          <CircularProgress />
+        </Container>
+      }
+    >
+      <LoginContent />
+    </Suspense>
   )
 }

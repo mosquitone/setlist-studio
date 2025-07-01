@@ -1,13 +1,14 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, Suspense } from 'react'
 import { useMutation, useQuery } from '@apollo/client'
 import { CREATE_SETLIST, GET_SETLIST } from '@/lib/graphql/apollo-operations'
 import { useRouter, useSearchParams } from 'next/navigation'
 import SetlistForm, { SetlistFormValues } from '@/components/forms/SetlistForm'
 import { GetSetlistResponse, SetlistItem } from '@/types/graphql'
+import { CircularProgress, Container } from '@mui/material'
 
-export default function NewSetlistPage() {
+function NewSetlistContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const duplicateId = searchParams.get('duplicate')
@@ -22,11 +23,7 @@ export default function NewSetlistPage() {
     items: [{ title: '', note: '' }],
   })
 
-  const [createSetlist, { loading, error }] = useMutation(CREATE_SETLIST, {
-    onError: err => {
-      console.error('[NewSetlistPage] create setlist failed:', err)
-    },
-  })
+  const [createSetlist, { loading, error }] = useMutation(CREATE_SETLIST)
 
   const { data: duplicateData, loading: duplicateLoading } = useQuery<GetSetlistResponse>(
     GET_SETLIST,
@@ -99,5 +96,19 @@ export default function NewSetlistPage() {
       loadingButtonText="作成中..."
       enableDragAndDrop={true}
     />
+  )
+}
+
+export default function NewSetlistPage() {
+  return (
+    <Suspense
+      fallback={
+        <Container maxWidth="md" sx={{ py: 4, textAlign: 'center' }}>
+          <CircularProgress />
+        </Container>
+      }
+    >
+      <NewSetlistContent />
+    </Suspense>
   )
 }

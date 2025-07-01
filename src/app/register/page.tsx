@@ -39,7 +39,6 @@ export default function RegisterPage() {
       router.push('/login?message=新規登録が完了しました。ログインしてください。')
     },
     onError: error => {
-      console.error('[RegisterPage] register failed:', error)
       setError(error.message)
     },
   })
