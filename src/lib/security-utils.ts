@@ -1,6 +1,7 @@
 // セキュリティ関連共通ユーティリティ
 
 import { NextRequest } from 'next/server'
+import DOMPurify from 'dompurify'
 
 // 信頼できるプロキシのリスト（環境に応じて設定）
 const TRUSTED_PROXIES = new Set([
@@ -76,7 +77,8 @@ function isTrustedProxy(ip: string): boolean {
  */
 export function getSecureClientIP(request: NextRequest): string {
   // 直接接続の場合（最も信頼できる）
-  const remoteAddress = request.ip
+  // NOTE: Vercel環境ではrequest.ipは利用できないため、ヘッダーベースで処理
+  const remoteAddress = request.headers.get('x-vercel-forwarded-for') || request.headers.get('x-forwarded-for')?.split(',')[0]
   if (remoteAddress && isValidIP(remoteAddress)) {
     // 信頼できるプロキシ経由でない場合は、リモートアドレスをそのまま使用
     if (!isTrustedProxy(remoteAddress)) {
@@ -237,4 +239,54 @@ export function assessRequestSecurity(request: NextRequest): {
   }
   
   return { riskLevel, reasons }
+}
+
+// DOMPurifyを使用したHTMLサニタイゼーション（security.tsから移行）
+export const sanitizeText = (text: string): string => {
+  if (typeof window === 'undefined') {
+    return text
+  }
+
+  return DOMPurify.sanitize(text, {
+    ALLOWED_TAGS: [],
+    ALLOWED_ATTR: [],
+    KEEP_CONTENT: true,
+  })
+}
+
+export const sanitizeHtml = (html: string): string => {
+  if (typeof window === 'undefined') {
+    return html
+  }
+
+  return DOMPurify.sanitize(html, {
+    ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'br', 'p'],
+    ALLOWED_ATTR: [],
+  })
+}
+
+export const isValidUrl = (url: string): boolean => {
+  try {
+    const parsedUrl = new URL(url)
+    return (
+      parsedUrl.protocol === 'https:' ||
+      parsedUrl.protocol === 'http:' ||
+      url.startsWith('data:image/')
+    )
+  } catch {
+    return false
+  }
+}
+
+export const validateAndSanitizeInput = (input: string, maxLength: number = 1000): string => {
+  if (!input || typeof input !== 'string') {
+    return ''
+  }
+
+  const trimmed = input.trim()
+  if (trimmed.length > maxLength) {
+    throw new Error(`入力が長すぎます。${maxLength}文字以下にしてください。`)
+  }
+
+  return sanitizeText(trimmed)
 }

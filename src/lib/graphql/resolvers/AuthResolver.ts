@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken'
 import { AuthPayload, RegisterInput, LoginInput, PasswordResetRequestInput, PasswordResetInput, PasswordResetResponse } from '../types/Auth'
 import { logAuthSuccess, logAuthFailure, SecurityEventType, SecurityEventSeverity, logSecurityEvent } from '../../security-logger'
 import { analyzeLoginAttempt } from '../../threat-detection'
-import { createPasswordResetRequest, executePasswordReset } from '../../password-reset'
+// import { createPasswordResetRequest, executePasswordReset } from '../../password-reset' // 削除済み
 
 interface Context {
   prisma: PrismaClient
@@ -154,21 +154,18 @@ export class AuthResolver {
     }
   }
 
+  // パスワードリセット機能（将来実装予定）
+  /*
   @Mutation(() => PasswordResetResponse)
   async requestPasswordReset(
     @Arg('input') input: PasswordResetRequestInput,
     @Ctx() ctx: Context
   ): Promise<PasswordResetResponse> {
-    const result = await createPasswordResetRequest(
-      input.email,
-      getClientIP(ctx),
-      ctx.req?.headers['user-agent']
-    )
-
+    // TODO: パスワードリセット機能の実装
     return {
-      success: result.success,
-      message: result.message,
-      requestId: result.requestId,
+      success: false,
+      message: 'パスワードリセット機能は現在実装中です',
+      requestId: '',
     }
   }
 
@@ -177,30 +174,12 @@ export class AuthResolver {
     @Arg('input') input: PasswordResetInput,
     @Ctx() ctx: Context
   ): Promise<PasswordResetResponse> {
-    const result = await executePasswordReset(
-      input.token,
-      input.requestId,
-      input.newPassword,
-      getClientIP(ctx),
-      ctx.req?.headers['user-agent']
-    )
-
-    if (result.success) {
-      // 実際にパスワードを更新する処理
-      // パスワードリセット機能を使用する場合は、以下のコメントアウトを外してください
-      /*
-      const hashedPassword = await bcrypt.hash(input.newPassword, 12)
-      await ctx.prisma.user.update({
-        where: { email: validation.email },
-        data: { password: hashedPassword }
-      })
-      */
-    }
-
+    // TODO: パスワードリセット機能の実装
     return {
-      success: result.success,
-      message: result.message,
-      requestId: result.requestId,
+      success: false,
+      message: 'パスワードリセット機能は現在実装中です',
+      requestId: '',
     }
   }
+  */
 }
