@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { randomBytes } from 'crypto'
+import { logSecurityEvent, SecurityEventType, SecurityEventSeverity } from './security-logger'
 
 export interface CSRFTokens {
   token: string
@@ -51,6 +52,24 @@ export async function csrfProtection(request: NextRequest): Promise<NextResponse
 
   // Verify CSRF token for mutations
   if (!verifyCSRFToken(request)) {
+    // CSRF攻撃をログに記録
+    const forwarded = request.headers.get('x-forwarded-for')
+    const realIp = request.headers.get('x-real-ip')
+    const ip = forwarded?.split(',')[0] ?? realIp ?? 'unknown'
+    
+    await logSecurityEvent({
+      type: SecurityEventType.CSRF_TOKEN_INVALID,
+      severity: SecurityEventSeverity.HIGH,
+      ipAddress: ip,
+      userAgent: request.headers.get('user-agent') || undefined,
+      resource: request.url,
+      details: { 
+        csrfAttack: true,
+        endpoint: request.url,
+        method: request.method
+      },
+    })
+    
     return NextResponse.json(
       { 
         error: 'CSRF token validation failed',

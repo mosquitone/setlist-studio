@@ -16,6 +16,7 @@ import { PrismaClient } from '@prisma/client'
 import { Setlist } from '../types/Setlist'
 import { SetlistItem } from '../types/SetlistItem'
 import { AuthMiddleware } from '../middleware/jwt-auth-middleware'
+import { logUnauthorizedAccess, logSecurityEvent, SecurityEventType, SecurityEventSeverity } from '../../security-logger'
 
 interface Context {
   prisma: PrismaClient
@@ -127,6 +128,19 @@ export class SetlistResolver {
 
     // セキュリティチェック: 公開Setlistまたは所有者のみアクセス可能
     if (!setlist.isPublic && setlist.userId !== ctx.userId) {
+      // 不正アクセス試行をログに記録
+      await logSecurityEvent({
+        type: SecurityEventType.PRIVATE_SETLIST_ACCESS_DENIED,
+        severity: SecurityEventSeverity.HIGH,
+        userId: ctx.userId,
+        resource: `setlist:${id}`,
+        details: { 
+          setlistId: id,
+          setlistOwnerId: setlist.userId,
+          attemptedUserId: ctx.userId,
+          isPublic: setlist.isPublic
+        },
+      })
       throw new Error('Unauthorized access to private setlist')
     }
 

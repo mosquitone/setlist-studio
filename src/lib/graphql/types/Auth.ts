@@ -47,3 +47,43 @@ export class LoginInput {
   @MinLength(1)
   password!: string
 }
+
+@InputType()
+export class PasswordResetRequestInput {
+  @Field()
+  @IsEmail({}, { message: '有効なメールアドレスを入力してください' })
+  email!: string
+}
+
+@InputType()
+export class PasswordResetInput {
+  @Field()
+  @IsString()
+  @MinLength(1, { message: 'トークンは必須です' })
+  token!: string
+
+  @Field()
+  @IsString()
+  @MinLength(1, { message: 'リクエストIDは必須です' })
+  requestId!: string
+
+  @Field()
+  @IsString()
+  @MinLength(8, { message: 'パスワードは8文字以上である必要があります' })
+  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/, {
+    message: 'パスワードは大文字・小文字・数字・特殊文字（@$!%*?&）を含む必要があります',
+  })
+  newPassword!: string
+}
+
+@ObjectType()
+export class PasswordResetResponse {
+  @Field()
+  success!: boolean
+
+  @Field()
+  message!: string
+
+  @Field({ nullable: true })
+  requestId?: string
+}
