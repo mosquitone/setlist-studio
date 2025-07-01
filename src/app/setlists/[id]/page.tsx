@@ -23,6 +23,7 @@ import { SetlistPreview } from '@/components/setlist/SetlistPreview'
 import { useSetlistActions } from '@/hooks/useSetlistActions'
 import { useImageGeneration } from '@/hooks/useImageGeneration'
 import { useAuth } from '@/components/providers/AuthProvider'
+import { SetlistProtectedRoute } from '@/components/auth/ProtectedRoute'
 
 export default function SetlistDetailPage() {
   const params = useParams()
@@ -41,24 +42,11 @@ export default function SetlistDetailPage() {
     skip: !setlistId,
   })
 
-  const [toggleVisibility] = useMutation(TOGGLE_SETLIST_VISIBILITY, {
-    refetchQueries: [{ query: GET_SETLIST, variables: { id: setlistId } }],
-  })
+
+  const [toggleVisibility] = useMutation(TOGGLE_SETLIST_VISIBILITY)
 
   const { handleEdit, handleDelete, handleShare, handleDuplicate, deleteLoading } =
     useSetlistActions({ setlistId, setlist: data?.setlist })
-
-  // Access control: check if user can view this setlist
-  const canViewSetlist = React.useMemo(() => {
-    if (!data?.setlist) return false
-
-    // Public setlists can be viewed by anyone
-    if (data.setlist.isPublic) return true
-
-    // Private setlists can only be viewed by the owner
-    if (!isLoggedIn || !user) return false
-    return data.setlist.userId === user.id
-  }, [data?.setlist, isLoggedIn, user])
 
   const isOwner = React.useMemo(() => {
     return isLoggedIn && user && data?.setlist && data.setlist.userId === user.id
@@ -67,6 +55,8 @@ export default function SetlistDetailPage() {
   const handleToggleVisibility = async () => {
     try {
       await toggleVisibility({ variables: { id: setlistId } })
+      // Force page reload to refresh data with correct authentication context
+      window.location.reload()
     } catch (error) {
       console.error('Failed to toggle visibility:', error)
     }
@@ -104,107 +94,102 @@ export default function SetlistDetailPage() {
     }
   }, [data?.setlist, themeInitialized])
 
-  // Show loading while checking auth, fetching data, or theme is not initialized
-  if (loading || authLoading || selectedTheme === null) {
-    return (
-      <Container maxWidth="lg" sx={{ py: 4, textAlign: 'center' }}>
-        <CircularProgress />
-        <Typography sx={{ mt: 2 }}>セットリストを読み込み中...</Typography>
-      </Container>
-    )
-  }
-
-  // If setlist exists but user cannot view it, show not found
-  if (data?.setlist && !canViewSetlist) {
-    return (
-      <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Alert severity="error">セットリストが見つかりません。</Alert>
-      </Container>
-    )
-  }
-
-  if (error || !data?.setlist) {
-    return (
-      <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Alert severity="error">セットリストが見つかりません。</Alert>
-      </Container>
-    )
-  }
-
-  const setlist = data.setlist
-  const setlistData: SetlistData = {
-    id: setlist.id,
-    title: setlist.title,
-    bandName: setlist.bandName,
-    eventName: setlist.eventName,
-    eventDate: setlist.eventDate,
-    openTime: setlist.openTime,
-    startTime: setlist.startTime,
-    theme: setlist.theme,
-    items: [...setlist.items].sort((a: any, b: any) => a.order - b.order),
-  }
+  // setlistDataを安全に作成
+  const setlistData: SetlistData | null = data?.setlist ? {
+    id: data.setlist.id,
+    title: data.setlist.title,
+    bandName: data.setlist.bandName,
+    eventName: data.setlist.eventName,
+    eventDate: data.setlist.eventDate,
+    openTime: data.setlist.openTime,
+    startTime: data.setlist.startTime,
+    theme: data.setlist.theme,
+    items: [...data.setlist.items].sort((a: any, b: any) => a.order - b.order),
+  } : null
 
   const handleThemeChange = (theme: 'black' | 'white') => {
     setSelectedTheme(theme)
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      {/* Success Banner */}
-      {showSuccess && (
-        <Alert severity="success" sx={{ mb: 3 }}>
-          Setlist Generated !
-        </Alert>
-      )}
+    <SetlistProtectedRoute 
+      setlistData={data?.setlist} 
+      isLoading={loading || authLoading}
+      error={error}
+    >
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        {/* データがない場合はSetlistProtectedRouteがハンドリング */}
+        {!setlistData ? null : (
+          /* テーマ初期化中の場合はローディングを表示 */
+          selectedTheme === null ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+              <CircularProgress />
+            </Box>
+          ) : (
+            <>
+              {/* Success Banner */}
+              {showSuccess && (
+                <Alert severity="success" sx={{ mb: 3 }}>
+                  Setlist Generated !
+                </Alert>
+              )}
 
-      <SetlistActions
-        onEdit={handleEdit}
-        onDownload={onDownload}
-        onShare={handleShare}
-        onDuplicate={handleDuplicate}
-        selectedTheme={selectedTheme}
-        onThemeChange={handleThemeChange}
-        showDebugToggle={isDev}
-        showDebug={showDebug}
-        onDebugToggle={handleDebugToggle}
-        isPublic={data?.setlist?.isPublic}
-        onToggleVisibility={handleToggleVisibility}
-        isOwner={isOwner}
-      />
-
-      <SetlistPreview
-        data={{ ...setlistData, theme: selectedTheme }}
-        selectedTheme={selectedTheme}
-        showDebug={showDebug}
-        isGeneratingPreview={isGeneratingPreview}
-        previewImage={previewImage}
-        qrCodeURL={`${typeof window !== 'undefined' ? window.location.origin : ''}/setlists/${setlistId}`}
-      />
-
-      <Box sx={{ display: 'none' }}>
-        <ImageGenerator
-          data={{ ...setlistData, theme: selectedTheme }}
+        <SetlistActions
+          onEdit={handleEdit}
+          onDownload={onDownload}
+          onShare={handleShare}
+          onDuplicate={handleDuplicate}
           selectedTheme={selectedTheme}
-          onDownloadReady={handleDownloadReady}
-          onPreviewReady={handlePreviewReady}
-          onPreviewGenerationStart={handlePreviewGenerationStart}
+          onThemeChange={handleThemeChange}
+          showDebugToggle={isDev}
+          showDebug={showDebug}
+          onDebugToggle={handleDebugToggle}
+          isPublic={data?.setlist?.isPublic}
+          onToggleVisibility={handleToggleVisibility}
+          isOwner={isOwner}
         />
-      </Box>
 
-      <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
-        <DialogTitle>セットリストを削除</DialogTitle>
-        <DialogContent>
-          <Typography>
-            「{setlist.title}」を削除してもよろしいですか？ この操作は取り消せません。
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDeleteDialogOpen(false)}>キャンセル</Button>
-          <Button onClick={handleDelete} color="error" disabled={deleteLoading}>
-            {deleteLoading ? '削除中...' : '削除'}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Container>
+        {setlistData && (
+          <>
+            <SetlistPreview
+              data={{ ...setlistData, theme: selectedTheme }}
+              selectedTheme={selectedTheme}
+              showDebug={showDebug}
+              isGeneratingPreview={isGeneratingPreview}
+              previewImage={previewImage}
+              qrCodeURL={`${typeof window !== 'undefined' ? window.location.origin : ''}/setlists/${setlistId}`}
+            />
+
+            <Box sx={{ display: 'none' }}>
+              <ImageGenerator
+                data={{ ...setlistData, theme: selectedTheme }}
+                selectedTheme={selectedTheme}
+                onDownloadReady={handleDownloadReady}
+                onPreviewReady={handlePreviewReady}
+                onPreviewGenerationStart={handlePreviewGenerationStart}
+              />
+            </Box>
+          </>
+        )}
+
+        <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
+          <DialogTitle>セットリストを削除</DialogTitle>
+          <DialogContent>
+            <Typography>
+              「{data?.setlist?.title}」を削除してもよろしいですか？ この操作は取り消せません。
+            </Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setDeleteDialogOpen(false)}>キャンセル</Button>
+            <Button onClick={handleDelete} color="error" disabled={deleteLoading}>
+              {deleteLoading ? '削除中...' : '削除'}
+            </Button>
+          </DialogActions>
+        </Dialog>
+            </>
+          )
+        )}
+      </Container>
+    </SetlistProtectedRoute>
   )
 }
