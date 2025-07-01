@@ -22,9 +22,9 @@
 - セットリスト複製機能
 
 ### 🔐 セキュリティ・認証
-- **マルチレイヤー認証**: JWT + HttpOnly Cookie によるセキュアな認証
+- **HttpOnly Cookie認証**: XSS攻撃に対して安全なJWT token管理
 - **CSRF攻撃防御**: Double Submit Cookie + HMAC署名による防御
-- **レート制限**: データベースベースの分散対応レート制限
+- **レート制限**: データベースベースの分散対応レート制限（開発環境は緩和設定）
 - **脅威検知**: ブルートフォース攻撃・認証情報スタッフィング検知
 - **リアルタイム監視**: セキュリティイベントログ・異常検知
 - **IP偽装防御**: 信頼できるプロキシバリデーション
@@ -43,7 +43,7 @@
 - **Type-GraphQL 1.1.1** - スキーマファーストAPI開発
 - **Prisma 6.10.1** - 型安全データベースORM
 - **PostgreSQL 15** - メインデータベース + セキュリティログ
-- **JWT + HttpOnly Cookie** - 多層認証システム
+- **HttpOnly Cookie + JWT** - XSS耐性のあるセキュア認証システム
 - **Rate Limiting** - データベースベース分散レート制限
 - **CSRF Protection** - Double Submit Cookie + HMAC パターン
 - **Threat Detection** - リアルタイム脅威検知エンジン
@@ -153,7 +153,7 @@ pnpm generate     # Prismaクライアント生成
 
 本アプリケーションは包括的なセキュリティ対策を実装しています:
 
-- **認証**: JWT + HttpOnly Cookie による多層認証
+- **認証**: HttpOnly Cookie + JWT によるXSS耐性認証
 - **CSRF保護**: Double Submit Cookie + HMAC署名
 - **レート制限**: 分散対応データベースベースレート制限
 - **脅威検知**: リアルタイム異常検知・自動ログ
