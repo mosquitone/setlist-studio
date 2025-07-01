@@ -55,9 +55,11 @@ export function SetlistActions({
         <Button variant="outlined" startIcon={<ShareIcon />} onClick={onShare}>
           Share
         </Button>
-        <Button variant="outlined" startIcon={<DuplicateIcon />} onClick={onDuplicate}>
-          Duplicate
-        </Button>
+        {isOwner && (
+          <Button variant="outlined" startIcon={<DuplicateIcon />} onClick={onDuplicate}>
+            Duplicate
+          </Button>
+        )}
       </Box>
 
       <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
@@ -114,23 +116,25 @@ export function SetlistActions({
           </Button>
         )}
 
-        <FormControl size="small">
-          <Select
-            value={selectedTheme}
-            onChange={e => onThemeChange(e.target.value as 'black' | 'white')}
-            displayEmpty
-            IconComponent={ExpandMoreIcon}
-            sx={{ minWidth: 140 }}
-            renderValue={value => {
-              if (value === 'black') return 'Theme: black'
-              if (value === 'white') return 'Theme: white'
-              return 'Theme: black'
-            }}
-          >
-            <MenuItem value="black">black</MenuItem>
-            <MenuItem value="white">white</MenuItem>
-          </Select>
-        </FormControl>
+        {isOwner && (
+          <FormControl size="small">
+            <Select
+              value={selectedTheme}
+              onChange={e => onThemeChange(e.target.value as 'black' | 'white')}
+              displayEmpty
+              IconComponent={ExpandMoreIcon}
+              sx={{ minWidth: 140 }}
+              renderValue={value => {
+                if (value === 'black') return 'Theme: black'
+                if (value === 'white') return 'Theme: white'
+                return 'Theme: black'
+              }}
+            >
+              <MenuItem value="black">black</MenuItem>
+              <MenuItem value="white">white</MenuItem>
+            </Select>
+          </FormControl>
+        )}
       </Box>
     </Box>
   )
