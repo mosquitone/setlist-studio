@@ -57,6 +57,29 @@ async function getServerInstance() {
   return createServer()
 }
 
+// Context helper for secure token extraction
+function createSecureContext(req: NextRequest) {
+  // 認証トークンの取得：HttpOnly Cookie を優先、フォールバックでAuthorization ヘッダー
+  let authToken = req.cookies.get('auth_token')?.value
+  
+  // フォールバック：Authorization ヘッダーからトークンを取得（後方互換性）
+  if (!authToken) {
+    const authHeader = req.headers.get('authorization')
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      authToken = authHeader.substring(7)
+    }
+  }
+  
+  return {
+    req: {
+      headers: {
+        authorization: authToken ? `Bearer ${authToken}` : undefined,
+      },
+    },
+    prisma,
+  }
+}
+
 export async function GET(request: NextRequest) {
   // Apply rate limiting
   const rateLimitResponse = await apiRateLimit(request)
@@ -66,16 +89,7 @@ export async function GET(request: NextRequest) {
 
   const server = await getServerInstance()
   const handler = startServerAndCreateNextHandler(server, {
-    context: async (req: NextRequest) => {
-      return {
-        req: {
-          headers: {
-            authorization: req.headers.get('authorization') || undefined,
-          },
-        },
-        prisma,
-      }
-    },
+    context: async (req: NextRequest) => createSecureContext(req),
   })
   return handler(request)
 }
@@ -103,16 +117,7 @@ export async function POST(request: NextRequest) {
 
   const server = await getServerInstance()
   const handler = startServerAndCreateNextHandler(server, {
-    context: async (req: NextRequest) => {
-      return {
-        req: {
-          headers: {
-            authorization: req.headers.get('authorization') || undefined,
-          },
-        },
-        prisma,
-      }
-    },
+    context: async (req: NextRequest) => createSecureContext(req),
   })
   return handler(request)
 }

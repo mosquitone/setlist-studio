@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { logRateLimitExceeded } from './security-logger'
+import { generateRateLimitKey } from './security-utils'
 
 interface RateLimitStore {
   [key: string]: {
@@ -20,10 +21,8 @@ export function rateLimit(options: RateLimitOptions) {
   const { windowMs, maxRequests, message = 'Too many requests' } = options
 
   return async (request: NextRequest): Promise<NextResponse | null> => {
-    // Get client IP address
-    const forwarded = request.headers.get('x-forwarded-for')
-    const realIp = request.headers.get('x-real-ip')
-    const ip = forwarded?.split(',')[0] ?? realIp ?? 'unknown'
+    // Generate secure rate limit key (IP + User-Agent hash)
+    const rateLimitKey = generateRateLimitKey(request)
 
     const now = Date.now()
     const resetTime = now + windowMs
@@ -36,48 +35,48 @@ export function rateLimit(options: RateLimitOptions) {
     })
 
     // Initialize or update rate limit data
-    if (!store[ip]) {
-      store[ip] = {
+    if (!store[rateLimitKey]) {
+      store[rateLimitKey] = {
         count: 1,
         resetTime,
       }
-    } else if (store[ip].resetTime < now) {
-      store[ip] = {
+    } else if (store[rateLimitKey].resetTime < now) {
+      store[rateLimitKey] = {
         count: 1,
         resetTime,
       }
     } else {
-      store[ip].count++
+      store[rateLimitKey].count++
     }
 
     // Check if rate limit exceeded
-    if (store[ip].count > maxRequests) {
+    if (store[rateLimitKey].count > maxRequests) {
       // レート制限違反をログに記録
-      logRateLimitExceeded(ip, request.url, request.headers.get('user-agent') || undefined)
+      logRateLimitExceeded(rateLimitKey, request.url, request.headers.get('user-agent') || undefined)
       
       return NextResponse.json(
         { 
           error: message,
-          retryAfter: Math.ceil((store[ip].resetTime - now) / 1000)
+          retryAfter: Math.ceil((store[rateLimitKey].resetTime - now) / 1000)
         },
         { 
           status: 429,
           headers: {
-            'Retry-After': Math.ceil((store[ip].resetTime - now) / 1000).toString(),
+            'Retry-After': Math.ceil((store[rateLimitKey].resetTime - now) / 1000).toString(),
             'X-RateLimit-Limit': maxRequests.toString(),
             'X-RateLimit-Remaining': '0',
-            'X-RateLimit-Reset': Math.ceil(store[ip].resetTime / 1000).toString(),
+            'X-RateLimit-Reset': Math.ceil(store[rateLimitKey].resetTime / 1000).toString(),
           }
         }
       )
     }
 
     // Add rate limit headers
-    const remaining = Math.max(0, maxRequests - store[ip].count)
+    const remaining = Math.max(0, maxRequests - store[rateLimitKey].count)
     const response = NextResponse.next()
     response.headers.set('X-RateLimit-Limit', maxRequests.toString())
     response.headers.set('X-RateLimit-Remaining', remaining.toString())
-    response.headers.set('X-RateLimit-Reset', Math.ceil(store[ip].resetTime / 1000).toString())
+    response.headers.set('X-RateLimit-Reset', Math.ceil(store[rateLimitKey].resetTime / 1000).toString())
 
     return null // Allow request to continue
   }
