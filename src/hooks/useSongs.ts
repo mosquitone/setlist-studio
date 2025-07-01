@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useQuery, useMutation } from '@apollo/client'
-import { GET_SONGS, DELETE_SONG, UPDATE_SONG } from '@/lib/graphql/apollo-operations'
+import { GET_SONGS, DELETE_SONG, UPDATE_SONG } from '@/lib/server/graphql/apollo-operations'
 import { Song, GetSongsResponse } from '@/types/graphql'
 
 export function useSongs() {

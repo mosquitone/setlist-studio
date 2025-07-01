@@ -8,7 +8,7 @@ import {
   sanitizeIPForLog,
   sanitizeResourceForLog,
   sanitizeObjectForLog,
-  formatSecurityLog
+  formatSecurityLog,
 } from './log-sanitizer'
 
 export enum SecurityEventType {
@@ -20,27 +20,27 @@ export enum SecurityEventType {
   LOGOUT = 'LOGOUT',
   TOKEN_EXPIRED = 'TOKEN_EXPIRED',
   TOKEN_INVALID = 'TOKEN_INVALID',
-  
+
   // アクセス制御
   UNAUTHORIZED_ACCESS = 'UNAUTHORIZED_ACCESS',
   FORBIDDEN_ACCESS = 'FORBIDDEN_ACCESS',
   PERMISSION_DENIED = 'PERMISSION_DENIED',
-  
+
   // セキュリティ攻撃
   BRUTE_FORCE_ATTEMPT = 'BRUTE_FORCE_ATTEMPT',
   CSRF_TOKEN_INVALID = 'CSRF_TOKEN_INVALID',
   CSRF_TOKEN_MISSING = 'CSRF_TOKEN_MISSING',
   SQL_INJECTION_ATTEMPT = 'SQL_INJECTION_ATTEMPT',
   XSS_ATTEMPT = 'XSS_ATTEMPT',
-  
+
   // レート制限
   RATE_LIMIT_EXCEEDED = 'RATE_LIMIT_EXCEEDED',
   API_ABUSE = 'API_ABUSE',
-  
+
   // システム
   SYSTEM_ERROR = 'SYSTEM_ERROR',
   CONFIGURATION_ERROR = 'CONFIGURATION_ERROR',
-  
+
   // データ関連
   DATA_BREACH_ATTEMPT = 'DATA_BREACH_ATTEMPT',
   SENSITIVE_DATA_ACCESS = 'SENSITIVE_DATA_ACCESS',
@@ -94,14 +94,14 @@ export class DatabaseSecurityLogger {
           userAgent: sanitizedEvent.userAgent,
           resource: sanitizedEvent.resource,
           details: sanitizedEvent.details || {},
-        }
+        },
       })
 
       // 重要度に応じてコンソール出力
       this.logToConsole({
         id: 'db_logged',
         timestamp: new Date(),
-        ...sanitizedEvent
+        ...sanitizedEvent,
       })
 
       // 緊急度が高い場合は即座に通知
@@ -109,25 +109,27 @@ export class DatabaseSecurityLogger {
         await this.sendCriticalAlert({
           id: 'critical_alert',
           timestamp: new Date(),
-          ...sanitizedEvent
+          ...sanitizedEvent,
         })
       }
-
     } catch (error) {
       console.error('Failed to log security event to database:', error)
       // フォールバック：最低限コンソールには出力
       this.logToConsole({
         id: 'fallback_log',
         timestamp: new Date(),
-        ...sanitizedEvent
+        ...sanitizedEvent,
       })
     }
   }
 
   private logToConsole(event: SecurityEvent): void {
-    const logLevel = event.severity === SecurityEventSeverity.CRITICAL ? 'error' :
-                    event.severity === SecurityEventSeverity.HIGH ? 'warn' :
-                    'info'
+    const logLevel =
+      event.severity === SecurityEventSeverity.CRITICAL
+        ? 'error'
+        : event.severity === SecurityEventSeverity.HIGH
+          ? 'warn'
+          : 'info'
 
     // セキュアなログフォーマットを使用
     const secureLogEntry = formatSecurityLog({
@@ -142,9 +144,9 @@ export class DatabaseSecurityLogger {
         ipAddress: event.ipAddress,
         resource: event.resource,
         details: event.details,
-      }
+      },
     })
-    
+
     console[logLevel]('🔒', secureLogEntry)
   }
 
@@ -155,7 +157,7 @@ export class DatabaseSecurityLogger {
       details: event.details,
       timestamp: event.timestamp.toISOString(),
     })
-    
+
     // TODO: 実際の通知システム実装
     // await sendSlackAlert(event)
     // await sendEmailAlert(event)
@@ -173,16 +175,16 @@ export class DatabaseSecurityLogger {
         this.prisma.securityEvent.count(),
         this.prisma.securityEvent.groupBy({
           by: ['type'],
-          _count: { type: true }
+          _count: { type: true },
         }),
         this.prisma.securityEvent.groupBy({
           by: ['severity'],
-          _count: { severity: true }
+          _count: { severity: true },
         }),
         this.prisma.securityEvent.findMany({
           orderBy: { timestamp: 'desc' },
-          take: 10
-        })
+          take: 10,
+        }),
       ])
 
       const eventsByTypeMap: Record<string, number> = {}
@@ -208,8 +210,8 @@ export class DatabaseSecurityLogger {
           ipAddress: event.ipAddress || undefined,
           userAgent: event.userAgent || undefined,
           resource: event.resource || undefined,
-          details: event.details as Record<string, any> || undefined,
-        }))
+          details: (event.details as Record<string, any>) || undefined,
+        })),
       }
     } catch (error) {
       console.error('Failed to get security statistics:', error)
@@ -217,7 +219,7 @@ export class DatabaseSecurityLogger {
         totalEvents: 0,
         eventsByType: {},
         eventsBySeverity: {},
-        recentEvents: []
+        recentEvents: [],
       }
     }
   }
@@ -229,10 +231,10 @@ export class DatabaseSecurityLogger {
         where: {
           timestamp: {
             gte: startTime,
-            lte: endTime
-          }
+            lte: endTime,
+          },
         },
-        orderBy: { timestamp: 'desc' }
+        orderBy: { timestamp: 'desc' },
       })
 
       return events.map(event => ({
@@ -244,7 +246,7 @@ export class DatabaseSecurityLogger {
         ipAddress: event.ipAddress || undefined,
         userAgent: event.userAgent || undefined,
         resource: event.resource || undefined,
-        details: event.details as Record<string, any> || undefined,
+        details: (event.details as Record<string, any>) || undefined,
       }))
     } catch (error) {
       console.error('Failed to get events by time range:', error)
@@ -257,15 +259,15 @@ export class DatabaseSecurityLogger {
     try {
       // 90日以上古いイベントを削除
       const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000)
-      
+
       const result = await this.prisma.securityEvent.deleteMany({
         where: {
           timestamp: {
-            lt: ninetyDaysAgo
-          }
-        }
+            lt: ninetyDaysAgo,
+          },
+        },
       })
-      
+
       console.log(`Cleaned up ${result.count} old security events`)
     } catch (error) {
       console.error('Security event cleanup error:', error)
@@ -276,7 +278,7 @@ export class DatabaseSecurityLogger {
 // 便利なヘルパー関数（データベースベース）
 export async function logSecurityEventDB(
   prisma: PrismaClient,
-  event: Omit<SecurityEvent, 'id' | 'timestamp'>
+  event: Omit<SecurityEvent, 'id' | 'timestamp'>,
 ): Promise<void> {
   const logger = new DatabaseSecurityLogger(prisma)
   await logger.logEvent(event)
@@ -285,9 +287,9 @@ export async function logSecurityEventDB(
 // 認証関連のログヘルパー
 export const logAuthSuccessDB = (
   prisma: PrismaClient,
-  userId: string, 
-  ipAddress?: string, 
-  userAgent?: string
+  userId: string,
+  ipAddress?: string,
+  userAgent?: string,
 ) =>
   logSecurityEventDB(prisma, {
     type: SecurityEventType.LOGIN_SUCCESS,
@@ -300,28 +302,28 @@ export const logAuthSuccessDB = (
 
 export const logAuthFailureDB = (
   prisma: PrismaClient,
-  email: string, 
-  reason: string, 
-  ipAddress?: string, 
-  userAgent?: string
+  email: string,
+  reason: string,
+  ipAddress?: string,
+  userAgent?: string,
 ) =>
   logSecurityEventDB(prisma, {
     type: SecurityEventType.LOGIN_FAILURE,
     severity: SecurityEventSeverity.MEDIUM,
     ipAddress,
     userAgent,
-    details: { 
-      email: sanitizeEmailForLog(email), 
-      reason: sanitizeForLog(reason), 
-      failed: true 
+    details: {
+      email: sanitizeEmailForLog(email),
+      reason: sanitizeForLog(reason),
+      failed: true,
     },
   })
 
 export const logRateLimitExceededDB = (
   prisma: PrismaClient,
-  ipAddress?: string, 
-  endpoint?: string, 
-  userAgent?: string
+  ipAddress?: string,
+  endpoint?: string,
+  userAgent?: string,
 ) =>
   logSecurityEventDB(prisma, {
     type: SecurityEventType.RATE_LIMIT_EXCEEDED,
@@ -336,15 +338,15 @@ export const logRateLimitExceededDB = (
 export async function cleanupOldSecurityEvents(prisma: PrismaClient): Promise<number> {
   try {
     const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000)
-    
+
     const result = await prisma.securityEvent.deleteMany({
       where: {
         timestamp: {
-          lt: ninetyDaysAgo
-        }
-      }
+          lt: ninetyDaysAgo,
+        },
+      },
     })
-    
+
     return result.count
   } catch (error) {
     console.error('Security event cleanup error:', error)

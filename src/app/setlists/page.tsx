@@ -20,9 +20,9 @@ import {
   MusicNote as MusicNoteIcon,
 } from '@mui/icons-material'
 import { useQuery } from '@apollo/client'
-import { GET_SETLISTS } from '@/lib/graphql/apollo-operations'
+import { GET_SETLISTS } from '@/lib/server/graphql/apollo-operations'
 import { useRouter } from 'next/navigation'
-import { formatDateJST } from '@/lib/dateUtils'
+import { formatDateJST } from '@/lib/shared/dateUtils'
 
 interface SetlistItem {
   id: string

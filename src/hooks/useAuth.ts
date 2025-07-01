@@ -5,7 +5,7 @@ import {
   createStorageListener,
   createUserStorageListener,
   User,
-} from '../lib/auth-utils'
+} from '../lib/client/auth-utils'
 
 export function useAuth() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)

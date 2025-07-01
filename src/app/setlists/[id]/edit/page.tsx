@@ -4,7 +4,7 @@ import React from 'react'
 import { Container, Alert, CircularProgress, Typography } from '@mui/material'
 import { useQuery, useMutation } from '@apollo/client'
 import { useParams, useRouter } from 'next/navigation'
-import { GET_SETLIST, UPDATE_SETLIST } from '@/lib/graphql/apollo-operations'
+import { GET_SETLIST, UPDATE_SETLIST } from '@/lib/server/graphql/apollo-operations'
 import SetlistForm, { SetlistFormValues } from '@/components/forms/SetlistForm'
 
 export default function EditSetlistPage() {

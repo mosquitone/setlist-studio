@@ -12,7 +12,7 @@ import {
 } from 'type-graphql'
 import { PrismaClient } from '@prisma/client'
 import { SetlistItem } from '../types/SetlistItem'
-import { AuthMiddleware } from '../middleware/jwt-auth-middleware'
+import { AuthMiddleware } from '@/lib/server/graphql/middleware/jwt-auth-middleware'
 
 interface Context {
   prisma: PrismaClient

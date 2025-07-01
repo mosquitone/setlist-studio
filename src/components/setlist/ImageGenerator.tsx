@@ -7,7 +7,7 @@ import html2canvas from 'html2canvas'
 import QRCode from 'qrcode'
 import { SetlistData } from '../setlist-themes/types'
 import { SetlistRenderer } from '../setlist-themes/SetlistRenderer'
-import { isValidUrl } from '../../lib/security-utils'
+import { isValidUrl } from '@/lib/security/security-utils'
 
 interface ImageGeneratorProps {
   data: SetlistData
@@ -100,7 +100,6 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
         if (!element) {
           throw new Error('Rendered element not found')
         }
-
 
         // Generate image with html2canvas
         const canvas = await html2canvas(element, {

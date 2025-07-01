@@ -23,12 +23,12 @@ export function generateCSRFTokens(): CSRFTokens {
   const secret = getCSRFSecret()
   const timestamp = Date.now().toString()
   const randomValue = randomBytes(16).toString('hex')
-  
+
   // ダブルサブミットクッキーパターン + HMAC署名
   const payload = `${timestamp}.${randomValue}`
   const signature = createHmac('sha256', secret).update(payload).digest('hex')
   const token = `${payload}.${signature}`
-  
+
   return { token, cookieToken: token }
 }
 
@@ -36,65 +36,64 @@ export function generateCSRFTokens(): CSRFTokens {
 export function verifyCSRFToken(request: NextRequest): boolean {
   const headerToken = request.headers.get('x-csrf-token')
   const cookieToken = request.cookies.get('csrf_token')?.value
-  
+
   if (!headerToken || !cookieToken) {
     return false
   }
-  
+
   try {
     // トークンの形式検証
     const headerParts = headerToken.split('.')
     const cookieParts = cookieToken.split('.')
-    
+
     if (headerParts.length !== 3 || cookieParts.length !== 3) {
       return false
     }
-    
+
     // トークンの同一性をタイミング攻撃耐性で検証
     const headerBuffer = Buffer.from(headerToken, 'utf8')
     const cookieBuffer = Buffer.from(cookieToken, 'utf8')
-    
+
     if (headerBuffer.length !== cookieBuffer.length) {
       return false
     }
-    
+
     // タイミング攻撃耐性のある比較
     const tokensMatch = timingSafeEqual(headerBuffer, cookieBuffer)
-    
+
     if (!tokensMatch) {
       return false
     }
-    
+
     // HMAC署名の検証
     const secret = getCSRFSecret()
     const [timestamp, randomValue, signature] = headerParts
     const payload = `${timestamp}.${randomValue}`
     const expectedSignature = createHmac('sha256', secret).update(payload).digest('hex')
-    
+
     const signatureBuffer = Buffer.from(signature, 'hex')
     const expectedBuffer = Buffer.from(expectedSignature, 'hex')
-    
+
     if (signatureBuffer.length !== expectedBuffer.length) {
       return false
     }
-    
+
     const signatureValid = timingSafeEqual(signatureBuffer, expectedBuffer)
-    
+
     if (!signatureValid) {
       return false
     }
-    
+
     // トークンの有効期限チェック（1時間）
     const tokenTimestamp = parseInt(timestamp, 10)
     const currentTime = Date.now()
     const oneHour = 60 * 60 * 1000
-    
+
     if (currentTime - tokenTimestamp > oneHour) {
       return false
     }
-    
+
     return true
-    
   } catch (error) {
     // エラーは常にfalseを返す（情報漏洩防止）
     return false
@@ -111,7 +110,10 @@ export function setCSRFCookie(response: NextResponse, token: string): void {
   })
 }
 
-export async function csrfProtection(request: NextRequest, prisma?: PrismaClient): Promise<NextResponse | null> {
+export async function csrfProtection(
+  request: NextRequest,
+  prisma?: PrismaClient,
+): Promise<NextResponse | null> {
   // Skip CSRF protection for GET requests (GraphQL introspection, etc.)
   if (request.method === 'GET') {
     return null
@@ -120,11 +122,11 @@ export async function csrfProtection(request: NextRequest, prisma?: PrismaClient
   // Check for state-changing operations in GraphQL
   const requestClone = request.clone()
   const body = await requestClone.text()
-  
+
   // より厳密なGraphQL判定: mutationが含まれる場合のみCSRF保護を適用
-  const isMutation = /mutation\s*\{/.test(body.toLowerCase()) || 
-                     /mutation\s*[\w\s]*\s*\(/.test(body.toLowerCase())
-  
+  const isMutation =
+    /mutation\s*\{/.test(body.toLowerCase()) || /mutation\s*[\w\s]*\s*\(/.test(body.toLowerCase())
+
   // Skip CSRF for queries without mutations
   if (!isMutation) {
     return null
@@ -134,7 +136,7 @@ export async function csrfProtection(request: NextRequest, prisma?: PrismaClient
   if (!verifyCSRFToken(request)) {
     // CSRF攻撃をログに記録
     const ip = getSecureClientIP(request)
-    
+
     // データベースベースログ（Prismaが利用可能な場合）
     if (prisma) {
       const { logSecurityEventDB } = await import('./security-logger-db')
@@ -144,10 +146,10 @@ export async function csrfProtection(request: NextRequest, prisma?: PrismaClient
         ipAddress: ip,
         userAgent: request.headers.get('user-agent') || undefined,
         resource: request.url,
-        details: { 
+        details: {
           csrfAttack: true,
           endpoint: request.url,
-          method: request.method
+          method: request.method,
         },
       })
     } else {
@@ -156,16 +158,16 @@ export async function csrfProtection(request: NextRequest, prisma?: PrismaClient
         ip,
         endpoint: request.url,
         method: request.method,
-        userAgent: request.headers.get('user-agent')
+        userAgent: request.headers.get('user-agent'),
       })
     }
-    
+
     return NextResponse.json(
-      { 
+      {
         error: 'CSRF token validation failed',
-        code: 'CSRF_TOKEN_INVALID'
+        code: 'CSRF_TOKEN_INVALID',
       },
-      { status: 403 }
+      { status: 403 },
     )
   }
 
@@ -176,8 +178,8 @@ export async function csrfProtection(request: NextRequest, prisma?: PrismaClient
 export function createCSRFTokenResponse(): NextResponse {
   const { token } = generateCSRFTokens()
   const response = NextResponse.json({ csrfToken: token })
-  
+
   setCSRFCookie(response, token)
-  
+
   return response
 }

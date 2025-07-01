@@ -6,11 +6,11 @@ import { Add as AddIcon } from '@mui/icons-material'
 import { Formik, Form, FieldArray } from 'formik'
 import * as Yup from 'yup'
 import { useQuery } from '@apollo/client'
-import { GET_SONGS } from '@/lib/graphql/apollo-operations'
+import { GET_SONGS } from '@/lib/server/graphql/apollo-operations'
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd'
 import { SetlistFormFields } from './SetlistFormFields'
 import { SongItemInput } from './SongItemInput'
-import { validateAndSanitizeInput } from '../../lib/security-utils'
+import { validateAndSanitizeInput } from '@/lib/security/security-utils'
 
 export interface SetlistItem {
   id?: string

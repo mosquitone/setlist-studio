@@ -7,7 +7,8 @@ export const ValidationRules = {
     minLength: 8,
     maxLength: 128,
     pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
-    message: 'パスワードは8文字以上で、大文字・小文字・数字・特殊文字（@$!%*?&）を含む必要があります',
+    message:
+      'パスワードは8文字以上で、大文字・小文字・数字・特殊文字（@$!%*?&）を含む必要があります',
   },
 
   // ユーザー関連
@@ -92,7 +93,7 @@ export const ValidationRules = {
 // XSS対策用のサニタイゼーション関数
 export function sanitizeInput(input: string): string {
   if (typeof input !== 'string') return ''
-  
+
   return input
     .trim()
     .replace(/[<>]/g, '') // HTMLタグ除去
@@ -104,10 +105,10 @@ export function sanitizeInput(input: string): string {
 // 統一された検証関数
 export function validateField(
   value: string,
-  fieldType: keyof typeof ValidationRules
+  fieldType: keyof typeof ValidationRules,
 ): { isValid: boolean; message?: string } {
   const rule = ValidationRules[fieldType]
-  
+
   if (!rule) {
     return { isValid: false, message: '不明なフィールドタイプです' }
   }
@@ -151,7 +152,7 @@ export function validateField(
 // Yup用のスキーマヘルパー
 export function createYupValidation(fieldType: keyof typeof ValidationRules) {
   const rule = ValidationRules[fieldType]
-  
+
   return {
     rule,
     test: (value: string) => validateField(value, fieldType).isValid,

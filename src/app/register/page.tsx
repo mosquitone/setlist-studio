@@ -19,7 +19,7 @@ import {
   ArrowBack as ArrowBackIcon,
 } from '@mui/icons-material'
 import { useMutation } from '@apollo/client'
-import { REGISTER } from '@/lib/graphql/apollo-operations'
+import { REGISTER } from '@/lib/server/graphql/apollo-operations'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
@@ -47,16 +47,16 @@ export default function RegisterPage() {
     if (password.length < 8) {
       return 'パスワードは8文字以上である必要があります'
     }
-    
+
     const hasLowercase = /[a-z]/.test(password)
     const hasUppercase = /[A-Z]/.test(password)
     const hasNumber = /\d/.test(password)
     const hasSpecialChar = /[@$!%*?&]/.test(password)
-    
+
     if (!hasLowercase || !hasUppercase || !hasNumber || !hasSpecialChar) {
       return 'パスワードは大文字・小文字・数字・特殊文字（@$!%*?&）を含む必要があります'
     }
-    
+
     return null
   }
 

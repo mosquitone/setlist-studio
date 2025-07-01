@@ -2,9 +2,22 @@ import { Resolver, Mutation, Arg, Ctx } from 'type-graphql'
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import { AuthPayload, RegisterInput, LoginInput, PasswordResetRequestInput, PasswordResetInput, PasswordResetResponse } from '../types/Auth'
-import { logAuthSuccessDB, logAuthFailureDB, SecurityEventType, SecurityEventSeverity, logSecurityEventDB } from '../../security-logger-db'
-import { DatabaseThreatDetection } from '../../threat-detection-db'
+import {
+  AuthPayload,
+  RegisterInput,
+  LoginInput,
+  PasswordResetRequestInput,
+  PasswordResetInput,
+  PasswordResetResponse,
+} from '../types/Auth'
+import {
+  logAuthSuccessDB,
+  logAuthFailureDB,
+  SecurityEventType,
+  SecurityEventSeverity,
+  logSecurityEventDB,
+} from '../../../security/security-logger-db'
+import { DatabaseThreatDetection } from '../../../security/threat-detection-db'
 // import { createPasswordResetRequest, executePasswordReset } from '../../password-reset' // 削除済み
 
 interface Context {
@@ -23,10 +36,8 @@ interface Context {
 function getClientIP(context: Context): string | undefined {
   const headers = context.req?.headers
   if (!headers) return undefined
-  
-  return headers['x-forwarded-for']?.split(',')[0] || 
-         headers['x-real-ip'] || 
-         'unknown'
+
+  return headers['x-forwarded-for']?.split(',')[0] || headers['x-real-ip'] || 'unknown'
 }
 
 @Resolver()
@@ -46,10 +57,10 @@ export class AuthResolver {
         severity: SecurityEventSeverity.MEDIUM,
         ipAddress: getClientIP(ctx),
         userAgent: ctx.req?.headers['user-agent'],
-        details: { 
+        details: {
           email: input.email,
           username: input.username,
-          reason: 'user_already_exists'
+          reason: 'user_already_exists',
         },
       })
       throw new Error('登録に失敗しました。入力内容を確認してください')
@@ -80,9 +91,9 @@ export class AuthResolver {
       userId: user.id,
       ipAddress: getClientIP(ctx),
       userAgent: ctx.req?.headers['user-agent'],
-      details: { 
+      details: {
         email: user.email,
-        username: user.username
+        username: user.username,
       },
     })
 
@@ -100,34 +111,46 @@ export class AuthResolver {
 
     if (!user) {
       // ログイン失敗をログに記録（データベースベース）
-      await logAuthFailureDB(ctx.prisma, input.email, 'user_not_found', getClientIP(ctx), ctx.req?.headers['user-agent'])
-      
+      await logAuthFailureDB(
+        ctx.prisma,
+        input.email,
+        'user_not_found',
+        getClientIP(ctx),
+        ctx.req?.headers['user-agent'],
+      )
+
       // 脅威検知分析（データベースベース）
       const threatDetection = new DatabaseThreatDetection(ctx.prisma)
       const threats = await threatDetection.analyzeLoginAttempt(
         input.email,
         false,
         getClientIP(ctx),
-        ctx.req?.headers['user-agent']
+        ctx.req?.headers['user-agent'],
       )
-      
+
       throw new Error('メールアドレスまたはパスワードが正しくありません')
     }
 
     const isValidPassword = await bcrypt.compare(input.password, user.password)
     if (!isValidPassword) {
       // パスワード不正をログに記録（データベースベース）
-      await logAuthFailureDB(ctx.prisma, input.email, 'invalid_password', getClientIP(ctx), ctx.req?.headers['user-agent'])
-      
+      await logAuthFailureDB(
+        ctx.prisma,
+        input.email,
+        'invalid_password',
+        getClientIP(ctx),
+        ctx.req?.headers['user-agent'],
+      )
+
       // 脅威検知分析（データベースベース）
       const threatDetection = new DatabaseThreatDetection(ctx.prisma)
       const threats = await threatDetection.analyzeLoginAttempt(
         input.email,
         false,
         getClientIP(ctx),
-        ctx.req?.headers['user-agent']
+        ctx.req?.headers['user-agent'],
       )
-      
+
       throw new Error('メールアドレスまたはパスワードが正しくありません')
     }
 
@@ -141,14 +164,14 @@ export class AuthResolver {
 
     // ログイン成功をログに記録（データベースベース）
     await logAuthSuccessDB(ctx.prisma, user.id, getClientIP(ctx), ctx.req?.headers['user-agent'])
-    
+
     // 成功時の脅威検知分析（異常なパターンがないかチェック）
     const threatDetection = new DatabaseThreatDetection(ctx.prisma)
     const threats = await threatDetection.analyzeLoginAttempt(
       input.email,
       true,
       getClientIP(ctx),
-      ctx.req?.headers['user-agent']
+      ctx.req?.headers['user-agent'],
     )
 
     return {

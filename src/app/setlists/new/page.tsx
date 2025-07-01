@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { useMutation, useQuery } from '@apollo/client'
-import { CREATE_SETLIST, GET_SETLIST } from '@/lib/graphql/apollo-operations'
+import { CREATE_SETLIST, GET_SETLIST } from '@/lib/server/graphql/apollo-operations'
 import { useRouter, useSearchParams } from 'next/navigation'
 import SetlistForm, { SetlistFormValues } from '@/components/forms/SetlistForm'
 import { GetSetlistResponse, SetlistItem } from '@/types/graphql'

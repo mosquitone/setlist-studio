@@ -192,20 +192,37 @@ For detailed deployment instructions, see [VERCEL_DEPLOYMENT_GUIDE.md](./VERCEL_
 │       ├── BlackTheme.tsx  # Black/dark theme
 │       ├── WhiteTheme.tsx  # White/light theme
 │       └── SetlistRenderer.tsx
-├── src/lib/               # Shared utilities
-│   ├── apollo-client.ts    # GraphQL client configuration
-│   └── graphql/           # GraphQL schema and operations
-│       ├── apollo-operations.ts  # All GraphQL queries, mutations, and subscriptions
-│       ├── resolvers/      # GraphQL resolvers
-│       │   ├── SetlistResolver.ts
-│       │   ├── SongResolver.ts
-│       │   └── AuthResolver.ts
-│       ├── types/          # GraphQL type definitions
-│       │   ├── Setlist.ts
-│       │   ├── Song.ts
-│       │   └── User.ts
-│       └── middleware/     # Authentication middleware
-│           └── jwt-auth-middleware.ts
+├── src/lib/               # Shared utilities organized by function
+│   ├── client/            # Client-side utilities
+│   │   ├── apollo-client.ts    # GraphQL client configuration
+│   │   ├── auth-utils.ts       # Client-side authentication utilities
+│   │   └── secure-auth-client.ts # Secure authentication client
+│   ├── server/            # Server-side utilities
+│   │   └── graphql/       # GraphQL schema and operations
+│   │       ├── apollo-operations.ts  # All GraphQL queries, mutations, and subscriptions
+│   │       ├── resolvers/ # GraphQL resolvers
+│   │       │   ├── AuthResolver.ts
+│   │       │   ├── SetlistResolver.ts
+│   │       │   ├── SetlistItemResolver.ts
+│   │       │   └── SongResolver.ts
+│   │       ├── types/     # GraphQL type definitions
+│   │       │   ├── Auth.ts
+│   │       │   ├── Setlist.ts
+│   │       │   ├── SetlistItem.ts
+│   │       │   ├── Song.ts
+│   │       │   └── User.ts
+│   │       └── middleware/ # Authentication middleware
+│   │           └── jwt-auth-middleware.ts
+│   ├── security/          # Security-related utilities
+│   │   ├── csrf-protection.ts    # CSRF protection middleware
+│   │   ├── log-sanitizer.ts      # Log sanitization utilities
+│   │   ├── rate-limit-db.ts      # Database-based rate limiting
+│   │   ├── security-logger-db.ts # Security event logging
+│   │   ├── security-utils.ts     # General security utilities
+│   │   ├── threat-detection-db.ts # Threat detection system
+│   │   └── validation-rules.ts   # Input validation rules
+│   └── shared/            # Shared utilities across client/server
+│       └── dateUtils.ts   # Date formatting utilities
 ├── prisma/                 # Database schema and migrations
 │   └── schema.prisma       # Prisma schema definition
 ├── public/                 # Static assets including theme logos
@@ -378,3 +395,13 @@ ThreatActivity: ipAddress, activityType, userId, timestamp, metadata
 
 ### Repository Management
 - **Claude.mdとReadme.mdを必要に応じて更新**: Added task to keep documentation files updated as part of ongoing project maintenance
+
+### Library Structure Reorganization (2025-07-01)
+- **Hierarchical Organization**: Reorganized src/lib directory into functional categories (client, server, security, shared)
+- **Client Directory**: Moved apollo-client.ts, auth-utils.ts, secure-auth-client.ts to client/ subdirectory
+- **Server Directory**: Moved GraphQL-related files (apollo-operations.ts, resolvers/, types/, middleware/) to server/graphql/ subdirectory
+- **Security Directory**: Consolidated all security-related utilities (csrf-protection.ts, rate-limit-db.ts, security-logger-db.ts, etc.) into security/ subdirectory  
+- **Shared Directory**: Moved dateUtils.ts to shared/ for utilities used by both client and server
+- **Import Path Updates**: Updated all import statements across the codebase to reflect new directory structure
+- **Type Safety**: Maintained full TypeScript compatibility with zero compilation errors
+- **Documentation Update**: Updated CLAUDE.md project structure section to reflect new organization

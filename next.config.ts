@@ -19,8 +19,8 @@ const nextConfig: NextConfig = {
               "base-uri 'self'", // base要素制限
               "form-action 'self'", // フォーム送信先制限
               "frame-ancestors 'none'", // クリックジャッキング対策
-              "block-all-mixed-content", // HTTPS強制
-              "upgrade-insecure-requests" // HTTP→HTTPS自動アップグレード
+              'block-all-mixed-content', // HTTPS強制
+              'upgrade-insecure-requests', // HTTP→HTTPS自動アップグレード
             ].join('; '),
           },
           {
