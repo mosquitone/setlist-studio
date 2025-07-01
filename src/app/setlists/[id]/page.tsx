@@ -13,15 +13,16 @@ import {
   Typography,
   Box,
 } from '@mui/material'
-import { useQuery } from '@apollo/client'
+import { useQuery, useMutation } from '@apollo/client'
 import { useParams } from 'next/navigation'
-import { GET_SETLIST } from '@/lib/graphql/apollo-operations'
+import { GET_SETLIST, TOGGLE_SETLIST_VISIBILITY } from '@/lib/graphql/apollo-operations'
 import { SetlistData } from '@/components/setlist-themes/types'
 import { ImageGenerator } from '@/components/setlist/ImageGenerator'
 import { SetlistActions } from '@/components/setlist/SetlistActions'
 import { SetlistPreview } from '@/components/setlist/SetlistPreview'
 import { useSetlistActions } from '@/hooks/useSetlistActions'
 import { useImageGeneration } from '@/hooks/useImageGeneration'
+import { useAuth } from '@/hooks/useAuth'
 
 export default function SetlistDetailPage() {
   const params = useParams()
@@ -32,13 +33,43 @@ export default function SetlistDetailPage() {
   const [showSuccess, setShowSuccess] = useState(false)
   const isDev = process.env.NODE_ENV === 'development'
 
+  const { user, isLoggedIn, isLoading: authLoading } = useAuth()
+
   const { data, loading, error } = useQuery(GET_SETLIST, {
     variables: { id: setlistId },
     skip: !setlistId,
   })
 
+  const [toggleVisibility] = useMutation(TOGGLE_SETLIST_VISIBILITY, {
+    refetchQueries: [{ query: GET_SETLIST, variables: { id: setlistId } }],
+  })
+
   const { handleEdit, handleDelete, handleShare, handleDuplicate, deleteLoading } =
     useSetlistActions({ setlistId, setlist: data?.setlist })
+
+  // Access control: check if user can view this setlist
+  const canViewSetlist = React.useMemo(() => {
+    if (!data?.setlist) return false
+
+    // Public setlists can be viewed by anyone
+    if (data.setlist.isPublic) return true
+
+    // Private setlists can only be viewed by the owner
+    if (!isLoggedIn || !user) return false
+    return data.setlist.userId === user.id
+  }, [data?.setlist, isLoggedIn, user])
+
+  const isOwner = React.useMemo(() => {
+    return isLoggedIn && user && data?.setlist && data.setlist.userId === user.id
+  }, [isLoggedIn, user, data?.setlist])
+
+  const handleToggleVisibility = async () => {
+    try {
+      await toggleVisibility({ variables: { id: setlistId } })
+    } catch (error) {
+      console.error('Failed to toggle visibility:', error)
+    }
+  }
 
   const {
     isGeneratingPreview,
@@ -66,11 +97,21 @@ export default function SetlistDetailPage() {
     }
   }, [data?.setlist?.theme])
 
-  if (loading) {
+  // Show loading while checking auth or fetching data
+  if (loading || authLoading) {
     return (
       <Container maxWidth="lg" sx={{ py: 4, textAlign: 'center' }}>
         <CircularProgress />
         <Typography sx={{ mt: 2 }}>セットリストを読み込み中...</Typography>
+      </Container>
+    )
+  }
+
+  // If setlist exists but user cannot view it, show not found
+  if (data?.setlist && !canViewSetlist) {
+    return (
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Alert severity="error">セットリストが見つかりません。</Alert>
       </Container>
     )
   }
@@ -119,6 +160,9 @@ export default function SetlistDetailPage() {
         showDebugToggle={isDev}
         showDebug={showDebug}
         onDebugToggle={handleDebugToggle}
+        isPublic={data?.setlist?.isPublic}
+        onToggleVisibility={handleToggleVisibility}
+        isOwner={isOwner}
       />
 
       <SetlistPreview
@@ -127,6 +171,7 @@ export default function SetlistDetailPage() {
         showDebug={showDebug}
         isGeneratingPreview={isGeneratingPreview}
         previewImage={previewImage}
+        qrCodeURL={`${typeof window !== 'undefined' ? window.location.origin : ''}/setlists/${setlistId}`}
       />
 
       <Box sx={{ display: 'none' }}>

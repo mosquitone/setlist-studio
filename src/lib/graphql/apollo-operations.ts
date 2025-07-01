@@ -111,6 +111,7 @@ export const GET_SETLISTS = gql`
       openTime
       startTime
       theme
+      isPublic
       createdAt
       updatedAt
       items {
@@ -134,6 +135,8 @@ export const GET_SETLIST = gql`
       openTime
       startTime
       theme
+      isPublic
+      userId
       createdAt
       updatedAt
       items {
@@ -157,6 +160,7 @@ export const CREATE_SETLIST = gql`
       openTime
       startTime
       theme
+      isPublic
       createdAt
       updatedAt
       items {
@@ -180,6 +184,7 @@ export const UPDATE_SETLIST = gql`
       openTime
       startTime
       theme
+      isPublic
       createdAt
       updatedAt
       items {
@@ -195,6 +200,12 @@ export const UPDATE_SETLIST = gql`
 export const DELETE_SETLIST = gql`
   mutation DeleteSetlist($id: ID!) {
     deleteSetlist(id: $id)
+  }
+`
+
+export const TOGGLE_SETLIST_VISIBILITY = gql`
+  mutation ToggleSetlistVisibility($id: ID!) {
+    toggleSetlistVisibility(id: $id)
   }
 `
 

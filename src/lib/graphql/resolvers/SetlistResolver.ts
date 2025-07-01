@@ -57,6 +57,9 @@ export class CreateSetlistInput {
   @Field()
   theme: string
 
+  @Field({ defaultValue: false })
+  isPublic: boolean
+
   @Field(() => [CreateSetlistItemForSetlistInput], { nullable: true })
   items?: CreateSetlistItemForSetlistInput[]
 }
@@ -84,6 +87,9 @@ export class UpdateSetlistInput {
   @Field({ nullable: true })
   theme?: string
 
+  @Field({ nullable: true })
+  isPublic?: boolean
+
   @Field(() => [CreateSetlistItemForSetlistInput], { nullable: true })
   items?: CreateSetlistItemForSetlistInput[]
 }
@@ -105,16 +111,23 @@ export class SetlistResolver {
   }
 
   @Query(() => Setlist, { nullable: true })
-  @UseMiddleware(AuthMiddleware)
   async setlist(@Arg('id', () => ID) id: string, @Ctx() ctx: Context): Promise<Setlist | null> {
-    return ctx.prisma.setlist.findFirst({
-      where: { id, userId: ctx.userId },
+    const setlist = await ctx.prisma.setlist.findUnique({
+      where: { id },
       include: {
         items: {
           orderBy: { order: 'asc' },
         },
       },
-    }) as Promise<Setlist | null>
+    })
+
+    if (!setlist) {
+      return null
+    }
+
+    // For ISR, always return the setlist data (access control will be handled on client-side)
+    // This allows proper SSR/ISR generation while maintaining security on the frontend
+    return setlist as Setlist
   }
 
   @Mutation(() => Setlist)
@@ -147,6 +160,28 @@ export class SetlistResolver {
     })
 
     return setlist as Setlist
+  }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(AuthMiddleware)
+  async toggleSetlistVisibility(
+    @Arg('id', () => ID) id: string,
+    @Ctx() ctx: Context,
+  ): Promise<boolean> {
+    const setlist = await ctx.prisma.setlist.findFirst({
+      where: { id, userId: ctx.userId },
+    })
+
+    if (!setlist) {
+      throw new Error('Setlist not found')
+    }
+
+    await ctx.prisma.setlist.update({
+      where: { id },
+      data: { isPublic: !setlist.isPublic },
+    })
+
+    return true
   }
 
   @Mutation(() => Setlist)

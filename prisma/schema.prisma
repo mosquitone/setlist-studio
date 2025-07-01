@@ -48,6 +48,7 @@ model Setlist {
   openTime    String?
   startTime   String?
   theme       String?
+  isPublic    Boolean @default(false)
   
   userId      String
   user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)

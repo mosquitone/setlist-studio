@@ -9,6 +9,8 @@ import {
   Group as GroupIcon,
   Visibility as VisibilityIcon,
   Edit as EditIcon,
+  Public as PublicIcon,
+  Lock as LockIcon,
 } from '@mui/icons-material'
 import Link from 'next/link'
 import { Setlist } from '../../types/graphql'
@@ -121,18 +123,35 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
                     >
                       <PlaylistPlayIcon />
                     </Avatar>
-                    <Chip
-                      label={setlist.theme === 'white' ? 'ホワイト' : 'ブラック'}
-                      size="small"
-                      sx={{
-                        bgcolor:
-                          setlist.theme === 'white'
-                            ? 'rgba(59, 130, 246, 0.1)'
-                            : 'rgba(239, 68, 68, 0.2)',
-                        color: setlist.theme === 'white' ? 'primary.main' : '#ef4444',
-                        fontWeight: 600,
-                      }}
-                    />
+                    <Stack direction="row" spacing={0.5}>
+                      <Chip
+                        icon={setlist.isPublic ? <PublicIcon /> : <LockIcon />}
+                        label={setlist.isPublic ? '公開' : '非公開'}
+                        size="small"
+                        sx={{
+                          bgcolor: setlist.isPublic
+                            ? 'rgba(34, 197, 94, 0.1)'
+                            : 'rgba(156, 163, 175, 0.1)',
+                          color: setlist.isPublic ? '#16a34a' : '#6b7280',
+                          fontWeight: 600,
+                          '& .MuiChip-icon': {
+                            fontSize: '0.8rem',
+                          },
+                        }}
+                      />
+                      <Chip
+                        label={setlist.theme === 'white' ? 'ホワイト' : 'ブラック'}
+                        size="small"
+                        sx={{
+                          bgcolor:
+                            setlist.theme === 'white'
+                              ? 'rgba(59, 130, 246, 0.1)'
+                              : 'rgba(239, 68, 68, 0.2)',
+                          color: setlist.theme === 'white' ? 'primary.main' : '#ef4444',
+                          fontWeight: 600,
+                        }}
+                      />
+                    </Stack>
                   </Box>
                   <Typography
                     variant="h6"

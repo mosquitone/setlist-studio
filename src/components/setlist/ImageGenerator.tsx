@@ -75,7 +75,7 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
         // Create data with QR code
         const dataWithQR = { ...data, theme: theme as any, qrCodeURL }
 
-        // Create a temporary container
+        // Create a temporary container for rendering
         const container = document.createElement('div')
         container.style.position = 'absolute'
         container.style.left = '-9999px'
@@ -103,13 +103,11 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
 
         // Generate image with html2canvas
         const canvas = await html2canvas(element, {
-          backgroundColor: null,
-          scale: 2,
-          useCORS: true,
-          allowTaint: true,
-          logging: false,
-          width: element.scrollWidth,
-          height: element.scrollHeight,
+          backgroundColor: '#ffffff',
+          scale: 1,
+          logging: true,
+          useCORS: false,
+          allowTaint: false,
         })
 
         // Convert to blob URL

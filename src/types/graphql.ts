@@ -26,6 +26,7 @@ export interface Setlist {
   openTime: string | null
   startTime: string | null
   theme: string | null
+  isPublic: boolean
   createdAt: string
   updatedAt: string
   items: SetlistItem[]
