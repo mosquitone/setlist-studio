@@ -4,7 +4,7 @@
 
 ## 概要
 
-音楽バンド向けの現代的なセットリスト生成アプリケーションです。ユーザー認証、楽曲管理、セットリスト作成機能を提供します。
+音楽バンド向けの現代的なセットリスト生成アプリケーションです。Next.js + Vercel Functions によるGraphQL API統合アーキテクチャで、ユーザー認証、楽曲管理、セットリスト作成機能を提供します。
 
 ## 主な機能
 
@@ -32,20 +32,20 @@
 
 ## 技術スタック
 
-### フロントエンド・バックエンド統合
-- **Next.js 15** - React フレームワーク（App Router使用）
-- **TypeScript** - 型安全性
-- **Material-UI v5** - モダンなUIコンポーネント
-- **Apollo Client** - GraphQL状態管理
+### 統合アーキテクチャ（Next.js + Vercel Functions）
+- **Next.js 15.3.4** - React フレームワーク（App Router使用）
+- **TypeScript 5.5** - 型安全性とコード品質
+- **Material-UI v5.17.1** - モダンなUIコンポーネント + カスタムテーマ
+- **Apollo Client 3.13.8** - GraphQL状態管理 + キャッシング
 
 ### GraphQL API (Vercel Functions)
-- **Apollo Server v4** - Next.js API Routesで動作するGraphQL API（セキュリティ強化済み）
-- **Type-GraphQL** - スキーマファーストAPI開発
-- **Prisma** - データベースORM
-- **PostgreSQL** - メインデータベース + セキュリティログ
+- **Apollo Server v4.12.2** - Next.js API Routesで動作するGraphQL API（セキュリティ強化済み）
+- **Type-GraphQL 1.1.1** - スキーマファーストAPI開発
+- **Prisma 6.10.1** - 型安全データベースORM
+- **PostgreSQL 15** - メインデータベース + セキュリティログ
 - **JWT + HttpOnly Cookie** - 多層認証システム
 - **Rate Limiting** - データベースベース分散レート制限
-- **CSRF Protection** - Double Submit Cookie パターン
+- **CSRF Protection** - Double Submit Cookie + HMAC パターン
 - **Threat Detection** - リアルタイム脅威検知エンジン
 
 ## セットアップ
@@ -146,6 +146,8 @@ pnpm generate     # Prismaクライアント生成
 ### アーキテクチャ
 
 詳細なアーキテクチャ情報は [CLAUDE.md](./CLAUDE.md) を参照してください。
+
+**GraphQLアーキテクチャの詳細解説**: [GraphQL-Architecture-Guide.md](./GraphQL-Architecture-Guide.md) でレストラン比喩を使った分かりやすい解説を提供しています。
 
 ### セキュリティ
 
