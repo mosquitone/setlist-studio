@@ -22,7 +22,6 @@ import { useMutation } from '@apollo/client'
 import { REGISTER } from '@/lib/graphql/apollo-operations'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useCSRF } from '@/hooks/useCSRF'
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('')
@@ -33,9 +32,6 @@ export default function RegisterPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [error, setError] = useState('')
   const router = useRouter()
-  
-  // CSRFトークンを初期化
-  useCSRF()
 
   const [register, { loading }] = useMutation(REGISTER, {
     onCompleted: () => {
