@@ -6,10 +6,37 @@ interface RateLimitStore {
   [key: string]: {
     count: number
     resetTime: number
+    mutex?: boolean // Race condition防止用のミューテックス
   }
 }
 
 const store: RateLimitStore = {}
+
+// Race condition防止のための非同期ミューテックス
+const mutexes = new Map<string, Promise<void>>()
+
+async function withMutex<T>(key: string, operation: () => T | Promise<T>): Promise<T> {
+  // 既存のミューテックスがある場合は待機
+  while (mutexes.has(key)) {
+    await mutexes.get(key)
+  }
+  
+  // 新しいミューテックスを作成
+  let resolve: () => void
+  const mutex = new Promise<void>((res) => {
+    resolve = res
+  })
+  mutexes.set(key, mutex)
+  
+  try {
+    const result = await operation()
+    return result
+  } finally {
+    // ミューテックスを解放
+    mutexes.delete(key)
+    resolve!()
+  }
+}
 
 interface RateLimitOptions {
   windowMs: number
@@ -24,59 +51,70 @@ export function rateLimit(options: RateLimitOptions) {
     // Generate secure rate limit key (IP + User-Agent hash)
     const rateLimitKey = generateRateLimitKey(request)
 
-    const now = Date.now()
-    const resetTime = now + windowMs
+    // Race condition防止：ミューテックスを使用してアトミックな操作を保証
+    const result = await withMutex(rateLimitKey, () => {
+      const now = Date.now()
+      const resetTime = now + windowMs
 
-    // Clean up expired entries
-    Object.keys(store).forEach(key => {
-      if (store[key].resetTime < now) {
-        delete store[key]
+      // Clean up expired entries (バックグラウンドタスクに移すべき)
+      Object.keys(store).forEach(key => {
+        if (store[key].resetTime < now) {
+          delete store[key]
+        }
+      })
+
+      // Initialize or update rate limit data
+      if (!store[rateLimitKey]) {
+        store[rateLimitKey] = {
+          count: 1,
+          resetTime,
+        }
+      } else if (store[rateLimitKey].resetTime < now) {
+        store[rateLimitKey] = {
+          count: 1,
+          resetTime,
+        }
+      } else {
+        store[rateLimitKey].count++
+      }
+
+      // 現在のカウントを返す
+      return {
+        count: store[rateLimitKey].count,
+        resetTime: store[rateLimitKey].resetTime,
+        exceeded: store[rateLimitKey].count > maxRequests
       }
     })
 
-    // Initialize or update rate limit data
-    if (!store[rateLimitKey]) {
-      store[rateLimitKey] = {
-        count: 1,
-        resetTime,
-      }
-    } else if (store[rateLimitKey].resetTime < now) {
-      store[rateLimitKey] = {
-        count: 1,
-        resetTime,
-      }
-    } else {
-      store[rateLimitKey].count++
-    }
-
     // Check if rate limit exceeded
-    if (store[rateLimitKey].count > maxRequests) {
+    if (result.exceeded) {
       // レート制限違反をログに記録
       logRateLimitExceeded(rateLimitKey, request.url, request.headers.get('user-agent') || undefined)
       
+      const now = Date.now()
       return NextResponse.json(
         { 
           error: message,
-          retryAfter: Math.ceil((store[rateLimitKey].resetTime - now) / 1000)
+          retryAfter: Math.ceil((result.resetTime - now) / 1000)
         },
         { 
           status: 429,
           headers: {
-            'Retry-After': Math.ceil((store[rateLimitKey].resetTime - now) / 1000).toString(),
+            'Retry-After': Math.ceil((result.resetTime - now) / 1000).toString(),
             'X-RateLimit-Limit': maxRequests.toString(),
             'X-RateLimit-Remaining': '0',
-            'X-RateLimit-Reset': Math.ceil(store[rateLimitKey].resetTime / 1000).toString(),
+            'X-RateLimit-Reset': Math.ceil(result.resetTime / 1000).toString(),
           }
         }
       )
     }
 
     // Add rate limit headers
-    const remaining = Math.max(0, maxRequests - store[rateLimitKey].count)
+    const remaining = Math.max(0, maxRequests - result.count)
     const response = NextResponse.next()
     response.headers.set('X-RateLimit-Limit', maxRequests.toString())
     response.headers.set('X-RateLimit-Remaining', remaining.toString())
-    response.headers.set('X-RateLimit-Reset', Math.ceil(store[rateLimitKey].resetTime / 1000).toString())
+    response.headers.set('X-RateLimit-Reset', Math.ceil(result.resetTime / 1000).toString())
 
     return null // Allow request to continue
   }

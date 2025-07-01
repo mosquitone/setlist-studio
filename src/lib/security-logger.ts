@@ -1,4 +1,13 @@
 // セキュリティイベント監査ログシステム
+import {
+  sanitizeForLog,
+  sanitizeEmailForLog,
+  sanitizeUserAgentForLog,
+  sanitizeIPForLog,
+  sanitizeResourceForLog,
+  sanitizeObjectForLog,
+  formatSecurityLog
+} from './log-sanitizer'
 
 export enum SecurityEventType {
   // 認証関連
@@ -79,10 +88,19 @@ class SecurityLogger {
   }
 
   async logEvent(event: Omit<SecurityEvent, 'id' | 'timestamp'>): Promise<void> {
+    // ログインジェクション攻撃防止：すべての入力をサニタイズ
+    const sanitizedEvent = {
+      ...event,
+      ipAddress: event.ipAddress ? sanitizeIPForLog(event.ipAddress) : undefined,
+      userAgent: event.userAgent ? sanitizeUserAgentForLog(event.userAgent) : undefined,
+      resource: event.resource ? sanitizeResourceForLog(event.resource) : undefined,
+      details: event.details ? sanitizeObjectForLog(event.details) : undefined,
+    }
+    
     const fullEvent: SecurityEvent = {
       id: this.generateEventId(),
       timestamp: new Date(),
-      ...event,
+      ...sanitizedEvent,
     }
 
     // 重要度フィルタリング
@@ -133,16 +151,23 @@ class SecurityLogger {
                     event.severity === SecurityEventSeverity.HIGH ? 'warn' :
                     'info'
 
-    console[logLevel]('🔒 Security Event:', {
-      id: event.id,
+    // セキュアなログフォーマットを使用
+    const secureLogEntry = formatSecurityLog({
+      timestamp: event.timestamp,
+      level: logLevel.toUpperCase(),
       type: event.type,
-      severity: event.severity,
-      timestamp: event.timestamp.toISOString(),
-      userId: event.userId,
-      ipAddress: event.ipAddress,
-      resource: event.resource,
-      details: event.details,
+      message: `Security event: ${event.type}`,
+      metadata: {
+        id: event.id,
+        severity: event.severity,
+        userId: event.userId,
+        ipAddress: event.ipAddress,
+        resource: event.resource,
+        details: event.details,
+      }
     })
+    
+    console[logLevel]('🔒', secureLogEntry)
   }
 
   private async logToFile(event: SecurityEvent): Promise<void> {
@@ -283,7 +308,11 @@ export const logAuthFailure = (email: string, reason: string, ipAddress?: string
     severity: SecurityEventSeverity.MEDIUM,
     ipAddress,
     userAgent,
-    details: { email, reason, failed: true },
+    details: { 
+      email: sanitizeEmailForLog(email), 
+      reason: sanitizeForLog(reason), 
+      failed: true 
+    },
   })
 
 export const logRateLimitExceeded = (ipAddress?: string, endpoint?: string, userAgent?: string) =>
