@@ -33,7 +33,7 @@ export function WelcomeSection() {
           あなたの楽曲を管理して、素敵なセットリストを作成しましょう
         </Typography>
         <Chip
-          label="🎵 プロフェッショナルなセットリスト作成ツール"
+          label="🎵 エモーショナルなセットリスト作成ツール"
           variant="outlined"
           sx={{ fontSize: '1rem', py: 2 }}
         />
