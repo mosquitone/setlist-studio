@@ -62,7 +62,7 @@ The application uses a modern, streamlined architecture:
 - Apollo Server v4.12.2 running as Next.js API route at `/api/graphql`
 - Type-GraphQL 1.1.1 for schema-first API development
 - Prisma 6.10.1 as ORM with PostgreSQL
-- JWT-based authentication with bcryptjs 3.0.2
+- HttpOnly Cookie authentication with JWT tokens and bcryptjs 3.0.2
 - Security enhancements: query depth limiting, request size limiting, introspection control
 - Field resolvers for handling relations without circular dependencies
 
@@ -85,27 +85,29 @@ The application uses a modern, streamlined architecture:
 - **QR Code Integration**: Automatic QR codes linking to setlist pages
 - **Theme System**: Black and White themes with dropdown selector
 - **Duplication System**: Clone existing setlists via URL query parameters
-- **Authentication**: JWT-based user system with protected routes
+- **Authentication**: HttpOnly Cookie-based user system with JWT tokens and protected routes
 
 **Frontend Architecture**
 - Provider pattern with separate MUIProvider and ApolloProvider
 - Custom MUI theme with blue/red color scheme and Inter font
-- Apollo Client configured for development (localhost:4000) with auth headers
+- Apollo Client configured with HttpOnly Cookie authentication and CSRF protection
 - Client-side routing with NextJS App Router
 - Advanced image generation system using html2canvas and QR code integration
 - Simplified theme system with Black/White options for better UX
 - Responsive design with Material-UI components
 
 **GraphQL Integration**
-- Apollo Client automatically includes JWT tokens in authorization headers
-- GraphQL API uses AuthMiddleware to protect resolvers
+- Apollo Client uses HttpOnly Cookies for automatic authentication
+- GraphQL API uses AuthMiddleware with cookie-based JWT token validation
+- CSRF protection with token-based validation for mutations
 - Unified GraphQL version: v15.8.0 (with pnpm override for compatibility)
 
 ### Authentication Flow
-- JWT tokens stored in localStorage
-- Protected GraphQL resolvers use AuthMiddleware decorator
-- User registration/login through GraphQL mutations
-- Client-side auth state management with localStorage monitoring
+- JWT tokens stored in secure HttpOnly cookies
+- Protected GraphQL resolvers use AuthMiddleware decorator with cookie validation
+- User registration/login through GraphQL mutations with cookie management
+- Client-side auth state management via secureAuthClient with subscription pattern
+- Automatic CSRF protection for state-changing operations
 
 ## Important Configuration Notes
 
