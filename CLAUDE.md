@@ -16,6 +16,7 @@ This is mosquitone Emotional Setlist Studio, a modern setlist generator applicat
 - **TypeScript type check**: `npx tsc --noEmit`
 
 ### Database Operations
+- **Initial setup**: `pnpm db:setup` (first-time PostgreSQL setup with security)
 - **Start PostgreSQL**: `docker-compose up -d postgres`
 - **Apply schema changes**: `pnpm db:push`
 - **Generate Prisma client**: `pnpm generate`
@@ -122,6 +123,11 @@ The application uses a modern, streamlined architecture:
 ### Development Workflow (Local)
 1. Install dependencies: `pnpm install`
 2. Start PostgreSQL (初回セットアップ):
+   ```bash
+   pnpm db:setup
+   ```
+   
+   または手動で:
    ```bash
    # セキュリティ設定を一時的に無効化
    sed -i.bak 's/user: "999:999"/# user: "999:999"/' docker-compose.yml

@@ -5,7 +5,7 @@ services:
       POSTGRES_DB: setlist_generator
       POSTGRES_USER: postgres
       # セキュリティ強化: 環境変数から読み込み、デフォルトは削除
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres_dev_only}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres_dev_secure}
       # セキュリティ強化: SSL設定
       POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256 --auth-local=scram-sha-256"
     ports:
