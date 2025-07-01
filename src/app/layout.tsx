@@ -4,6 +4,7 @@ import { Suspense } from 'react'
 import MUIProvider from '@/components/providers/MUIProvider'
 import ApolloProviderWrapper from '@/components/providers/ApolloProvider'
 import CSRFProvider from '@/components/providers/CSRFProvider'
+import { AuthProvider } from '@/components/providers/AuthProvider'
 import Header from '@/components/common/Header'
 import Footer from '@/components/common/Footer'
 import LoadingFallback from '@/components/common/LoadingFallback'
@@ -26,9 +27,11 @@ export default function RootLayout({
         <ApolloProviderWrapper>
           <MUIProvider>
             <CSRFProvider>
-              <Header />
-              <Suspense fallback={<LoadingFallback />}>{children}</Suspense>
-              <Footer />
+              <AuthProvider>
+                <Header />
+                <Suspense fallback={<LoadingFallback />}>{children}</Suspense>
+                <Footer />
+              </AuthProvider>
             </CSRFProvider>
           </MUIProvider>
         </ApolloProviderWrapper>

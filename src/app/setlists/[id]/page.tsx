@@ -22,7 +22,7 @@ import { SetlistActions } from '@/components/setlist/SetlistActions'
 import { SetlistPreview } from '@/components/setlist/SetlistPreview'
 import { useSetlistActions } from '@/hooks/useSetlistActions'
 import { useImageGeneration } from '@/hooks/useImageGeneration'
-import { useAuth } from '@/hooks/useAuth'
+import { useAuth } from '@/components/providers/AuthProvider'
 
 export default function SetlistDetailPage() {
   const params = useParams()
