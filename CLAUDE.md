@@ -254,3 +254,67 @@ The application uses a modern, streamlined architecture:
 - **Dependency Cleanup**: Removed redundant graphql-server directory and consolidated all dependencies into single package.json
 - **Environment Configuration**: Unified environment variable management with `.env` and `.env.local` files
 - **Production Ready**: Application now fully compatible with Vercel Functions deployment
+
+## Security Architecture (2025-07-01)
+
+### Comprehensive Security Implementation
+このアプリケーションは企業レベルのセキュリティ要件を満たすよう設計されています：
+
+#### Authentication & Authorization
+- **HttpOnly Cookie Authentication**: XSS攻撃を防ぐセキュアなトークン管理
+- **JWT Token Validation**: 改ざん防止のデジタル署名  
+- **Automatic Migration**: localStorage → HttpOnly Cookie への自動移行
+- **Access Control**: プライベート/パブリックセットリストの厳密なアクセス制御
+
+#### Security Monitoring & Logging
+- **Database-based Security Logging**: Vercel Functions対応の永続的ログシステム
+- **Threat Detection Engine**: ブルートフォース、認証情報スタッフィング攻撃の検知
+- **Real-time Security Events**: 不正アクセス試行の即座な記録と分析
+- **Automated Cleanup**: 古いセキュリティデータの自動削除 (Vercel Cron)
+
+#### Attack Prevention
+- **CSRF Protection**: タイミング攻撃耐性のあるDouble Submit Cookie + HMAC
+- **Rate Limiting**: データベースベースの分散レート制限（IP偽装防止付き）
+- **Log Injection Protection**: 改行・制御文字・特殊文字のサニタイゼーション
+- **IP Spoofing Prevention**: 信頼できるプロキシ検証とセキュアIP抽出
+
+#### Data Protection
+- **Input Sanitization**: DOMPurify + カスタムvalidation
+- **SQL Injection Prevention**: Prisma ORM + パラメータ化クエリ
+- **Password Security**: bcrypt 12ラウンド + 複雑性要件
+- **Sensitive Data Masking**: ログ出力時の機密情報保護
+
+#### Infrastructure Security
+- **Docker Hardening**: 非特権ユーザー、読み取り専用ルートFS、SCRAM-SHA-256認証
+- **Environment Isolation**: 本番/開発環境の完全分離
+- **Secure Headers**: CSP、X-Frame-Options等のセキュリティヘッダー
+- **Network Security**: localhost専用バインド、カスタムネットワーク分離
+
+### Security Tables (Database Schema)
+```sql
+-- レート制限追跡
+RateLimitEntry: key, count, resetTime
+
+-- セキュリティイベントログ  
+SecurityEvent: type, severity, timestamp, userId, ipAddress, details
+
+-- 脅威活動分析
+ThreatActivity: ipAddress, activityType, userId, timestamp, metadata
+```
+
+### Production Security Checklist
+- ✅ All critical vulnerabilities fixed
+- ✅ CSRF timing attack mitigation
+- ✅ IP spoofing prevention  
+- ✅ localStorage XSS vulnerability eliminated
+- ✅ Race condition prevention in rate limiting
+- ✅ Threat detection logic error fixed
+- ✅ Log injection attack prevention
+- ✅ Comprehensive security event monitoring
+- ✅ Automated security data cleanup
+- ✅ Vercel Functions compatibility
+
+## Updates and Memories
+
+### Repository Management
+- **Claude.mdとReadme.mdを必要に応じて更新**: Added task to keep documentation files updated as part of ongoing project maintenance
