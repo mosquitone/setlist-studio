@@ -116,6 +116,7 @@ export class SetlistResolver {
   }
 
   @Query(() => Setlist, { nullable: true })
+  @UseMiddleware(AuthMiddleware)
   async setlist(@Arg('id', () => ID) id: string, @Ctx() ctx: Context): Promise<Setlist | null> {
     const setlist = await ctx.prisma.setlist.findUnique({
       where: { id },
