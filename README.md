@@ -34,14 +34,14 @@
 
 ### 統合アーキテクチャ（Next.js + Vercel Functions）
 - **Next.js 15.3.4** - React フレームワーク（App Router使用）
-- **TypeScript 5.5** - 型安全性とコード品質
+- **TypeScript 5** - 型安全性とコード品質
 - **Material-UI v5.17.1** - モダンなUIコンポーネント + カスタムテーマ
 - **Apollo Client 3.13.8** - GraphQL状態管理 + キャッシング
 
 ### GraphQL API (Vercel Functions)
 - **Apollo Server v4.12.2** - Next.js API Routesで動作するGraphQL API（セキュリティ強化済み）
 - **Type-GraphQL 1.1.1** - スキーマファーストAPI開発
-- **Prisma 6.10.1** - 型安全データベースORM
+- **Prisma 6.11.0** - 型安全データベースORM
 - **PostgreSQL 15** - メインデータベース + セキュリティログ
 - **HttpOnly Cookie + JWT** - XSS耐性のあるセキュア認証システム
 - **Rate Limiting** - データベースベース分散レート制限

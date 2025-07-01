@@ -52,7 +52,7 @@ This is mosquitone Emotional Setlist Studio, a modern setlist generator applicat
 The application uses a modern, streamlined architecture:
 
 **Frontend & Backend (Next.js 15.3.4)**
-- Next.js App Router with TypeScript
+- Next.js 15.3.4 App Router with TypeScript 5
 - Material-UI v5.17.1 for component library with custom theme
 - Apollo Client 3.13.8 for GraphQL state management
 - Client-side authentication state management
@@ -61,7 +61,7 @@ The application uses a modern, streamlined architecture:
 **GraphQL API (Vercel Functions)**
 - Apollo Server v4.12.2 running as Next.js API route at `/api/graphql`
 - Type-GraphQL 1.1.1 for schema-first API development
-- Prisma 6.10.1 as ORM with PostgreSQL
+- Prisma 6.11.0 as ORM with PostgreSQL
 - HttpOnly Cookie authentication with JWT tokens and bcryptjs 3.0.2
 - Security enhancements: query depth limiting, request size limiting, introspection control
 - Field resolvers for handling relations without circular dependencies
@@ -119,7 +119,7 @@ The application uses a modern, streamlined architecture:
 ### Package Management
 - Uses pnpm 10.12.1 for package management with Node.js 20.11.1 requirement
 - Single unified package.json in project root
-- ESLint 9.x with TypeScript 8.35.0 parser and Prettier 3.6.2 for code formatting
+- ESLint 9.x with TypeScript 5 and Prettier 3.6.2 for code formatting
 - **ESLint Configuration**: Uses flat config format (eslint.config.mjs) with ignores property
 
 ### Development Workflow (Local)
