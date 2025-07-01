@@ -1,7 +1,23 @@
-import { useState, useEffect } from 'react'
-import { secureAuthClient, User } from '../lib/client/secure-auth-client'
+'use client'
 
-export function useAuth() {
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { secureAuthClient, User } from '@/lib/client/secure-auth-client'
+
+interface AuthContextType {
+  isLoggedIn: boolean
+  isLoading: boolean
+  user: User | null
+  login: (token: string, userData: User) => Promise<{ success: boolean; user?: User }>
+  logout: () => Promise<void>
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined)
+
+interface AuthProviderProps {
+  children: ReactNode
+}
+
+export function AuthProvider({ children }: AuthProviderProps) {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [user, setUser] = useState<User | null>(null)
@@ -39,5 +55,21 @@ export function useAuth() {
     window.location.reload()
   }
 
-  return { isLoggedIn, isLoading, user, login, logout }
+  const value = {
+    isLoggedIn,
+    isLoading,
+    user,
+    login,
+    logout,
+  }
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext)
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider')
+  }
+  return context
 }

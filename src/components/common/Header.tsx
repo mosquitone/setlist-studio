@@ -6,7 +6,7 @@ import Toolbar from '@mui/material/Toolbar'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Link from 'next/link'
-import { useAuth } from '../../hooks/useAuth'
+import { useAuth } from '@/components/providers/AuthProvider'
 
 export default function Header() {
   const { isLoggedIn, isLoading, logout } = useAuth()
