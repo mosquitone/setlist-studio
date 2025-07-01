@@ -1,9 +1,11 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import { Suspense } from 'react'
 import MUIProvider from '@/components/providers/MUIProvider'
 import ApolloProviderWrapper from '@/components/providers/ApolloProvider'
 import Header from '@/components/common/Header'
 import Footer from '@/components/common/Footer'
+import LoadingFallback from '@/components/common/LoadingFallback'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -23,7 +25,7 @@ export default function RootLayout({
         <ApolloProviderWrapper>
           <MUIProvider>
             <Header />
-            {children}
+            <Suspense fallback={<LoadingFallback />}>{children}</Suspense>
             <Footer />
           </MUIProvider>
         </ApolloProviderWrapper>
