@@ -12,6 +12,7 @@
     "db:push": "dotenv -e .env.local -- prisma db push",
     "db:migrate": "dotenv -e .env.local -- prisma migrate dev",
     "db:studio": "dotenv -e .env.local -- prisma studio",
+    "db:setup": "bash scripts/setup-db.sh",
     "postinstall": "prisma generate"
   },
   "dependencies": {
