@@ -89,10 +89,7 @@ export default function SetlistDetailPage() {
 
   // Initialize selectedTheme with the saved theme from database
   React.useEffect(() => {
-    if (
-      data?.setlist?.theme &&
-      (data.setlist.theme === 'black' || data.setlist.theme === 'white')
-    ) {
+    if (data?.setlist?.theme && (data.setlist.theme === 'black' || data.setlist.theme === 'white')) {
       setSelectedTheme(data.setlist.theme)
     }
   }, [data?.setlist?.theme])
@@ -140,6 +137,7 @@ export default function SetlistDetailPage() {
   const handleThemeChange = (theme: 'black' | 'white') => {
     setSelectedTheme(theme)
   }
+
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
