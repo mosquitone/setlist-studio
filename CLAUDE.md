@@ -337,49 +337,178 @@ For detailed deployment instructions, see [VERCEL_DEPLOYMENT_GUIDE.md](./VERCEL_
 ## Security Architecture (2025-07-01)
 
 ### Comprehensive Security Implementation
-このアプリケーションは企業レベルのセキュリティ要件を満たすよう設計されています：
+This application is designed to meet enterprise-level security requirements:
 
 #### Authentication & Authorization
-- **HttpOnly Cookie Authentication**: XSS攻撃を防ぐセキュアなトークン管理
-- **JWT Token Validation**: 改ざん防止のデジタル署名  
-- **Automatic Migration**: localStorage → HttpOnly Cookie への自動移行
-- **Access Control**: プライベート/パブリックセットリストの厳密なアクセス制御
+- **HttpOnly Cookie Authentication**: Secure token management preventing XSS attacks
+- **JWT Token Validation**: Digital signatures for tamper prevention
+- **Automatic Migration**: localStorage → HttpOnly Cookie automatic migration
+- **Access Control**: Strict access control for private/public setlists
 
 #### Security Monitoring & Logging
-- **Database-based Security Logging**: Vercel Functions対応の永続的ログシステム
-- **Threat Detection Engine**: ブルートフォース、認証情報スタッフィング攻撃の検知
-- **Real-time Security Events**: 不正アクセス試行の即座な記録と分析
-- **Automated Cleanup**: 古いセキュリティデータの自動削除 (Vercel Cron)
+- **Database-based Security Logging**: Persistent logging system compatible with Vercel Functions
+- **Threat Detection Engine**: Detection of brute force and credential stuffing attacks
+- **Real-time Security Events**: Immediate recording and analysis of unauthorized access attempts
+- **Automated Cleanup**: Automatic deletion of old security data via Vercel Cron
 
 #### Attack Prevention
-- **CSRF Protection**: タイミング攻撃耐性のあるDouble Submit Cookie + HMAC
-- **Rate Limiting**: データベースベースの分散レート制限（IP偽装防止付き）
-- **Log Injection Protection**: 改行・制御文字・特殊文字のサニタイゼーション
-- **IP Spoofing Prevention**: 信頼できるプロキシ検証とセキュアIP抽出
+- **CSRF Protection**: Timing attack resistant Double Submit Cookie + HMAC
+- **Rate Limiting**: Database-based distributed rate limiting with IP spoofing prevention
+- **Log Injection Protection**: Sanitization of newlines, control characters, and special characters
+- **IP Spoofing Prevention**: Trusted proxy validation and secure IP extraction
 
 #### Data Protection
-- **Input Sanitization**: DOMPurify + カスタムvalidation
-- **SQL Injection Prevention**: Prisma ORM + パラメータ化クエリ
-- **Password Security**: bcrypt 12ラウンド + 複雑性要件
-- **Sensitive Data Masking**: ログ出力時の機密情報保護
+- **Input Sanitization**: DOMPurify + custom validation
+- **SQL Injection Prevention**: Prisma ORM + parameterized queries
+- **Password Security**: bcrypt 12 rounds + complexity requirements
+- **Sensitive Data Masking**: Protection of confidential information in log outputs
 
 #### Infrastructure Security
-- **Docker Hardening**: 非特権ユーザー、読み取り専用ルートFS、SCRAM-SHA-256認証
-- **Environment Isolation**: 本番/開発環境の完全分離
-- **Secure Headers**: CSP、X-Frame-Options等のセキュリティヘッダー
-- **Network Security**: localhost専用バインド、カスタムネットワーク分離
+- **Docker Hardening**: Non-privileged users, read-only root FS, SCRAM-SHA-256 authentication
+- **Environment Isolation**: Complete separation of production/development environments
+- **Secure Headers**: Security headers including CSP, X-Frame-Options
+- **Network Security**: localhost-only binding, custom network isolation
 
 ### Security Tables (Database Schema)
 ```sql
--- レート制限追跡
+-- Rate limiting tracking
 RateLimitEntry: key, count, resetTime
 
--- セキュリティイベントログ  
+-- Security event logging
 SecurityEvent: type, severity, timestamp, userId, ipAddress, details
 
--- 脅威活動分析
+-- Threat activity analysis
 ThreatActivity: ipAddress, activityType, userId, timestamp, metadata
 ```
+
+### Token Architecture & Implementation Details
+
+#### 1. JWT Authentication Token
+**Purpose**: User authentication and session management
+
+**Storage Method**: HttpOnly Cookie
+```javascript
+Cookie Name: 'auth_token'
+HttpOnly: true          // XSS attack protection
+Secure: production      // HTTPS only in production
+SameSite: 'strict'      // CSRF attack protection
+Path: '/'               // All paths
+MaxAge: 86400           // 24 hours in seconds
+```
+
+**JWT Payload Structure**:
+```json
+{
+  "userId": "cuid_user_id",
+  "email": "user@example.com", 
+  "username": "username",
+  "iat": 1704067200,
+  "exp": 1704153600
+}
+```
+
+**Signing Algorithm**: HMAC SHA-256 with `JWT_SECRET`
+
+**Authentication Flow**:
+1. GraphQL Login → JWT token generation
+2. `POST /api/auth` → Token verification → HttpOnly Cookie setup
+3. Subsequent requests → Automatic cookie transmission → GraphQL authentication
+4. `DELETE /api/auth` → Cookie deletion → Logout
+
+#### 2. CSRF Protection Token
+**Purpose**: Cross-Site Request Forgery attack protection
+
+**Implementation**: Double Submit Cookie + HMAC Pattern
+
+**Token Format**:
+```
+Format: timestamp.randomValue.hmacSignature
+Example: 1704067200000.a1b2c3d4e5f6789.8f7e6d5c4b3a2190
+```
+
+**Generation Process**:
+```javascript
+const timestamp = Date.now().toString()
+const randomValue = randomBytes(16).toString('hex')
+const payload = `${timestamp}.${randomValue}`
+const signature = createHmac('sha256', CSRF_SECRET).update(payload).digest('hex')
+const token = `${payload}.${signature}`
+```
+
+**Distribution Method**:
+- **Cookie**: `csrf_token` (HttpOnly, temporary)
+- **Header**: `x-csrf-token` (JavaScript readable)
+
+**Verification Process**:
+1. Extract CSRF token from request headers
+2. Retrieve corresponding token from cookie
+3. HMAC signature verification (using `timingSafeEqual`)
+4. Timestamp validity check
+5. Match confirmation → Request approval
+
+#### 3. Security Secrets Management
+
+| Secret | Purpose | Requirements | Storage | Rotation |
+|--------|---------|--------------|---------|----------|
+| `JWT_SECRET` | JWT signing & verification | 32+ chars | Environment variable | Regular |
+| `CSRF_SECRET` | CSRF HMAC signing | 32+ chars, ≠ JWT | Environment variable | Regular |
+| `IP_HASH_SALT` | IP anonymization salt | 16+ chars | Environment variable | Rare |
+| `CRON_SECRET` | Cron authentication | 32+ chars | Environment variable | Rare |
+
+#### 4. Token Security Features
+
+**Timing Attack Resistance**:
+```javascript
+// CSRF token verification
+const isValid = timingSafeEqual(
+  Buffer.from(receivedToken, 'hex'),
+  Buffer.from(expectedToken, 'hex')
+)
+```
+
+**XSS Protection**:
+- JWT Token: HttpOnly Cookie → JavaScript inaccessible
+- CSRF Token: Header distribution → Limited access only
+
+**CSRF Protection**:
+- Double Submit Pattern: Both Cookie + Header required
+- HMAC Signature: Server-side verification
+- SameSite Cookie: Browser-level protection
+
+**Tampering Protection**:
+- JWT: Digital signature for integrity guarantee
+- CSRF: HMAC-SHA256 for tampering detection
+
+#### 5. Token Lifecycle & Management
+
+**JWT Token Lifecycle**:
+```
+Login → Generate → Store in HttpOnly Cookie → Auto-refresh (24h) → Logout/Expire
+```
+
+**CSRF Token Lifecycle**:  
+```
+Request → Generate → Store (Cookie+Header) → Validate → Discard
+```
+
+**Automatic Cleanup**:
+- Expired rate limit entries: Auto-deletion
+- Security logs: Periodic deletion via Vercel Cron
+- Invalid cookie clearing: Auto-execution on auth failure
+
+#### 6. Development vs Production Configurations
+
+**Development Environment**:
+- Cookie Secure: false (HTTP allowed)
+- Rate Limiting: Relaxed (20 attempts/5min)
+- Verbose Logging: Enabled
+
+**Production Environment**:
+- Cookie Secure: true (HTTPS required)
+- Rate Limiting: Strict (5 attempts/15min)
+- Security Logging: Database persistence
+
+This implementation satisfies OWASP Top 10 compliance and enterprise-level security requirements.
 
 ### Production Security Checklist
 - ✅ All critical vulnerabilities fixed
