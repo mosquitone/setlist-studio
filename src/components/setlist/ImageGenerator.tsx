@@ -69,7 +69,7 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
       setError(null)
 
       try {
-        // Generate QR code
+        // Temporarily disable QR code for image generation
         const qrCodeURL = await generateQRCode(data.id)
 
         // Create data with QR code
@@ -101,11 +101,12 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
           throw new Error('Rendered element not found')
         }
 
+
         // Generate image with html2canvas
         const canvas = await html2canvas(element, {
-          backgroundColor: '#ffffff',
+          backgroundColor: null,
           scale: 1,
-          logging: true,
+          logging: false,
           useCORS: false,
           allowTaint: false,
         })
@@ -155,8 +156,7 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
         onPreviewReady(imageURL)
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedTheme])
+  }, [selectedTheme, generateImage, onPreviewGenerationStart, onPreviewReady])
 
   const handleDownloadImage = React.useCallback(async () => {
     const imageURL = await generateImage(selectedTheme)
@@ -204,7 +204,7 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
       handleGeneratePreview()
       setHasGenerated(true)
     }
-  }, [hasGenerated, isGenerating])
+  }, [hasGenerated, isGenerating, handleGeneratePreview])
 
   return (
     <Box>
