@@ -113,8 +113,7 @@ class SecureAuthClient {
       loading: false,
     })
 
-    // レガシーのlocalStorageもクリア
-    this.clearLegacyStorage()
+      // 認証状態をクリア
   }
 
   // 状態の更新とリスナーへの通知
@@ -143,85 +142,8 @@ class SecureAuthClient {
     return { ...this.currentState }
   }
 
-  // レガシーlocalStorageのクリア
-  private clearLegacyStorage(): void {
-    if (typeof window !== 'undefined') {
-      try {
-        localStorage.removeItem('token')
-        localStorage.removeItem('user')
-      } catch (error) {
-        console.warn('Failed to clear legacy storage:', error)
-      }
-    }
-  }
-
-  // localStorage から HttpOnly Cookie への移行
-  async migrateLegacyAuth(): Promise<void> {
-    if (typeof window === 'undefined') return
-
-    try {
-      const legacyToken = localStorage.getItem('token')
-      if (legacyToken) {
-        console.log('Migrating legacy token to secure cookie...')
-        const result = await this.login(legacyToken)
-
-        if (result.success) {
-          // 成功した場合、legacyストレージをクリア
-          this.clearLegacyStorage()
-          console.log('Legacy token migration completed successfully')
-        } else {
-          console.warn('Legacy token migration failed:', result.error)
-          // 無効なトークンの場合はクリア
-          this.clearLegacyStorage()
-        }
-      }
-    } catch (error) {
-      console.error('Legacy token migration error:', error)
-      this.clearLegacyStorage()
-    }
-  }
 }
 
 // シングルトンインスタンス
 export const secureAuthClient = new SecureAuthClient()
 
-// React Hook用のヘルパー
-export function useSecureAuth(): [AuthState, typeof secureAuthClient] {
-  // Note: 実際のReact Hookの実装は別ファイルで行う
-  // ここでは型定義とクライアント参照のみ提供
-  return [secureAuthClient.getState(), secureAuthClient]
-}
-
-// 既存コードからの移行用互換性レイヤー
-export const TokenManagerSecure = {
-  get: (): string | null => {
-    console.warn('TokenManagerSecure.get() is deprecated. Use secureAuthClient instead.')
-    return null // HttpOnly Cookieはクライアントサイドで読み取り不可
-  },
-
-  set: async (token: string): Promise<boolean> => {
-    console.warn('TokenManagerSecure.set() is deprecated. Use secureAuthClient.login() instead.')
-    const result = await secureAuthClient.login(token)
-    return result.success
-  },
-
-  remove: async (): Promise<void> => {
-    console.warn(
-      'TokenManagerSecure.remove() is deprecated. Use secureAuthClient.logout() instead.',
-    )
-    await secureAuthClient.logout()
-  },
-
-  isValid: (): boolean => {
-    console.warn(
-      'TokenManagerSecure.isValid() is deprecated. Use secureAuthClient.getState() instead.',
-    )
-    return secureAuthClient.getState().authenticated
-  },
-}
-
-// 初期化：レガシートークンの移行を自動実行
-if (typeof window !== 'undefined') {
-  // ページロード時に自動移行を実行
-  secureAuthClient.migrateLegacyAuth()
-}
