@@ -29,7 +29,8 @@ export default function SetlistDetailPage() {
   const setlistId = params.id as string
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [selectedTheme, setSelectedTheme] = useState<'black' | 'white'>('black')
+  const [selectedTheme, setSelectedTheme] = useState<'black' | 'white' | null>(null)
+  const [themeInitialized, setThemeInitialized] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const isDev = process.env.NODE_ENV === 'development'
 
@@ -87,15 +88,21 @@ export default function SetlistDetailPage() {
     },
   })
 
-  // Initialize selectedTheme with the saved theme from database
+  // Initialize selectedTheme with the saved theme from database (only once)
   React.useEffect(() => {
-    if (data?.setlist?.theme && (data.setlist.theme === 'black' || data.setlist.theme === 'white')) {
-      setSelectedTheme(data.setlist.theme)
+    if (data?.setlist && !themeInitialized) {
+      if (data.setlist.theme && (data.setlist.theme === 'black' || data.setlist.theme === 'white')) {
+        setSelectedTheme(data.setlist.theme)
+      } else {
+        // Fallback to black if no theme is saved
+        setSelectedTheme('black')
+      }
+      setThemeInitialized(true)
     }
-  }, [data?.setlist?.theme])
+  }, [data?.setlist, themeInitialized])
 
-  // Show loading while checking auth or fetching data
-  if (loading || authLoading) {
+  // Show loading while checking auth, fetching data, or theme is not initialized
+  if (loading || authLoading || selectedTheme === null) {
     return (
       <Container maxWidth="lg" sx={{ py: 4, textAlign: 'center' }}>
         <CircularProgress />
