@@ -153,6 +153,12 @@ pnpm generate     # Prismaクライアント生成
 
 本アプリケーションは包括的なセキュリティ対策を実装しています:
 
+#### トークンベースセキュリティ
+- **JWTトークン**: HttpOnly Cookieに保存、24時間有効、ユーザー認証用
+- **CSRFトークン**: Double Submit Pattern、リクエスト毎生成、CSRF攻撃防御
+- **セッション管理**: 自動ログアウト、セキュアCookie設定、XSS耐性
+
+#### セキュリティ機能
 - **認証**: HttpOnly Cookie + JWT によるXSS耐性認証
 - **CSRF保護**: Double Submit Cookie + HMAC署名
 - **レート制限**: 分散対応データベースベースレート制限
@@ -170,14 +176,14 @@ pnpm generate     # Prismaクライアント生成
 
 ### 必要な環境変数
 
-| 環境変数名 | 説明 | 必須 | 生成方法 |
-|-----------|------|------|----------|
-| `DATABASE_URL` | PostgreSQL接続文字列 | ✅ | データベースプロバイダーから取得 |
-| `JWT_SECRET` | JWT認証用シークレット | ✅ | `openssl rand -base64 32` |
-| `CSRF_SECRET` | CSRF保護用シークレット | ✅ | `openssl rand -base64 32` |
-| `IP_HASH_SALT` | IPアドレスハッシュ用ソルト | ✅ | `openssl rand -base64 16` |
-| `CRON_SECRET` | Cronジョブ認証用シークレット | ✅ | `openssl rand -base64 32` |
-| `NODE_ENV` | 実行環境 | ❌ | Vercelが自動設定 |
+| 環境変数名 | 説明 | 必須 | 有効期限 | 生成方法 |
+|-----------|------|------|----------|----------|
+| `DATABASE_URL` | PostgreSQL接続文字列 | ✅ | 永続 | データベースプロバイダーから取得 |
+| `JWT_SECRET` | JWT認証用シークレット | ✅ | 24時間 | `openssl rand -base64 32` |
+| `CSRF_SECRET` | CSRF保護用シークレット | ✅ | リクエスト毎 | `openssl rand -base64 32` |
+| `IP_HASH_SALT` | IPアドレスハッシュ用ソルト | ✅ | 永続 | `openssl rand -base64 16` |
+| `CRON_SECRET` | Cronジョブ認証用シークレット | ✅ | 永続 | `openssl rand -base64 32` |
+| `NODE_ENV` | 実行環境 | ❌ | 永続 | Vercelが自動設定 |
 
 ### データベース選択肢
 - **Vercel Postgres**: Vercel統合が最も簡単（推奨）
