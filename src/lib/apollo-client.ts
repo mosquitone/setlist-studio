@@ -1,17 +1,54 @@
 import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client'
 import { setContext } from '@apollo/client/link/context'
 
+// CSRF token utility functions
+async function getCSRFToken(): Promise<string | null> {
+  if (typeof window === 'undefined') return null
+  
+  try {
+    const response = await fetch('/api/csrf-token', {
+      method: 'GET',
+      credentials: 'include',
+    })
+    
+    if (response.ok) {
+      const data = await response.json()
+      return data.csrfToken
+    }
+  } catch (error) {
+    console.warn('Failed to fetch CSRF token:', error)
+  }
+  
+  return null
+}
+
+function getCSRFTokenFromCookie(): string | null {
+  if (typeof window === 'undefined') return null
+  
+  const cookies = document.cookie.split(';')
+  for (const cookie of cookies) {
+    const [name, value] = cookie.trim().split('=')
+    if (name === 'csrf_token') {
+      return value
+    }
+  }
+  
+  return null
+}
+
 const httpLink = createHttpLink({
   uri: '/api/graphql', // Next.js API Routes (開発・本番共通)
 })
 
-const authLink = setContext((_, { headers }) => {
+const authLink = setContext(async (_, { headers }) => {
   const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
+  const csrfToken = getCSRFTokenFromCookie()
 
   return {
     headers: {
       ...headers,
       authorization: token ? `Bearer ${token}` : '',
+      'x-csrf-token': csrfToken || '',
     },
   }
 })

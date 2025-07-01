@@ -6,6 +6,8 @@ import { buildSchema } from 'type-graphql'
 import { PrismaClient } from '@prisma/client'
 import { GraphQLSchema } from 'graphql'
 import depthLimit from 'graphql-depth-limit'
+import { apiRateLimit, authRateLimit } from '../../../lib/rate-limit'
+import { csrfProtection } from '../../../lib/csrf-protection'
 
 // Import resolvers
 import { SetlistResolver } from '../../../lib/graphql/resolvers/SetlistResolver'
@@ -56,6 +58,12 @@ async function getServerInstance() {
 }
 
 export async function GET(request: NextRequest) {
+  // Apply rate limiting
+  const rateLimitResponse = await apiRateLimit(request)
+  if (rateLimitResponse) {
+    return rateLimitResponse
+  }
+
   const server = await getServerInstance()
   const handler = startServerAndCreateNextHandler(server, {
     context: async (req: NextRequest) => {
@@ -73,6 +81,26 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  // Check if this is an authentication request for enhanced rate limiting
+  const requestClone = request.clone()
+  const body = await requestClone.text()
+  const isAuthRequest = body.includes('login') || body.includes('register')
+  
+  // Apply appropriate rate limiting
+  const rateLimitResponse = isAuthRequest 
+    ? await authRateLimit(request)
+    : await apiRateLimit(request)
+  
+  if (rateLimitResponse) {
+    return rateLimitResponse
+  }
+
+  // Apply CSRF protection for state-changing operations
+  const csrfResponse = await csrfProtection(request)
+  if (csrfResponse) {
+    return csrfResponse
+  }
+
   const server = await getServerInstance()
   const handler = startServerAndCreateNextHandler(server, {
     context: async (req: NextRequest) => {
