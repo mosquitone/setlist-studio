@@ -7,7 +7,7 @@ import html2canvas from 'html2canvas'
 import QRCode from 'qrcode'
 import { SetlistData } from '../setlist-themes/types'
 import { SetlistRenderer } from '../setlist-themes/SetlistRenderer'
-import { isValidUrl } from '@/lib/security'
+import { isValidUrl } from '../../lib/security-utils'
 
 interface ImageGeneratorProps {
   data: SetlistData

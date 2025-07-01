@@ -6,6 +6,17 @@ export interface User {
   updatedAt: string
 }
 
+// セキュリティ設定
+interface SecurityConfig {
+  useSecureCookies: boolean
+  tokenStorageType: 'localStorage' | 'secureCookie'
+}
+
+const securityConfig: SecurityConfig = {
+  useSecureCookies: false, // 将来的な移行用フラグ
+  tokenStorageType: 'localStorage', // 現在はlocalStorageを使用
+}
+
 export const TokenManager = {
   get: (): string | null => {
     if (typeof window === 'undefined') return null

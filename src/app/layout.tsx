@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import { Suspense } from 'react'
 import MUIProvider from '@/components/providers/MUIProvider'
 import ApolloProviderWrapper from '@/components/providers/ApolloProvider'
+import CSRFProvider from '@/components/providers/CSRFProvider'
 import Header from '@/components/common/Header'
 import Footer from '@/components/common/Footer'
 import LoadingFallback from '@/components/common/LoadingFallback'
@@ -24,9 +25,11 @@ export default function RootLayout({
       <body className={inter.className}>
         <ApolloProviderWrapper>
           <MUIProvider>
-            <Header />
-            <Suspense fallback={<LoadingFallback />}>{children}</Suspense>
-            <Footer />
+            <CSRFProvider>
+              <Header />
+              <Suspense fallback={<LoadingFallback />}>{children}</Suspense>
+              <Footer />
+            </CSRFProvider>
           </MUIProvider>
         </ApolloProviderWrapper>
       </body>

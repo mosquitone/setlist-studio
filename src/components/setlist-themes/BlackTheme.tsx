@@ -2,7 +2,7 @@ import React from 'react'
 import { Box, Typography } from '@mui/material'
 import { SetlistThemeProps } from './types'
 import { formatEventDateJST } from '@/lib/dateUtils'
-import { isValidUrl } from '@/lib/security'
+import { isValidUrl } from '@/lib/security-utils'
 
 export const BlackTheme: React.FC<SetlistThemeProps> = ({ data, className }) => {
   const { bandName, eventName, eventDate, openTime, startTime, items, qrCodeURL } = data
