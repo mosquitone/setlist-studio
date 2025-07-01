@@ -1,11 +1,5 @@
 import { useState, useEffect } from 'react'
-import {
-  TokenManager,
-  UserManager,
-  createStorageListener,
-  createUserStorageListener,
-  User,
-} from '../lib/client/auth-utils'
+import { secureAuthClient, User } from '../lib/client/secure-auth-client'
 
 export function useAuth() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -13,34 +7,33 @@ export function useAuth() {
   const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
-    setIsLoggedIn(TokenManager.isValid())
-    setUser(UserManager.get())
-    setIsLoading(false)
+    // 既存の認証状態を取得（重複APIコールを避けるため）
+    const currentState = secureAuthClient.getState()
+    setIsLoggedIn(currentState.authenticated)
+    setUser(currentState.user)
+    setIsLoading(currentState.loading)
 
-    const tokenCleanup = createStorageListener(token => {
-      setIsLoggedIn(!!token)
+    // 認証状態の変更をリッスン
+    const unsubscribe = secureAuthClient.subscribe(authState => {
+      setIsLoggedIn(authState.authenticated)
+      setUser(authState.user)
+      setIsLoading(authState.loading)
     })
 
-    const userCleanup = createUserStorageListener(userData => {
-      setUser(userData)
-    })
-
-    return () => {
-      tokenCleanup()
-      userCleanup()
-    }
+    return unsubscribe
   }, [])
 
-  const login = (token: string, userData: User) => {
-    TokenManager.set(token)
-    UserManager.set(userData)
-    setIsLoggedIn(true)
-    setUser(userData)
+  const login = async (token: string, userData: User) => {
+    const result = await secureAuthClient.login(token)
+    if (result.success) {
+      setIsLoggedIn(true)
+      setUser(result.user || userData)
+    }
+    return result
   }
 
-  const logout = () => {
-    TokenManager.remove()
-    UserManager.remove()
+  const logout = async () => {
+    await secureAuthClient.logout()
     setIsLoggedIn(false)
     setUser(null)
     window.location.reload()

@@ -59,22 +59,22 @@ async function getServerInstance() {
 
 // Context helper for secure token extraction
 function createSecureContext(req: NextRequest) {
-  // 認証トークンの取得：HttpOnly Cookie を優先、フォールバックでAuthorization ヘッダー
-  let authToken = req.cookies.get('auth_token')?.value
+  // Cookiesオブジェクトを作成（認証ミドルウェア用）
+  const cookies: { [key: string]: string } = {}
+  req.cookies.getAll().forEach((cookie) => {
+    cookies[cookie.name] = cookie.value
+  })
 
-  // フォールバック：Authorization ヘッダーからトークンを取得（後方互換性）
-  if (!authToken) {
-    const authHeader = req.headers.get('authorization')
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      authToken = authHeader.substring(7)
-    }
-  }
+  // Headersオブジェクトを作成（セキュリティログ用）
+  const headers: { [key: string]: string } = {}
+  req.headers.forEach((value, key) => {
+    headers[key] = value
+  })
 
   return {
     req: {
-      headers: {
-        authorization: authToken ? `Bearer ${authToken}` : undefined,
-      },
+      cookies,
+      headers,
     },
     prisma,
   }
