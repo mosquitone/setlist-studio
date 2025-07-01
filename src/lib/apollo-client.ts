@@ -2,10 +2,7 @@ import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client'
 import { setContext } from '@apollo/client/link/context'
 
 const httpLink = createHttpLink({
-  uri:
-    process.env.NODE_ENV === 'production'
-      ? '/api/graphql' // Vercel本番環境
-      : 'http://localhost:4000/graphql', // ローカル開発
+  uri: '/api/graphql', // Next.js API Routes (開発・本番共通)
 })
 
 const authLink = setContext((_, { headers }) => {

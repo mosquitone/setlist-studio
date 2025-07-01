@@ -1,5 +1,4 @@
 import { ObjectType, Field, ID, Int } from 'type-graphql'
-import { Setlist } from './Setlist'
 
 @ObjectType()
 export class SetlistItem {
@@ -18,7 +17,6 @@ export class SetlistItem {
   @Field()
   setlistId!: string
 
-  // Optional relation - not used by frontend queries
-  @Field(() => Setlist, { nullable: true })
-  setlist?: Setlist
+  // Note: Setlist relation removed to avoid circular dependencies
+  // Would be resolved through GraphQL resolvers if needed
 }

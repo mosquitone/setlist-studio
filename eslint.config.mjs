@@ -15,8 +15,6 @@ export default [
       '.next',
       'out',
       'build',
-      'graphql-server/node_modules',
-      'graphql-server/dist',
       'postgres_data',
     ],
   },

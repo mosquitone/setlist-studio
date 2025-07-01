@@ -9,9 +9,12 @@ import {
   Field,
   ID,
   Int,
+  FieldResolver,
+  Root,
 } from 'type-graphql'
 import { PrismaClient } from '@prisma/client'
 import { Setlist } from '../types/Setlist'
+import { SetlistItem } from '../types/SetlistItem'
 import { AuthMiddleware } from '../middleware/jwt-auth-middleware'
 
 interface Context {
@@ -205,5 +208,19 @@ export class SetlistResolver {
     })
 
     return true
+  }
+
+  // Field resolver for items relation
+  @FieldResolver(() => [SetlistItem])
+  async items(@Root() setlist: Setlist, @Ctx() ctx: Context): Promise<SetlistItem[]> {
+    const setlistData = await ctx.prisma.setlist.findUnique({
+      where: { id: setlist.id },
+      include: {
+        items: {
+          orderBy: { order: 'asc' },
+        },
+      },
+    })
+    return (setlistData?.items || []) as SetlistItem[]
   }
 }
