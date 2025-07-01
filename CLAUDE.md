@@ -4,51 +4,49 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is mosquitone Emotional Setlist Studio, a modern setlist generator application built for music bands, featuring user authentication, song management, and setlist creation. The application uses a dual-server architecture with NextJS frontend and a standalone GraphQL server for development, designed for potential Vercel deployment.
+This is mosquitone Emotional Setlist Studio, a modern setlist generator application built for music bands, featuring user authentication, song management, and setlist creation. The application uses a unified Next.js architecture with GraphQL API routes powered by Vercel Functions, ready for production deployment.
 
 ## Development Commands
 
 ### Core Development
-- **Start frontend**: `pnpm dev` (runs NextJS on http://localhost:3000)
-- **Start GraphQL server**: `cd graphql-server && pnpm dev` (runs on http://localhost:4000/graphql)
-- **Build frontend**: `pnpm build`
-- **Lint frontend**: `pnpm lint`
+- **Start development server**: `pnpm dev` (runs Next.js with GraphQL API on http://localhost:3000)
+- **Build for production**: `pnpm build`
+- **Lint code**: `pnpm lint`
 - **Fix lint issues**: `pnpm lint:fix`
-- **TypeScript type check**: `cd graphql-server && npx tsc --noEmit` (check server types without compilation)
+- **TypeScript type check**: `npx tsc --noEmit`
 
 ### Database Operations
 - **Start PostgreSQL**: `docker-compose up -d postgres`
-- **Apply schema changes**: `cd graphql-server && pnpm db:push`
-- **Generate Prisma client**: `cd graphql-server && pnpm generate`
-- **Open database studio**: `cd graphql-server && pnpm db:studio`
-- **Create migration**: `cd graphql-server && pnpm db:migrate`
+- **Apply schema changes**: `pnpm db:push`
+- **Generate Prisma client**: `pnpm generate`
+- **Open database studio**: `pnpm db:studio`
+- **Create migration**: `pnpm db:migrate`
 
 ### Environment Setup
-- **Install dependencies**: `pnpm install && cd graphql-server && pnpm install`
-- **Required environment variables** (in `graphql-server/.env`):
+- **Install dependencies**: `pnpm install`
+- **Required environment variables** (in `.env` and `.env.local`):
   - `DATABASE_URL`: PostgreSQL connection string
   - `JWT_SECRET`: Secret key for JWT token generation
 
 ## Architecture Overview
 
-### Dual-Server Development Architecture
-The application uses separate servers during development:
+### Unified Next.js Architecture
+The application uses a modern, streamlined architecture:
 
-**Frontend (NextJS 15.3.4)**
+**Frontend & Backend (Next.js 15.3.4)**
 - Next.js App Router with TypeScript
 - Material-UI v5.17.1 for component library with custom theme
 - Apollo Client 3.13.8 for GraphQL state management
 - Client-side authentication state management
 - React 19.0.0 with strict mode
 
-**Backend (GraphQL + Prisma)**
-- Apollo Server v4.12.2 with modern Express4 middleware integration
+**GraphQL API (Vercel Functions)**
+- Apollo Server v4.12.2 running as Next.js API route at `/api/graphql`
 - Type-GraphQL 1.1.1 for schema-first API development
-- Prisma 6.2.0 as ORM with PostgreSQL
-- JWT-based authentication with bcryptjs 2.4.3
-- CORS enabled for frontend communication
-- TypeScript with strictPropertyInitialization disabled for Type-GraphQL compatibility
+- Prisma 6.10.1 as ORM with PostgreSQL
+- JWT-based authentication with bcryptjs 3.0.2
 - Security enhancements: query depth limiting, request size limiting, introspection control
+- Field resolvers for handling relations without circular dependencies
 
 **Database**
 - PostgreSQL 15 running in Docker container
@@ -82,8 +80,8 @@ The application uses separate servers during development:
 
 **GraphQL Integration**
 - Apollo Client automatically includes JWT tokens in authorization headers
-- GraphQL server uses AuthMiddleware to protect resolvers
-- Dual GraphQL versions: v16 in frontend, v15 in server (compatibility requirement)
+- GraphQL API uses AuthMiddleware to protect resolvers
+- Unified GraphQL version: v15.8.0 (with pnpm override for compatibility)
 
 ### Authentication Flow
 - JWT tokens stored in localStorage
@@ -93,30 +91,29 @@ The application uses separate servers during development:
 
 ## Important Configuration Notes
 
-### GraphQL Version Compatibility
-- Frontend uses GraphQL 16.11.0 (required by Apollo Client 3.13.8)
-- GraphQL server uses GraphQL 15.8.0 (required by Type-GraphQL 1.1.1)
-- Server package.json includes pnpm override to enforce GraphQL 15.8.0
-- This dual-version setup is intentional for library compatibility
+### GraphQL Version Management
+- Unified GraphQL version: v15.8.0 enforced via pnpm override
+- Compatible with both Apollo Client 3.13.8 and Type-GraphQL 1.1.1
+- Single package.json for simplified dependency management
 
 ### Package Management
-- Uses pnpm 10.12.1 for package management with specific Node.js 20.11.1 requirement
-- Both root and graphql-server have separate package.json files
-- GraphQL server has isolated dependencies to avoid version conflicts
+- Uses pnpm 10.12.1 for package management with Node.js 20.11.1 requirement
+- Single unified package.json in project root
 - ESLint 9.x with TypeScript 8.35.0 parser and Prettier 3.6.2 for code formatting
-- **ESLint Configuration**: Uses flat config format (eslint.config.mjs) with ignores property instead of deprecated .eslintignore
+- **ESLint Configuration**: Uses flat config format (eslint.config.mjs) with ignores property
 
 ### Development Workflow
 1. Start PostgreSQL: `docker-compose up -d postgres`
-2. Install dependencies in both projects
-3. Set up database schema: `cd graphql-server && pnpm db:push`
-4. Start GraphQL server: `cd graphql-server && pnpm dev`
-5. Start frontend: `pnpm dev`
+2. Install dependencies: `pnpm install`
+3. Set up database schema: `pnpm db:push`
+4. Start development server: `pnpm dev`
 
 ### Project Structure
 ```
-/                           # NextJS frontend root
-├── src/app/                # NextJS App Router
+/                           # Next.js application root
+├── src/app/                # Next.js App Router
+│   ├── api/graphql/        # GraphQL API route (Vercel Function)
+│   │   └── route.ts        # Apollo Server integration
 │   ├── login/             # User authentication pages
 │   ├── register/          # User registration
 │   ├── setlists/          # Setlist management pages
@@ -144,22 +141,26 @@ The application uses separate servers during development:
 │       └── SetlistRenderer.tsx
 ├── src/lib/               # Shared utilities
 │   ├── apollo-client.ts    # GraphQL client configuration
-│   └── graphql/           # GraphQL queries and mutations
-│       └── apollo-operations.ts  # All GraphQL queries, mutations, and subscriptions
-├── graphql-server/        # Standalone GraphQL server
-│   ├── src/apollo-server.ts      # Main Apollo GraphQL server entry point
-│   ├── src/resolvers/     # GraphQL resolvers
-│   │   ├── SetlistResolver.ts
-│   │   └── SetlistItemResolver.ts
-│   ├── src/types/         # GraphQL type definitions
-│   ├── src/middleware/    # Authentication middleware
-│   │   └── jwt-auth-middleware.ts  # JWT authentication middleware
-│   └── prisma/           # Database schema and migrations
-├── public/               # Static assets including theme logos
-└── docker-compose.yml     # PostgreSQL for local development
+│   └── graphql/           # GraphQL schema and operations
+│       ├── apollo-operations.ts  # All GraphQL queries, mutations, and subscriptions
+│       ├── resolvers/      # GraphQL resolvers
+│       │   ├── SetlistResolver.ts
+│       │   ├── SongResolver.ts
+│       │   └── AuthResolver.ts
+│       ├── types/          # GraphQL type definitions
+│       │   ├── Setlist.ts
+│       │   ├── Song.ts
+│       │   └── User.ts
+│       └── middleware/     # Authentication middleware
+│           └── jwt-auth-middleware.ts
+├── prisma/                 # Database schema and migrations
+│   └── schema.prisma       # Prisma schema definition
+├── public/                 # Static assets including theme logos
+└── docker-compose.yml      # PostgreSQL for local development
 ```
 
 ### Current Status
+- **Architecture**: Unified Next.js application with Vercel Functions GraphQL API
 - **Database**: PostgreSQL with complete schema applied via Prisma
 - **Authentication**: Complete GraphQL resolvers for register/login with JWT tokens
 - **Frontend**: Full application with login/register pages, setlist management
@@ -168,9 +169,10 @@ The application uses separate servers during development:
 - **Image Generation**: Simplified one-click download system with theme selection dropdown and debug preview modes
 - **Theme System**: Black and White themes with real-time preview updates, loading states, and proper theme persistence
 - **Duplication Feature**: Clone setlists via query parameters (/setlists/new?duplicate=ID)
-- **Development**: Fully functional dual-server setup with hot reload
-- **Code Quality**: GraphQL resolvers optimized for frontend requirements, all TypeScript warnings resolved
-- **Security**: Apollo Server v4 migration completed with enhanced security features and EOL vulnerability fixes
+- **Development**: Single-server Next.js setup with hot reload and API routes
+- **Code Quality**: Type-GraphQL circular dependencies resolved, all TypeScript warnings resolved
+- **Security**: Apollo Server v4 with enhanced security features and EOL vulnerability fixes
+- **Deployment**: Ready for Vercel production deployment
 
 ## Recent UI/UX Improvements
 
@@ -237,3 +239,12 @@ The application uses separate servers during development:
 - **Architecture Modernization**: Replaced legacy apollo-server-express with @apollo/server and expressMiddleware pattern
 - **Validation Integration**: Added class-validator decorators to LoginInput and RegisterInput types for proper argument validation
 - **Vulnerability Resolution**: Eliminated all known security vulnerabilities from deprecated Apollo Server v3 dependencies
+
+### Vercel Functions Migration (2025-07-01)
+- **Architecture Unification**: Migrated from dual-server architecture to unified Next.js with Vercel Functions
+- **GraphQL API Routes**: Converted standalone GraphQL server to Next.js API route at `/api/graphql`
+- **Type-GraphQL Integration**: Successfully integrated Type-GraphQL with Next.js API routes using buildSchema
+- **Circular Dependency Resolution**: Resolved Type-GraphQL circular dependencies using field resolvers instead of direct type relations
+- **Dependency Cleanup**: Removed redundant graphql-server directory and consolidated all dependencies into single package.json
+- **Environment Configuration**: Unified environment variable management with `.env` and `.env.local` files
+- **Production Ready**: Application now fully compatible with Vercel Functions deployment
