@@ -7,6 +7,7 @@ import { Container, Typography, TextField, Button, Box, Paper, Alert } from '@mu
 import { useMutation } from '@apollo/client'
 import { CREATE_SONG } from '@/lib/server/graphql/apollo-operations'
 import { useRouter } from 'next/navigation'
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 
 interface SongFormValues {
   title: string
@@ -55,18 +56,19 @@ export default function NewSongPage() {
   }
 
   return (
-    <Container maxWidth="md" sx={{ py: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        新しい楽曲を追加
-      </Typography>
+    <ProtectedRoute>
+      <Container maxWidth="md" sx={{ py: 4 }}>
+        <Typography variant="h4" gutterBottom>
+          新しい楽曲を追加
+        </Typography>
 
-      <Formik
-        initialValues={initialValues}
-        validationSchema={validationSchema}
-        onSubmit={handleSubmit}
-      >
-        {({ values, errors, touched, handleChange, handleBlur }) => (
-          <Form>
+        <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          onSubmit={handleSubmit}
+        >
+          {({ values, errors, touched, handleChange, handleBlur }) => (
+            <Form>
             <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
                 <TextField
@@ -137,9 +139,10 @@ export default function NewSongPage() {
                 {loading ? '作成中...' : '作成'}
               </Button>
             </Box>
-          </Form>
-        )}
-      </Formik>
-    </Container>
+            </Form>
+          )}
+        </Formik>
+      </Container>
+    </ProtectedRoute>
   )
 }
