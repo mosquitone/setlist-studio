@@ -544,3 +544,15 @@ This implementation satisfies OWASP Top 10 compliance and enterprise-level secur
 - **Import Path Updates**: Updated all import statements across the codebase to reflect new directory structure
 - **Type Safety**: Maintained full TypeScript compatibility with zero compilation errors
 - **Documentation Update**: Updated CLAUDE.md project structure section to reflect new organization
+
+### Authentication and Authorization Updates (2025-07-01)
+- **SetlistProtectedRoute Implementation**: Implemented access control for private/public setlists
+- **React Hooks Order Error Fix**: Moved useEffect hooks before conditional statements to resolve React errors
+- **GraphQL Error Handling Improvement**: Enhanced proper retrieval and processing of authentication error messages
+- **Private Setlist Access Control**: Automatic redirect to login page when unauthenticated users access private setlists
+- **Authentication Protection Applied to All Pages**: Applied ProtectedRoute to the following pages:
+  - `/songs`: Song list page
+  - `/songs/new`: New song creation page
+  - `/setlists/new`: New setlist creation page
+  - `/setlists/[id]/edit`: Setlist edit page
+- **SetlistResolver Authentication Logic**: Implemented manual authentication check for private setlists (public setlists remain accessible to everyone)
