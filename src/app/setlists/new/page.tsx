@@ -6,6 +6,7 @@ import { CREATE_SETLIST, GET_SETLIST } from '@/lib/server/graphql/apollo-operati
 import { useRouter, useSearchParams } from 'next/navigation'
 import SetlistForm, { SetlistFormValues } from '@/components/forms/SetlistForm'
 import { GetSetlistResponse, SetlistItem } from '@/types/graphql'
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 
 export default function NewSetlistPage() {
   const router = useRouter()
@@ -85,15 +86,17 @@ export default function NewSetlistPage() {
   const isLoading = loading || duplicateLoading
 
   return (
-    <SetlistForm
-      title={duplicateId ? 'セットリストを複製' : '新しいセットリストを作成'}
-      initialValues={initialValues}
-      onSubmit={handleSubmit}
-      loading={isLoading}
-      error={createError}
-      submitButtonText="セットリストを作成"
-      loadingButtonText="作成中..."
-      enableDragAndDrop={true}
-    />
+    <ProtectedRoute>
+      <SetlistForm
+        title={duplicateId ? 'セットリストを複製' : '新しいセットリストを作成'}
+        initialValues={initialValues}
+        onSubmit={handleSubmit}
+        loading={isLoading}
+        error={createError}
+        submitButtonText="セットリストを作成"
+        loadingButtonText="作成中..."
+        enableDragAndDrop={true}
+      />
+    </ProtectedRoute>
   )
 }

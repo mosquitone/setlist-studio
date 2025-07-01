@@ -6,6 +6,7 @@ import { useQuery, useMutation } from '@apollo/client'
 import { useParams, useRouter } from 'next/navigation'
 import { GET_SETLIST, UPDATE_SETLIST } from '@/lib/server/graphql/apollo-operations'
 import SetlistForm, { SetlistFormValues } from '@/components/forms/SetlistForm'
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 
 export default function EditSetlistPage() {
   const params = useParams()
@@ -91,15 +92,17 @@ export default function EditSetlistPage() {
     : null
 
   return (
-    <SetlistForm
-      title="セットリストを編集"
-      initialValues={initialValues}
-      onSubmit={handleSubmit}
-      loading={updateLoading}
-      error={updateErrorMessage}
-      submitButtonText="変更を保存"
-      loadingButtonText="保存中..."
-      enableDragAndDrop={true}
-    />
+    <ProtectedRoute>
+      <SetlistForm
+        title="セットリストを編集"
+        initialValues={initialValues}
+        onSubmit={handleSubmit}
+        loading={updateLoading}
+        error={updateErrorMessage}
+        submitButtonText="変更を保存"
+        loadingButtonText="保存中..."
+        enableDragAndDrop={true}
+      />
+    </ProtectedRoute>
   )
 }
