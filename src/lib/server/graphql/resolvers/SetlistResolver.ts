@@ -116,7 +116,6 @@ export class SetlistResolver {
   }
 
   @Query(() => Setlist, { nullable: true })
-  @UseMiddleware(AuthMiddleware)
   async setlist(@Arg('id', () => ID) id: string, @Ctx() ctx: Context): Promise<Setlist | null> {
     const setlist = await ctx.prisma.setlist.findUnique({
       where: { id },
@@ -131,22 +130,45 @@ export class SetlistResolver {
       return null
     }
 
-    // セキュリティチェック: 公開Setlistまたは所有者のみアクセス可能
-    if (!setlist.isPublic && setlist.userId !== ctx.userId) {
-      // 不正アクセス試行をログに記録（データベースベース）
-      await logSecurityEventDB(ctx.prisma, {
-        type: SecurityEventType.UNAUTHORIZED_ACCESS,
-        severity: SecurityEventSeverity.HIGH,
-        userId: ctx.userId,
-        resource: `setlist:${id}`,
-        details: {
-          setlistId: id,
-          setlistOwnerId: setlist.userId,
-          attemptedUserId: ctx.userId,
-          isPublic: setlist.isPublic,
-        },
-      })
-      throw new Error('Unauthorized access to private setlist')
+    // 公開セットリストは誰でもアクセス可能
+    if (setlist.isPublic) {
+      return setlist as Setlist
+    }
+
+    // プライベートセットリストは認証が必要 - 手動で認証をチェック
+    const token = ctx.req?.cookies?.auth_token
+    if (!token) {
+      throw new Error('Authentication required to access private setlist')
+    }
+
+    try {
+      const jwtSecret = process.env.JWT_SECRET
+      if (!jwtSecret) {
+        throw new Error('JWT_SECRET environment variable is not configured')
+      }
+      const jwt = require('jsonwebtoken')
+      const payload = jwt.verify(token, jwtSecret) as { userId: string }
+      
+      // セキュリティチェック: 所有者のみアクセス可能
+      if (setlist.userId !== payload.userId) {
+        // 不正アクセス試行をログに記録（データベースベース）
+        await logSecurityEventDB(ctx.prisma, {
+          type: SecurityEventType.UNAUTHORIZED_ACCESS,
+          severity: SecurityEventSeverity.HIGH,
+          userId: payload.userId,
+          resource: `setlist:${id}`,
+          details: {
+            setlistId: id,
+            setlistOwnerId: setlist.userId,
+            attemptedUserId: payload.userId,
+            isPublic: setlist.isPublic,
+          },
+        })
+        throw new Error('Unauthorized access to private setlist')
+      }
+    } catch (error) {
+      console.error('JWT verification failed:', error)
+      throw new Error('Authentication required to access private setlist')
     }
 
     return setlist as Setlist
