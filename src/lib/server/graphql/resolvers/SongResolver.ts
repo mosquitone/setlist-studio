@@ -13,7 +13,7 @@ import {
 import { IsOptional, IsString, IsInt, Min, Max } from 'class-validator'
 import { PrismaClient } from '@prisma/client'
 import { Song } from '../types/Song'
-import { AuthMiddleware } from '../middleware/jwt-auth-middleware'
+import { AuthMiddleware } from '@/lib/server/graphql/middleware/jwt-auth-middleware'
 
 interface Context {
   prisma: PrismaClient

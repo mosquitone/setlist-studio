@@ -26,29 +26,26 @@ export class DatabaseRateLimit {
     this.prisma = prisma
   }
 
-  async checkRateLimit(
-    key: string, 
-    options: RateLimitOptions
-  ): Promise<RateLimitResult> {
+  async checkRateLimit(key: string, options: RateLimitOptions): Promise<RateLimitResult> {
     const { windowMs, maxRequests } = options
     const now = new Date()
     const resetTime = new Date(now.getTime() + windowMs)
 
     try {
       // トランザクションでアトミックな操作を保証
-      const result = await this.prisma.$transaction(async (tx) => {
+      const result = await this.prisma.$transaction(async tx => {
         // 期限切れエントリの削除
         await tx.rateLimitEntry.deleteMany({
           where: {
             resetTime: {
-              lt: now
-            }
-          }
+              lt: now,
+            },
+          },
         })
 
         // 既存エントリの確認・更新
         const existingEntry = await tx.rateLimitEntry.findUnique({
-          where: { key }
+          where: { key },
         })
 
         if (!existingEntry) {
@@ -57,13 +54,13 @@ export class DatabaseRateLimit {
             data: {
               key,
               count: 1,
-              resetTime
-            }
+              resetTime,
+            },
           })
-          
+
           return {
             count: newEntry.count,
-            resetTime: newEntry.resetTime
+            resetTime: newEntry.resetTime,
           }
         } else if (existingEntry.resetTime < now) {
           // 期限切れエントリの更新
@@ -71,13 +68,13 @@ export class DatabaseRateLimit {
             where: { key },
             data: {
               count: 1,
-              resetTime
-            }
+              resetTime,
+            },
           })
-          
+
           return {
             count: updatedEntry.count,
-            resetTime: updatedEntry.resetTime
+            resetTime: updatedEntry.resetTime,
           }
         } else {
           // カウンターのインクリメント
@@ -85,14 +82,14 @@ export class DatabaseRateLimit {
             where: { key },
             data: {
               count: {
-                increment: 1
-              }
-            }
+                increment: 1,
+              },
+            },
           })
-          
+
           return {
             count: updatedEntry.count,
-            resetTime: updatedEntry.resetTime
+            resetTime: updatedEntry.resetTime,
           }
         }
       })
@@ -104,9 +101,8 @@ export class DatabaseRateLimit {
         success,
         count: result.count,
         remaining,
-        resetTime: result.resetTime
+        resetTime: result.resetTime,
       }
-
     } catch (error) {
       console.error('Database rate limit error:', error)
       // データベースエラー時は制限を通す（fail-open approach）
@@ -114,7 +110,7 @@ export class DatabaseRateLimit {
         success: true,
         count: 0,
         remaining: maxRequests,
-        resetTime
+        resetTime,
       }
     }
   }
@@ -125,9 +121,9 @@ export class DatabaseRateLimit {
       const result = await this.prisma.rateLimitEntry.deleteMany({
         where: {
           resetTime: {
-            lt: new Date()
-          }
-        }
+            lt: new Date(),
+          },
+        },
       })
       console.log(`Cleaned up ${result.count} expired rate limit entries`)
     } catch (error) {
@@ -137,10 +133,7 @@ export class DatabaseRateLimit {
 }
 
 // Vercel Function対応のレート制限ミドルウェア
-export function createDatabaseRateLimit(
-  prisma: PrismaClient,
-  options: RateLimitOptions
-) {
+export function createDatabaseRateLimit(prisma: PrismaClient, options: RateLimitOptions) {
   const rateLimiter = new DatabaseRateLimit(prisma)
 
   return async (request: NextRequest): Promise<NextResponse | null> => {
@@ -151,27 +144,27 @@ export function createDatabaseRateLimit(
       // レート制限違反をログに記録（データベースベース）
       await logRateLimitExceededDB(
         prisma,
-        rateLimitKey, 
-        request.url, 
-        request.headers.get('user-agent') || undefined
+        rateLimitKey,
+        request.url,
+        request.headers.get('user-agent') || undefined,
       )
 
       const retryAfter = Math.ceil((result.resetTime.getTime() - Date.now()) / 1000)
 
       return NextResponse.json(
-        { 
+        {
           error: options.message || 'Too many requests',
-          retryAfter
+          retryAfter,
         },
-        { 
+        {
           status: 429,
           headers: {
             'Retry-After': retryAfter.toString(),
             'X-RateLimit-Limit': options.maxRequests.toString(),
             'X-RateLimit-Remaining': result.remaining.toString(),
             'X-RateLimit-Reset': Math.ceil(result.resetTime.getTime() / 1000).toString(),
-          }
-        }
+          },
+        },
       )
     }
 
@@ -179,7 +172,10 @@ export function createDatabaseRateLimit(
     const response = NextResponse.next()
     response.headers.set('X-RateLimit-Limit', options.maxRequests.toString())
     response.headers.set('X-RateLimit-Remaining', result.remaining.toString())
-    response.headers.set('X-RateLimit-Reset', Math.ceil(result.resetTime.getTime() / 1000).toString())
+    response.headers.set(
+      'X-RateLimit-Reset',
+      Math.ceil(result.resetTime.getTime() / 1000).toString(),
+    )
 
     return null // Allow request to continue
   }
@@ -190,7 +186,7 @@ export function createAuthRateLimit(prisma: PrismaClient) {
   return createDatabaseRateLimit(prisma, {
     windowMs: 15 * 60 * 1000, // 15分
     maxRequests: 5, // 認証試行回数制限
-    message: '認証試行回数が上限に達しました。しばらく時間をおいてから再試行してください'
+    message: '認証試行回数が上限に達しました。しばらく時間をおいてから再試行してください',
   })
 }
 
@@ -198,7 +194,7 @@ export function createApiRateLimit(prisma: PrismaClient) {
   return createDatabaseRateLimit(prisma, {
     windowMs: 60 * 1000, // 1分
     maxRequests: 60, // 一般API制限
-    message: 'リクエスト数が上限に達しました。しばらく時間をおいてから再試行してください'
+    message: 'リクエスト数が上限に達しました。しばらく時間をおいてから再試行してください',
   })
 }
 
@@ -208,9 +204,9 @@ export async function cleanupExpiredRateLimits(prisma: PrismaClient): Promise<nu
     const result = await prisma.rateLimitEntry.deleteMany({
       where: {
         resetTime: {
-          lt: new Date()
-        }
-      }
+          lt: new Date(),
+        },
+      },
     })
     return result.count
   } catch (error) {

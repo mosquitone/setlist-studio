@@ -128,7 +128,7 @@ class SecureAuthClient {
     this.listeners.push(listener)
     // 現在の状態を即座に通知
     listener(this.currentState)
-    
+
     // アンサブスクライブ関数を返す
     return () => {
       const index = this.listeners.indexOf(listener)
@@ -164,7 +164,7 @@ class SecureAuthClient {
       if (legacyToken) {
         console.log('Migrating legacy token to secure cookie...')
         const result = await this.login(legacyToken)
-        
+
         if (result.success) {
           // 成功した場合、legacyストレージをクリア
           this.clearLegacyStorage()
@@ -198,20 +198,24 @@ export const TokenManagerSecure = {
     console.warn('TokenManagerSecure.get() is deprecated. Use secureAuthClient instead.')
     return null // HttpOnly Cookieはクライアントサイドで読み取り不可
   },
-  
+
   set: async (token: string): Promise<boolean> => {
     console.warn('TokenManagerSecure.set() is deprecated. Use secureAuthClient.login() instead.')
     const result = await secureAuthClient.login(token)
     return result.success
   },
-  
+
   remove: async (): Promise<void> => {
-    console.warn('TokenManagerSecure.remove() is deprecated. Use secureAuthClient.logout() instead.')
+    console.warn(
+      'TokenManagerSecure.remove() is deprecated. Use secureAuthClient.logout() instead.',
+    )
     await secureAuthClient.logout()
   },
-  
+
   isValid: (): boolean => {
-    console.warn('TokenManagerSecure.isValid() is deprecated. Use secureAuthClient.getState() instead.')
+    console.warn(
+      'TokenManagerSecure.isValid() is deprecated. Use secureAuthClient.getState() instead.',
+    )
     return secureAuthClient.getState().authenticated
   },
 }

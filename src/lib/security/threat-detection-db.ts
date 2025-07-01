@@ -8,14 +8,14 @@ import { logSecurityEventDB, SecurityEventType, SecurityEventSeverity } from './
 export enum ThreatType {
   BRUTE_FORCE_ATTACK = 'BRUTE_FORCE_ATTACK',
   SUSPICIOUS_IP_ACTIVITY = 'SUSPICIOUS_IP_ACTIVITY',
-  RAPID_REQUEST_PATTERN = 'RAPID_REQUEST_PATTERN', 
+  RAPID_REQUEST_PATTERN = 'RAPID_REQUEST_PATTERN',
   CREDENTIAL_STUFFING = 'CREDENTIAL_STUFFING',
   BOT_DETECTION = 'BOT_DETECTION',
 }
 
 export enum ThreatSeverity {
   LOW = 'LOW',
-  MEDIUM = 'MEDIUM', 
+  MEDIUM = 'MEDIUM',
   HIGH = 'HIGH',
   CRITICAL = 'CRITICAL',
 }
@@ -37,13 +37,11 @@ export interface ThreatAlert {
 export class DatabaseThreatDetection {
   private prisma: PrismaClient
   private readonly thresholds = {
-    maxFailedLogins: 5,            // 連続ログイン失敗回数
-    maxLoginAttemptsPerHour: 10,   // 1時間あたりの最大ログイン試行
-    maxRequestsPerMinute: 100,     // 1分あたりの最大リクエスト数
-    maxUsersPerIP: 5,              // 1つのIPから同時利用できる最大ユーザー数
-    suspiciousUserAgents: [
-      'bot', 'crawler', 'spider', 'scraper', 'automated'
-    ],
+    maxFailedLogins: 5, // 連続ログイン失敗回数
+    maxLoginAttemptsPerHour: 10, // 1時間あたりの最大ログイン試行
+    maxRequestsPerMinute: 100, // 1分あたりの最大リクエスト数
+    maxUsersPerIP: 5, // 1つのIPから同時利用できる最大ユーザー数
+    suspiciousUserAgents: ['bot', 'crawler', 'spider', 'scraper', 'automated'],
   }
 
   constructor(prisma: PrismaClient) {
@@ -52,26 +50,26 @@ export class DatabaseThreatDetection {
 
   // NextRequestからの脅威分析
   async analyzeRequest(
-    request: NextRequest, 
-    email?: string, 
-    success?: boolean
+    request: NextRequest,
+    email?: string,
+    success?: boolean,
   ): Promise<ThreatAlert[]> {
     const ipAddress = getSecureClientIP(request)
     const userAgent = request.headers.get('user-agent') || undefined
-    
+
     if (email !== undefined && success !== undefined) {
       return this.analyzeLoginAttempt(email, success, ipAddress, userAgent)
     }
-    
+
     // 一般的なリクエスト分析
     const alerts: ThreatAlert[] = []
-    
+
     if (ipAddress) {
       await this.recordIPActivity(ipAddress, 'request', undefined, userAgent)
       const ipThreats = await this.detectIPThreats(ipAddress)
       alerts.push(...ipThreats)
     }
-    
+
     return alerts
   }
 
@@ -80,19 +78,19 @@ export class DatabaseThreatDetection {
     email: string,
     success: boolean,
     ipAddress?: string,
-    userAgent?: string
+    userAgent?: string,
   ): Promise<ThreatAlert[]> {
     const alerts: ThreatAlert[] = []
 
     // 脅威活動を記録
     if (ipAddress) {
       await this.recordIPActivity(
-        ipAddress, 
+        ipAddress,
         success ? 'login_success' : 'login_failure',
         email,
-        userAgent
+        userAgent,
       )
-      
+
       // IP関連の脅威検知
       const ipThreats = await this.detectIPThreats(ipAddress)
       alerts.push(...ipThreats)
@@ -115,7 +113,7 @@ export class DatabaseThreatDetection {
     ipAddress: string,
     activityType: string,
     userId?: string,
-    userAgent?: string
+    userAgent?: string,
   ): Promise<void> {
     try {
       await this.prisma.threatActivity.create({
@@ -124,8 +122,8 @@ export class DatabaseThreatDetection {
           activityType,
           userId,
           userAgent,
-          metadata: userAgent ? { userAgent } : undefined
-        }
+          metadata: userAgent ? { userAgent } : undefined,
+        },
       })
     } catch (error) {
       console.error('Failed to record IP activity:', error)
@@ -133,21 +131,24 @@ export class DatabaseThreatDetection {
   }
 
   // ブルートフォース攻撃の検知
-  private async detectBruteForceAttack(email: string, ipAddress?: string): Promise<ThreatAlert | null> {
+  private async detectBruteForceAttack(
+    email: string,
+    ipAddress?: string,
+  ): Promise<ThreatAlert | null> {
     if (!ipAddress) return null
 
     try {
       // 過去1時間の失敗ログイン数を確認
       const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000)
-      
+
       const failedAttempts = await this.prisma.threatActivity.count({
         where: {
           ipAddress,
           activityType: 'login_failure',
           timestamp: {
-            gte: oneHourAgo
-          }
-        }
+            gte: oneHourAgo,
+          },
+        },
       })
 
       if (failedAttempts >= this.thresholds.maxFailedLogins) {
@@ -162,7 +163,7 @@ export class DatabaseThreatDetection {
           recommendations: [
             '該当IPアドレスの一時的なブロック',
             'CAPTCHAの導入',
-            'アカウントロックの検討'
+            'アカウントロックの検討',
           ],
           autoMitigated: false,
         }
@@ -181,18 +182,18 @@ export class DatabaseThreatDetection {
     try {
       // 過去30分間の活動を分析
       const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000)
-      
+
       const activities = await this.prisma.threatActivity.findMany({
         where: {
           ipAddress,
           activityType: 'login_failure',
           timestamp: {
-            gte: thirtyMinutesAgo
-          }
+            gte: thirtyMinutesAgo,
+          },
         },
         select: {
-          userId: true
-        }
+          userId: true,
+        },
       })
 
       const uniqueUsers = new Set(activities.map(a => a.userId).filter(Boolean))
@@ -205,15 +206,17 @@ export class DatabaseThreatDetection {
           timestamp: new Date(),
           description: `IP ${ipAddress} から${uniqueUsers.size}個の異なるアカウントに対する認証情報スタッフィング攻撃を検出`,
           ipAddress,
-          evidence: [{ 
-            uniqueUsers: uniqueUsers.size, 
-            totalAttempts: activities.length,
-            timeWindow: '30minutes'
-          }],
+          evidence: [
+            {
+              uniqueUsers: uniqueUsers.size,
+              totalAttempts: activities.length,
+              timeWindow: '30minutes',
+            },
+          ],
           recommendations: [
             '該当IPアドレスの即座のブロック',
             '影響を受けた可能性のあるユーザーへの通知',
-            'CAPTCHAの導入検討'
+            'CAPTCHAの導入検討',
           ],
           autoMitigated: true,
         }
@@ -232,14 +235,14 @@ export class DatabaseThreatDetection {
     try {
       // 過去1時間のリクエスト数確認
       const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000)
-      
+
       const recentActivity = await this.prisma.threatActivity.count({
         where: {
           ipAddress,
           timestamp: {
-            gte: oneHourAgo
-          }
-        }
+            gte: oneHourAgo,
+          },
+        },
       })
 
       if (recentActivity > this.thresholds.maxRequestsPerMinute) {
@@ -251,10 +254,7 @@ export class DatabaseThreatDetection {
           description: `IP ${ipAddress} から過去1時間で${recentActivity}件の大量リクエストを検出`,
           ipAddress,
           evidence: [{ requestCount: recentActivity, timeWindow: '1hour' }],
-          recommendations: [
-            'レート制限の強化',
-            'DDoS攻撃の可能性を調査'
-          ],
+          recommendations: ['レート制限の強化', 'DDoS攻撃の可能性を調査'],
           autoMitigated: false,
         })
       }
@@ -279,37 +279,37 @@ export class DatabaseThreatDetection {
         this.prisma.threatActivity.count({
           where: {
             activityType: 'login_failure',
-            timestamp: { gte: oneHourAgo }
-          }
+            timestamp: { gte: oneHourAgo },
+          },
         }),
         this.prisma.threatActivity.count({
           where: {
             activityType: 'rate_limit_hit',
-            timestamp: { gte: oneHourAgo }
-          }
+            timestamp: { gte: oneHourAgo },
+          },
         }),
         this.prisma.threatActivity.groupBy({
           by: ['ipAddress'],
           where: {
-            timestamp: { gte: oneHourAgo }
+            timestamp: { gte: oneHourAgo },
           },
           _count: {
-            ipAddress: true
+            ipAddress: true,
           },
           orderBy: {
             _count: {
-              ipAddress: 'desc'
-            }
+              ipAddress: 'desc',
+            },
           },
-          take: 5
-        })
+          take: 5,
+        }),
       ])
 
       return {
         criticalEvents: 0, // SecurityEventテーブルから取得予定
         recentFailedLogins,
         rateLimitViolations,
-        topRiskyIPs: ipActivities.map(activity => activity.ipAddress)
+        topRiskyIPs: ipActivities.map(activity => activity.ipAddress),
       }
     } catch (error) {
       console.error('Security dashboard data error:', error)
@@ -317,7 +317,7 @@ export class DatabaseThreatDetection {
         criticalEvents: 0,
         recentFailedLogins: 0,
         rateLimitViolations: 0,
-        topRiskyIPs: []
+        topRiskyIPs: [],
       }
     }
   }
@@ -327,15 +327,15 @@ export class DatabaseThreatDetection {
     try {
       // 30日以上古い脅威活動を削除
       const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
-      
+
       const result = await this.prisma.threatActivity.deleteMany({
         where: {
           timestamp: {
-            lt: thirtyDaysAgo
-          }
-        }
+            lt: thirtyDaysAgo,
+          },
+        },
       })
-      
+
       console.log(`Cleaned up ${result.count} old threat activities`)
     } catch (error) {
       console.error('Threat detection cleanup error:', error)
@@ -351,15 +351,15 @@ export class DatabaseThreatDetection {
 export async function cleanupOldThreatActivities(prisma: PrismaClient): Promise<number> {
   try {
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
-    
+
     const result = await prisma.threatActivity.deleteMany({
       where: {
         timestamp: {
-          lt: thirtyDaysAgo
-        }
-      }
+          lt: thirtyDaysAgo,
+        },
+      },
     })
-    
+
     return result.count
   } catch (error) {
     console.error('Threat activity cleanup error:', error)

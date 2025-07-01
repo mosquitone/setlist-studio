@@ -6,13 +6,13 @@ import { buildSchema } from 'type-graphql'
 import { PrismaClient } from '@prisma/client'
 import { GraphQLSchema } from 'graphql'
 import depthLimit from 'graphql-depth-limit'
-import { createApiRateLimit, createAuthRateLimit } from '../../../lib/rate-limit-db'
-import { csrfProtection } from '../../../lib/csrf-protection'
+import { createApiRateLimit, createAuthRateLimit } from '../../../lib/security/rate-limit-db'
+import { csrfProtection } from '../../../lib/security/csrf-protection'
 
 // Import resolvers
-import { SetlistResolver } from '../../../lib/graphql/resolvers/SetlistResolver'
-import { SongResolver } from '../../../lib/graphql/resolvers/SongResolver'
-import { AuthResolver } from '../../../lib/graphql/resolvers/AuthResolver'
+import { SetlistResolver } from '../../../lib/server/graphql/resolvers/SetlistResolver'
+import { SongResolver } from '../../../lib/server/graphql/resolvers/SongResolver'
+import { AuthResolver } from '../../../lib/server/graphql/resolvers/AuthResolver'
 
 // Initialize Prisma Client
 const prisma = new PrismaClient()
@@ -61,7 +61,7 @@ async function getServerInstance() {
 function createSecureContext(req: NextRequest) {
   // 認証トークンの取得：HttpOnly Cookie を優先、フォールバックでAuthorization ヘッダー
   let authToken = req.cookies.get('auth_token')?.value
-  
+
   // フォールバック：Authorization ヘッダーからトークンを取得（後方互換性）
   if (!authToken) {
     const authHeader = req.headers.get('authorization')
@@ -69,7 +69,7 @@ function createSecureContext(req: NextRequest) {
       authToken = authHeader.substring(7)
     }
   }
-  
+
   return {
     req: {
       headers: {
@@ -100,13 +100,11 @@ export async function POST(request: NextRequest) {
   const requestClone = request.clone()
   const body = await requestClone.text()
   const isAuthRequest = body.includes('login') || body.includes('register')
-  
+
   // Apply appropriate database-based rate limiting
-  const rateLimitFunction = isAuthRequest 
-    ? createAuthRateLimit(prisma)
-    : createApiRateLimit(prisma)
+  const rateLimitFunction = isAuthRequest ? createAuthRateLimit(prisma) : createApiRateLimit(prisma)
   const rateLimitResponse = await rateLimitFunction(request)
-  
+
   if (rateLimitResponse) {
     return rateLimitResponse
   }

@@ -4,13 +4,13 @@ import { setContext } from '@apollo/client/link/context'
 // CSRF token utility functions
 async function getCSRFToken(): Promise<string | null> {
   if (typeof window === 'undefined') return null
-  
+
   try {
     const response = await fetch('/api/csrf', {
       method: 'GET',
       credentials: 'include',
     })
-    
+
     if (response.ok) {
       const data = await response.json()
       return data.csrfToken
@@ -18,13 +18,13 @@ async function getCSRFToken(): Promise<string | null> {
   } catch (error) {
     console.warn('Failed to fetch CSRF token:', error)
   }
-  
+
   return null
 }
 
 function getCSRFTokenFromCookie(): string | null {
   if (typeof window === 'undefined') return null
-  
+
   const cookies = document.cookie.split(';')
   for (const cookie of cookies) {
     const [name, value] = cookie.trim().split('=')
@@ -32,7 +32,7 @@ function getCSRFTokenFromCookie(): string | null {
       return value
     }
   }
-  
+
   return null
 }
 
@@ -44,10 +44,10 @@ const httpLink = createHttpLink({
 const authLink = setContext(async (_, { headers }) => {
   // HttpOnly Cookieによる認証では、authorizationヘッダーは不要
   // JWTトークンは自動的にCookieとして送信される
-  
+
   // レガシーサポート：一時的にlocalStorageからのトークンもサポート（移行期間用）
   const legacyToken = typeof window !== 'undefined' ? localStorage.getItem('token') : null
-  
+
   // CSRFトークンを取得（Cookieから、またはAPIから）
   let csrfToken = getCSRFTokenFromCookie()
   if (!csrfToken && typeof window !== 'undefined') {

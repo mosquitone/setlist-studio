@@ -2,7 +2,7 @@
 
 import { Container, Box, Typography } from '@mui/material'
 import { useQuery } from '@apollo/client'
-import { GET_SETLISTS } from '../lib/graphql/apollo-operations'
+import { GET_SETLISTS } from '@/lib/server/graphql/apollo-operations'
 import { GetSetlistsResponse } from '../types/graphql'
 import { useAuth } from '../hooks/useAuth'
 import { WelcomeSection } from '../components/home/WelcomeSection'

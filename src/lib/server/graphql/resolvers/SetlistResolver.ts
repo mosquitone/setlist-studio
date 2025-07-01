@@ -15,8 +15,12 @@ import {
 import { PrismaClient } from '@prisma/client'
 import { Setlist } from '../types/Setlist'
 import { SetlistItem } from '../types/SetlistItem'
-import { AuthMiddleware } from '../middleware/jwt-auth-middleware'
-import { logSecurityEventDB, SecurityEventType, SecurityEventSeverity } from '../../security-logger-db'
+import { AuthMiddleware } from '@/lib/server/graphql/middleware/jwt-auth-middleware'
+import {
+  logSecurityEventDB,
+  SecurityEventType,
+  SecurityEventSeverity,
+} from '../../../security/security-logger-db'
 
 interface Context {
   prisma: PrismaClient
@@ -134,11 +138,11 @@ export class SetlistResolver {
         severity: SecurityEventSeverity.HIGH,
         userId: ctx.userId,
         resource: `setlist:${id}`,
-        details: { 
+        details: {
           setlistId: id,
           setlistOwnerId: setlist.userId,
           attemptedUserId: ctx.userId,
-          isPublic: setlist.isPublic
+          isPublic: setlist.isPublic,
         },
       })
       throw new Error('Unauthorized access to private setlist')

@@ -8,7 +8,7 @@ const TRUSTED_PROXIES = new Set([
   '127.0.0.1',
   '::1',
   '10.0.0.0/8',
-  '172.16.0.0/12', 
+  '172.16.0.0/12',
   '192.168.0.0/16',
   // Cloudflare
   '103.21.244.0/22',
@@ -33,13 +33,13 @@ function isInCIDR(ip: string, cidr: string): boolean {
   if (!cidr.includes('/')) {
     return ip === cidr
   }
-  
+
   const [network, prefixLength] = cidr.split('/')
   const mask = (0xffffffff << (32 - parseInt(prefixLength, 10))) >>> 0
-  
+
   const ipNum = ipToNumber(ip)
   const networkNum = ipToNumber(network)
-  
+
   return (ipNum & mask) === (networkNum & mask)
 }
 
@@ -50,9 +50,10 @@ function ipToNumber(ip: string): number {
 
 // IPアドレスの検証
 function isValidIP(ip: string): boolean {
-  const ipv4Regex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
+  const ipv4Regex =
+    /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
   const ipv6Regex = /^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$/
-  
+
   return ipv4Regex.test(ip) || ipv6Regex.test(ip)
 }
 
@@ -61,13 +62,13 @@ function isTrustedProxy(ip: string): boolean {
   if (!isValidIP(ip)) {
     return false
   }
-  
+
   for (const trustedRange of TRUSTED_PROXIES) {
     if (isInCIDR(ip, trustedRange)) {
       return true
     }
   }
-  
+
   return false
 }
 
@@ -78,30 +79,32 @@ function isTrustedProxy(ip: string): boolean {
 export function getSecureClientIP(request: NextRequest): string {
   // 直接接続の場合（最も信頼できる）
   // NOTE: Vercel環境ではrequest.ipは利用できないため、ヘッダーベースで処理
-  const remoteAddress = request.headers.get('x-vercel-forwarded-for') || request.headers.get('x-forwarded-for')?.split(',')[0]
+  const remoteAddress =
+    request.headers.get('x-vercel-forwarded-for') ||
+    request.headers.get('x-forwarded-for')?.split(',')[0]
   if (remoteAddress && isValidIP(remoteAddress)) {
     // 信頼できるプロキシ経由でない場合は、リモートアドレスをそのまま使用
     if (!isTrustedProxy(remoteAddress)) {
       return remoteAddress
     }
   }
-  
+
   // 信頼できるプロキシからのヘッダーを順番に確認
   const xForwardedFor = request.headers.get('x-forwarded-for')
   const xRealIP = request.headers.get('x-real-ip')
   const cfConnectingIP = request.headers.get('cf-connecting-ip') // Cloudflare
   const xClientIP = request.headers.get('x-client-ip')
-  
+
   // Cloudflareの場合（最も信頼できるヘッダー）
   if (cfConnectingIP && isValidIP(cfConnectingIP)) {
     return cfConnectingIP
   }
-  
+
   // X-Real-IPをチェック
   if (xRealIP && isValidIP(xRealIP)) {
     return xRealIP
   }
-  
+
   // X-Forwarded-Forの最初のIPをチェック（チェーン内の最初のクライアント）
   if (xForwardedFor) {
     const ips = xForwardedFor.split(',').map(ip => ip.trim())
@@ -111,12 +114,12 @@ export function getSecureClientIP(request: NextRequest): string {
       }
     }
   }
-  
+
   // X-Client-IPをチェック
   if (xClientIP && isValidIP(xClientIP)) {
     return xClientIP
   }
-  
+
   // すべて失敗した場合はremoteAddressまたはunknown
   return remoteAddress || 'unknown'
 }
@@ -128,7 +131,7 @@ export function getSecureClientIP(request: NextRequest): string {
 export function hashIP(ip: string): string {
   const crypto = require('crypto')
   const salt = process.env.IP_HASH_SALT || 'default-salt-change-in-production'
-  
+
   return crypto
     .createHash('sha256')
     .update(ip + salt)
@@ -143,7 +146,7 @@ export function hashIP(ip: string): string {
 export function generateRateLimitKey(request: NextRequest): string {
   const ip = getSecureClientIP(request)
   const userAgent = request.headers.get('user-agent') || ''
-  
+
   // プライバシーを保護しつつ、一意性を確保
   const hashedIP = hashIP(ip)
   const hashedUA = require('crypto')
@@ -151,7 +154,7 @@ export function generateRateLimitKey(request: NextRequest): string {
     .update(userAgent)
     .digest('hex')
     .substring(0, 8)
-  
+
   return `${hashedIP}:${hashedUA}`
 }
 
@@ -167,23 +170,23 @@ export function getIPInfo(request: NextRequest): {
   const ip = getSecureClientIP(request)
   const hashedIP = hashIP(ip)
   const isProxy = isTrustedProxy(ip)
-  
+
   const headers: Record<string, string> = {}
   const relevantHeaders = [
     'x-forwarded-for',
-    'x-real-ip', 
+    'x-real-ip',
     'cf-connecting-ip',
     'x-client-ip',
-    'user-agent'
+    'user-agent',
   ]
-  
+
   relevantHeaders.forEach(header => {
     const value = request.headers.get(header)
     if (value) {
       headers[header] = value
     }
   })
-  
+
   return { ip, hashedIP, isProxy, headers }
 }
 
@@ -196,17 +199,24 @@ export function assessRequestSecurity(request: NextRequest): {
 } {
   const reasons: string[] = []
   let riskLevel: 'low' | 'medium' | 'high' = 'low'
-  
+
   const ip = getSecureClientIP(request)
   const userAgent = request.headers.get('user-agent') || ''
-  
+
   // 不審なUser-Agentパターン
   const suspiciousUAPatterns = [
-    /bot/i, /crawler/i, /spider/i, /scraper/i,
-    /curl/i, /wget/i, /python/i, /java/i,
-    /automated/i, /test/i
+    /bot/i,
+    /crawler/i,
+    /spider/i,
+    /scraper/i,
+    /curl/i,
+    /wget/i,
+    /python/i,
+    /java/i,
+    /automated/i,
+    /test/i,
   ]
-  
+
   if (!userAgent) {
     reasons.push('Missing User-Agent header')
     riskLevel = 'medium'
@@ -214,30 +224,32 @@ export function assessRequestSecurity(request: NextRequest): {
     reasons.push('Suspicious User-Agent pattern detected')
     riskLevel = 'high'
   }
-  
+
   // IPアドレスの妥当性
   if (ip === 'unknown') {
     reasons.push('Unable to determine client IP')
     riskLevel = 'high'
   }
-  
+
   // プライベートIPからのアクセス（開発環境以外では不審）
-  if (process.env.NODE_ENV === 'production' && 
-      (ip.startsWith('10.') || ip.startsWith('192.168.') || ip.startsWith('172.'))) {
+  if (
+    process.env.NODE_ENV === 'production' &&
+    (ip.startsWith('10.') || ip.startsWith('192.168.') || ip.startsWith('172.'))
+  ) {
     reasons.push('Access from private IP in production')
     riskLevel = 'medium'
   }
-  
+
   // 複数のプロキシヘッダーが存在（IP偽装の可能性）
-  const proxyHeaders = [
-    'x-forwarded-for', 'x-real-ip', 'cf-connecting-ip', 'x-client-ip'
-  ].filter(header => request.headers.get(header))
-  
+  const proxyHeaders = ['x-forwarded-for', 'x-real-ip', 'cf-connecting-ip', 'x-client-ip'].filter(
+    header => request.headers.get(header),
+  )
+
   if (proxyHeaders.length > 2) {
     reasons.push('Multiple proxy headers detected')
     riskLevel = 'medium'
   }
-  
+
   return { riskLevel, reasons }
 }
 

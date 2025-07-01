@@ -36,11 +36,11 @@ function verifyToken(token: string): any {
 // GET /api/auth - 現在の認証状態を確認
 export async function GET(request: NextRequest) {
   const token = request.cookies.get('auth_token')?.value
-  
+
   if (!token) {
     return NextResponse.json({ authenticated: false }, { status: 401 })
   }
-  
+
   const decoded = verifyToken(token)
   if (!decoded) {
     // 無効なトークンの場合、クッキーをクリア
@@ -48,14 +48,14 @@ export async function GET(request: NextRequest) {
     response.cookies.delete('auth_token')
     return response
   }
-  
-  return NextResponse.json({ 
+
+  return NextResponse.json({
     authenticated: true,
     user: {
       id: decoded.userId,
       email: decoded.email,
-      username: decoded.username
-    }
+      username: decoded.username,
+    },
   })
 }
 
@@ -63,32 +63,31 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const { token } = await request.json()
-    
+
     if (!token) {
       return NextResponse.json({ error: 'Token is required' }, { status: 400 })
     }
-    
+
     // トークンの有効性を検証
     const decoded = verifyToken(token)
     if (!decoded) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 400 })
     }
-    
-    const response = NextResponse.json({ 
+
+    const response = NextResponse.json({
       success: true,
       user: {
         id: decoded.userId,
         email: decoded.email,
-        username: decoded.username
-      }
+        username: decoded.username,
+      },
     })
-    
+
     // HttpOnly Cookieとしてトークンを設定
     const cookieOptions = getAuthCookieOptions()
     response.cookies.set('auth_token', token, cookieOptions)
-    
+
     return response
-    
   } catch (error) {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
   }

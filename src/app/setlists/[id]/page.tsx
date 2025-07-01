@@ -15,7 +15,7 @@ import {
 } from '@mui/material'
 import { useQuery, useMutation } from '@apollo/client'
 import { useParams } from 'next/navigation'
-import { GET_SETLIST, TOGGLE_SETLIST_VISIBILITY } from '@/lib/graphql/apollo-operations'
+import { GET_SETLIST, TOGGLE_SETLIST_VISIBILITY } from '@/lib/server/graphql/apollo-operations'
 import { SetlistData } from '@/components/setlist-themes/types'
 import { ImageGenerator } from '@/components/setlist/ImageGenerator'
 import { SetlistActions } from '@/components/setlist/SetlistActions'
@@ -91,7 +91,10 @@ export default function SetlistDetailPage() {
   // Initialize selectedTheme with the saved theme from database (only once)
   React.useEffect(() => {
     if (data?.setlist && !themeInitialized) {
-      if (data.setlist.theme && (data.setlist.theme === 'black' || data.setlist.theme === 'white')) {
+      if (
+        data.setlist.theme &&
+        (data.setlist.theme === 'black' || data.setlist.theme === 'white')
+      ) {
         setSelectedTheme(data.setlist.theme)
       } else {
         // Fallback to black if no theme is saved
@@ -144,7 +147,6 @@ export default function SetlistDetailPage() {
   const handleThemeChange = (theme: 'black' | 'white') => {
     setSelectedTheme(theme)
   }
-
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
