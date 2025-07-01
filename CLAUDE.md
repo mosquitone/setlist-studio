@@ -218,6 +218,12 @@ The application uses a modern, streamlined architecture:
 - **Error Handling**: Replaced confusing fallback DOM preview with proper error message and retry functionality when image generation fails
 - **Grid Layout Issues**: Resolved card height overflow problems by optimizing content spacing and card dimensions
 
+### Theme System Bug Fixes (2025-07-01)
+- **Page Reload Theme Issue**: Fixed issue where white theme setlists would display as black theme after page reload
+- **Theme Change Interference**: Resolved problem where manual theme changes were being overridden by database initialization
+- **Theme Initialization Logic**: Implemented proper theme state management with initialization flags to prevent conflicts between database values and user selections
+- **Loading State Management**: Added proper loading states during theme initialization to prevent flickering between themes
+
 ### Semantic File Organization (2025-06-30)
 - **GraphQL Server Entry Point**: Renamed `src/index.ts` to `src/apollo-server.ts` for better semantic clarity
 - **GraphQL Operations**: Renamed `src/lib/graphql/queries.ts` to `apollo-operations.ts` to reflect it contains both queries and mutations
