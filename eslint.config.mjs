@@ -10,13 +10,7 @@ const compat = new FlatCompat({ baseDirectory: __dirname })
 export default [
   // ESLint ignore patterns (migrated from .eslintignore)
   {
-    ignores: [
-      'node_modules',
-      '.next',
-      'out',
-      'build',
-      'postgres_data',
-    ],
+    ignores: ['node_modules', '.next', 'out', 'build', 'postgres_data'],
   },
   // Core Next.js + TypeScript rules
   ...compat.extends(
