@@ -113,7 +113,7 @@ class SecureAuthClient {
       loading: false,
     })
 
-    // レガシーのlocalStorageもクリア（移行期間中）
+    // レガシーのlocalStorageもクリア
     this.clearLegacyStorage()
   }
 

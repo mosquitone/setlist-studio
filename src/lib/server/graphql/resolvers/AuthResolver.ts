@@ -116,7 +116,7 @@ export class AuthResolver {
         input.email,
         'user_not_found',
         getClientIP(ctx),
-        ctx.req?.headers['user-agent'],
+        ctx.req?.headers?.['user-agent'] || 'unknown',
       )
 
       // 脅威検知分析（データベースベース）
@@ -125,7 +125,7 @@ export class AuthResolver {
         input.email,
         false,
         getClientIP(ctx),
-        ctx.req?.headers['user-agent'],
+        ctx.req?.headers?.['user-agent'] || 'unknown',
       )
 
       throw new Error('メールアドレスまたはパスワードが正しくありません')
@@ -139,7 +139,7 @@ export class AuthResolver {
         input.email,
         'invalid_password',
         getClientIP(ctx),
-        ctx.req?.headers['user-agent'],
+        ctx.req?.headers?.['user-agent'] || 'unknown',
       )
 
       // 脅威検知分析（データベースベース）
@@ -148,7 +148,7 @@ export class AuthResolver {
         input.email,
         false,
         getClientIP(ctx),
-        ctx.req?.headers['user-agent'],
+        ctx.req?.headers?.['user-agent'] || 'unknown',
       )
 
       throw new Error('メールアドレスまたはパスワードが正しくありません')

@@ -183,9 +183,12 @@ export function createDatabaseRateLimit(prisma: PrismaClient, options: RateLimit
 
 // プリセット設定（Vercel対応）
 export function createAuthRateLimit(prisma: PrismaClient) {
+  // 開発環境では制限を緩和
+  const isDevelopment = process.env.NODE_ENV === 'development'
+  
   return createDatabaseRateLimit(prisma, {
-    windowMs: 15 * 60 * 1000, // 15分
-    maxRequests: 5, // 認証試行回数制限
+    windowMs: isDevelopment ? 5 * 60 * 1000 : 15 * 60 * 1000, // 開発: 5分, 本番: 15分
+    maxRequests: isDevelopment ? 20 : 5, // 開発: 20回, 本番: 5回
     message: '認証試行回数が上限に達しました。しばらく時間をおいてから再試行してください',
   })
 }

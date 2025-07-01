@@ -35,9 +35,13 @@ export default function LoginPage() {
   const { login: authLogin } = useAuth()
 
   const [loginMutation, { loading }] = useMutation(LOGIN, {
-    onCompleted: data => {
-      authLogin(data.login.token, data.login.user)
-      router.push('/')
+    onCompleted: async data => {
+      const result = await authLogin(data.login.token, data.login.user)
+      if (result.success) {
+        router.push('/')
+      } else {
+        setError(result.error || 'Login failed')
+      }
     },
     onError: error => {
       setError(error.message)

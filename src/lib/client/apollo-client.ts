@@ -45,9 +45,6 @@ const authLink = setContext(async (_, { headers }) => {
   // HttpOnly Cookieによる認証では、authorizationヘッダーは不要
   // JWTトークンは自動的にCookieとして送信される
 
-  // レガシーサポート：一時的にlocalStorageからのトークンもサポート（移行期間用）
-  const legacyToken = typeof window !== 'undefined' ? localStorage.getItem('token') : null
-
   // CSRFトークンを取得（Cookieから、またはAPIから）
   let csrfToken = getCSRFTokenFromCookie()
   if (!csrfToken && typeof window !== 'undefined') {
@@ -57,8 +54,6 @@ const authLink = setContext(async (_, { headers }) => {
   return {
     headers: {
       ...headers,
-      // レガシートークンがある場合のみauthorizationヘッダーを設定（移行期間中のみ）
-      ...(legacyToken && { authorization: `Bearer ${legacyToken}` }),
       'x-csrf-token': csrfToken || '',
     },
   }
