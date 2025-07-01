@@ -79,14 +79,25 @@ CSRF_SECRET="your-csrf-secret-key-different-from-jwt"
 > **セキュリティ注意**: 本番環境では必ず強力で異なる秘密鍵を設定してください
 
 4. データベースを起動:
+
+**初回セットアップ（推奨）**:
+```bash
+pnpm db:setup
+```
+
+**または手動で実行**:
 ```bash
 docker-compose up -d postgres
 ```
+
+> **初回起動時の注意**: SCRAM-SHA-256認証の初期化のため、`pnpm db:setup`を使用するか、CLAUDE.mdに記載の手動手順を実行してください。
 
 5. データベーススキーマを適用:
 ```bash
 pnpm db:push
 ```
+
+> **注**: `pnpm db:setup`を使用した場合、この手順は自動的に実行されます。
 
 ### 開発サーバー起動
 
