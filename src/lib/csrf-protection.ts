@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { randomBytes, timingSafeEqual, createHmac } from 'crypto'
-import { logSecurityEvent, SecurityEventType, SecurityEventSeverity } from './security-logger'
+import { SecurityEventType, SecurityEventSeverity } from './security-logger-db'
 import { getSecureClientIP } from './security-utils'
+import { PrismaClient } from '@prisma/client'
 
 export interface CSRFTokens {
   token: string
@@ -110,7 +111,7 @@ export function setCSRFCookie(response: NextResponse, token: string): void {
   })
 }
 
-export async function csrfProtection(request: NextRequest): Promise<NextResponse | null> {
+export async function csrfProtection(request: NextRequest, prisma?: PrismaClient): Promise<NextResponse | null> {
   // Skip CSRF protection for GET requests (GraphQL introspection, etc.)
   if (request.method === 'GET') {
     return null
@@ -134,18 +135,30 @@ export async function csrfProtection(request: NextRequest): Promise<NextResponse
     // CSRF攻撃をログに記録
     const ip = getSecureClientIP(request)
     
-    await logSecurityEvent({
-      type: SecurityEventType.CSRF_TOKEN_INVALID,
-      severity: SecurityEventSeverity.HIGH,
-      ipAddress: ip,
-      userAgent: request.headers.get('user-agent') || undefined,
-      resource: request.url,
-      details: { 
-        csrfAttack: true,
+    // データベースベースログ（Prismaが利用可能な場合）
+    if (prisma) {
+      const { logSecurityEventDB } = await import('./security-logger-db')
+      await logSecurityEventDB(prisma, {
+        type: SecurityEventType.CSRF_TOKEN_INVALID,
+        severity: SecurityEventSeverity.HIGH,
+        ipAddress: ip,
+        userAgent: request.headers.get('user-agent') || undefined,
+        resource: request.url,
+        details: { 
+          csrfAttack: true,
+          endpoint: request.url,
+          method: request.method
+        },
+      })
+    } else {
+      // フォールバック：コンソールログ
+      console.error('🚨 CSRF Attack Detected:', {
+        ip,
         endpoint: request.url,
-        method: request.method
-      },
-    })
+        method: request.method,
+        userAgent: request.headers.get('user-agent')
+      })
+    }
     
     return NextResponse.json(
       { 
