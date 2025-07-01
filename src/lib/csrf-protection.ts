@@ -1,18 +1,37 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { randomBytes } from 'crypto'
+import { randomBytes, timingSafeEqual, createHmac } from 'crypto'
 import { logSecurityEvent, SecurityEventType, SecurityEventSeverity } from './security-logger'
+import { getSecureClientIP } from './security-utils'
 
 export interface CSRFTokens {
   token: string
   cookieToken: string
 }
 
-export function generateCSRFTokens(): CSRFTokens {
-  const token = randomBytes(32).toString('hex')
-  const cookieToken = randomBytes(32).toString('hex')
-  return { token, cookieToken }
+// CSRF秘密鍵の取得（環境変数から）
+function getCSRFSecret(): string {
+  const secret = process.env.CSRF_SECRET || process.env.JWT_SECRET
+  if (!secret) {
+    throw new Error('CSRF_SECRET or JWT_SECRET environment variable is required')
+  }
+  return secret
 }
 
+// 暗号学的に安全なCSRFトークン生成
+export function generateCSRFTokens(): CSRFTokens {
+  const secret = getCSRFSecret()
+  const timestamp = Date.now().toString()
+  const randomValue = randomBytes(16).toString('hex')
+  
+  // ダブルサブミットクッキーパターン + HMAC署名
+  const payload = `${timestamp}.${randomValue}`
+  const signature = createHmac('sha256', secret).update(payload).digest('hex')
+  const token = `${payload}.${signature}`
+  
+  return { token, cookieToken: token }
+}
+
+// タイミング攻撃耐性のあるトークン検証
 export function verifyCSRFToken(request: NextRequest): boolean {
   const headerToken = request.headers.get('x-csrf-token')
   const cookieToken = request.cookies.get('csrf_token')?.value
@@ -21,17 +40,73 @@ export function verifyCSRFToken(request: NextRequest): boolean {
     return false
   }
   
-  // Simple token comparison (in production, consider using HMAC)
-  return headerToken === cookieToken
+  try {
+    // トークンの形式検証
+    const headerParts = headerToken.split('.')
+    const cookieParts = cookieToken.split('.')
+    
+    if (headerParts.length !== 3 || cookieParts.length !== 3) {
+      return false
+    }
+    
+    // トークンの同一性をタイミング攻撃耐性で検証
+    const headerBuffer = Buffer.from(headerToken, 'utf8')
+    const cookieBuffer = Buffer.from(cookieToken, 'utf8')
+    
+    if (headerBuffer.length !== cookieBuffer.length) {
+      return false
+    }
+    
+    // タイミング攻撃耐性のある比較
+    const tokensMatch = timingSafeEqual(headerBuffer, cookieBuffer)
+    
+    if (!tokensMatch) {
+      return false
+    }
+    
+    // HMAC署名の検証
+    const secret = getCSRFSecret()
+    const [timestamp, randomValue, signature] = headerParts
+    const payload = `${timestamp}.${randomValue}`
+    const expectedSignature = createHmac('sha256', secret).update(payload).digest('hex')
+    
+    const signatureBuffer = Buffer.from(signature, 'hex')
+    const expectedBuffer = Buffer.from(expectedSignature, 'hex')
+    
+    if (signatureBuffer.length !== expectedBuffer.length) {
+      return false
+    }
+    
+    const signatureValid = timingSafeEqual(signatureBuffer, expectedBuffer)
+    
+    if (!signatureValid) {
+      return false
+    }
+    
+    // トークンの有効期限チェック（1時間）
+    const tokenTimestamp = parseInt(timestamp, 10)
+    const currentTime = Date.now()
+    const oneHour = 60 * 60 * 1000
+    
+    if (currentTime - tokenTimestamp > oneHour) {
+      return false
+    }
+    
+    return true
+    
+  } catch (error) {
+    // エラーは常にfalseを返す（情報漏洩防止）
+    return false
+  }
 }
 
 export function setCSRFCookie(response: NextResponse, token: string): void {
   response.cookies.set('csrf_token', token, {
-    httpOnly: false, // Needs to be accessible by client-side JS
+    httpOnly: false, // CSRFトークンはクライアントサイドでアクセス可能である必要がある
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'strict',
     path: '/',
-    maxAge: 60 * 60 * 24, // 24 hours
+    maxAge: 60 * 60, // 1時間（トークンの有効期限と一致）
   })
 }
 
@@ -45,17 +120,19 @@ export async function csrfProtection(request: NextRequest): Promise<NextResponse
   const requestClone = request.clone()
   const body = await requestClone.text()
   
-  // Skip CSRF for non-state-changing queries
-  if (body.includes('query') && !body.includes('mutation')) {
+  // より厳密なGraphQL判定: mutationが含まれる場合のみCSRF保護を適用
+  const isMutation = /mutation\s*\{/.test(body.toLowerCase()) || 
+                     /mutation\s*[\w\s]*\s*\(/.test(body.toLowerCase())
+  
+  // Skip CSRF for queries without mutations
+  if (!isMutation) {
     return null
   }
 
   // Verify CSRF token for mutations
   if (!verifyCSRFToken(request)) {
     // CSRF攻撃をログに記録
-    const forwarded = request.headers.get('x-forwarded-for')
-    const realIp = request.headers.get('x-real-ip')
-    const ip = forwarded?.split(',')[0] ?? realIp ?? 'unknown'
+    const ip = getSecureClientIP(request)
     
     await logSecurityEvent({
       type: SecurityEventType.CSRF_TOKEN_INVALID,

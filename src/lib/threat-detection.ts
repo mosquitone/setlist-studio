@@ -1,6 +1,7 @@
 // セキュリティ脅威検知システム
 
 import { securityLogger, SecurityEventType, SecurityEventSeverity, logSecurityEvent } from './security-logger'
+import { getSecureClientIP } from './security-utils'
 
 export enum ThreatType {
   BRUTE_FORCE_ATTACK = 'BRUTE_FORCE_ATTACK',
@@ -68,6 +69,27 @@ class ThreatDetectionEngine {
   constructor() {
     // 定期的なクリーンアップを開始
     this.startPeriodicCleanup()
+  }
+
+  // NextRequest からの脅威分析 (推奨方法)
+  analyzeRequest(request: any, email?: string, success?: boolean): ThreatAlert[] {
+    const ipAddress = getSecureClientIP(request)
+    const userAgent = request.headers.get('user-agent') || undefined
+    
+    if (email !== undefined && success !== undefined) {
+      return this.analyzeLoginAttempt(email, success, ipAddress, userAgent)
+    }
+    
+    // 一般的なリクエスト分析
+    const alerts: ThreatAlert[] = []
+    
+    if (ipAddress) {
+      this.updateIPActivity(ipAddress, userAgent)
+      const ipThreats = this.detectIPThreats(ipAddress)
+      alerts.push(...ipThreats)
+    }
+    
+    return alerts
   }
 
   // ログイン試行の分析
@@ -152,7 +174,8 @@ class ThreatDetectionEngine {
     if (!ipAddress) return null
 
     const ipActivity = this.ipActivities.get(ipAddress)
-    if (!ipActivity && ipActivity!.userIds.size < 3) return null
+    // 論理エラー修正: ipActivityが存在し、かつユーザー数が3未満の場合はreturn
+    if (!ipActivity || ipActivity.userIds.size < 3) return null
 
     // 1つのIPから複数の異なるアカウントへのログイン試行
     const recentEvents = securityLogger.getEventsByTimeRange(

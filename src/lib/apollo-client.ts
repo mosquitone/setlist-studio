@@ -38,16 +38,22 @@ function getCSRFTokenFromCookie(): string | null {
 
 const httpLink = createHttpLink({
   uri: '/api/graphql', // Next.js API Routes (開発・本番共通)
+  credentials: 'include', // HttpOnly Cookieを含める
 })
 
 const authLink = setContext(async (_, { headers }) => {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
+  // HttpOnly Cookieによる認証では、authorizationヘッダーは不要
+  // JWTトークンは自動的にCookieとして送信される
+  
+  // レガシーサポート：一時的にlocalStorageからのトークンもサポート（移行期間用）
+  const legacyToken = typeof window !== 'undefined' ? localStorage.getItem('token') : null
   const csrfToken = getCSRFTokenFromCookie()
 
   return {
     headers: {
       ...headers,
-      authorization: token ? `Bearer ${token}` : '',
+      // レガシートークンがある場合のみauthorizationヘッダーを設定（移行期間中のみ）
+      ...(legacyToken && { authorization: `Bearer ${legacyToken}` }),
       'x-csrf-token': csrfToken || '',
     },
   }
