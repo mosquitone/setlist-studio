@@ -16,6 +16,7 @@ This is mosquitone Emotional Setlist Studio, a modern setlist generator applicat
 - **TypeScript type check**: `npx tsc --noEmit`
 
 ### Database Operations
+- **Initial setup**: `pnpm db:setup` (first-time PostgreSQL setup with security)
 - **Start PostgreSQL**: `docker-compose up -d postgres`
 - **Apply schema changes**: `pnpm db:push`
 - **Generate Prisma client**: `pnpm generate`
@@ -102,11 +103,30 @@ The application uses a modern, streamlined architecture:
 - ESLint 9.x with TypeScript 8.35.0 parser and Prettier 3.6.2 for code formatting
 - **ESLint Configuration**: Uses flat config format (eslint.config.mjs) with ignores property
 
-### Development Workflow
-1. Start PostgreSQL: `docker-compose up -d postgres`
-2. Install dependencies: `pnpm install`
-3. Set up database schema: `pnpm db:push`
-4. Start development server: `pnpm dev`
+### Development Workflow (Local)
+1. Install dependencies: `pnpm install`
+2. Start PostgreSQL (初回セットアップ):
+   ```bash
+   pnpm db:setup
+   ```
+   
+   または手動で:
+   ```bash
+   # セキュリティ設定を一時的に無効化
+   sed -i.bak 's/user: "999:999"/# user: "999:999"/' docker-compose.yml
+   sed -i.bak 's/read_only: true/# read_only: true/' docker-compose.yml
+   
+   # PostgreSQL起動と初期化
+   docker-compose down -v && docker-compose up -d postgres
+   sleep 10 && pnpm db:push
+   
+   # セキュリティ設定を再有効化
+   sed -i.bak 's/# user: "999:999"/user: "999:999"/' docker-compose.yml
+   sed -i.bak 's/# read_only: true/read_only: true/' docker-compose.yml
+   docker-compose up -d postgres
+   ```
+3. Start development server: `pnpm dev`
+4. 以降の起動: `docker-compose up -d postgres && pnpm dev`
 
 ### Project Structure
 ```
