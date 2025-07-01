@@ -21,10 +21,14 @@
 - QRコード付きセットリスト画像
 - セットリスト複製機能
 
-### 🔐 ユーザー認証
-- 安全なユーザー登録・ログイン
-- JWT認証による保護されたAPI
-- 個人専用の楽曲・セットリスト管理
+### 🔐 セキュリティ・認証
+- **マルチレイヤー認証**: JWT + HttpOnly Cookie によるセキュアな認証
+- **CSRF攻撃防御**: Double Submit Cookie + HMAC署名による防御
+- **レート制限**: データベースベースの分散対応レート制限
+- **脅威検知**: ブルートフォース攻撃・認証情報スタッフィング検知
+- **リアルタイム監視**: セキュリティイベントログ・異常検知
+- **IP偽装防御**: 信頼できるプロキシバリデーション
+- **個人専用管理**: ユーザー別の楽曲・セットリスト管理
 
 ## 技術スタック
 
@@ -35,11 +39,14 @@
 - **Apollo Client** - GraphQL状態管理
 
 ### GraphQL API (Vercel Functions)
-- **Apollo Server v4** - Next.js API Routesで動作するGraphQL API
+- **Apollo Server v4** - Next.js API Routesで動作するGraphQL API（セキュリティ強化済み）
 - **Type-GraphQL** - スキーマファーストAPI開発
 - **Prisma** - データベースORM
-- **PostgreSQL** - データベース
-- **JWT** - 認証システム
+- **PostgreSQL** - メインデータベース + セキュリティログ
+- **JWT + HttpOnly Cookie** - 多層認証システム
+- **Rate Limiting** - データベースベース分散レート制限
+- **CSRF Protection** - Double Submit Cookie パターン
+- **Threat Detection** - リアルタイム脅威検知エンジン
 
 ## セットアップ
 
@@ -66,7 +73,10 @@ pnpm install
 # .env と .env.local
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/setlist_generator"
 JWT_SECRET="your-super-secret-jwt-key-change-this-in-production"
+CSRF_SECRET="your-csrf-secret-key-different-from-jwt"
 ```
+
+> **セキュリティ注意**: 本番環境では必ず強力で異なる秘密鍵を設定してください
 
 4. データベースを起動:
 ```bash
@@ -108,6 +118,19 @@ pnpm generate     # Prismaクライアント生成
 ### アーキテクチャ
 
 詳細なアーキテクチャ情報は [CLAUDE.md](./CLAUDE.md) を参照してください。
+
+### セキュリティ
+
+本アプリケーションは包括的なセキュリティ対策を実装しています:
+
+- **認証**: JWT + HttpOnly Cookie による多層認証
+- **CSRF保護**: Double Submit Cookie + HMAC署名
+- **レート制限**: 分散対応データベースベースレート制限
+- **脅威検知**: リアルタイム異常検知・自動ログ
+- **監査ログ**: 全セキュリティイベントの永続化
+- **Docker強化**: セキュリティ設定済みコンテナ
+
+詳細なセキュリティ仕様は [CLAUDE.md](./CLAUDE.md#security-architecture-2025-07-01) を参照してください。
 
 ## ライセンス
 

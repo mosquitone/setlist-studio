@@ -10,7 +10,7 @@ import { GET_SONGS } from '@/lib/graphql/apollo-operations'
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd'
 import { SetlistFormFields } from './SetlistFormFields'
 import { SongItemInput } from './SongItemInput'
-import { validateAndSanitizeInput } from '@/lib/security'
+import { validateAndSanitizeInput } from '../../lib/security-utils'
 
 export interface SetlistItem {
   id?: string

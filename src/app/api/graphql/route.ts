@@ -6,6 +6,8 @@ import { buildSchema } from 'type-graphql'
 import { PrismaClient } from '@prisma/client'
 import { GraphQLSchema } from 'graphql'
 import depthLimit from 'graphql-depth-limit'
+import { createApiRateLimit, createAuthRateLimit } from '../../../lib/rate-limit-db'
+import { csrfProtection } from '../../../lib/csrf-protection'
 
 // Import resolvers
 import { SetlistResolver } from '../../../lib/graphql/resolvers/SetlistResolver'
@@ -55,36 +57,69 @@ async function getServerInstance() {
   return createServer()
 }
 
+// Context helper for secure token extraction
+function createSecureContext(req: NextRequest) {
+  // 認証トークンの取得：HttpOnly Cookie を優先、フォールバックでAuthorization ヘッダー
+  let authToken = req.cookies.get('auth_token')?.value
+  
+  // フォールバック：Authorization ヘッダーからトークンを取得（後方互換性）
+  if (!authToken) {
+    const authHeader = req.headers.get('authorization')
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      authToken = authHeader.substring(7)
+    }
+  }
+  
+  return {
+    req: {
+      headers: {
+        authorization: authToken ? `Bearer ${authToken}` : undefined,
+      },
+    },
+    prisma,
+  }
+}
+
 export async function GET(request: NextRequest) {
+  // Apply database-based rate limiting
+  const apiRateLimit = createApiRateLimit(prisma)
+  const rateLimitResponse = await apiRateLimit(request)
+  if (rateLimitResponse) {
+    return rateLimitResponse
+  }
+
   const server = await getServerInstance()
   const handler = startServerAndCreateNextHandler(server, {
-    context: async (req: NextRequest) => {
-      return {
-        req: {
-          headers: {
-            authorization: req.headers.get('authorization') || undefined,
-          },
-        },
-        prisma,
-      }
-    },
+    context: async (req: NextRequest) => createSecureContext(req),
   })
   return handler(request)
 }
 
 export async function POST(request: NextRequest) {
+  // Check if this is an authentication request for enhanced rate limiting
+  const requestClone = request.clone()
+  const body = await requestClone.text()
+  const isAuthRequest = body.includes('login') || body.includes('register')
+  
+  // Apply appropriate database-based rate limiting
+  const rateLimitFunction = isAuthRequest 
+    ? createAuthRateLimit(prisma)
+    : createApiRateLimit(prisma)
+  const rateLimitResponse = await rateLimitFunction(request)
+  
+  if (rateLimitResponse) {
+    return rateLimitResponse
+  }
+
+  // Apply CSRF protection for state-changing operations
+  const csrfResponse = await csrfProtection(request, prisma)
+  if (csrfResponse) {
+    return csrfResponse
+  }
+
   const server = await getServerInstance()
   const handler = startServerAndCreateNextHandler(server, {
-    context: async (req: NextRequest) => {
-      return {
-        req: {
-          headers: {
-            authorization: req.headers.get('authorization') || undefined,
-          },
-        },
-        prisma,
-      }
-    },
+    context: async (req: NextRequest) => createSecureContext(req),
   })
   return handler(request)
 }

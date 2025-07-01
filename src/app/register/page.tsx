@@ -43,17 +43,36 @@ export default function RegisterPage() {
     },
   })
 
+  const validatePassword = (password: string): string | null => {
+    if (password.length < 8) {
+      return 'パスワードは8文字以上である必要があります'
+    }
+    
+    const hasLowercase = /[a-z]/.test(password)
+    const hasUppercase = /[A-Z]/.test(password)
+    const hasNumber = /\d/.test(password)
+    const hasSpecialChar = /[@$!%*?&]/.test(password)
+    
+    if (!hasLowercase || !hasUppercase || !hasNumber || !hasSpecialChar) {
+      return 'パスワードは大文字・小文字・数字・特殊文字（@$!%*?&）を含む必要があります'
+    }
+    
+    return null
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
 
-    if (password !== confirmPassword) {
-      setError('パスワードが一致しません')
+    // パスワード強度チェック
+    const passwordError = validatePassword(password)
+    if (passwordError) {
+      setError(passwordError)
       return
     }
 
-    if (password.length < 6) {
-      setError('パスワードは6文字以上で入力してください')
+    if (password !== confirmPassword) {
+      setError('パスワードが一致しません')
       return
     }
 
