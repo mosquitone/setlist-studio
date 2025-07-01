@@ -23,7 +23,6 @@ import { LOGIN } from '@/lib/graphql/apollo-operations'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
-import { useCSRF } from '@/hooks/useCSRF'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -34,9 +33,6 @@ export default function LoginPage() {
   const searchParams = useSearchParams()
   const successMessage = searchParams.get('message')
   const { login: authLogin } = useAuth()
-  
-  // CSRFトークンを初期化
-  useCSRF()
 
   const [loginMutation, { loading }] = useMutation(LOGIN, {
     onCompleted: data => {

@@ -255,6 +255,13 @@ The application uses a modern, streamlined architecture:
 - **Environment Configuration**: Unified environment variable management with `.env` and `.env.local` files
 - **Production Ready**: Application now fully compatible with Vercel Functions deployment
 
+### CSRF & CSP Implementation (2025-07-01)
+- **CSRF Token API**: Added `/api/csrf` endpoint for secure token generation and distribution
+- **CSP Development Fix**: Updated Content Security Policy to allow `unsafe-inline` and `unsafe-eval` in development only
+- **Apollo Client Integration**: Automatic CSRF token fetching and header injection for all GraphQL mutations
+- **Centralized CSRF Management**: Single CSRFProvider handles app-wide token initialization, removed duplicate useCSRF calls
+- **Production Security**: Maintains strict CSP in production while enabling Next.js development features
+
 ## Security Architecture (2025-07-01)
 
 ### Comprehensive Security Implementation
