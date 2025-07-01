@@ -22,7 +22,7 @@ import { useMutation } from '@apollo/client'
 import { LOGIN } from '@/lib/server/graphql/apollo-operations'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useAuth } from '@/hooks/useAuth'
+import { useAuth } from '@/components/providers/AuthProvider'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
