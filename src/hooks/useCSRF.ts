@@ -5,7 +5,7 @@ export function useCSRF() {
     // Initialize CSRF token on app start
     const initializeCSRF = async () => {
       try {
-        await fetch('/api/csrf-token', {
+        await fetch('/api/csrf', {
           method: 'GET',
           credentials: 'include',
         })

@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'wasm-unsafe-eval'", // WebAssemblyサポート、unsafe-evalは除去
+              `script-src 'self' 'wasm-unsafe-eval'${process.env.NODE_ENV === 'development' ? " 'unsafe-inline' 'unsafe-eval'" : ''}`, // 開発時のみunsafe-inline/eval許可
               "style-src 'self' 'unsafe-inline'", // Material-UIのため一時的に保持
               "img-src 'self' data: https: blob:", // 画像生成とQRコードのため
               "font-src 'self' data:",

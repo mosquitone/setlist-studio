@@ -6,7 +6,7 @@ async function getCSRFToken(): Promise<string | null> {
   if (typeof window === 'undefined') return null
   
   try {
-    const response = await fetch('/api/csrf-token', {
+    const response = await fetch('/api/csrf', {
       method: 'GET',
       credentials: 'include',
     })
@@ -47,7 +47,12 @@ const authLink = setContext(async (_, { headers }) => {
   
   // レガシーサポート：一時的にlocalStorageからのトークンもサポート（移行期間用）
   const legacyToken = typeof window !== 'undefined' ? localStorage.getItem('token') : null
-  const csrfToken = getCSRFTokenFromCookie()
+  
+  // CSRFトークンを取得（Cookieから、またはAPIから）
+  let csrfToken = getCSRFTokenFromCookie()
+  if (!csrfToken && typeof window !== 'undefined') {
+    csrfToken = await getCSRFToken()
+  }
 
   return {
     headers: {
