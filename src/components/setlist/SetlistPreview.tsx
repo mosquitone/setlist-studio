@@ -1,7 +1,8 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Box, Paper, CircularProgress, Typography, Button } from '@mui/material'
+import QRCode from 'qrcode'
 import { SetlistData } from '../setlist-themes/types'
 import { SetlistRenderer } from '../setlist-themes/SetlistRenderer'
 
@@ -22,6 +23,23 @@ export function SetlistPreview({
   previewImage,
   qrCodeURL = '',
 }: SetlistPreviewProps) {
+  const [generatedQrCode, setGeneratedQrCode] = useState<string>('')
+
+  // Generate QR code for DOM preview
+  useEffect(() => {
+    if (qrCodeURL && showDebug) {
+      QRCode.toDataURL(qrCodeURL, {
+        width: 200,
+        margin: 2,
+        color: {
+          dark: '#000000',
+          light: '#FFFFFF',
+        },
+      })
+        .then(setGeneratedQrCode)
+        .catch(() => setGeneratedQrCode(''))
+    }
+  }, [qrCodeURL, showDebug])
   const renderPreview = () => {
     if (showDebug) {
       // DOM Preview
@@ -37,7 +55,7 @@ export function SetlistPreview({
           }}
         >
           <Box sx={{ transform: 'scale(0.88)', transformOrigin: 'top left' }}>
-            <SetlistRenderer data={{ ...data, theme: selectedTheme, qrCodeURL }} />
+            <SetlistRenderer data={{ ...data, theme: selectedTheme, qrCodeURL: generatedQrCode }} />
           </Box>
         </Box>
       )

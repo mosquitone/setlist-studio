@@ -1,13 +1,15 @@
 'use client'
 
 import React from 'react'
-import { Box, Button, FormControl, Select, MenuItem } from '@mui/material'
+import { Box, Button, FormControl, Select, MenuItem, IconButton, Tooltip } from '@mui/material'
 import {
   Edit as EditIcon,
   Download as DownloadIcon,
   Share as ShareIcon,
   ContentCopy as DuplicateIcon,
   ExpandMore as ExpandMoreIcon,
+  Public as PublicIcon,
+  Lock as LockIcon,
 } from '@mui/icons-material'
 
 interface SetlistActionsProps {
@@ -20,6 +22,9 @@ interface SetlistActionsProps {
   showDebugToggle?: boolean
   showDebug?: boolean
   onDebugToggle?: () => void
+  isPublic?: boolean
+  onToggleVisibility?: () => void
+  isOwner?: boolean
 }
 
 export function SetlistActions({
@@ -32,13 +37,18 @@ export function SetlistActions({
   showDebugToggle = false,
   showDebug = false,
   onDebugToggle,
+  isPublic = false,
+  onToggleVisibility,
+  isOwner = true,
 }: SetlistActionsProps) {
   return (
     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
       <Box sx={{ display: 'flex', gap: 2 }}>
-        <Button variant="outlined" startIcon={<EditIcon />} onClick={onEdit}>
-          Edit
-        </Button>
+        {isOwner && (
+          <Button variant="outlined" startIcon={<EditIcon />} onClick={onEdit}>
+            Edit
+          </Button>
+        )}
         <Button variant="outlined" startIcon={<DownloadIcon />} onClick={onDownload}>
           Download
         </Button>
@@ -51,6 +61,39 @@ export function SetlistActions({
       </Box>
 
       <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+        {isOwner && onToggleVisibility && (
+          <Tooltip title={isPublic ? '非公開にする' : '公開にする'}>
+            <IconButton
+              onClick={onToggleVisibility}
+              sx={{
+                color: isPublic ? '#16a34a' : '#6b7280',
+                backgroundColor: isPublic ? 'rgba(34, 197, 94, 0.1)' : 'rgba(156, 163, 175, 0.1)',
+                '&:hover': {
+                  backgroundColor: isPublic ? 'rgba(34, 197, 94, 0.2)' : 'rgba(156, 163, 175, 0.2)',
+                },
+              }}
+            >
+              {isPublic ? <PublicIcon /> : <LockIcon />}
+            </IconButton>
+          </Tooltip>
+        )}
+
+        {!isOwner && (
+          <Tooltip title={isPublic ? '公開セットリスト' : '非公開セットリスト'}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                color: isPublic ? '#16a34a' : '#6b7280',
+                backgroundColor: isPublic ? 'rgba(34, 197, 94, 0.1)' : 'rgba(156, 163, 175, 0.1)',
+                borderRadius: 1,
+                p: 1,
+              }}
+            >
+              {isPublic ? <PublicIcon /> : <LockIcon />}
+            </Box>
+          </Tooltip>
+        )}
         {showDebugToggle && onDebugToggle && (
           <Button
             variant={showDebug ? 'contained' : 'outlined'}

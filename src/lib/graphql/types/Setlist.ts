@@ -27,6 +27,9 @@ export class Setlist {
   theme?: string
 
   @Field()
+  isPublic!: boolean
+
+  @Field()
   userId!: string
 
   @Field()
