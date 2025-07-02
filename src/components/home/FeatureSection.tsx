@@ -7,13 +7,11 @@ import {
 } from '@mui/icons-material'
 import Link from 'next/link'
 import { useAuth } from '@/components/providers/AuthProvider'
-import { FadeInBox } from '@/components/common/FadeInBox'
-
 export function FeatureSection() {
   const { isLoggedIn } = useAuth()
 
   return (
-    <FadeInBox delay={200} sx={{ mb: 8 }}>
+    <Box sx={{ mb: 8 }}>
       <Typography variant="h4" component="h2" textAlign="center" gutterBottom sx={{ mb: 4 }}>
         主な機能
       </Typography>
@@ -57,6 +55,6 @@ export function FeatureSection() {
           </CardActionArea>
         </Card>
       </Box>
-    </FadeInBox>
+    </Box>
   )
 }
