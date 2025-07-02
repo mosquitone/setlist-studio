@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useMutation, useQuery } from '@apollo/client';
-import { CREATE_SETLIST, GET_SETLIST } from '@/lib/server/graphql/apollo-operations';
+import { CREATE_SETLIST, GET_SETLIST, GET_SETLISTS } from '@/lib/server/graphql/apollo-operations';
 import { useRouter, useSearchParams } from 'next/navigation';
 import SetlistForm, { SetlistFormValues } from '@/components/forms/SetlistForm';
 import { GetSetlistResponse, SetlistItem } from '@/types/graphql';
@@ -23,7 +23,12 @@ export default function NewSetlistPage() {
     items: [{ title: '', note: '' }],
   });
 
-  const [createSetlist, { loading, error }] = useMutation(CREATE_SETLIST);
+  const [createSetlist, { loading, error }] = useMutation(CREATE_SETLIST, {
+    refetchQueries: [
+      { query: GET_SETLISTS }
+    ],
+    awaitRefetchQueries: true,
+  });
 
   const { data: duplicateData, loading: duplicateLoading } = useQuery<GetSetlistResponse>(
     GET_SETLIST,
