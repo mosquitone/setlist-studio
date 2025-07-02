@@ -40,32 +40,50 @@ export default function Header() {
     <>
       <AppBar position="sticky" sx={{ borderRadius: 0 }}>
         <Toolbar>
+          {/* モバイルハンバーガーメニュー */}
           <MobileNavigation
             items={navigationItems}
             isLoading={isLoading}
             mobileOpen={mobileOpen}
             onToggle={handleDrawerToggle}
-            onAuthClick={handleAuthClick}
           />
 
-          <HeaderLogo />
+          {/* モバイル: ロゴを中央配置、デスクトップ: 左寄せ */}
+          <Box
+            sx={{
+              display: { xs: 'flex', sm: 'none' },
+              justifyContent: 'center',
+              flexGrow: 1,
+            }}
+          >
+            <HeaderLogo />
+          </Box>
 
+          {/* デスクトップ: ロゴを左に配置 */}
+          <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+            <HeaderLogo />
+          </Box>
+
+          {/* デスクトップナビゲーション */}
           <DesktopNavigation items={navigationItems} isLoading={isLoading} />
 
           <Box sx={{ flexGrow: 1 }} />
 
-          {isLoading ? (
-            <Skeleton
-              variant="rounded"
-              width={80}
-              height={36}
-              sx={{ borderRadius: 5, bgcolor: 'rgba(255, 255, 255, 0.1)' }}
-            />
-          ) : isLoggedIn ? (
-            <UserMenu onAuthClick={handleAuthClick} />
-          ) : (
-            <AuthButton onClick={handleAuthClick} />
-          )}
+          {/* デスクトップのみ: 認証ボタン/ユーザーメニュー */}
+          <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+            {isLoading ? (
+              <Skeleton
+                variant="rounded"
+                width={80}
+                height={36}
+                sx={{ borderRadius: 5, bgcolor: 'rgba(255, 255, 255, 0.1)' }}
+              />
+            ) : isLoggedIn ? (
+              <UserMenu onAuthClick={handleAuthClick} />
+            ) : (
+              <AuthButton onClick={handleAuthClick} />
+            )}
+          </Box>
         </Toolbar>
       </AppBar>
     </>
