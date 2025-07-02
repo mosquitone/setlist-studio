@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
+import { JWTPayload } from '@/types/jwt';
 
 interface AuthCookieOptions {
   httpOnly: boolean;
@@ -21,13 +22,13 @@ function getAuthCookieOptions(): AuthCookieOptions {
 }
 
 // JWTトークンの検証
-function verifyToken(token: string): any {
+function verifyToken(token: string): JWTPayload | null {
   try {
     const secret = process.env.JWT_SECRET;
     if (!secret) {
       throw new Error('JWT_SECRET is not configured');
     }
-    return jwt.verify(token, secret);
+    return jwt.verify(token, secret) as JWTPayload;
   } catch {
     return null;
   }

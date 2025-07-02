@@ -19,6 +19,19 @@ export enum ThreatSeverity {
   CRITICAL = 'CRITICAL',
 }
 
+export interface ThreatEvidence {
+  timestamp: Date;
+  action: string;
+  details: Record<string, unknown>;
+  ipAddress?: string;
+  userAgent?: string;
+  failedAttempts?: number;
+  uniqueUsers?: number;
+  requestCount?: number;
+  timeWindow?: string;
+  totalAttempts?: number;
+}
+
 export interface ThreatAlert {
   id: string;
   type: ThreatType;
@@ -27,7 +40,7 @@ export interface ThreatAlert {
   description: string;
   ipAddress?: string;
   userId?: string;
-  evidence: any[];
+  evidence: ThreatEvidence[];
   recommendations: string[];
   autoMitigated: boolean;
 }
@@ -158,7 +171,13 @@ export class DatabaseThreatDetection {
           timestamp: new Date(),
           description: `IP ${ipAddress} から${failedAttempts}回の連続ログイン失敗を検出`,
           ipAddress,
-          evidence: [{ failedAttempts, timeWindow: '1hour' }],
+          evidence: [{
+            timestamp: new Date(),
+            action: 'login_attempt',
+            details: {},
+            failedAttempts,
+            timeWindow: '1hour'
+          }],
           recommendations: [
             '該当IPアドレスの一時的なブロック',
             'CAPTCHAの導入',
@@ -207,6 +226,9 @@ export class DatabaseThreatDetection {
           ipAddress,
           evidence: [
             {
+              timestamp: new Date(),
+              action: 'credential_stuffing',
+              details: {},
               uniqueUsers: uniqueUsers.size,
               totalAttempts: activities.length,
               timeWindow: '30minutes',
@@ -252,7 +274,13 @@ export class DatabaseThreatDetection {
           timestamp: new Date(),
           description: `IP ${ipAddress} から過去1時間で${recentActivity}件の大量リクエストを検出`,
           ipAddress,
-          evidence: [{ requestCount: recentActivity, timeWindow: '1hour' }],
+          evidence: [{
+            timestamp: new Date(),
+            action: 'rapid_requests',
+            details: {},
+            requestCount: recentActivity,
+            timeWindow: '1hour'
+          }],
           recommendations: ['レート制限の強化', 'DDoS攻撃の可能性を調査'],
           autoMitigated: false,
         });

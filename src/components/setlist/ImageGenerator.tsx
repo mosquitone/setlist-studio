@@ -73,7 +73,7 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
         const qrCodeURL = await generateQRCode(data.id);
 
         // Create data with QR code
-        const dataWithQR = { ...data, theme: theme as any, qrCodeURL };
+        const dataWithQR = { ...data, theme: theme as 'black' | 'white', qrCodeURL };
 
         // Create a temporary container for rendering
         const container = document.createElement('div');

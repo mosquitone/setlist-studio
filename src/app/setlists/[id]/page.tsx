@@ -104,7 +104,7 @@ export default function SetlistDetailPage() {
         openTime: data.setlist.openTime,
         startTime: data.setlist.startTime,
         theme: data.setlist.theme,
-        items: [...data.setlist.items].sort((a: any, b: any) => a.order - b.order),
+        items: [...data.setlist.items].sort((a, b) => a.order - b.order),
       }
     : null;
 
