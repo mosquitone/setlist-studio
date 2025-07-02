@@ -120,7 +120,7 @@ export function sanitizeResourceForLog(resource: string | undefined | null): str
     }
 
     return reEncoded;
-  } catch (error) {
+  } catch {
     // デコードに失敗した場合は元の文字列を返す
     return sanitized.substring(0, 1000);
   }

@@ -94,7 +94,7 @@ export function verifyCSRFToken(request: NextRequest): boolean {
     }
 
     return true;
-  } catch (error) {
+  } catch {
     // エラーは常にfalseを返す（情報漏洩防止）
     return false;
   }

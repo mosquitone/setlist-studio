@@ -28,7 +28,7 @@ function verifyToken(token: string): any {
       throw new Error('JWT_SECRET is not configured');
     }
     return jwt.verify(token, secret);
-  } catch (error) {
+  } catch {
     return null;
   }
 }
@@ -88,13 +88,13 @@ export async function POST(request: NextRequest) {
     response.cookies.set('auth_token', token, cookieOptions);
 
     return response;
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }
 }
 
 // DELETE /api/auth - ログアウト（クッキーをクリア）
-export async function DELETE(request: NextRequest) {
+export async function DELETE() {
   const response = NextResponse.json({ success: true });
   response.cookies.delete('auth_token');
   return response;
