@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { Box, Typography, Card, CardActionArea, CardContent, Fade } from '@mui/material'
 import {
   LibraryMusic as LibraryMusicIcon,
@@ -10,8 +11,14 @@ import { useAuth } from '@/components/providers/AuthProvider'
 
 export function FeatureSection() {
   const { isLoggedIn } = useAuth()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   return (
-    <Fade in timeout={1000} style={{ transitionDelay: '200ms' }}>
+    <Fade in={mounted} timeout={1000} style={{ transitionDelay: '200ms' }}>
       <Box sx={{ mb: 8 }}>
         <Typography variant="h4" component="h2" textAlign="center" gutterBottom sx={{ mb: 4 }}>
           主な機能
