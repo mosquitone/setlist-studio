@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Box, Typography, Card, CardActionArea, CardContent, Fade } from '@mui/material'
+import { Box, Typography, Card, CardActionArea, CardContent } from '@mui/material'
 import {
   LibraryMusic as LibraryMusicIcon,
   PlaylistPlay as PlaylistPlayIcon,
@@ -11,15 +11,20 @@ import { useAuth } from '@/components/providers/AuthProvider'
 
 export function FeatureSection() {
   const { isLoggedIn } = useAuth()
-  const [mounted, setMounted] = useState(false)
+  const [visible, setVisible] = useState(false)
 
   useEffect(() => {
-    setMounted(true)
+    const timer = setTimeout(() => setVisible(true), 200)
+    return () => clearTimeout(timer)
   }, [])
 
   return (
-    <Fade in={mounted} timeout={1000} style={{ transitionDelay: '200ms' }}>
-      <Box sx={{ mb: 8 }}>
+    <Box sx={{ 
+      mb: 8,
+      opacity: visible ? 1 : 0,
+      transform: visible ? 'translateY(0)' : 'translateY(20px)',
+      transition: 'opacity 1s ease-out, transform 1s ease-out'
+    }}>
         <Typography variant="h4" component="h2" textAlign="center" gutterBottom sx={{ mb: 4 }}>
           主な機能
         </Typography>
@@ -63,7 +68,6 @@ export function FeatureSection() {
             </CardActionArea>
           </Card>
         </Box>
-      </Box>
-    </Fade>
+    </Box>
   )
 }

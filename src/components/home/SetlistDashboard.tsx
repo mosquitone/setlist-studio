@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Box, Typography, Card, Button, Grid, Avatar, Chip, Fade, Stack } from '@mui/material'
+import { Box, Typography, Card, Button, Grid, Avatar, Chip, Stack } from '@mui/material'
 import {
   PlaylistPlay as PlaylistPlayIcon,
   Add as AddIcon,
@@ -22,16 +22,21 @@ interface SetlistDashboardProps {
 }
 
 export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashboardProps) {
-  const [mounted, setMounted] = useState(false)
+  const [visible, setVisible] = useState(false)
 
   useEffect(() => {
-    setMounted(true)
+    const timer = setTimeout(() => setVisible(true), 400)
+    return () => clearTimeout(timer)
   }, [])
 
   if (setlistsLoading) {
     return (
-      <Fade in={mounted} timeout={1000} style={{ transitionDelay: '400ms' }}>
-        <Box sx={{ mb: 8 }}>
+      <Box sx={{ 
+        mb: 8,
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0)' : 'translateY(20px)',
+        transition: 'opacity 1s ease-out, transform 1s ease-out'
+      }}>
           <Typography variant="h4" component="h2" gutterBottom sx={{ mb: 4 }}>
             あなたのセットリスト
           </Typography>
@@ -40,15 +45,18 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
               セットリストを読み込み中...
             </Typography>
           </Box>
-        </Box>
-      </Fade>
+      </Box>
     )
   }
 
   if (!setlistsData?.setlists?.length) {
     return (
-      <Fade in={mounted} timeout={1000} style={{ transitionDelay: '400ms' }}>
-        <Box sx={{ mb: 8 }}>
+      <Box sx={{ 
+        mb: 8,
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0)' : 'translateY(20px)',
+        transition: 'opacity 1s ease-out, transform 1s ease-out'
+      }}>
           <Typography variant="h4" component="h2" gutterBottom sx={{ mb: 4 }}>
             あなたのセットリスト
           </Typography>
@@ -71,14 +79,17 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
               セットリストを作成
             </Button>
           </Card>
-        </Box>
-      </Fade>
+      </Box>
     )
   }
 
   return (
-    <Fade in={mounted} timeout={1000} style={{ transitionDelay: '400ms' }}>
-      <Box sx={{ mb: 8 }}>
+    <Box sx={{ 
+      mb: 8,
+      opacity: visible ? 1 : 0,
+      transform: visible ? 'translateY(0)' : 'translateY(20px)',
+      transition: 'opacity 1s ease-out, transform 1s ease-out'
+    }}>
         <Typography variant="h4" component="h2" gutterBottom sx={{ mb: 4 }}>
           あなたのセットリスト
         </Typography>
@@ -275,7 +286,6 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
             </Grid>
           ))}
         </Grid>
-      </Box>
-    </Fade>
+    </Box>
   )
 }
