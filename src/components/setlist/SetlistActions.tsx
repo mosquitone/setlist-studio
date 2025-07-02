@@ -78,13 +78,29 @@ export function SetlistActions({
               Edit
             </Button>
           )}
+          {isOwner && (
+            <Button 
+              variant="outlined" 
+              startIcon={<DuplicateIcon />} 
+              onClick={onDuplicate}
+              size="small"
+              sx={{ 
+                minWidth: 80, 
+                flex: '1 1 auto',
+                fontSize: '0.75rem',
+                px: 1
+              }}
+            >
+              Duplicate
+            </Button>
+          )}
           <Button 
             variant="outlined" 
             startIcon={<DownloadIcon />} 
             onClick={onDownload}
             size="small"
             sx={{ 
-              minWidth: 100, 
+              minWidth: 80, 
               flex: '1 1 auto',
               fontSize: '0.75rem',
               px: 1
@@ -106,22 +122,6 @@ export function SetlistActions({
           >
             Share
           </Button>
-          {isOwner && (
-            <Button 
-              variant="outlined" 
-              startIcon={<DuplicateIcon />} 
-              onClick={onDuplicate}
-              size="small"
-              sx={{ 
-                minWidth: 80, 
-                flex: '1 1 auto',
-                fontSize: '0.75rem',
-                px: 1
-              }}
-            >
-              Duplicate
-            </Button>
-          )}
         </Stack>
 
         {/* 設定・ツール群 */}
