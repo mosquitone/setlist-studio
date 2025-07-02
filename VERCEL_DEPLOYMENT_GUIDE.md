@@ -25,6 +25,16 @@
 2. GitHubリポジトリ一覧から「setlist-studio」を選択
 3. 「Import」をクリックしてプロジェクトをインポート
 
+### 🔧 ビルド設定の確認
+プロジェクトのインポート時に、Vercelは自動的に以下を検出します：
+
+1. **Framework Preset**: `Next.js`が自動選択される
+2. **Build Command**: `pnpm build`（package.jsonから自動検出）
+3. **Output Directory**: `.next`（Next.jsのデフォルト）
+4. **Install Command**: `pnpm install`（pnpmのlockfileから自動検出）
+
+⚠️ **重要**: これらの設定は通常自動検出されますが、後で「Settings」→「General」→「Build & Output Settings」から確認・変更可能です。
+
 ## 📋 ステップ3: 環境変数の設定
 
 ### 🔐 環境変数について
@@ -95,6 +105,20 @@
 - **説明**: アプリケーションの実行環境
 - **値**: Vercelが自動的に`production`に設定
 - **注意**: 手動設定は不要
+
+#### 7️⃣ **PNPM_VERSION**（推奨）
+- **説明**: pnpmのバージョンを固定（プロジェクトとの互換性確保）
+- **値**: `10.12.1`（このプロジェクトで使用しているバージョン）
+- **設定理由**: 
+  - ローカル開発環境とVercelで同じpnpmバージョンを使用
+  - パッケージの互換性問題を防ぐ
+  - ビルドエラーを回避
+- **設定方法**: 環境変数として設定、またはpackage.jsonに以下を追加：
+  ```json
+  {
+    "packageManager": "pnpm@10.12.1"
+  }
+  ```
 
 ### 🛠️ 環境変数の設定手順
 
@@ -271,6 +295,24 @@ GitHubとの統合により、以下の自動デプロイが設定されます:
 #### 6. Environment variable not found
 - **原因**: 必要な環境変数が不足
 - **解決方法**: すべての必須環境変数が設定されているか確認
+
+#### 7. pnpm: command not found / pnpm version mismatch
+- **原因**: Vercelがpnpmを認識できない、またはバージョンが不一致
+- **解決方法**:
+  - 方法1: 環境変数に`PNPM_VERSION=10.12.1`を追加
+  - 方法2: package.jsonに以下を追加:
+    ```json
+    {
+      "packageManager": "pnpm@10.12.1"
+    }
+    ```
+  - 方法3: Build Settingsで`Install Command`を`npm install -g pnpm@10.12.1 && pnpm install`に変更
+
+#### 8. Prisma generate error
+- **原因**: Prismaクライアントの生成に失敗
+- **解決方法**:
+  - package.jsonのpostinstallスクリプトに`prisma generate`が含まれているか確認
+  - ビルドコマンドを`pnpm generate && pnpm build`に変更
 
 ## 🎉 デプロイ完了後の確認
 
