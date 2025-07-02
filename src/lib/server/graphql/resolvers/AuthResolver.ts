@@ -73,9 +73,17 @@ export class AuthResolver {
     if (!jwtSecret) {
       throw new Error('JWT_SECRET environment variable is not configured');
     }
-    const token = jwt.sign({ userId: user.id }, jwtSecret, {
-      expiresIn: '7d',
-    });
+    const token = jwt.sign(
+      {
+        userId: user.id,
+        email: user.email,
+        username: user.username,
+      },
+      jwtSecret,
+      {
+        expiresIn: '7d',
+      },
+    );
 
     // 登録成功をログに記録（データベースベース）
     await logSecurityEventDB(ctx.prisma, {
@@ -151,9 +159,17 @@ export class AuthResolver {
     if (!jwtSecret) {
       throw new Error('JWT_SECRET environment variable is not configured');
     }
-    const token = jwt.sign({ userId: user.id }, jwtSecret, {
-      expiresIn: '7d',
-    });
+    const token = jwt.sign(
+      {
+        userId: user.id,
+        email: user.email,
+        username: user.username,
+      },
+      jwtSecret,
+      {
+        expiresIn: '7d',
+      },
+    );
 
     // ログイン成功をログに記録（データベースベース）
     await logAuthSuccessDB(ctx.prisma, user.id, getClientIP(ctx), ctx.req?.headers['user-agent']);

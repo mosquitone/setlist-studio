@@ -16,7 +16,8 @@ import {
 import { useQuery, useMutation } from '@apollo/client';
 import { useParams } from 'next/navigation';
 import { GET_SETLIST, TOGGLE_SETLIST_VISIBILITY } from '@/lib/server/graphql/apollo-operations';
-import { SetlistData } from '@/components/setlist-themes/types';
+import { SetlistData } from '@/types/components';
+import { Theme } from '@/types/common';
 import { ImageGenerator } from '@/components/setlist/ImageGenerator';
 import { SetlistActions } from '@/components/setlist/SetlistActions';
 import { SetlistPreview } from '@/components/setlist/SetlistPreview';
@@ -30,7 +31,7 @@ export default function SetlistDetailPage() {
   const setlistId = params.id as string;
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedTheme, setSelectedTheme] = useState<'black' | 'white' | null>(null);
+  const [selectedTheme, setSelectedTheme] = useState<Theme | null>(null);
   const [themeInitialized, setThemeInitialized] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const isDev = process.env.NODE_ENV === 'development';
@@ -104,11 +105,11 @@ export default function SetlistDetailPage() {
         openTime: data.setlist.openTime,
         startTime: data.setlist.startTime,
         theme: data.setlist.theme,
-        items: [...data.setlist.items].sort((a: any, b: any) => a.order - b.order),
+        items: [...data.setlist.items].sort((a, b) => a.order - b.order),
       }
     : null;
 
-  const handleThemeChange = (theme: 'black' | 'white') => {
+  const handleThemeChange = (theme: Theme) => {
     setSelectedTheme(theme);
   };
 

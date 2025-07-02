@@ -1,19 +1,12 @@
 // セキュアな認証クライアント（HttpOnly Cookie使用）
 import { apolloClient } from './apollo-client';
 import { GET_ME_QUERY } from '../server/graphql/apollo-operations';
+import { User } from '@/types/entities';
+import { AuthResponse } from '@/types/api';
 
-export interface User {
-  id: string;
-  email: string;
-  username: string;
-  createdAt?: string;
-}
-
-export interface AuthResponse {
-  success: boolean;
-  user?: User;
-  error?: string;
-}
+// 後方互換性のため再エクスポート
+export type { User } from '@/types/entities';
+export type { AuthResponse } from '@/types/api';
 
 export interface AuthState {
   authenticated: boolean;

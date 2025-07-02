@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 import { FormikProps } from 'formik';
-import { SetlistFormValues } from './SetlistForm';
+import { SetlistFormValues } from '@/types/components';
 
 interface SetlistFormFieldsProps {
   formik: FormikProps<SetlistFormValues>;

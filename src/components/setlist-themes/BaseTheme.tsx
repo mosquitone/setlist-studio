@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 import { SETLIST_FOOTER_TEXT } from './constants';
-import { SetlistThemeProps } from './types';
+import { SetlistThemeProps } from '@/types/components';
 import { formatEventDateJST } from '@/lib/shared/dateUtils';
 import { isValidUrl } from '@/lib/security/security-utils';
 

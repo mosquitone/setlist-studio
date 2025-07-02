@@ -5,7 +5,8 @@ import { Container, Alert, CircularProgress, Typography } from '@mui/material';
 import { useQuery, useMutation } from '@apollo/client';
 import { useParams, useRouter } from 'next/navigation';
 import { GET_SETLIST, UPDATE_SETLIST } from '@/lib/server/graphql/apollo-operations';
-import SetlistForm, { SetlistFormValues } from '@/components/forms/SetlistForm';
+import SetlistForm from '@/components/forms/SetlistForm';
+import { SetlistFormValues } from '@/types/components';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
 export default function EditSetlistPage() {
@@ -53,8 +54,8 @@ export default function EditSetlistPage() {
     startTime: setlist.startTime || '',
     theme: setlist.theme || 'black',
     items: [...setlist.items]
-      .sort((a: any, b: any) => a.order - b.order)
-      .map((item: any) => ({
+      .sort((a, b) => a.order - b.order)
+      .map((item) => ({
         id: item.id,
         title: item.title || '',
         note: item.note || '',
