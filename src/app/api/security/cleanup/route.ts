@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
     console.log('Security cleanup completed:', result);
 
     return NextResponse.json(result);
-  } catch (error) {
+  } catch {
     console.error('Security cleanup error:', error);
 
     return NextResponse.json(
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
   try {
     const result = await GET(request);
     return result;
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Manual cleanup failed' }, { status: 500 });
   }
 }
