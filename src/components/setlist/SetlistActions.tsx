@@ -113,7 +113,7 @@ export function SetlistActions({
               onClick={onDuplicate}
               size="small"
               sx={{ 
-                minWidth: 100, 
+                minWidth: 80, 
                 flex: '1 1 auto',
                 fontSize: '0.75rem',
                 px: 1
