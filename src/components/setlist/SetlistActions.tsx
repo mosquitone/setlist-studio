@@ -61,14 +61,19 @@ export function SetlistActions({
     return (
       <Stack spacing={2} sx={{ mb: 3 }}>
         {/* アクションボタン群 */}
-        <Stack direction="row" spacing={1} flexWrap="wrap">
+        <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
           {isOwner && (
             <Button 
               variant="outlined" 
               startIcon={<EditIcon />} 
               onClick={onEdit}
               size="small"
-              sx={{ minWidth: 'auto', flex: '1 1 auto' }}
+              sx={{ 
+                minWidth: 80, 
+                flex: '1 1 auto',
+                fontSize: '0.75rem',
+                px: 1
+              }}
             >
               Edit
             </Button>
@@ -78,7 +83,12 @@ export function SetlistActions({
             startIcon={<DownloadIcon />} 
             onClick={onDownload}
             size="small"
-            sx={{ minWidth: 'auto', flex: '1 1 auto' }}
+            sx={{ 
+              minWidth: 100, 
+              flex: '1 1 auto',
+              fontSize: '0.75rem',
+              px: 1
+            }}
           >
             Download
           </Button>
@@ -87,7 +97,12 @@ export function SetlistActions({
             startIcon={<ShareIcon />} 
             onClick={onShare}
             size="small"
-            sx={{ minWidth: 'auto', flex: '1 1 auto' }}
+            sx={{ 
+              minWidth: 80, 
+              flex: '1 1 auto',
+              fontSize: '0.75rem',
+              px: 1
+            }}
           >
             Share
           </Button>
@@ -97,7 +112,12 @@ export function SetlistActions({
               startIcon={<DuplicateIcon />} 
               onClick={onDuplicate}
               size="small"
-              sx={{ minWidth: 'auto', flex: '1 1 auto' }}
+              sx={{ 
+                minWidth: 100, 
+                flex: '1 1 auto',
+                fontSize: '0.75rem',
+                px: 1
+              }}
             >
               Duplicate
             </Button>

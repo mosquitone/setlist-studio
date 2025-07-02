@@ -47,8 +47,8 @@ export function SetlistPreview({
   // レスポンシブなサイズ設定
   const getPreviewDimensions = () => {
     if (isMobile) {
-      // モバイル: ビューポート幅の90%を基準に、A4比率（700:990）を維持
-      const maxWidth = Math.min(350, window.innerWidth * 0.9);
+      // モバイル: 最大350pxまたはビューポート幅の90%、A4比率（700:990）を維持
+      const maxWidth = 350; // 固定値に変更してSSRエラーを回避
       const height = (maxWidth * 990) / 700;
       return { width: maxWidth, height };
     }
