@@ -12,24 +12,10 @@ import { SetlistFormFields } from './SetlistFormFields';
 import { SongItemInput } from './SongItemInput';
 import { validateAndSanitizeInput } from '@/lib/security/security-utils';
 
-import { EntityId } from '@/types/common';
+import { SetlistFormItem, SetlistFormValues } from '@/types/components';
 
-export interface SetlistItem {
-  id?: EntityId;
-  title: string;
-  note: string;
-}
-
-export interface SetlistFormValues {
-  title: string;
-  bandName: string;
-  eventName: string;
-  eventDate: string;
-  openTime: string;
-  startTime: string;
-  theme: string;
-  items: SetlistItem[];
-}
+// 後方互換性のため再エクスポート
+export type { SetlistFormItem as SetlistItem, SetlistFormValues } from '@/types/components';
 
 interface SetlistFormProps {
   title: string;
