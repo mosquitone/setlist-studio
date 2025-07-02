@@ -247,8 +247,7 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 │   │   ├── themeColors.ts     # テーマカラーパレット設定
 │   │   ├── SetlistRenderer.tsx # テーマレンダラー
 │   │   ├── constants.ts       # テーマ定数
-│   │   ├── index.ts          # テーマエクスポート
-│   │   └── types.ts          # テーマ型定義
+│   │   └── index.ts          # テーマエクスポート
 │   └── songs/             # 楽曲管理コンポーネント
 │       ├── SongEditDialog.tsx # 楽曲編集ダイアログ
 │       ├── SongPageHeader.tsx # 楽曲ページヘッダー
@@ -289,7 +288,12 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 │   │   └── validation-rules.ts   # 入力検証ルール
 │   └── shared/            # クライアント/サーバー共有ユーティリティ
 │       └── dateUtils.ts   # 日付フォーマットユーティリティ
-├── src/types/             # TypeScript型定義
+├── src/types/             # TypeScript型定義（階層構造）
+│   ├── common.ts          # 共通型定義（Theme、EntityId、StringArray、Timestamp、ISODateString）
+│   ├── entities.ts        # ドメインエンティティ型（User、Song、Setlist、SetlistItem）
+│   ├── api.ts             # API/GraphQLレスポンス型（AuthPayload、GetSetlistsResponse等）
+│   ├── components.ts      # コンポーネント専用型（SetlistFormValues、SetlistFormItem等）
+│   ├── jwt.ts             # JWT認証型（JWTPayload、型ガード関数、検証ユーティリティ）
 │   └── graphql.ts         # GraphQL関連型定義
 ├── prisma/                # データベーススキーマとマイグレーション
 │   ├── migrations/        # データベースマイグレーション
@@ -319,7 +323,7 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 - **ブランディング**: テンプレートベースメタデータ付き統一"Setlist Studio"タイトルシステム
 - **複製機能**: クエリパラメータ経由でセットリストをクローン（/setlists/new?duplicate=ID）
 - **開発**: ホットリロードとAPIルート付きハイブリッド最適化Next.jsセットアップ
-- **コード品質**: Type-GraphQL循環依存解決、全TypeScript警告解決
+- **コード品質**: Type-GraphQL循環依存解決、全TypeScript警告解決、型安全性強化（any型排除、JWT型ガード、共通型統合）
 - **セキュリティ**: 強化セキュリティ機能とEOL脆弱性修正付きApollo Server v4
 - **デプロイ**: Vercel用ハイブリッドアーキテクチャ最適化で本番対応
 
@@ -623,6 +627,17 @@ const isValid = timingSafeEqual(
 - ✅ Vercel Functions互換性
 
 ## 更新履歴と記録
+
+### TypeScript型システム強化 (2025-07-02)
+- **any型完全排除**: 全ての`any`型を適切なTypeScript型定義に置換
+- **JWT型安全性**: ランタイム型ガード関数による安全なJWT検証機能を実装
+- **共通型統合**: 重複していた型定義（Theme、EntityId、StringArray、Timestamp）を統合
+- **型ファイル再構成**: 機能別型定義構造（common、entities、api、components、jwt）に再編成
+- **型ガード実装**: `isValidJWTPayload()`関数でランタイム型安全性を保証
+- **arrowParens統一**: ESLint/Prettier設定でアロー関数の括弧を必須に統一
+- **DRY原則適用**: 8箇所に散らばっていた`'black' | 'white'`型を単一Theme型に統合
+- **isolatedModules対応**: TypeScript設定に対応した`export type`構文を使用
+- **型安全なJWT検証**: `verifyAndValidateJWT()`関数で改ざん・構造検証を統合
 
 ### テーマコンポーネント共通化リファクタリング (2025-07-02)
 - **BaseTheme.tsx実装**: BlackTheme/WhiteThemeの共通ロジックを統一ベースコンポーネントに集約

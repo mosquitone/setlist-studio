@@ -10,6 +10,7 @@ import {
   sanitizeObjectForLog,
   formatSecurityLog,
 } from './log-sanitizer';
+import { Timestamp } from '@/types/common';
 
 export enum SecurityEventType {
   // 認証関連
@@ -57,12 +58,12 @@ export interface SecurityEvent {
   id: string;
   type: SecurityEventType;
   severity: SecurityEventSeverity;
-  timestamp: Date;
+  timestamp: Timestamp;
   userId?: string;
   ipAddress?: string;
   userAgent?: string;
   resource?: string;
-  details?: Record<string, any>;
+  details?: Record<string, unknown>;
 }
 
 // Vercel互換性：データベースベースのセキュリティログシステム
@@ -93,7 +94,7 @@ export class DatabaseSecurityLogger {
           ipAddress: sanitizedEvent.ipAddress,
           userAgent: sanitizedEvent.userAgent,
           resource: sanitizedEvent.resource,
-          details: sanitizedEvent.details || {},
+          details: (sanitizedEvent.details || {}) as any,
         },
       });
 
@@ -210,7 +211,7 @@ export class DatabaseSecurityLogger {
           ipAddress: event.ipAddress || undefined,
           userAgent: event.userAgent || undefined,
           resource: event.resource || undefined,
-          details: (event.details as Record<string, any>) || undefined,
+          details: (event.details as Record<string, unknown>) || undefined,
         })),
       };
     } catch (error) {
@@ -246,7 +247,7 @@ export class DatabaseSecurityLogger {
         ipAddress: event.ipAddress || undefined,
         userAgent: event.userAgent || undefined,
         resource: event.resource || undefined,
-        details: (event.details as Record<string, any>) || undefined,
+        details: (event.details as Record<string, unknown>) || undefined,
       }));
     } catch (error) {
       console.error('Failed to get events by time range:', error);

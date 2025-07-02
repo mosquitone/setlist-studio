@@ -3,12 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Paper, CircularProgress, Typography, Button } from '@mui/material';
 import QRCode from 'qrcode';
-import { SetlistData } from '../setlist-themes/types';
+import { SetlistData } from '@/types/components';
+import { Theme } from '@/types/common';
 import { SetlistRenderer } from '../setlist-themes/SetlistRenderer';
 
 interface SetlistPreviewProps {
   data: SetlistData;
-  selectedTheme: 'black' | 'white';
+  selectedTheme: Theme;
   showDebug: boolean;
   isGeneratingPreview: boolean;
   previewImage: string | null;

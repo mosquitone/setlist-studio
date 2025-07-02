@@ -1,5 +1,7 @@
 // ログインジェクション攻撃対策
 
+import { Timestamp } from '@/types/common';
+
 /**
  * ログインジェクション攻撃を防ぐためのサニタイゼーション関数
  * 改行文字、制御文字、およびログ解析を妨害する可能性のある文字を除去
@@ -130,8 +132,8 @@ export function sanitizeResourceForLog(resource: string | undefined | null): str
  * 汎用オブジェクトのサニタイゼーション
  * ログに出力されるオブジェクトの全フィールドをサニタイズ
  */
-export function sanitizeObjectForLog(obj: Record<string, any>): Record<string, any> {
-  const sanitized: Record<string, any> = {};
+export function sanitizeObjectForLog(obj: Record<string, unknown>): Record<string, unknown> {
+  const sanitized: Record<string, unknown> = {};
 
   for (const [key, value] of Object.entries(obj)) {
     const sanitizedKey = sanitizeForLog(key);
@@ -146,9 +148,9 @@ export function sanitizeObjectForLog(obj: Record<string, any>): Record<string, a
       sanitized[sanitizedKey] = value.map((item) =>
         typeof item === 'string' ? sanitizeForLog(item) : item,
       );
-    } else if (typeof value === 'object') {
+    } else if (typeof value === 'object' && value !== null) {
       // 再帰的にサニタイズ（深さ制限あり）
-      sanitized[sanitizedKey] = sanitizeObjectForLog(value);
+      sanitized[sanitizedKey] = sanitizeObjectForLog(value as Record<string, unknown>);
     } else {
       // その他の型は文字列化してサニタイズ
       sanitized[sanitizedKey] = sanitizeForLog(String(value));
@@ -181,11 +183,11 @@ export function validateLogEntry(logEntry: string): boolean {
  * 構造化ログ形式でのセキュアな出力
  */
 export function formatSecurityLog(data: {
-  timestamp: Date;
+  timestamp: Timestamp;
   level: string;
   type: string;
   message: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }): string {
   const sanitizedData = {
     timestamp: data.timestamp.toISOString(),
