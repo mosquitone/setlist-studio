@@ -10,7 +10,6 @@ import { FeatureSection } from '../components/home/FeatureSection';
 import { SetlistDashboard } from '../components/home/SetlistDashboard';
 import { AuthActions } from '../components/home/AuthActions';
 import { PageFooter } from '../components/home/PageFooter';
-
 export default function HomeClient() {
   const { isLoggedIn, isLoading } = useAuth();
 

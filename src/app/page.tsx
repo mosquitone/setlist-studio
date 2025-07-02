@@ -1,12 +1,31 @@
-// ISR for home page - 1 hour cache for optimal performance
-import { Metadata } from 'next';
 import HomeClient from './HomeClient';
+import NoSSR from '@/components/common/NoSSR';
+import { Container, Box, Typography } from '@mui/material';
 
-// ホームページはレイアウトのデフォルトタイトルを使用
-
-// Enable ISR with 1 hour cache
-export const revalidate = 3600;
+// Disable caching for authentication-dependent content
+export const dynamic = 'force-dynamic';
 
 export default function HomePage() {
-  return <HomeClient />;
+  return (
+    <NoSSR
+      fallback={
+        <Container maxWidth="lg">
+          <Box
+            sx={{
+              minHeight: '100vh',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Typography variant="h6" color="text.secondary">
+              読み込み中...
+            </Typography>
+          </Box>
+        </Container>
+      }
+    >
+      <HomeClient />
+    </NoSSR>
+  );
 }
