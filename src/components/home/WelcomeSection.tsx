@@ -1,19 +1,24 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Box, Typography, Chip, Fade } from '@mui/material'
+import { Box, Typography, Chip } from '@mui/material'
 import { MusicNote as MusicNoteIcon } from '@mui/icons-material'
 
 export function WelcomeSection() {
-  const [mounted, setMounted] = useState(false)
+  const [visible, setVisible] = useState(false)
 
   useEffect(() => {
-    setMounted(true)
+    setVisible(true)
   }, [])
 
   return (
-    <Fade in={mounted} timeout={800}>
-      <Box sx={{ textAlign: 'center', mb: 6 }}>
+    <Box sx={{ 
+      textAlign: 'center', 
+      mb: 6,
+      opacity: visible ? 1 : 0,
+      transform: visible ? 'translateY(0)' : 'translateY(20px)',
+      transition: 'opacity 0.8s ease-out, transform 0.8s ease-out'
+    }}>
         <Box sx={{ mb: 3 }}>
           <MusicNoteIcon sx={{ fontSize: 80, color: 'primary.main', mb: 2 }} />
         </Box>
@@ -44,7 +49,6 @@ export function WelcomeSection() {
           variant="outlined"
           sx={{ fontSize: '1rem', py: 2 }}
         />
-      </Box>
-    </Fade>
+    </Box>
   )
 }
