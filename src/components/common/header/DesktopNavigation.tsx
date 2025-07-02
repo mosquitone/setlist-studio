@@ -1,18 +1,41 @@
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import Skeleton from '@mui/material/Skeleton';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useAuth } from '@/components/providers/AuthProvider';
-import { authenticatedNavigationItems, publicNavigationItems } from './navigationItems';
 
-export function DesktopNavigation() {
-  const { isLoggedIn } = useAuth();
+interface NavigationItem {
+  label: string;
+  path: string;
+  icon: React.ComponentType;
+}
+
+interface DesktopNavigationProps {
+  items: NavigationItem[];
+  isLoading: boolean;
+}
+
+export function DesktopNavigation({ items, isLoading }: DesktopNavigationProps) {
   const pathname = usePathname();
 
-  // ログイン状態に応じて表示するナビゲーション項目を決定
-  const items = isLoggedIn
-    ? [...publicNavigationItems, ...authenticatedNavigationItems]
-    : publicNavigationItems;
+  if (isLoading) {
+    return (
+      <Box sx={{ flexGrow: 1, display: { xs: 'none', sm: 'flex' }, ml: 4 }}>
+        {[1, 2].map(i => (
+          <Skeleton
+            key={i}
+            variant="rounded"
+            width={120}
+            height={36}
+            sx={{
+              mx: 1,
+              bgcolor: 'rgba(255, 255, 255, 0.1)',
+            }}
+          />
+        ))}
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ flexGrow: 1, display: { xs: 'none', sm: 'flex' }, ml: 4 }}>
