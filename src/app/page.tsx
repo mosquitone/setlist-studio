@@ -24,7 +24,7 @@ export default function HomePage() {
 
   if (isLoading) {
     return (
-      <Container maxWidth="md">
+      <Container maxWidth="lg">
         <Box
           sx={{
             minHeight: '100vh',
