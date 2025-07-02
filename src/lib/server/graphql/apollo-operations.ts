@@ -250,3 +250,24 @@ export const REORDER_SETLIST_ITEMS = gql`
     }
   }
 `
+
+export const GET_ME_QUERY = gql`
+  query GetMe {
+    me {
+      id
+      email
+      username
+      createdAt
+    }
+  }
+`
+
+export const UPDATE_USER_MUTATION = gql`
+  mutation UpdateUser($username: String!) {
+    updateUser(username: $username) {
+      id
+      email
+      username
+    }
+  }
+`

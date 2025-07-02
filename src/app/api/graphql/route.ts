@@ -13,6 +13,7 @@ import { csrfProtection } from '../../../lib/security/csrf-protection'
 import { SetlistResolver } from '../../../lib/server/graphql/resolvers/SetlistResolver'
 import { SongResolver } from '../../../lib/server/graphql/resolvers/SongResolver'
 import { AuthResolver } from '../../../lib/server/graphql/resolvers/AuthResolver'
+import { UserResolver } from '../../../lib/server/graphql/resolvers/UserResolver'
 
 // Initialize Prisma Client
 const prisma = new PrismaClient()
@@ -23,7 +24,7 @@ let schema: GraphQLSchema | null = null
 async function getSchema() {
   if (!schema) {
     schema = await buildSchema({
-      resolvers: [SetlistResolver, SongResolver, AuthResolver],
+      resolvers: [SetlistResolver, SongResolver, AuthResolver, UserResolver],
       validate: false, // Disable validation for better performance
       authChecker: undefined, // We use middleware instead
     })
