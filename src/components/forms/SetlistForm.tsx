@@ -126,7 +126,12 @@ export default function SetlistForm({
 
   return (
     <Container maxWidth="md" sx={{ py: 4, px: { xs: 2, sm: 3 } }}>
-      <Typography variant="h4" component="h1" gutterBottom sx={{ fontSize: { xs: '1.75rem', sm: '2rem' } }}>
+      <Typography
+        variant="h4"
+        component="h1"
+        gutterBottom
+        sx={{ fontSize: { xs: '1.75rem', sm: '2rem' } }}
+      >
         {title}
       </Typography>
 

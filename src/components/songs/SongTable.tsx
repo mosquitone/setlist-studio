@@ -59,9 +59,9 @@ export function SongTable({ songs, loading, onEdit, onDelete }: SongTableProps) 
     return (
       <Stack spacing={2}>
         {songs.map((song) => (
-          <Card 
+          <Card
             key={song.id}
-            sx={{ 
+            sx={{
               '&:hover': { backgroundColor: 'action.hover' },
               cursor: 'pointer',
             }}
@@ -103,24 +103,14 @@ export function SongTable({ songs, loading, onEdit, onDelete }: SongTableProps) 
                     </IconButton>
                   </Stack>
                 </Stack>
-                
+
                 <Stack direction="row" spacing={1} flexWrap="wrap">
-                  {song.key && (
-                    <Chip 
-                      label={`キー: ${song.key}`} 
-                      size="small" 
-                      variant="outlined"
-                    />
-                  )}
+                  {song.key && <Chip label={`キー: ${song.key}`} size="small" variant="outlined" />}
                   {song.tempo && (
-                    <Chip 
-                      label={`テンポ: ${song.tempo}`} 
-                      size="small" 
-                      variant="outlined"
-                    />
+                    <Chip label={`テンポ: ${song.tempo}`} size="small" variant="outlined" />
                   )}
                 </Stack>
-                
+
                 {song.notes && (
                   <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
                     {song.notes}
