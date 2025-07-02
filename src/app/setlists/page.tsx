@@ -105,7 +105,7 @@ export default function SetlistsPage() {
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Typography variant="h4" component="h1">
-          セトリスト一覧
+          セットリスト一覧
         </Typography>
         <Button
           variant="contained"
@@ -113,7 +113,7 @@ export default function SetlistsPage() {
           onClick={() => router.push('/setlists/new')}
           size="large"
         >
-          新しいセトリスト
+          新しいセットリスト
         </Button>
       </Box>
 
@@ -122,17 +122,17 @@ export default function SetlistsPage() {
           <CardContent sx={{ textAlign: 'center', py: 8 }}>
             <MusicNoteIcon sx={{ fontSize: 64, color: 'action.disabled', mb: 2 }} />
             <Typography variant="h6" color="text.secondary" gutterBottom>
-              セトリストがありません
+              セットリストがありません
             </Typography>
             <Typography color="text.secondary" sx={{ mb: 3 }}>
-              最初のセトリストを作成しましょう
+              最初のセットリストを作成しましょう
             </Typography>
             <Button
               variant="contained"
               startIcon={<AddIcon />}
               onClick={() => router.push('/setlists/new')}
             >
-              セトリストを作成
+              セットリストを作成
             </Button>
           </CardContent>
         </Card>
