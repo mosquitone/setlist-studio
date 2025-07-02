@@ -1,9 +1,10 @@
 // セキュアな認証クライアント（HttpOnly Cookie使用）
 import { apolloClient } from './apollo-client';
 import { GET_ME_QUERY } from '../server/graphql/apollo-operations';
+import { EntityId } from '@/types/common';
 
 export interface User {
-  id: string;
+  id: EntityId;
   email: string;
   username: string;
   createdAt?: string;

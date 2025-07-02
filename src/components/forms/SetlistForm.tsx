@@ -12,8 +12,10 @@ import { SetlistFormFields } from './SetlistFormFields';
 import { SongItemInput } from './SongItemInput';
 import { validateAndSanitizeInput } from '@/lib/security/security-utils';
 
+import { EntityId } from '@/types/common';
+
 export interface SetlistItem {
-  id?: string;
+  id?: EntityId;
   title: string;
   note: string;
 }
