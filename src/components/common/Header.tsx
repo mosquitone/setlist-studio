@@ -43,7 +43,7 @@ export default function Header() {
 
           <DesktopNavigation />
 
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', sm: 'none' } }} />
+          <Box sx={{ flexGrow: 1 }} />
 
           {isLoggedIn ? (
             <UserMenu onAuthClick={handleAuthClick} />
