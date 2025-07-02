@@ -6,15 +6,38 @@ import {
   Card,
   CardContent,
   Grid,
-  Divider,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
   Paper,
   Alert,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
 } from '@mui/material';
-import { Visibility, Share, Download, QrCode, PersonAdd, Lock, Public } from '@mui/icons-material';
+import {
+  Visibility,
+  Share,
+  Download,
+  QrCode,
+  PersonAdd,
+  Lock,
+  Public,
+  Edit,
+  LibraryMusic,
+  PlaylistAdd,
+  Home,
+  Close,
+  Check,
+  AccountCircle,
+  Palette,
+  FileCopy,
+  PersonOff,
+} from '@mui/icons-material';
 
 // 静的生成を強制
 export const dynamic = 'force-static';
@@ -27,11 +50,11 @@ export default function GuidePage() {
           Setlist Studio 利用ガイド
         </Typography>
         <Typography variant="h6" color="text.secondary" align="center" sx={{ mb: 4 }}>
-          認証不要でも利用できる機能について
+          機能一覧と利用方法の完全ガイド
         </Typography>
       </Box>
 
-      {/* パブリックセットリストについて */}
+      {/* Setlist Studioとは */}
       <Card sx={{ mb: 4 }}>
         <CardContent>
           <Typography
@@ -40,71 +63,149 @@ export default function GuidePage() {
             gutterBottom
             sx={{ display: 'flex', alignItems: 'center' }}
           >
-            <Public sx={{ mr: 2, color: 'success.main' }} />
-            パブリックセットリストとは
+            <Public sx={{ mr: 2, color: 'primary.main' }} />
+            Setlist Studio とは
           </Typography>
           <Typography variant="body1" paragraph>
-            Setlist Studioでは、セットリストを「パブリック（公開）」として設定することで、
-            アカウント登録やログインなしでも誰でも閲覧できるセットリストを作成できます。
+            Setlist Studioは、バンドや音楽グループのためのセットリスト生成・管理ツールです。
+            楽曲情報を管理し、プロフェッショナルなセットリスト画像を簡単に作成できます。
+          </Typography>
+          <Typography variant="body1" paragraph>
+            セットリストは「パブリック（公開）」と「プライベート（非公開）」で管理でき、
+            パブリックセットリストはアカウント登録なしでも閲覧・ダウンロードが可能です。
           </Typography>
           <Alert severity="info" sx={{ mt: 2 }}>
             パブリックセットリストは、共有URLを知っている誰でもアクセス可能です。
+            プライベートセットリストは所有者のみが閲覧できます。
           </Alert>
         </CardContent>
       </Card>
 
-      {/* 認証不要で利用できる機能 */}
+      {/* 機能比較表 */}
       <Card sx={{ mb: 4 }}>
         <CardContent>
           <Typography variant="h4" component="h2" gutterBottom>
-            認証不要で利用できる機能
+            利用可能機能一覧
           </Typography>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
-              <Paper sx={{ p: 3, height: '100%' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <Visibility sx={{ mr: 2, color: 'primary.main' }} />
-                  <Typography variant="h6">セットリスト閲覧</Typography>
-                </Box>
-                <Typography variant="body2">
-                  パブリックセットリストの詳細情報を閲覧できます。楽曲リスト、バンド名、イベント情報などが確認できます。
-                </Typography>
-              </Paper>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Paper sx={{ p: 3, height: '100%' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <Download sx={{ mr: 2, color: 'success.main' }} />
-                  <Typography variant="h6">画像ダウンロード</Typography>
-                </Box>
-                <Typography variant="body2">
-                  セットリストをプロフェッショナルな画像として生成・ダウンロードできます。2つのテーマから選択可能です。
-                </Typography>
-              </Paper>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Paper sx={{ p: 3, height: '100%' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <Share sx={{ mr: 2, color: 'info.main' }} />
-                  <Typography variant="h6">共有機能</Typography>
-                </Box>
-                <Typography variant="body2">
-                  セットリストのURLをコピーして他の人と共有できます。SNSでの拡散も簡単です。
-                </Typography>
-              </Paper>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Paper sx={{ p: 3, height: '100%' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <QrCode sx={{ mr: 2, color: 'secondary.main' }} />
-                  <Typography variant="h6">QRコード</Typography>
-                </Box>
-                <Typography variant="body2">
-                  生成された画像には自動的にQRコードが含まれ、モバイルデバイスでの素早いアクセスが可能です。
-                </Typography>
-              </Paper>
-            </Grid>
-          </Grid>
+          <Typography variant="body1" paragraph>
+            登録・未登録ユーザーで利用できる機能の違いを一目で確認できます。
+          </Typography>
+
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>
+                    <strong>機能</strong>
+                  </TableCell>
+                  <TableCell align="center">
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <PersonOff sx={{ mr: 1, color: 'warning.main' }} />
+                      <strong>未登録ユーザー</strong>
+                    </Box>
+                  </TableCell>
+                  <TableCell align="center">
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <AccountCircle sx={{ mr: 1, color: 'primary.main' }} />
+                      <strong>登録ユーザー</strong>
+                    </Box>
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                <TableRow>
+                  <TableCell>パブリックセットリスト閲覧</TableCell>
+                  <TableCell align="center">
+                    <Check sx={{ color: 'success.main' }} />
+                  </TableCell>
+                  <TableCell align="center">
+                    <Check sx={{ color: 'success.main' }} />
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>画像ダウンロード（Black/White テーマ）</TableCell>
+                  <TableCell align="center">
+                    <Check sx={{ color: 'success.main' }} />
+                  </TableCell>
+                  <TableCell align="center">
+                    <Check sx={{ color: 'success.main' }} />
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>セットリスト共有（URL コピー）</TableCell>
+                  <TableCell align="center">
+                    <Check sx={{ color: 'success.main' }} />
+                  </TableCell>
+                  <TableCell align="center">
+                    <Check sx={{ color: 'success.main' }} />
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>QRコード付き画像生成</TableCell>
+                  <TableCell align="center">
+                    <Check sx={{ color: 'success.main' }} />
+                  </TableCell>
+                  <TableCell align="center">
+                    <Check sx={{ color: 'success.main' }} />
+                  </TableCell>
+                </TableRow>
+                <TableRow sx={{ bgcolor: 'grey.50' }}>
+                  <TableCell>セットリスト作成・編集・削除</TableCell>
+                  <TableCell align="center">
+                    <Close sx={{ color: 'error.main' }} />
+                  </TableCell>
+                  <TableCell align="center">
+                    <Check sx={{ color: 'success.main' }} />
+                  </TableCell>
+                </TableRow>
+                <TableRow sx={{ bgcolor: 'grey.50' }}>
+                  <TableCell>楽曲データベース管理</TableCell>
+                  <TableCell align="center">
+                    <Close sx={{ color: 'error.main' }} />
+                  </TableCell>
+                  <TableCell align="center">
+                    <Check sx={{ color: 'success.main' }} />
+                  </TableCell>
+                </TableRow>
+                <TableRow sx={{ bgcolor: 'grey.50' }}>
+                  <TableCell>プライベート／パブリック設定</TableCell>
+                  <TableCell align="center">
+                    <Close sx={{ color: 'error.main' }} />
+                  </TableCell>
+                  <TableCell align="center">
+                    <Check sx={{ color: 'success.main' }} />
+                  </TableCell>
+                </TableRow>
+                <TableRow sx={{ bgcolor: 'grey.50' }}>
+                  <TableCell>セットリスト複製機能</TableCell>
+                  <TableCell align="center">
+                    <Close sx={{ color: 'error.main' }} />
+                  </TableCell>
+                  <TableCell align="center">
+                    <Check sx={{ color: 'success.main' }} />
+                  </TableCell>
+                </TableRow>
+                <TableRow sx={{ bgcolor: 'grey.50' }}>
+                  <TableCell>個人ダッシュボード</TableCell>
+                  <TableCell align="center">
+                    <Close sx={{ color: 'error.main' }} />
+                  </TableCell>
+                  <TableCell align="center">
+                    <Check sx={{ color: 'success.main' }} />
+                  </TableCell>
+                </TableRow>
+                <TableRow sx={{ bgcolor: 'grey.50' }}>
+                  <TableCell>プロフィール管理</TableCell>
+                  <TableCell align="center">
+                    <Close sx={{ color: 'error.main' }} />
+                  </TableCell>
+                  <TableCell align="center">
+                    <Check sx={{ color: 'success.main' }} />
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
         </CardContent>
       </Card>
 
@@ -211,6 +312,213 @@ export default function GuidePage() {
         </CardContent>
       </Card>
 
+      {/* 各ページ機能詳細 */}
+      <Card sx={{ mb: 4 }}>
+        <CardContent>
+          <Typography variant="h4" component="h2" gutterBottom>
+            各ページの機能詳細
+          </Typography>
+
+          <Grid container spacing={3}>
+            {/* ホームページ */}
+            <Grid item xs={12} md={6}>
+              <Paper sx={{ p: 3, height: '100%' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <Home sx={{ mr: 2, color: 'primary.main' }} />
+                  <Typography variant="h6">ホームページ</Typography>
+                </Box>
+                <Typography variant="body2" paragraph>
+                  <strong>未登録ユーザー:</strong> アプリケーションの紹介とアカウント作成への案内
+                </Typography>
+                <Typography variant="body2" paragraph>
+                  <strong>登録ユーザー:</strong>{' '}
+                  個人ダッシュボードで自分のセットリスト一覧を表示。各セットリストはカード形式で表示され、直接表示・編集が可能。
+                </Typography>
+                <List dense>
+                  <ListItem sx={{ pl: 0 }}>
+                    <ListItemText primary="• セットリスト作成へのクイックアクセス" />
+                  </ListItem>
+                  <ListItem sx={{ pl: 0 }}>
+                    <ListItemText primary="• レスポンシブなグリッドレイアウト" />
+                  </ListItem>
+                  <ListItem sx={{ pl: 0 }}>
+                    <ListItemText primary="• テーマ別カードデザイン" />
+                  </ListItem>
+                </List>
+              </Paper>
+            </Grid>
+
+            {/* セットリスト詳細 */}
+            <Grid item xs={12} md={6}>
+              <Paper sx={{ p: 3, height: '100%' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <Visibility sx={{ mr: 2, color: 'success.main' }} />
+                  <Typography variant="h6">セットリスト詳細ページ</Typography>
+                </Box>
+                <Typography variant="body2" paragraph>
+                  セットリストの詳細表示と各種操作が可能です。
+                </Typography>
+                <List dense>
+                  <ListItem sx={{ pl: 0 }}>
+                    <ListItemIcon>
+                      <Visibility sx={{ fontSize: 16 }} />
+                    </ListItemIcon>
+                    <ListItemText primary="楽曲リスト・イベント情報表示" />
+                  </ListItem>
+                  <ListItem sx={{ pl: 0 }}>
+                    <ListItemIcon>
+                      <Palette sx={{ fontSize: 16 }} />
+                    </ListItemIcon>
+                    <ListItemText primary="テーマ変更（Black/White）" />
+                  </ListItem>
+                  <ListItem sx={{ pl: 0 }}>
+                    <ListItemIcon>
+                      <Download sx={{ fontSize: 16 }} />
+                    </ListItemIcon>
+                    <ListItemText primary="高品質画像ダウンロード" />
+                  </ListItem>
+                  <ListItem sx={{ pl: 0 }}>
+                    <ListItemIcon>
+                      <Share sx={{ fontSize: 16 }} />
+                    </ListItemIcon>
+                    <ListItemText primary="URL共有機能" />
+                  </ListItem>
+                  <ListItem sx={{ pl: 0 }}>
+                    <ListItemIcon>
+                      <Edit sx={{ fontSize: 16 }} />
+                    </ListItemIcon>
+                    <ListItemText primary="編集機能（所有者のみ）" />
+                  </ListItem>
+                  <ListItem sx={{ pl: 0 }}>
+                    <ListItemIcon>
+                      <FileCopy sx={{ fontSize: 16 }} />
+                    </ListItemIcon>
+                    <ListItemText primary="複製機能（ログインユーザー）" />
+                  </ListItem>
+                </List>
+              </Paper>
+            </Grid>
+
+            {/* 楽曲管理 */}
+            <Grid item xs={12} md={6}>
+              <Paper sx={{ p: 3, height: '100%' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <LibraryMusic sx={{ mr: 2, color: 'info.main' }} />
+                  <Typography variant="h6">楽曲管理ページ</Typography>
+                </Box>
+                <Typography variant="body2" paragraph>
+                  <strong>要認証:</strong> 個人の楽曲データベースを管理できます。
+                </Typography>
+                <List dense>
+                  <ListItem sx={{ pl: 0 }}>
+                    <ListItemText primary="• 楽曲の追加・編集・削除" />
+                  </ListItem>
+                  <ListItem sx={{ pl: 0 }}>
+                    <ListItemText primary="• タイトル・アーティスト・キー・テンポ管理" />
+                  </ListItem>
+                  <ListItem sx={{ pl: 0 }}>
+                    <ListItemText primary="• 演奏時間とメモ機能" />
+                  </ListItem>
+                  <ListItem sx={{ pl: 0 }}>
+                    <ListItemText primary="• 検索・フィルタリング機能" />
+                  </ListItem>
+                  <ListItem sx={{ pl: 0 }}>
+                    <ListItemText primary="• セットリスト作成時の楽曲選択" />
+                  </ListItem>
+                </List>
+              </Paper>
+            </Grid>
+
+            {/* セットリスト作成 */}
+            <Grid item xs={12} md={6}>
+              <Paper sx={{ p: 3, height: '100%' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <PlaylistAdd sx={{ mr: 2, color: 'warning.main' }} />
+                  <Typography variant="h6">セットリスト作成ページ</Typography>
+                </Box>
+                <Typography variant="body2" paragraph>
+                  <strong>要認証:</strong> 新しいセットリストを作成できます。
+                </Typography>
+                <List dense>
+                  <ListItem sx={{ pl: 0 }}>
+                    <ListItemText primary="• 基本情報設定（タイトル・バンド名）" />
+                  </ListItem>
+                  <ListItem sx={{ pl: 0 }}>
+                    <ListItemText primary="• イベント情報（会場・日時・開演時間）" />
+                  </ListItem>
+                  <ListItem sx={{ pl: 0 }}>
+                    <ListItemText primary="• 楽曲追加とドラッグ&ドロップ並び替え" />
+                  </ListItem>
+                  <ListItem sx={{ pl: 0 }}>
+                    <ListItemText primary="• テーマ選択（Black/White）" />
+                  </ListItem>
+                  <ListItem sx={{ pl: 0 }}>
+                    <ListItemText primary="• プライベート／パブリック設定" />
+                  </ListItem>
+                  <ListItem sx={{ pl: 0 }}>
+                    <ListItemText primary="• 複製元がある場合の自動入力" />
+                  </ListItem>
+                </List>
+              </Paper>
+            </Grid>
+
+            {/* プロフィール */}
+            <Grid item xs={12} md={6}>
+              <Paper sx={{ p: 3, height: '100%' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <AccountCircle sx={{ mr: 2, color: 'secondary.main' }} />
+                  <Typography variant="h6">プロフィールページ</Typography>
+                </Box>
+                <Typography variant="body2" paragraph>
+                  <strong>要認証:</strong> アカウント情報の確認と管理ができます。
+                </Typography>
+                <List dense>
+                  <ListItem sx={{ pl: 0 }}>
+                    <ListItemText primary="• ユーザー名・メールアドレス表示" />
+                  </ListItem>
+                  <ListItem sx={{ pl: 0 }}>
+                    <ListItemText primary="• アカウント作成日時" />
+                  </ListItem>
+                  <ListItem sx={{ pl: 0 }}>
+                    <ListItemText primary="• 統計情報（作成セットリスト数など）" />
+                  </ListItem>
+                  <ListItem sx={{ pl: 0 }}>
+                    <ListItemText primary="• アカウント設定" />
+                  </ListItem>
+                </List>
+              </Paper>
+            </Grid>
+
+            {/* 利用ガイド */}
+            <Grid item xs={12} md={6}>
+              <Paper sx={{ p: 3, height: '100%' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <QrCode sx={{ mr: 2, color: 'success.main' }} />
+                  <Typography variant="h6">利用ガイドページ</Typography>
+                </Box>
+                <Typography variant="body2" paragraph>
+                  <strong>認証不要:</strong> このページです。全機能の説明を確認できます。
+                </Typography>
+                <List dense>
+                  <ListItem sx={{ pl: 0 }}>
+                    <ListItemText primary="• 機能一覧と利用方法" />
+                  </ListItem>
+                  <ListItem sx={{ pl: 0 }}>
+                    <ListItemText primary="• 登録・未登録での機能比較" />
+                  </ListItem>
+                  <ListItem sx={{ pl: 0 }}>
+                    <ListItemText primary="• 各ページの詳細説明" />
+                  </ListItem>
+                  <ListItem sx={{ pl: 0 }}>
+                    <ListItemText primary="• 使用方法のステップガイド" />
+                  </ListItem>
+                </List>
+              </Paper>
+            </Grid>
+          </Grid>
+        </CardContent>
+      </Card>
+
       {/* アカウント作成の利点 */}
       <Card sx={{ mb: 4 }}>
         <CardContent>
@@ -224,51 +532,51 @@ export default function GuidePage() {
             アカウント作成でさらに便利に
           </Typography>
           <Typography variant="body1" paragraph>
-            アカウントを作成すると、以下の追加機能が利用できます：
+            無料のアカウントを作成すると、パブリック機能に加えて以下の機能が利用できます：
           </Typography>
-          <List>
-            <ListItem>
-              <ListItemIcon>
-                <Lock sx={{ color: 'error.main' }} />
-              </ListItemIcon>
-              <ListItemText
-                primary="プライベートセットリスト"
-                secondary="非公開のセットリストを作成・管理できます"
-              />
-            </ListItem>
-            <ListItem>
-              <ListItemIcon>
-                <PersonAdd sx={{ color: 'info.main' }} />
-              </ListItemIcon>
-              <ListItemText
-                primary="セットリスト作成・編集"
-                secondary="独自のセットリストを作成し、いつでも編集できます"
-              />
-            </ListItem>
-            <ListItem>
-              <ListItemIcon>
-                <Share sx={{ color: 'success.main' }} />
-              </ListItemIcon>
-              <ListItemText
-                primary="複製機能"
-                secondary="他のセットリストを複製して、カスタマイズできます"
-              />
-            </ListItem>
-          </List>
+
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={4}>
+              <Paper sx={{ p: 2, textAlign: 'center', height: '100%' }}>
+                <PlaylistAdd sx={{ fontSize: 40, color: 'primary.main', mb: 1 }} />
+                <Typography variant="h6" gutterBottom>
+                  セットリスト作成
+                </Typography>
+                <Typography variant="body2">
+                  独自のセットリストを無制限に作成・編集できます
+                </Typography>
+              </Paper>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <Paper sx={{ p: 2, textAlign: 'center', height: '100%' }}>
+                <LibraryMusic sx={{ fontSize: 40, color: 'info.main', mb: 1 }} />
+                <Typography variant="h6" gutterBottom>
+                  楽曲管理
+                </Typography>
+                <Typography variant="body2">
+                  個人の楽曲データベースで曲情報を効率的に管理
+                </Typography>
+              </Paper>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <Paper sx={{ p: 2, textAlign: 'center', height: '100%' }}>
+                <Lock sx={{ fontSize: 40, color: 'secondary.main', mb: 1 }} />
+                <Typography variant="h6" gutterBottom>
+                  プライベート機能
+                </Typography>
+                <Typography variant="body2">非公開セットリストや個人設定などの管理機能</Typography>
+              </Paper>
+            </Grid>
+          </Grid>
+
+          <Alert severity="info" sx={{ mt: 3 }}>
+            <Typography variant="body2">
+              <strong>今すぐ始める:</strong> 右上の「登録」ボタンからアカウントを作成できます。
+              メールアドレスとパスワードのみで、すぐに全機能をご利用いただけます。
+            </Typography>
+          </Alert>
         </CardContent>
       </Card>
-
-      <Divider sx={{ my: 4 }} />
-
-      {/* フッター */}
-      <Box sx={{ textAlign: 'center' }}>
-        <Typography variant="body2" color="text.secondary">
-          Setlist Studio - バンド向けセットリスト生成ツール
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-          パブリックセットリストは認証不要でご利用いただけます
-        </Typography>
-      </Box>
     </Container>
   );
 }
