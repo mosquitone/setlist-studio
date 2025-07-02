@@ -1,7 +1,9 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { secureAuthClient, User, AuthResponse } from '@/lib/client/secure-auth-client';
+import { secureAuthClient } from '@/lib/client/secure-auth-client';
+import { User } from '@/types/entities';
+import { AuthResponse } from '@/types/api';
 
 interface AuthContextType {
   isLoggedIn: boolean;
