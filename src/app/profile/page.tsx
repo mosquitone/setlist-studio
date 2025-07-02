@@ -43,7 +43,9 @@ function ProfileContent() {
         setSuccess('プロフィールを更新しました');
         setIsEditing(false);
       } catch (error) {
-        console.error('Failed to update cache:', error);
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Failed to update cache:', error);
+        }
         setError('キャッシュの更新に失敗しました');
       }
     },

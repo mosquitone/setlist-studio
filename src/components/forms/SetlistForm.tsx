@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Box, Container, Typography, Button, Paper, Alert } from '@mui/material';
 import { Add as AddIcon } from '@mui/icons-material';
 import { Formik, Form, FieldArray } from 'formik';
@@ -122,7 +122,7 @@ export default function SetlistForm({
 }: SetlistFormProps) {
   const [expandedOptions, setExpandedOptions] = useState(false);
   const { data: songsData } = useQuery(GET_SONGS);
-  const songs = songsData?.songs || [];
+  const songs = useMemo(() => songsData?.songs || [], [songsData]);
 
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>

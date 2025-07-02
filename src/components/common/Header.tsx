@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -24,10 +24,14 @@ export default function Header() {
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  // ログイン状態に応じて表示するナビゲーション項目を決定（共通化）
-  const navigationItems = isLoggedIn
-    ? [...publicNavigationItems, ...authenticatedNavigationItems]
-    : publicNavigationItems;
+  // ログイン状態に応じて表示するナビゲーション項目を決定（useMemoで最適化）
+  const navigationItems = useMemo(
+    () =>
+      isLoggedIn
+        ? [...publicNavigationItems, ...authenticatedNavigationItems]
+        : publicNavigationItems,
+    [isLoggedIn],
+  );
 
   const handleAuthClick = () => {
     if (isLoggedIn) {
