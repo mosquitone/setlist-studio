@@ -21,7 +21,7 @@ import { ja } from 'date-fns/locale';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
 function ProfileContent() {
-  const { user, isLoading } = useAuth();
+  const { user } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [username, setUsername] = useState('');
   const [error, setError] = useState('');
@@ -58,21 +58,6 @@ function ProfileContent() {
       },
     });
   };
-
-  // ローディング中の表示
-  if (isLoading) {
-    return (
-      <Container maxWidth="sm" sx={{ mt: 4, mb: 4 }}>
-        <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
-          <Box
-            sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 300 }}
-          >
-            <Typography>読み込み中...</Typography>
-          </Box>
-        </Paper>
-      </Container>
-    );
-  }
 
   // ユーザー情報が取得できない場合の表示
   if (!user) {
