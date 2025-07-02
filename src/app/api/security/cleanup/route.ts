@@ -1,35 +1,35 @@
 // Vercel Cron Job用：セキュリティデータベースクリーンアップ
 
-import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
-import { cleanupExpiredRateLimits } from '../../../../lib/security/rate-limit-db'
-import { cleanupOldThreatActivities } from '../../../../lib/security/threat-detection-db'
-import { cleanupOldSecurityEvents } from '../../../../lib/security/security-logger-db'
+import { NextRequest, NextResponse } from 'next/server';
+import { PrismaClient } from '@prisma/client';
+import { cleanupExpiredRateLimits } from '../../../../lib/security/rate-limit-db';
+import { cleanupOldThreatActivities } from '../../../../lib/security/threat-detection-db';
+import { cleanupOldSecurityEvents } from '../../../../lib/security/security-logger-db';
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 // Vercel Cron Job: 0 2 * * * (毎日午前2時に実行)
 export async function GET(request: NextRequest) {
   // 認証確認：Vercel環境変数でCronジョブからのアクセスを確認
-  const authHeader = request.headers.get('authorization')
-  const cronSecret = process.env.CRON_SECRET
+  const authHeader = request.headers.get('authorization');
+  const cronSecret = process.env.CRON_SECRET;
 
   if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
-    const startTime = Date.now()
+    const startTime = Date.now();
 
     // 並行してクリーンアップ実行
     const [rateLimitCleanup, threatActivityCleanup, securityEventCleanup] = await Promise.all([
       cleanupExpiredRateLimits(prisma),
       cleanupOldThreatActivities(prisma),
       cleanupOldSecurityEvents(prisma),
-    ])
+    ]);
 
-    const endTime = Date.now()
-    const duration = endTime - startTime
+    const endTime = Date.now();
+    const duration = endTime - startTime;
 
     const result = {
       success: true,
@@ -40,13 +40,13 @@ export async function GET(request: NextRequest) {
         threatActivities: threatActivityCleanup,
         securityEvents: securityEventCleanup,
       },
-    }
+    };
 
-    console.log('Security cleanup completed:', result)
+    console.log('Security cleanup completed:', result);
 
-    return NextResponse.json(result)
+    return NextResponse.json(result);
   } catch (error) {
-    console.error('Security cleanup error:', error)
+    console.error('Security cleanup error:', error);
 
     return NextResponse.json(
       {
@@ -55,9 +55,9 @@ export async function GET(request: NextRequest) {
         timestamp: new Date().toISOString(),
       },
       { status: 500 },
-    )
+    );
   } finally {
-    await prisma.$disconnect()
+    await prisma.$disconnect();
   }
 }
 
@@ -65,13 +65,13 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   // 開発環境でのみ許可
   if (process.env.NODE_ENV !== 'development') {
-    return NextResponse.json({ error: 'Not available in production' }, { status: 403 })
+    return NextResponse.json({ error: 'Not available in production' }, { status: 403 });
   }
 
   try {
-    const result = await GET(request)
-    return result
+    const result = await GET(request);
+    return result;
   } catch (error) {
-    return NextResponse.json({ error: 'Manual cleanup failed' }, { status: 500 })
+    return NextResponse.json({ error: 'Manual cleanup failed' }, { status: 500 });
   }
 }

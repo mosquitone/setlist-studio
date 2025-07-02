@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
+import { useState } from 'react';
 import {
   Container,
   Paper,
@@ -11,77 +11,77 @@ import {
   Alert,
   IconButton,
   InputAdornment,
-} from '@mui/material'
+} from '@mui/material';
 import {
   PersonAdd as PersonAddIcon,
   Visibility,
   VisibilityOff,
   ArrowBack as ArrowBackIcon,
-} from '@mui/icons-material'
-import { useMutation } from '@apollo/client'
-import { REGISTER } from '@/lib/server/graphql/apollo-operations'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+} from '@mui/icons-material';
+import { useMutation } from '@apollo/client';
+import { REGISTER } from '@/lib/server/graphql/apollo-operations';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function RegisterPage() {
-  const [email, setEmail] = useState('')
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [error, setError] = useState('')
-  const router = useRouter()
+  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [error, setError] = useState('');
+  const router = useRouter();
 
   const [register, { loading }] = useMutation(REGISTER, {
     onCompleted: () => {
       // 新規登録成功後はログイン画面へ遷移
-      router.push('/login?message=新規登録が完了しました。ログインしてください。')
+      router.push('/login?message=新規登録が完了しました。ログインしてください。');
     },
     onError: error => {
-      setError(error.message)
+      setError(error.message);
     },
-  })
+  });
 
   const validatePassword = (password: string): string | null => {
     if (password.length < 8) {
-      return 'パスワードは8文字以上である必要があります'
+      return 'パスワードは8文字以上である必要があります';
     }
 
-    const hasLowercase = /[a-z]/.test(password)
-    const hasUppercase = /[A-Z]/.test(password)
-    const hasNumber = /\d/.test(password)
-    const hasSpecialChar = /[@$!%*?&]/.test(password)
+    const hasLowercase = /[a-z]/.test(password);
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    const hasSpecialChar = /[@$!%*?&]/.test(password);
 
     if (!hasLowercase || !hasUppercase || !hasNumber || !hasSpecialChar) {
-      return 'パスワードは大文字・小文字・数字・特殊文字（@$!%*?&）を含む必要があります'
+      return 'パスワードは大文字・小文字・数字・特殊文字（@$!%*?&）を含む必要があります';
     }
 
-    return null
-  }
+    return null;
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
+    e.preventDefault();
+    setError('');
 
     // パスワード強度チェック
-    const passwordError = validatePassword(password)
+    const passwordError = validatePassword(password);
     if (passwordError) {
-      setError(passwordError)
-      return
+      setError(passwordError);
+      return;
     }
 
     if (password !== confirmPassword) {
-      setError('パスワードが一致しません')
-      return
+      setError('パスワードが一致しません');
+      return;
     }
 
     register({
       variables: {
         input: { email, username, password },
       },
-    })
-  }
+    });
+  };
 
   return (
     <Container maxWidth="sm">
@@ -191,5 +191,5 @@ export default function RegisterPage() {
         </Paper>
       </Box>
     </Container>
-  )
+  );
 }

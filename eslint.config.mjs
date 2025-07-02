@@ -1,13 +1,13 @@
-import { FlatCompat } from '@eslint/eslintrc'
-import { dirname } from 'path'
-import { fileURLToPath } from 'url'
+import { FlatCompat } from '@eslint/eslintrc';
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-const compat = new FlatCompat({ baseDirectory: __dirname })
+const compat = new FlatCompat({ baseDirectory: __dirname });
 
-export default [
+const eslintConfig = [
   // ESLint ignore patterns (migrated from .eslintignore)
   {
     ignores: ['node_modules', '.next', 'out', 'build', 'postgres_data'],
@@ -33,13 +33,15 @@ export default [
         'error',
         {
           singleQuote: true,
-          semi: false,
+          semi: true,
           trailingComma: 'all',
           printWidth: 100,
           tabWidth: 2,
           arrowParens: 'avoid',
         },
       ],
+      // Semicolon rules
+      semi: ['error', 'always'],
       // TypeScript strictness
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
@@ -53,4 +55,6 @@ export default [
       react: { version: 'detect' },
     },
   },
-]
+];
+
+export default eslintConfig;

@@ -1,12 +1,12 @@
-import Button from '@mui/material/Button'
-import { useAuth } from '@/components/providers/AuthProvider'
+import Button from '@mui/material/Button';
+import { useAuth } from '@/components/providers/AuthProvider';
 
 interface AuthButtonProps {
-  onClick: () => void
+  onClick: () => void;
 }
 
 export function AuthButton({ onClick }: AuthButtonProps) {
-  const { isLoading } = useAuth()
+  const { isLoading } = useAuth();
 
   return (
     <Button
@@ -36,5 +36,5 @@ export function AuthButton({ onClick }: AuthButtonProps) {
     >
       {isLoading ? '読込中…' : 'ログイン'}
     </Button>
-  )
+  );
 }

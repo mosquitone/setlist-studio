@@ -1,28 +1,28 @@
-import IconButton from '@mui/material/IconButton'
-import Drawer from '@mui/material/Drawer'
-import List from '@mui/material/List'
-import ListItem from '@mui/material/ListItem'
-import ListItemButton from '@mui/material/ListItemButton'
-import ListItemText from '@mui/material/ListItemText'
-import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
-import Divider from '@mui/material/Divider'
-import Button from '@mui/material/Button'
-import MenuIcon from '@mui/icons-material/Menu'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { useAuth } from '@/components/providers/AuthProvider'
-import { navigationItems } from './navigationItems'
+import IconButton from '@mui/material/IconButton';
+import Drawer from '@mui/material/Drawer';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemText from '@mui/material/ListItemText';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
+import Button from '@mui/material/Button';
+import MenuIcon from '@mui/icons-material/Menu';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useAuth } from '@/components/providers/AuthProvider';
+import { navigationItems } from './navigationItems';
 
 interface MobileNavigationProps {
-  mobileOpen: boolean
-  onToggle: () => void
-  onAuthClick: () => void
+  mobileOpen: boolean;
+  onToggle: () => void;
+  onAuthClick: () => void;
 }
 
 export function MobileNavigation({ mobileOpen, onToggle, onAuthClick }: MobileNavigationProps) {
-  const { isLoggedIn, isLoading, user } = useAuth()
-  const pathname = usePathname()
+  const { isLoggedIn, isLoading, user } = useAuth();
+  const pathname = usePathname();
 
   const drawer = (
     <Box onClick={onToggle} sx={{ textAlign: 'center' }}>
@@ -34,7 +34,7 @@ export function MobileNavigation({ mobileOpen, onToggle, onAuthClick }: MobileNa
         <>
           <List>
             {navigationItems.map(item => {
-              const IconComponent = item.icon
+              const IconComponent = item.icon;
               return (
                 <ListItem key={item.path} disablePadding>
                   <ListItemButton
@@ -55,7 +55,7 @@ export function MobileNavigation({ mobileOpen, onToggle, onAuthClick }: MobileNa
                     <ListItemText primary={item.label} />
                   </ListItemButton>
                 </ListItem>
-              )
+              );
             })}
           </List>
           <Divider />
@@ -84,7 +84,7 @@ export function MobileNavigation({ mobileOpen, onToggle, onAuthClick }: MobileNa
         </Button>
       </Box>
     </Box>
-  )
+  );
 
   return (
     <>
@@ -115,5 +115,5 @@ export function MobileNavigation({ mobileOpen, onToggle, onAuthClick }: MobileNa
         {drawer}
       </Drawer>
     </>
-  )
+  );
 }

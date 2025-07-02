@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import React from 'react'
+import React from 'react';
 import {
   Grid,
   TextField,
@@ -12,28 +12,28 @@ import {
   AccordionSummary,
   AccordionDetails,
   Typography,
-} from '@mui/material'
-import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material'
-import { FormikProps } from 'formik'
-import { SetlistFormValues } from './SetlistForm'
+} from '@mui/material';
+import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
+import { FormikProps } from 'formik';
+import { SetlistFormValues } from './SetlistForm';
 
 interface SetlistFormFieldsProps {
-  formik: FormikProps<SetlistFormValues>
-  expandedOptions: boolean
-  onToggleOptions: () => void
+  formik: FormikProps<SetlistFormValues>;
+  expandedOptions: boolean;
+  onToggleOptions: () => void;
 }
 
 const themes = [
   { value: 'black', label: 'Black' },
   { value: 'white', label: 'White' },
-]
+];
 
 export function SetlistFormFields({
   formik,
   expandedOptions,
   onToggleOptions,
 }: SetlistFormFieldsProps) {
-  const { values, errors, touched, handleChange, handleBlur } = formik
+  const { values, errors, touched, handleChange, handleBlur } = formik;
 
   return (
     <>
@@ -136,5 +136,5 @@ export function SetlistFormFields({
         </AccordionDetails>
       </Accordion>
     </>
-  )
+  );
 }

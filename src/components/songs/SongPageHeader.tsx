@@ -1,8 +1,8 @@
-'use client'
+'use client';
 
-import { Box, Typography, Button, Stack } from '@mui/material'
-import { Add as AddIcon, Home as HomeIcon } from '@mui/icons-material'
-import Link from 'next/link'
+import { Box, Typography, Button, Stack } from '@mui/material';
+import { Add as AddIcon, Home as HomeIcon } from '@mui/icons-material';
+import Link from 'next/link';
 
 export function SongPageHeader() {
   return (
@@ -24,5 +24,5 @@ export function SongPageHeader() {
         楽曲の管理と編集ができます。楽曲をクリックして詳細を編集できます。
       </Typography>
     </Box>
-  )
+  );
 }

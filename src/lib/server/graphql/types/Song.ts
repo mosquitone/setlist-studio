@@ -1,36 +1,36 @@
-import { ObjectType, Field, ID, Int } from 'type-graphql'
+import { ObjectType, Field, ID, Int } from 'type-graphql';
 
 @ObjectType()
 export class Song {
   @Field(() => ID)
-  id!: string
+  id!: string;
 
   @Field()
-  title!: string
+  title!: string;
 
   @Field({ nullable: true })
-  artist?: string
+  artist?: string;
 
   @Field(() => Int, { nullable: true })
-  duration?: number
+  duration?: number;
 
   @Field({ nullable: true })
-  key?: string
+  key?: string;
 
   @Field(() => Int, { nullable: true })
-  tempo?: number
+  tempo?: number;
 
   @Field({ nullable: true })
-  notes?: string
+  notes?: string;
 
   @Field()
-  userId!: string
+  userId!: string;
 
   @Field()
-  createdAt!: Date
+  createdAt!: Date;
 
   @Field()
-  updatedAt!: Date
+  updatedAt!: Date;
 
   // Note: User relation removed to avoid circular dependencies
   // Would be resolved through GraphQL resolvers if needed

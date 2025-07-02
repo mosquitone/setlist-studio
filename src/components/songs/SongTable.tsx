@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import {
   TableContainer,
@@ -12,15 +12,15 @@ import {
   CircularProgress,
   Box,
   Typography,
-} from '@mui/material'
-import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material'
-import { Song } from '../../types/graphql'
+} from '@mui/material';
+import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
+import { Song } from '../../types/graphql';
 
 interface SongTableProps {
-  songs: Song[]
-  loading: boolean
-  onEdit: (song: Song) => void
-  onDelete: (id: string) => void
+  songs: Song[];
+  loading: boolean;
+  onEdit: (song: Song) => void;
+  onDelete: (id: string) => void;
 }
 
 export function SongTable({ songs, loading, onEdit, onDelete }: SongTableProps) {
@@ -29,7 +29,7 @@ export function SongTable({ songs, loading, onEdit, onDelete }: SongTableProps) 
       <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
         <CircularProgress />
       </Box>
-    )
+    );
   }
 
   if (!songs.length) {
@@ -42,7 +42,7 @@ export function SongTable({ songs, loading, onEdit, onDelete }: SongTableProps) 
           新しい楽曲を追加してください
         </Typography>
       </Box>
-    )
+    );
   }
 
   return (
@@ -74,11 +74,11 @@ export function SongTable({ songs, loading, onEdit, onDelete }: SongTableProps) 
               }}
               onKeyDown={event => {
                 if (event.key === 'Enter' || event.key === ' ') {
-                  event.preventDefault()
-                  onEdit(song)
+                  event.preventDefault();
+                  onEdit(song);
                 } else if (event.key === 'Delete') {
-                  event.preventDefault()
-                  onDelete(song.id)
+                  event.preventDefault();
+                  onDelete(song.id);
                 }
               }}
               aria-label={`楽曲: ${song.title}。Enterで編集、Deleteで削除`}
@@ -111,5 +111,5 @@ export function SongTable({ songs, loading, onEdit, onDelete }: SongTableProps) 
         </TableBody>
       </Table>
     </TableContainer>
-  )
+  );
 }

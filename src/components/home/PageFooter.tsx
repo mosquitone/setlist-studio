@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import { Box, Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material';
 
 export function PageFooter() {
   return (
@@ -9,5 +9,5 @@ export function PageFooter() {
         © 2025 mosquitone
       </Typography>
     </Box>
-  )
+  );
 }

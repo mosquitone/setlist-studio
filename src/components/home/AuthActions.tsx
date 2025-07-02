@@ -1,8 +1,8 @@
-'use client'
+'use client';
 
-import { Box, Button, Stack, Fade } from '@mui/material'
-import { Login as LoginIcon, PersonAdd as PersonAddIcon } from '@mui/icons-material'
-import Link from 'next/link'
+import { Box, Button, Stack, Fade } from '@mui/material';
+import { Login as LoginIcon, PersonAdd as PersonAddIcon } from '@mui/icons-material';
+import Link from 'next/link';
 
 export function AuthActions() {
   return (
@@ -67,5 +67,5 @@ export function AuthActions() {
         </Stack>
       </Box>
     </Fade>
-  )
+  );
 }

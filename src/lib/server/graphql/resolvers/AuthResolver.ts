@@ -1,36 +1,36 @@
-import { Resolver, Mutation, Arg, Ctx } from 'type-graphql'
-import { PrismaClient } from '@prisma/client'
-import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
-import { AuthPayload, RegisterInput, LoginInput } from '../types/Auth'
+import { Resolver, Mutation, Arg, Ctx } from 'type-graphql';
+import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { AuthPayload, RegisterInput, LoginInput } from '../types/Auth';
 import {
   logAuthSuccessDB,
   logAuthFailureDB,
   SecurityEventType,
   SecurityEventSeverity,
   logSecurityEventDB,
-} from '../../../security/security-logger-db'
-import { DatabaseThreatDetection } from '../../../security/threat-detection-db'
+} from '../../../security/security-logger-db';
+import { DatabaseThreatDetection } from '../../../security/threat-detection-db';
 // import { createPasswordResetRequest, executePasswordReset } from '../../password-reset' // 削除済み
 
 interface Context {
-  prisma: PrismaClient
+  prisma: PrismaClient;
   req?: {
     headers: {
-      authorization?: string
-      'user-agent'?: string
-      'x-forwarded-for'?: string
-      'x-real-ip'?: string
-    }
-  }
+      authorization?: string;
+      'user-agent'?: string;
+      'x-forwarded-for'?: string;
+      'x-real-ip'?: string;
+    };
+  };
 }
 
 // IP address extraction helper
 function getClientIP(context: Context): string | undefined {
-  const headers = context.req?.headers
-  if (!headers) return undefined
+  const headers = context.req?.headers;
+  if (!headers) return undefined;
 
-  return headers['x-forwarded-for']?.split(',')[0] || headers['x-real-ip'] || 'unknown'
+  return headers['x-forwarded-for']?.split(',')[0] || headers['x-real-ip'] || 'unknown';
 }
 
 @Resolver()
@@ -41,7 +41,7 @@ export class AuthResolver {
       where: {
         OR: [{ email: input.email }, { username: input.username }],
       },
-    })
+    });
 
     if (existingUser) {
       // 登録失敗をログに記録（データベースベース）
@@ -55,11 +55,11 @@ export class AuthResolver {
           username: input.username,
           reason: 'user_already_exists',
         },
-      })
-      throw new Error('登録に失敗しました。入力内容を確認してください')
+      });
+      throw new Error('登録に失敗しました。入力内容を確認してください');
     }
 
-    const hashedPassword = await bcrypt.hash(input.password, 12)
+    const hashedPassword = await bcrypt.hash(input.password, 12);
 
     const user = await ctx.prisma.user.create({
       data: {
@@ -67,15 +67,15 @@ export class AuthResolver {
         username: input.username,
         password: hashedPassword,
       },
-    })
+    });
 
-    const jwtSecret = process.env.JWT_SECRET
+    const jwtSecret = process.env.JWT_SECRET;
     if (!jwtSecret) {
-      throw new Error('JWT_SECRET environment variable is not configured')
+      throw new Error('JWT_SECRET environment variable is not configured');
     }
     const token = jwt.sign({ userId: user.id }, jwtSecret, {
       expiresIn: '7d',
-    })
+    });
 
     // 登録成功をログに記録（データベースベース）
     await logSecurityEventDB(ctx.prisma, {
@@ -88,19 +88,19 @@ export class AuthResolver {
         email: user.email,
         username: user.username,
       },
-    })
+    });
 
     return {
       token,
       user,
-    }
+    };
   }
 
   @Mutation(() => AuthPayload)
   async login(@Arg('input') input: LoginInput, @Ctx() ctx: Context): Promise<AuthPayload> {
     const user = await ctx.prisma.user.findUnique({
       where: { email: input.email },
-    })
+    });
 
     if (!user) {
       // ログイン失敗をログに記録（データベースベース）
@@ -110,21 +110,21 @@ export class AuthResolver {
         'user_not_found',
         getClientIP(ctx),
         ctx.req?.headers?.['user-agent'] || 'unknown',
-      )
+      );
 
       // 脅威検知分析（データベースベース）
-      const threatDetection = new DatabaseThreatDetection(ctx.prisma)
+      const threatDetection = new DatabaseThreatDetection(ctx.prisma);
       await threatDetection.analyzeLoginAttempt(
         input.email,
         false,
         getClientIP(ctx),
         ctx.req?.headers?.['user-agent'] || 'unknown',
-      )
+      );
 
-      throw new Error('メールアドレスまたはパスワードが正しくありません')
+      throw new Error('メールアドレスまたはパスワードが正しくありません');
     }
 
-    const isValidPassword = await bcrypt.compare(input.password, user.password)
+    const isValidPassword = await bcrypt.compare(input.password, user.password);
     if (!isValidPassword) {
       // パスワード不正をログに記録（データベースベース）
       await logAuthFailureDB(
@@ -133,44 +133,44 @@ export class AuthResolver {
         'invalid_password',
         getClientIP(ctx),
         ctx.req?.headers?.['user-agent'] || 'unknown',
-      )
+      );
 
       // 脅威検知分析（データベースベース）
-      const threatDetection = new DatabaseThreatDetection(ctx.prisma)
+      const threatDetection = new DatabaseThreatDetection(ctx.prisma);
       await threatDetection.analyzeLoginAttempt(
         input.email,
         false,
         getClientIP(ctx),
         ctx.req?.headers?.['user-agent'] || 'unknown',
-      )
+      );
 
-      throw new Error('メールアドレスまたはパスワードが正しくありません')
+      throw new Error('メールアドレスまたはパスワードが正しくありません');
     }
 
-    const jwtSecret = process.env.JWT_SECRET
+    const jwtSecret = process.env.JWT_SECRET;
     if (!jwtSecret) {
-      throw new Error('JWT_SECRET environment variable is not configured')
+      throw new Error('JWT_SECRET environment variable is not configured');
     }
     const token = jwt.sign({ userId: user.id }, jwtSecret, {
       expiresIn: '7d',
-    })
+    });
 
     // ログイン成功をログに記録（データベースベース）
-    await logAuthSuccessDB(ctx.prisma, user.id, getClientIP(ctx), ctx.req?.headers['user-agent'])
+    await logAuthSuccessDB(ctx.prisma, user.id, getClientIP(ctx), ctx.req?.headers['user-agent']);
 
     // 成功時の脅威検知分析（異常なパターンがないかチェック）
-    const threatDetection = new DatabaseThreatDetection(ctx.prisma)
+    const threatDetection = new DatabaseThreatDetection(ctx.prisma);
     await threatDetection.analyzeLoginAttempt(
       input.email,
       true,
       getClientIP(ctx),
       ctx.req?.headers['user-agent'],
-    )
+    );
 
     return {
       token,
       user,
-    }
+    };
   }
 
   // パスワードリセット機能（将来実装予定）

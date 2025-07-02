@@ -88,18 +88,18 @@ export const ValidationRules = {
     pattern: /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/,
     message: '有効な時間形式（HH:MM）で入力してください',
   },
-}
+};
 
 // XSS対策用のサニタイゼーション関数
 export function sanitizeInput(input: string): string {
-  if (typeof input !== 'string') return ''
+  if (typeof input !== 'string') return '';
 
   return input
     .trim()
     .replace(/[<>]/g, '') // HTMLタグ除去
     .replace(/javascript:/gi, '') // JavaScriptプロトコル除去
     .replace(/on\w+=/gi, '') // イベントハンドラ除去
-    .slice(0, 1000) // 最大長制限
+    .slice(0, 1000); // 最大長制限
 }
 
 // 統一された検証関数
@@ -107,55 +107,55 @@ export function validateField(
   value: string,
   fieldType: keyof typeof ValidationRules,
 ): { isValid: boolean; message?: string } {
-  const rule = ValidationRules[fieldType]
+  const rule = ValidationRules[fieldType];
 
   if (!rule) {
-    return { isValid: false, message: '不明なフィールドタイプです' }
+    return { isValid: false, message: '不明なフィールドタイプです' };
   }
 
   // 空文字チェック（必須フィールドの場合）
   if ('minLength' in rule && rule.minLength > 0 && (!value || value.trim().length === 0)) {
-    return { isValid: false, message: 'この項目は必須です' }
+    return { isValid: false, message: 'この項目は必須です' };
   }
 
   // 長さチェック
   if ('minLength' in rule && value.length < rule.minLength) {
-    return { isValid: false, message: rule.message }
+    return { isValid: false, message: rule.message };
   }
 
   if ('maxLength' in rule && value.length > rule.maxLength) {
-    return { isValid: false, message: rule.message }
+    return { isValid: false, message: rule.message };
   }
 
   // 数値範囲チェック
   if ('min' in rule || 'max' in rule) {
-    const numValue = parseInt(value, 10)
+    const numValue = parseInt(value, 10);
     if (isNaN(numValue)) {
-      return { isValid: false, message: '数値を入力してください' }
+      return { isValid: false, message: '数値を入力してください' };
     }
     if ('min' in rule && typeof rule.min === 'number' && numValue < rule.min) {
-      return { isValid: false, message: rule.message }
+      return { isValid: false, message: rule.message };
     }
     if ('max' in rule && typeof rule.max === 'number' && numValue > rule.max) {
-      return { isValid: false, message: rule.message }
+      return { isValid: false, message: rule.message };
     }
   }
 
   // パターンチェック
   if ('pattern' in rule && !rule.pattern.test(value)) {
-    return { isValid: false, message: rule.message }
+    return { isValid: false, message: rule.message };
   }
 
-  return { isValid: true }
+  return { isValid: true };
 }
 
 // Yup用のスキーマヘルパー
 export function createYupValidation(fieldType: keyof typeof ValidationRules) {
-  const rule = ValidationRules[fieldType]
+  const rule = ValidationRules[fieldType];
 
   return {
     rule,
     test: (value: string) => validateField(value, fieldType).isValid,
     message: rule.message,
-  }
+  };
 }

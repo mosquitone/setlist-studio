@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import { Box, Typography, Card, Button, Grid, Avatar, Chip, Stack } from '@mui/material'
+import { Box, Typography, Card, Button, Grid, Avatar, Chip, Stack } from '@mui/material';
 import {
   PlaylistPlay as PlaylistPlayIcon,
   Add as AddIcon,
@@ -11,13 +11,13 @@ import {
   Edit as EditIcon,
   Public as PublicIcon,
   Lock as LockIcon,
-} from '@mui/icons-material'
-import Link from 'next/link'
-import { Setlist } from '../../types/graphql'
+} from '@mui/icons-material';
+import Link from 'next/link';
+import { Setlist } from '../../types/graphql';
 
 interface SetlistDashboardProps {
-  setlistsData: { setlists: Setlist[] } | undefined
-  setlistsLoading: boolean
+  setlistsData: { setlists: Setlist[] } | undefined;
+  setlistsLoading: boolean;
 }
 
 export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashboardProps) {
@@ -33,7 +33,7 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
           </Typography>
         </Box>
       </Box>
-    )
+    );
   }
 
   if (!setlistsData?.setlists?.length) {
@@ -62,7 +62,7 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
           </Button>
         </Card>
       </Box>
-    )
+    );
   }
 
   return (
@@ -264,5 +264,5 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
         ))}
       </Grid>
     </Box>
-  )
+  );
 }

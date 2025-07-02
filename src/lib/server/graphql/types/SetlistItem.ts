@@ -1,21 +1,21 @@
-import { ObjectType, Field, ID, Int } from 'type-graphql'
+import { ObjectType, Field, ID, Int } from 'type-graphql';
 
 @ObjectType()
 export class SetlistItem {
   @Field(() => ID)
-  id!: string
+  id!: string;
 
   @Field()
-  title!: string
+  title!: string;
 
   @Field({ nullable: true })
-  note?: string
+  note?: string;
 
   @Field(() => Int)
-  order!: number
+  order!: number;
 
   @Field()
-  setlistId!: string
+  setlistId!: string;
 
   // Note: Setlist relation removed to avoid circular dependencies
   // Would be resolved through GraphQL resolvers if needed

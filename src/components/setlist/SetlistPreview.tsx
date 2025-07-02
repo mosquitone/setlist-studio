@@ -1,18 +1,18 @@
-'use client'
+'use client';
 
-import React, { useState, useEffect } from 'react'
-import { Box, Paper, CircularProgress, Typography, Button } from '@mui/material'
-import QRCode from 'qrcode'
-import { SetlistData } from '../setlist-themes/types'
-import { SetlistRenderer } from '../setlist-themes/SetlistRenderer'
+import React, { useState, useEffect } from 'react';
+import { Box, Paper, CircularProgress, Typography, Button } from '@mui/material';
+import QRCode from 'qrcode';
+import { SetlistData } from '../setlist-themes/types';
+import { SetlistRenderer } from '../setlist-themes/SetlistRenderer';
 
 interface SetlistPreviewProps {
-  data: SetlistData
-  selectedTheme: 'black' | 'white'
-  showDebug: boolean
-  isGeneratingPreview: boolean
-  previewImage: string | null
-  qrCodeURL?: string
+  data: SetlistData;
+  selectedTheme: 'black' | 'white';
+  showDebug: boolean;
+  isGeneratingPreview: boolean;
+  previewImage: string | null;
+  qrCodeURL?: string;
 }
 
 export function SetlistPreview({
@@ -23,7 +23,7 @@ export function SetlistPreview({
   previewImage,
   qrCodeURL = '',
 }: SetlistPreviewProps) {
-  const [generatedQrCode, setGeneratedQrCode] = useState<string>('')
+  const [generatedQrCode, setGeneratedQrCode] = useState<string>('');
 
   // Generate QR code for DOM preview
   useEffect(() => {
@@ -37,9 +37,9 @@ export function SetlistPreview({
         },
       })
         .then(setGeneratedQrCode)
-        .catch(() => setGeneratedQrCode(''))
+        .catch(() => setGeneratedQrCode(''));
     }
-  }, [qrCodeURL, showDebug])
+  }, [qrCodeURL, showDebug]);
   const renderPreview = () => {
     if (showDebug) {
       // DOM Preview
@@ -58,7 +58,7 @@ export function SetlistPreview({
             <SetlistRenderer data={{ ...data, theme: selectedTheme, qrCodeURL: generatedQrCode }} />
           </Box>
         </Box>
-      )
+      );
     }
 
     if (isGeneratingPreview) {
@@ -77,7 +77,7 @@ export function SetlistPreview({
           <CircularProgress />
           <Typography sx={{ mt: 2, color: 'text.secondary' }}>画像を生成中...</Typography>
         </Box>
-      )
+      );
     }
 
     if (previewImage) {
@@ -93,7 +93,7 @@ export function SetlistPreview({
             border: '1px solid #e0e0e0',
           }}
         />
-      )
+      );
     }
 
     // Error state - image generation failed
@@ -117,8 +117,8 @@ export function SetlistPreview({
           画像生成を再試行
         </Button>
       </Box>
-    )
-  }
+    );
+  };
 
   return (
     <Paper sx={{ width: '100%', p: 3 }}>
@@ -126,5 +126,5 @@ export function SetlistPreview({
         {renderPreview()}
       </Box>
     </Paper>
-  )
+  );
 }

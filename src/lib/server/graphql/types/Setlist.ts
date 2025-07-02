@@ -1,42 +1,42 @@
-import { ObjectType, Field, ID } from 'type-graphql'
+import { ObjectType, Field, ID } from 'type-graphql';
 
 @ObjectType()
 export class Setlist {
   @Field(() => ID)
-  id!: string
+  id!: string;
 
   @Field()
-  title!: string
+  title!: string;
 
   @Field({ nullable: true })
-  bandName?: string
+  bandName?: string;
 
   @Field({ nullable: true })
-  eventName?: string
+  eventName?: string;
 
   @Field({ nullable: true })
-  eventDate?: Date
+  eventDate?: Date;
 
   @Field({ nullable: true })
-  openTime?: string
+  openTime?: string;
 
   @Field({ nullable: true })
-  startTime?: string
+  startTime?: string;
 
   @Field({ nullable: true })
-  theme?: string
+  theme?: string;
 
   @Field()
-  isPublic!: boolean
+  isPublic!: boolean;
 
   @Field()
-  userId!: string
+  userId!: string;
 
   @Field()
-  createdAt!: Date
+  createdAt!: Date;
 
   @Field()
-  updatedAt!: Date
+  updatedAt!: Date;
 
   // Note: Relations removed to avoid circular dependencies
   // These would be resolved through GraphQL resolvers if needed

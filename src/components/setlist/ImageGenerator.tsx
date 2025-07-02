@@ -1,21 +1,21 @@
-'use client'
+'use client';
 
-import React, { useState, useEffect } from 'react'
-import { Box, Button, Alert, CircularProgress } from '@mui/material'
-import { Image as ImageIcon } from '@mui/icons-material'
-import html2canvas from 'html2canvas'
-import QRCode from 'qrcode'
-import { SetlistData } from '../setlist-themes/types'
-import { SetlistRenderer } from '../setlist-themes/SetlistRenderer'
-import { isValidUrl } from '@/lib/security/security-utils'
+import React, { useState, useEffect } from 'react';
+import { Box, Button, Alert, CircularProgress } from '@mui/material';
+import { Image as ImageIcon } from '@mui/icons-material';
+import html2canvas from 'html2canvas';
+import QRCode from 'qrcode';
+import { SetlistData } from '../setlist-themes/types';
+import { SetlistRenderer } from '../setlist-themes/SetlistRenderer';
+import { isValidUrl } from '@/lib/security/security-utils';
 
 interface ImageGeneratorProps {
-  data: SetlistData
-  selectedTheme: 'black' | 'white'
-  onDownloadReady?: (downloadFn: () => Promise<void>) => void
-  onPreviewReady?: (imageUrl: string) => void
-  onPreviewGenerationStart?: () => void
-  baseUrl?: string
+  data: SetlistData;
+  selectedTheme: 'black' | 'white';
+  onDownloadReady?: (downloadFn: () => Promise<void>) => void;
+  onPreviewReady?: (imageUrl: string) => void;
+  onPreviewGenerationStart?: () => void;
+  baseUrl?: string;
 }
 
 export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
@@ -26,18 +26,18 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
   onPreviewGenerationStart,
   baseUrl = typeof window !== 'undefined' ? window.location.origin : '',
 }) => {
-  const [isGenerating, setIsGenerating] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [previewImage, setPreviewImage] = useState<string | null>(null)
-  const [hasGenerated, setHasGenerated] = useState(false)
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [hasGenerated, setHasGenerated] = useState(false);
 
   const generateQRCode = React.useCallback(
     async (setlistId: string): Promise<string> => {
-      const url = `${baseUrl}/setlists/${setlistId}`
+      const url = `${baseUrl}/setlists/${setlistId}`;
 
       // Validate the URL before generating QR code
       if (!isValidUrl(url)) {
-        return ''
+        return '';
       }
 
       try {
@@ -48,57 +48,57 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
             dark: '#000000',
             light: '#FFFFFF',
           },
-        })
+        });
 
         // Additional validation for the generated data URL
         if (!qrCodeDataURL.startsWith('data:image/')) {
-          return ''
+          return '';
         }
 
-        return qrCodeDataURL
+        return qrCodeDataURL;
       } catch {
-        return ''
+        return '';
       }
     },
     [baseUrl],
-  )
+  );
 
   const generateImage = React.useCallback(
     async (theme: string): Promise<string | null> => {
-      setIsGenerating(true)
-      setError(null)
+      setIsGenerating(true);
+      setError(null);
 
       try {
         // Temporarily disable QR code for image generation
-        const qrCodeURL = await generateQRCode(data.id)
+        const qrCodeURL = await generateQRCode(data.id);
 
         // Create data with QR code
-        const dataWithQR = { ...data, theme: theme as any, qrCodeURL }
+        const dataWithQR = { ...data, theme: theme as any, qrCodeURL };
 
         // Create a temporary container for rendering
-        const container = document.createElement('div')
-        container.style.position = 'absolute'
-        container.style.left = '-9999px'
-        container.style.top = '-9999px'
-        container.style.width = 'auto'
-        container.style.height = 'auto'
-        document.body.appendChild(container)
+        const container = document.createElement('div');
+        container.style.position = 'absolute';
+        container.style.left = '-9999px';
+        container.style.top = '-9999px';
+        container.style.width = 'auto';
+        container.style.height = 'auto';
+        document.body.appendChild(container);
 
         // Create React root and render component
-        const { createRoot } = await import('react-dom/client')
-        const root = createRoot(container)
+        const { createRoot } = await import('react-dom/client');
+        const root = createRoot(container);
 
         // Render the component
         await new Promise<void>(resolve => {
-          root.render(<SetlistRenderer data={dataWithQR} className="setlist-image-generation" />)
+          root.render(<SetlistRenderer data={dataWithQR} className="setlist-image-generation" />);
           // Wait for rendering to complete
-          setTimeout(resolve, 1000)
-        })
+          setTimeout(resolve, 1000);
+        });
 
         // Find the rendered element
-        const element = container.querySelector('.setlist-image-generation') as HTMLElement
+        const element = container.querySelector('.setlist-image-generation') as HTMLElement;
         if (!element) {
-          throw new Error('Rendered element not found')
+          throw new Error('Rendered element not found');
         }
 
         // Generate image with html2canvas
@@ -108,102 +108,102 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
           logging: false,
           useCORS: false,
           allowTaint: false,
-        })
+        });
 
         // Convert to blob URL
         const blob = await new Promise<Blob>(resolve => {
           canvas.toBlob(
             blob => {
-              if (blob) resolve(blob)
+              if (blob) resolve(blob);
             },
             'image/png',
             1,
-          )
-        })
+          );
+        });
 
-        const imageURL = URL.createObjectURL(blob)
+        const imageURL = URL.createObjectURL(blob);
 
         // Cleanup
-        root.unmount()
-        document.body.removeChild(container)
+        root.unmount();
+        document.body.removeChild(container);
 
-        return imageURL
+        return imageURL;
       } catch (error) {
-        setError(`画像生成エラー: ${error instanceof Error ? error.message : 'Unknown error'}`)
-        return null
+        setError(`画像生成エラー: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        return null;
       } finally {
-        setIsGenerating(false)
+        setIsGenerating(false);
       }
     },
     [data, baseUrl, generateQRCode],
-  )
+  );
 
   const handleGeneratePreview = React.useCallback(async () => {
     if (onPreviewGenerationStart) {
-      onPreviewGenerationStart()
+      onPreviewGenerationStart();
     }
-    const imageURL = await generateImage(selectedTheme)
+    const imageURL = await generateImage(selectedTheme);
     if (imageURL) {
       // Clean up previous preview image URL
       setPreviewImage(prevUrl => {
         if (prevUrl) {
-          URL.revokeObjectURL(prevUrl)
+          URL.revokeObjectURL(prevUrl);
         }
-        return imageURL
-      })
+        return imageURL;
+      });
       if (onPreviewReady) {
-        onPreviewReady(imageURL)
+        onPreviewReady(imageURL);
       }
     }
-  }, [selectedTheme, generateImage, onPreviewGenerationStart, onPreviewReady])
+  }, [selectedTheme, generateImage, onPreviewGenerationStart, onPreviewReady]);
 
   const handleDownloadImage = React.useCallback(async () => {
-    const imageURL = await generateImage(selectedTheme)
+    const imageURL = await generateImage(selectedTheme);
     if (imageURL) {
-      const link = document.createElement('a')
-      link.href = imageURL
-      link.download = `setlist-${data.bandName}-${selectedTheme}.png`
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      URL.revokeObjectURL(imageURL)
+      const link = document.createElement('a');
+      link.href = imageURL;
+      link.download = `setlist-${data.bandName}-${selectedTheme}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(imageURL);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedTheme, data.bandName])
+  }, [selectedTheme, data.bandName]);
 
   React.useEffect(() => {
     if (onDownloadReady) {
-      onDownloadReady(handleDownloadImage)
+      onDownloadReady(handleDownloadImage);
     }
-  }, [onDownloadReady, handleDownloadImage])
+  }, [onDownloadReady, handleDownloadImage]);
 
   // Reset generation flag when theme changes
   React.useEffect(() => {
-    setHasGenerated(false)
+    setHasGenerated(false);
     setPreviewImage(prevUrl => {
       if (prevUrl) {
-        URL.revokeObjectURL(prevUrl)
+        URL.revokeObjectURL(prevUrl);
       }
-      return null
-    })
-  }, [selectedTheme, data.id])
+      return null;
+    });
+  }, [selectedTheme, data.id]);
 
   // Cleanup preview image on unmount
   useEffect(() => {
     return () => {
       if (previewImage) {
-        URL.revokeObjectURL(previewImage)
+        URL.revokeObjectURL(previewImage);
       }
-    }
-  }, [previewImage])
+    };
+  }, [previewImage]);
 
   // Auto-generate preview when not generated yet
   React.useEffect(() => {
     if (!hasGenerated && !isGenerating) {
-      handleGeneratePreview()
-      setHasGenerated(true)
+      handleGeneratePreview();
+      setHasGenerated(true);
     }
-  }, [hasGenerated, isGenerating, handleGeneratePreview])
+  }, [hasGenerated, isGenerating, handleGeneratePreview]);
 
   return (
     <Box>
@@ -241,5 +241,5 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
         )}
       </Box>
     </Box>
-  )
-}
+  );
+};

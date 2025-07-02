@@ -3,21 +3,21 @@
  */
 
 export const formatDateJST = (dateString: string | null | undefined): string => {
-  if (!dateString) return ''
+  if (!dateString) return '';
 
-  const date = new Date(dateString)
+  const date = new Date(dateString);
   return date.toLocaleDateString('ja-JP', {
     timeZone: 'Asia/Tokyo',
     year: 'numeric',
     month: 'long',
     day: 'numeric',
-  })
-}
+  });
+};
 
 export const formatDateTimeJST = (dateString: string | null | undefined): string => {
-  if (!dateString) return ''
+  if (!dateString) return '';
 
-  const date = new Date(dateString)
+  const date = new Date(dateString);
   return date.toLocaleString('ja-JP', {
     timeZone: 'Asia/Tokyo',
     year: 'numeric',
@@ -25,17 +25,17 @@ export const formatDateTimeJST = (dateString: string | null | undefined): string
     day: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
-  })
-}
+  });
+};
 
 export const formatEventDateJST = (dateString: string | null | undefined): string => {
-  if (!dateString) return ''
+  if (!dateString) return '';
 
-  const date = new Date(dateString)
+  const date = new Date(dateString);
   return date.toLocaleDateString('ja-JP', {
     timeZone: 'Asia/Tokyo',
     year: 'numeric',
     month: 'numeric',
     day: 'numeric',
-  })
-}
+  });
+};

@@ -1,38 +1,38 @@
-import { useState, useEffect } from 'react'
-import { useQuery, useMutation } from '@apollo/client'
-import { GET_SONGS, DELETE_SONG, UPDATE_SONG } from '@/lib/server/graphql/apollo-operations'
-import { Song, GetSongsResponse } from '@/types/graphql'
+import { useState, useEffect } from 'react';
+import { useQuery, useMutation } from '@apollo/client';
+import { GET_SONGS, DELETE_SONG, UPDATE_SONG } from '@/lib/server/graphql/apollo-operations';
+import { Song, GetSongsResponse } from '@/types/graphql';
 
 export function useSongs() {
   const { data, loading, error } = useQuery<GetSongsResponse>(GET_SONGS, {
     fetchPolicy: 'network-only',
-  })
+  });
 
-  const [songs, setSongs] = useState<Song[]>([])
-  const [selectedSong, setSelectedSong] = useState<Song | null>(null)
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const [songs, setSongs] = useState<Song[]>([]);
+  const [selectedSong, setSelectedSong] = useState<Song | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const [updateSong] = useMutation(UPDATE_SONG, {
     refetchQueries: [{ query: GET_SONGS }],
-  })
+  });
 
   const [deleteSong] = useMutation(DELETE_SONG, {
     refetchQueries: [{ query: GET_SONGS }],
-  })
+  });
 
   useEffect(() => {
     if (data?.songs) {
-      setSongs(data.songs)
+      setSongs(data.songs);
     }
-  }, [data])
+  }, [data]);
 
   const handleEditSong = (song: Song) => {
-    setSelectedSong(song)
-    setIsEditDialogOpen(true)
-  }
+    setSelectedSong(song);
+    setIsEditDialogOpen(true);
+  };
 
   const handleSaveSong = async (songData: Omit<Song, 'id' | 'createdAt' | 'updatedAt'>) => {
-    if (!selectedSong) return
+    if (!selectedSong) return;
 
     try {
       await updateSong({
@@ -40,26 +40,26 @@ export function useSongs() {
           id: selectedSong.id,
           input: songData,
         },
-      })
+      });
     } catch (error) {
-      throw error
+      throw error;
     }
-  }
+  };
 
   const handleDeleteSong = async (id: string) => {
     if (window.confirm('この楽曲を削除してもよろしいですか？')) {
       try {
-        await deleteSong({ variables: { id } })
+        await deleteSong({ variables: { id } });
       } catch (error) {
-        throw error
+        throw error;
       }
     }
-  }
+  };
 
   const closeEditDialog = () => {
-    setIsEditDialogOpen(false)
-    setSelectedSong(null)
-  }
+    setIsEditDialogOpen(false);
+    setSelectedSong(null);
+  };
 
   return {
     songs,
@@ -71,5 +71,5 @@ export function useSongs() {
     handleSaveSong,
     handleDeleteSong,
     closeEditDialog,
-  }
+  };
 }

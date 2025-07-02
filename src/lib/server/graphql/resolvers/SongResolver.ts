@@ -9,50 +9,50 @@ import {
   Field,
   Int,
   ID,
-} from 'type-graphql'
-import { IsOptional, IsString, IsInt, Min, Max } from 'class-validator'
-import { PrismaClient } from '@prisma/client'
-import { Song } from '../types/Song'
-import { AuthMiddleware } from '@/lib/server/graphql/middleware/jwt-auth-middleware'
+} from 'type-graphql';
+import { IsOptional, IsString, IsInt, Min, Max } from 'class-validator';
+import { PrismaClient } from '@prisma/client';
+import { Song } from '../types/Song';
+import { AuthMiddleware } from '@/lib/server/graphql/middleware/jwt-auth-middleware';
 
 interface Context {
-  prisma: PrismaClient
-  userId?: string
+  prisma: PrismaClient;
+  userId?: string;
 }
 
 @InputType()
 export class CreateSongInput {
   @Field()
   @IsString()
-  title: string
+  title: string;
 
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
-  artist?: string
+  artist?: string;
 
   @Field(() => Int, { nullable: true })
   @IsOptional()
   @IsInt()
   @Min(1)
-  duration?: number
+  duration?: number;
 
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
-  key?: string
+  key?: string;
 
   @Field(() => Int, { nullable: true })
   @IsOptional()
   @IsInt()
   @Min(1)
   @Max(300)
-  tempo?: number
+  tempo?: number;
 
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
-  notes?: string
+  notes?: string;
 }
 
 @InputType()
@@ -60,35 +60,35 @@ export class UpdateSongInput {
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
-  title?: string
+  title?: string;
 
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
-  artist?: string
+  artist?: string;
 
   @Field(() => Int, { nullable: true })
   @IsOptional()
   @IsInt()
   @Min(1)
-  duration?: number
+  duration?: number;
 
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
-  key?: string
+  key?: string;
 
   @Field(() => Int, { nullable: true })
   @IsOptional()
   @IsInt()
   @Min(1)
   @Max(300)
-  tempo?: number
+  tempo?: number;
 
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
-  notes?: string
+  notes?: string;
 }
 
 @Resolver(() => Song)
@@ -99,7 +99,7 @@ export class SongResolver {
     return ctx.prisma.song.findMany({
       where: { userId: ctx.userId },
       orderBy: { title: 'asc' },
-    }) as Promise<Song[]>
+    }) as Promise<Song[]>;
   }
 
   @Query(() => Song, { nullable: true })
@@ -107,7 +107,7 @@ export class SongResolver {
   async song(@Arg('id', () => ID) id: string, @Ctx() ctx: Context): Promise<Song | null> {
     return ctx.prisma.song.findFirst({
       where: { id, userId: ctx.userId },
-    }) as Promise<Song | null>
+    }) as Promise<Song | null>;
   }
 
   @Mutation(() => Song)
@@ -118,7 +118,7 @@ export class SongResolver {
         ...input,
         userId: ctx.userId!,
       },
-    }) as Promise<Song>
+    }) as Promise<Song>;
   }
 
   @Mutation(() => Song)
@@ -130,16 +130,16 @@ export class SongResolver {
   ): Promise<Song> {
     const song = await ctx.prisma.song.findFirst({
       where: { id, userId: ctx.userId },
-    })
+    });
 
     if (!song) {
-      throw new Error('Song not found')
+      throw new Error('Song not found');
     }
 
     return ctx.prisma.song.update({
       where: { id },
       data: input,
-    }) as Promise<Song>
+    }) as Promise<Song>;
   }
 
   @Mutation(() => Boolean)
@@ -147,16 +147,16 @@ export class SongResolver {
   async deleteSong(@Arg('id', () => ID) id: string, @Ctx() ctx: Context): Promise<boolean> {
     const song = await ctx.prisma.song.findFirst({
       where: { id, userId: ctx.userId },
-    })
+    });
 
     if (!song) {
-      throw new Error('Song not found')
+      throw new Error('Song not found');
     }
 
     await ctx.prisma.song.delete({
       where: { id },
-    })
+    });
 
-    return true
+    return true;
   }
 }

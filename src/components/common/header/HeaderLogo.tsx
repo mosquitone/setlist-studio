@@ -1,5 +1,5 @@
-import Box from '@mui/material/Box'
-import Link from 'next/link'
+import Box from '@mui/material/Box';
+import Link from 'next/link';
 
 export function HeaderLogo() {
   return (
@@ -11,5 +11,5 @@ export function HeaderLogo() {
         sx={{ height: 40, cursor: 'pointer' }}
       />
     </Link>
-  )
+  );
 }
