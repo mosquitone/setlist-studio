@@ -1,7 +1,6 @@
 import { MiddlewareFn } from 'type-graphql';
-import jwt from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
-import { JWTPayload } from '@/types/jwt';
+import { verifyAndValidateJWT } from '@/types/jwt';
 
 interface Context {
   req: {
@@ -35,7 +34,7 @@ export const AuthMiddleware: MiddlewareFn<Context> = async ({ context }, next) =
     if (!jwtSecret) {
       throw new Error('JWT_SECRET environment variable is not configured');
     }
-    const payload = jwt.verify(token, jwtSecret) as JWTPayload;
+    const payload = verifyAndValidateJWT(token, jwtSecret);
     context.userId = payload.userId;
   } catch (error) {
     console.error('AuthMiddleware: JWT verification failed:', error);
