@@ -2,6 +2,7 @@
 
 import { NextRequest } from 'next/server';
 import DOMPurify from 'dompurify';
+import { createHash } from 'crypto';
 
 // 信頼できるプロキシのリスト（環境に応じて設定）
 const TRUSTED_PROXIES = new Set([
@@ -129,11 +130,9 @@ export function getSecureClientIP(request: NextRequest): string {
  * GDPR等の規制対応のため、IPアドレスをハッシュ化して保存
  */
 export function hashIP(ip: string): string {
-  const crypto = require('crypto');
   const salt = process.env.IP_HASH_SALT || 'default-salt-change-in-production';
 
-  return crypto
-    .createHash('sha256')
+  return createHash('sha256')
     .update(ip + salt)
     .digest('hex')
     .substring(0, 16); // 短縮して保存効率を向上
@@ -149,11 +148,7 @@ export function generateRateLimitKey(request: NextRequest): string {
 
   // プライバシーを保護しつつ、一意性を確保
   const hashedIP = hashIP(ip);
-  const hashedUA = require('crypto')
-    .createHash('md5')
-    .update(userAgent)
-    .digest('hex')
-    .substring(0, 8);
+  const hashedUA = createHash('md5').update(userAgent).digest('hex').substring(0, 8);
 
   return `${hashedIP}:${hashedUA}`;
 }

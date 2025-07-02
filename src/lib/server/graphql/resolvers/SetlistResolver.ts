@@ -21,6 +21,7 @@ import {
   SecurityEventType,
   SecurityEventSeverity,
 } from '../../../security/security-logger-db';
+import jwt from 'jsonwebtoken';
 
 interface Context {
   prisma: PrismaClient;
@@ -150,7 +151,6 @@ export class SetlistResolver {
       if (!jwtSecret) {
         throw new Error('JWT_SECRET environment variable is not configured');
       }
-      const jwt = require('jsonwebtoken');
       const payload = jwt.verify(token, jwtSecret) as { userId: string };
 
       // セキュリティチェック: 所有者のみアクセス可能
