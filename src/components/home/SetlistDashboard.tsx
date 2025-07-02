@@ -14,7 +14,6 @@ import {
 } from '@mui/icons-material'
 import Link from 'next/link'
 import { Setlist } from '../../types/graphql'
-import { FadeInBox } from '@/components/common/FadeInBox'
 
 interface SetlistDashboardProps {
   setlistsData: { setlists: Setlist[] } | undefined
@@ -24,7 +23,7 @@ interface SetlistDashboardProps {
 export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashboardProps) {
   if (setlistsLoading) {
     return (
-      <FadeInBox delay={400} sx={{ mb: 8 }}>
+      <Box sx={{ mb: 8 }}>
         <Typography variant="h4" component="h2" gutterBottom sx={{ mb: 4 }}>
           あなたのセットリスト
         </Typography>
@@ -33,13 +32,13 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
             セットリストを読み込み中...
           </Typography>
         </Box>
-      </FadeInBox>
+      </Box>
     )
   }
 
   if (!setlistsData?.setlists?.length) {
     return (
-      <FadeInBox delay={400} sx={{ mb: 8 }}>
+      <Box sx={{ mb: 8 }}>
         <Typography variant="h4" component="h2" gutterBottom sx={{ mb: 4 }}>
           あなたのセットリスト
         </Typography>
@@ -62,12 +61,12 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
             セットリストを作成
           </Button>
         </Card>
-      </FadeInBox>
+      </Box>
     )
   }
 
   return (
-    <FadeInBox delay={400} sx={{ mb: 8 }}>
+    <Box sx={{ mb: 8 }}>
       <Typography variant="h4" component="h2" gutterBottom sx={{ mb: 4 }}>
         あなたのセットリスト
       </Typography>
@@ -264,6 +263,6 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
           </Grid>
         ))}
       </Grid>
-    </FadeInBox>
+    </Box>
   )
 }

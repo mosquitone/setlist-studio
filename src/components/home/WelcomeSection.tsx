@@ -2,11 +2,9 @@
 
 import { Box, Typography, Chip } from '@mui/material'
 import { MusicNote as MusicNoteIcon } from '@mui/icons-material'
-import { FadeInBox } from '@/components/common/FadeInBox'
-
 export function WelcomeSection() {
   return (
-    <FadeInBox delay={0} sx={{ textAlign: 'center', mb: 6 }}>
+    <Box sx={{ textAlign: 'center', mb: 6 }}>
       <Box sx={{ mb: 3 }}>
         <MusicNoteIcon sx={{ fontSize: 80, color: 'primary.main', mb: 2 }} />
       </Box>
@@ -37,6 +35,6 @@ export function WelcomeSection() {
         variant="outlined"
         sx={{ fontSize: '1rem', py: 2 }}
       />
-    </FadeInBox>
+    </Box>
   )
 }
