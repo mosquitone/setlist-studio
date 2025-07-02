@@ -1,6 +1,22 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+  // Optimize for hybrid approach (static + serverless)
+  output: 'standalone',
+
+  // Enable experimental features for better performance
+  experimental: {
+    optimizePackageImports: ['@mui/material', '@mui/icons-material'],
+  },
+
+  // Optimize images
+  images: {
+    formats: ['image/webp', 'image/avif'],
+    minimumCacheTTL: 86400, // 1 day cache
+  },
+  // Compress assets
+  compress: true,
+
   async headers() {
     return [
       {

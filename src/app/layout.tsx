@@ -12,8 +12,11 @@ import LoadingFallback from '@/components/common/LoadingFallback';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'セットリストジェネレーター v2',
-  description: 'あなたの楽曲を管理して、素敵なセットリストを作成しましょう',
+  title: {
+    template: '%s | Setlist Studio',
+    default: 'Setlist Studio - バンド向けセットリスト管理ツール',
+  },
+  description: 'あなたの楽曲を管理して、素敵なセットリストを作成しましょう。Setlist Studioでプロフェッショナルなパフォーマンスを実現。',
 };
 
 export default function RootLayout({
