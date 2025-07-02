@@ -15,7 +15,8 @@ import EmailIcon from '@mui/icons-material/Email';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useMutation } from '@apollo/client';
-import { UPDATE_USER_MUTATION } from '@/lib/server/graphql/apollo-operations';
+import { UPDATE_USER_MUTATION, GET_ME_QUERY } from '@/lib/server/graphql/apollo-operations';
+import { apolloClient } from '@/lib/client/apollo-client';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
@@ -28,11 +29,23 @@ function ProfileContent() {
   const [success, setSuccess] = useState('');
 
   const [updateUser, { loading: updateLoading }] = useMutation(UPDATE_USER_MUTATION, {
-    onCompleted: () => {
-      setSuccess('プロフィールを更新しました');
-      setIsEditing(false);
-      // ページをリロードして最新のユーザー情報を反映
-      window.location.reload();
+    onCompleted: data => {
+      try {
+        // Apollo Clientのキャッシュを更新
+        // secureAuthClientは自動的にGET_ME_QUERYの変更を検知する
+        apolloClient.writeQuery({
+          query: GET_ME_QUERY,
+          data: {
+            me: data.updateUser,
+          },
+        });
+
+        setSuccess('プロフィールを更新しました');
+        setIsEditing(false);
+      } catch (error) {
+        console.error('Failed to update cache:', error);
+        setError('キャッシュの更新に失敗しました');
+      }
     },
     onError: error => {
       setError(error.message);

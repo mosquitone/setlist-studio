@@ -196,6 +196,17 @@ class SecureAuthClient {
     };
   }
 
+  // ユーザー情報の更新
+  updateUser(user: User): void {
+    if (this.currentState.authenticated && this.currentState.user) {
+      this.updateState({
+        authenticated: true,
+        user: user,
+        loading: false,
+      });
+    }
+  }
+
   // 現在の状態を取得
   getState(): AuthState {
     return { ...this.currentState };
