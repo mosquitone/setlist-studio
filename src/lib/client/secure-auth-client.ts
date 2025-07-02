@@ -178,7 +178,7 @@ class SecureAuthClient {
   // 状態の更新とリスナーへの通知
   private updateState(newState: AuthState): void {
     this.currentState = { ...newState };
-    this.listeners.forEach(listener => listener(this.currentState));
+    this.listeners.forEach((listener) => listener(this.currentState));
   }
 
   // 状態変更リスナーの登録

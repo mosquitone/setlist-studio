@@ -38,7 +38,7 @@ export default function RegisterClient() {
       // 新規登録成功後はログイン画面へ遷移
       router.push('/login?message=新規登録が完了しました。ログインしてください。');
     },
-    onError: error => {
+    onError: (error) => {
       setError(error.message);
     },
   });
@@ -112,7 +112,7 @@ export default function RegisterClient() {
               fullWidth
               label="ユーザー名"
               value={username}
-              onChange={e => setUsername(e.target.value)}
+              onChange={(e) => setUsername(e.target.value)}
               margin="normal"
               required
               autoComplete="username"
@@ -122,7 +122,7 @@ export default function RegisterClient() {
               label="メールアドレス"
               type="email"
               value={email}
-              onChange={e => setEmail(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
               margin="normal"
               required
               autoComplete="email"
@@ -132,7 +132,7 @@ export default function RegisterClient() {
               label="パスワード"
               type={showPassword ? 'text' : 'password'}
               value={password}
-              onChange={e => setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
               margin="normal"
               required
               autoComplete="new-password"
@@ -151,7 +151,7 @@ export default function RegisterClient() {
               label="パスワード確認"
               type={showConfirmPassword ? 'text' : 'password'}
               value={confirmPassword}
-              onChange={e => setConfirmPassword(e.target.value)}
+              onChange={(e) => setConfirmPassword(e.target.value)}
               margin="normal"
               required
               autoComplete="new-password"

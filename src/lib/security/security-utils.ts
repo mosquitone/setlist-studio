@@ -108,7 +108,7 @@ export function getSecureClientIP(request: NextRequest): string {
 
   // X-Forwarded-Forの最初のIPをチェック（チェーン内の最初のクライアント）
   if (xForwardedFor) {
-    const ips = xForwardedFor.split(',').map(ip => ip.trim());
+    const ips = xForwardedFor.split(',').map((ip) => ip.trim());
     for (const ip of ips) {
       if (isValidIP(ip) && !isTrustedProxy(ip)) {
         return ip;
@@ -175,7 +175,7 @@ export function getIPInfo(request: NextRequest): {
     'user-agent',
   ];
 
-  relevantHeaders.forEach(header => {
+  relevantHeaders.forEach((header) => {
     const value = request.headers.get(header);
     if (value) {
       headers[header] = value;
@@ -215,7 +215,7 @@ export function assessRequestSecurity(request: NextRequest): {
   if (!userAgent) {
     reasons.push('Missing User-Agent header');
     riskLevel = 'medium';
-  } else if (suspiciousUAPatterns.some(pattern => pattern.test(userAgent))) {
+  } else if (suspiciousUAPatterns.some((pattern) => pattern.test(userAgent))) {
     reasons.push('Suspicious User-Agent pattern detected');
     riskLevel = 'high';
   }
@@ -237,7 +237,7 @@ export function assessRequestSecurity(request: NextRequest): {
 
   // 複数のプロキシヘッダーが存在（IP偽装の可能性）
   const proxyHeaders = ['x-forwarded-for', 'x-real-ip', 'cf-connecting-ip', 'x-client-ip'].filter(
-    header => request.headers.get(header),
+    (header) => request.headers.get(header),
   );
 
   if (proxyHeaders.length > 2) {

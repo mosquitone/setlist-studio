@@ -150,7 +150,7 @@ export const BaseTheme: React.FC<BaseThemeProps> = ({ data, className, colors })
           gap: 3.5,
         }}
       >
-        {items.map(item => (
+        {items.map((item) => (
           <Box key={item.id} sx={{}}>
             <Typography
               sx={{

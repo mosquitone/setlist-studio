@@ -50,7 +50,7 @@ export function SongEditDialog({ open, song, onClose, onSave }: SongEditDialogPr
   }, [open]);
 
   const handleFieldChange = (field: keyof typeof formValues, value: string) => {
-    setFormValues(prev => ({
+    setFormValues((prev) => ({
       ...prev,
       [field]: field === 'tempo' ? (value === '' ? null : Number(value)) : value,
     }));
@@ -70,34 +70,34 @@ export function SongEditDialog({ open, song, onClose, onSave }: SongEditDialogPr
             ref={titleRef}
             label="タイトル"
             value={formValues.title}
-            onChange={e => handleFieldChange('title', e.target.value)}
+            onChange={(e) => handleFieldChange('title', e.target.value)}
             fullWidth
             required
           />
           <TextField
             label="アーティスト"
             value={formValues.artist}
-            onChange={e => handleFieldChange('artist', e.target.value)}
+            onChange={(e) => handleFieldChange('artist', e.target.value)}
             fullWidth
             required
           />
           <TextField
             label="キー"
             value={formValues.key || ''}
-            onChange={e => handleFieldChange('key', e.target.value)}
+            onChange={(e) => handleFieldChange('key', e.target.value)}
             fullWidth
           />
           <TextField
             label="テンポ"
             type="number"
             value={formValues.tempo || ''}
-            onChange={e => handleFieldChange('tempo', e.target.value)}
+            onChange={(e) => handleFieldChange('tempo', e.target.value)}
             fullWidth
           />
           <TextField
             label="ノート"
             value={formValues.notes || ''}
-            onChange={e => handleFieldChange('notes', e.target.value)}
+            onChange={(e) => handleFieldChange('notes', e.target.value)}
             fullWidth
             multiline
             rows={3}

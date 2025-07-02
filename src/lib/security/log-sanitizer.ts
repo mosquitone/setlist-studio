@@ -143,7 +143,7 @@ export function sanitizeObjectForLog(obj: Record<string, any>): Record<string, a
     } else if (value === null || value === undefined) {
       sanitized[sanitizedKey] = value;
     } else if (Array.isArray(value)) {
-      sanitized[sanitizedKey] = value.map(item =>
+      sanitized[sanitizedKey] = value.map((item) =>
         typeof item === 'string' ? sanitizeForLog(item) : item,
       );
     } else if (typeof value === 'object') {

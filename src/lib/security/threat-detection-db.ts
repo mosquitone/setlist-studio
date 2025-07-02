@@ -195,7 +195,7 @@ export class DatabaseThreatDetection {
         },
       });
 
-      const uniqueUsers = new Set(activities.map(a => a.userId).filter(Boolean));
+      const uniqueUsers = new Set(activities.map((a) => a.userId).filter(Boolean));
 
       if (uniqueUsers.size >= 5 && activities.length >= 10) {
         return {
@@ -308,7 +308,7 @@ export class DatabaseThreatDetection {
         criticalEvents: 0, // SecurityEventテーブルから取得予定
         recentFailedLogins,
         rateLimitViolations,
-        topRiskyIPs: ipActivities.map(activity => activity.ipAddress),
+        topRiskyIPs: ipActivities.map((activity) => activity.ipAddress),
       };
     } catch (error) {
       console.error('Security dashboard data error:', error);

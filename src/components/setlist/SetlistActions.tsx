@@ -120,11 +120,11 @@ export function SetlistActions({
           <FormControl size="small">
             <Select
               value={selectedTheme}
-              onChange={e => onThemeChange(e.target.value as 'black' | 'white')}
+              onChange={(e) => onThemeChange(e.target.value as 'black' | 'white')}
               displayEmpty
               IconComponent={ExpandMoreIcon}
               sx={{ minWidth: 140 }}
-              renderValue={value => {
+              renderValue={(value) => {
                 if (value === 'black') return 'Theme: black';
                 if (value === 'white') return 'Theme: white';
                 return 'Theme: black';

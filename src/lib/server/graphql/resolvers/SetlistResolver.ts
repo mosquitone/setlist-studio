@@ -192,7 +192,7 @@ export class SetlistResolver {
         userId: ctx.userId!,
         items: items
           ? {
-              create: items.map(item => ({
+              create: items.map((item) => ({
                 title: item.title,
                 note: item.note,
                 order: item.order,
@@ -257,7 +257,7 @@ export class SetlistResolver {
         items: items
           ? {
               deleteMany: {}, // Delete all existing items
-              create: items.map(item => ({
+              create: items.map((item) => ({
                 title: item.title,
                 note: item.note,
                 order: item.order,

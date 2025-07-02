@@ -188,12 +188,12 @@ export class DatabaseSecurityLogger {
       ]);
 
       const eventsByTypeMap: Record<string, number> = {};
-      eventsByType.forEach(item => {
+      eventsByType.forEach((item) => {
         eventsByTypeMap[item.type] = item._count.type;
       });
 
       const eventsBySeverityMap: Record<string, number> = {};
-      eventsBySeverity.forEach(item => {
+      eventsBySeverity.forEach((item) => {
         eventsBySeverityMap[item.severity] = item._count.severity;
       });
 
@@ -201,7 +201,7 @@ export class DatabaseSecurityLogger {
         totalEvents,
         eventsByType: eventsByTypeMap,
         eventsBySeverity: eventsBySeverityMap,
-        recentEvents: recentEvents.map(event => ({
+        recentEvents: recentEvents.map((event) => ({
           id: event.id,
           type: event.type as SecurityEventType,
           severity: event.severity as SecurityEventSeverity,
@@ -237,7 +237,7 @@ export class DatabaseSecurityLogger {
         orderBy: { timestamp: 'desc' },
       });
 
-      return events.map(event => ({
+      return events.map((event) => ({
         id: event.id,
         type: event.type as SecurityEventType,
         severity: event.severity as SecurityEventSeverity,

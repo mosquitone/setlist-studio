@@ -89,7 +89,7 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
         const root = createRoot(container);
 
         // Render the component
-        await new Promise<void>(resolve => {
+        await new Promise<void>((resolve) => {
           root.render(<SetlistRenderer data={dataWithQR} className="setlist-image-generation" />);
           // Wait for rendering to complete
           setTimeout(resolve, 1000);
@@ -111,9 +111,9 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
         });
 
         // Convert to blob URL
-        const blob = await new Promise<Blob>(resolve => {
+        const blob = await new Promise<Blob>((resolve) => {
           canvas.toBlob(
-            blob => {
+            (blob) => {
               if (blob) resolve(blob);
             },
             'image/png',
@@ -145,7 +145,7 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
     const imageURL = await generateImage(selectedTheme);
     if (imageURL) {
       // Clean up previous preview image URL
-      setPreviewImage(prevUrl => {
+      setPreviewImage((prevUrl) => {
         if (prevUrl) {
           URL.revokeObjectURL(prevUrl);
         }
@@ -180,7 +180,7 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
   // Reset generation flag when theme changes
   React.useEffect(() => {
     setHasGenerated(false);
-    setPreviewImage(prevUrl => {
+    setPreviewImage((prevUrl) => {
       if (prevUrl) {
         URL.revokeObjectURL(prevUrl);
       }

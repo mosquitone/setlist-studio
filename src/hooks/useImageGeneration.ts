@@ -33,7 +33,7 @@ export function useImageGeneration({ onSuccess }: UseImageGenerationProps = {}) 
   }, [onSuccess]);
 
   const handleDebugToggle = useCallback(() => {
-    setShowDebug(prev => !prev);
+    setShowDebug((prev) => !prev);
   }, []);
 
   const resetPreview = useCallback(() => {
