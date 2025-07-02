@@ -44,6 +44,38 @@ async function createServer() {
     ],
     formatError: (err) => {
       console.error('GraphQL Error:', err);
+
+      const isProduction = process.env.NODE_ENV === 'production';
+
+      if (isProduction) {
+        // 本番環境では詳細なエラー情報を隠蔽
+        const userFriendlyErrors = [
+          '認証',
+          '権限',
+          'メールアドレス',
+          'パスワード',
+          'ユーザー',
+          '登録',
+          'ログイン',
+          'セットリスト',
+          '楽曲',
+          '不正',
+          '無効',
+        ];
+
+        const isUserError = userFriendlyErrors.some((keyword) => err.message.includes(keyword));
+
+        if (isUserError) {
+          return { message: err.message };
+        }
+
+        // システムエラーは汎用メッセージ
+        return {
+          message: 'サーバーエラーが発生しました。しばらく時間をおいて再度お試しください。',
+        };
+      }
+
+      // 開発環境では詳細情報を含める
       return {
         message: err.message,
         locations: err.locations,

@@ -183,7 +183,7 @@ pnpm generate     # Prismaクライアント生成
 
 **🔐 JWT認証トークン**
 - **保存場所**: HttpOnly Cookie (JavaScriptからアクセス不可)
-- **有効期間**: 24時間（自動期限切れ）
+- **有効期間**: 2時間（セキュリティ強化済み）
 - **内容**: ユーザーID、メール、ユーザー名
 - **セキュリティ**: HMAC-SHA256署名、改ざん検知
 - **利用**: 全GraphQL APIの認証、自動ログイン維持
@@ -196,7 +196,7 @@ pnpm generate     # Prismaクライアント生成
 - **利用**: 状態変更操作（作成・更新・削除）の保護
 
 **⚙️ セッション管理**
-- **自動ログアウト**: 24時間後またはセキュリティ違反時
+- **自動ログアウト**: 2時間後またはセキュリティ違反時
 - **Cookie設定**: Secure (HTTPS), SameSite=Strict, HttpOnly
 - **状態同期**: リアルタイム認証状態更新
 - **XSS耐性**: HttpOnly Cookieによる完全なXSS防御
@@ -222,7 +222,7 @@ pnpm generate     # Prismaクライアント生成
 | 環境変数名 | 説明 | 必須 | 有効期限 | 生成方法 |
 |-----------|------|------|----------|----------|
 | `DATABASE_URL` | PostgreSQL接続文字列 | ✅ | 永続 | データベースプロバイダーから取得 |
-| `JWT_SECRET` | JWT認証用シークレット (HMAC-SHA256署名) | ✅ | 24時間 | `openssl rand -base64 32` |
+| `JWT_SECRET` | JWT認証用シークレット (HMAC-SHA256署名) | ✅ | 2時間 | `openssl rand -base64 32` |
 | `CSRF_SECRET` | CSRF保護用シークレット (JWT_SECRETと異なる値) | ✅ | リクエスト毎 | `openssl rand -base64 32` |
 | `IP_HASH_SALT` | IPアドレス匿名化用ソルト (ログ保護) | ✅ | 永続 | `openssl rand -base64 16` |
 | `CRON_SECRET` | Cronジョブ認証用シークレット (自動削除) | ✅ | 永続 | `openssl rand -base64 32` |

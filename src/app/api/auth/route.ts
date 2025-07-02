@@ -16,7 +16,7 @@ function getAuthCookieOptions(): AuthCookieOptions {
     secure: process.env.NODE_ENV === 'production', // HTTPSでのみ送信
     sameSite: 'strict', // CSRF攻撃を防ぐ
     path: '/',
-    maxAge: 24 * 60 * 60, // 24時間（秒単位）
+    maxAge: 2 * 60 * 60, // 2時間（秒単位）
   };
 }
 
