@@ -121,7 +121,7 @@ export default function SetlistDetailPage() {
       isLoading={loading || authLoading}
       error={error}
     >
-      <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Container maxWidth="lg" sx={{ py: 4, px: { xs: 2, sm: 3 } }}>
         {/* データがない場合はSetlistProtectedRouteがハンドリング */}
         {!setlistData ? null /* テーマ初期化中の場合はローディングを表示 */ : selectedTheme ===
           null ? (
