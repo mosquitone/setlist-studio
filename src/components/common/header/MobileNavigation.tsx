@@ -12,22 +12,23 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/components/providers/AuthProvider';
-import { authenticatedNavigationItems, publicNavigationItems } from './navigationItems';
+
+interface NavigationItem {
+  label: string;
+  path: string;
+  icon: React.ComponentType;
+}
 
 interface MobileNavigationProps {
+  items: NavigationItem[];
   mobileOpen: boolean;
   onToggle: () => void;
   onAuthClick: () => void;
 }
 
-export function MobileNavigation({ mobileOpen, onToggle, onAuthClick }: MobileNavigationProps) {
+export function MobileNavigation({ items, mobileOpen, onToggle, onAuthClick }: MobileNavigationProps) {
   const { isLoggedIn, isLoading, user } = useAuth();
   const pathname = usePathname();
-
-  // ログイン状態に応じて表示するナビゲーション項目を決定
-  const items = isLoggedIn
-    ? [...publicNavigationItems, ...authenticatedNavigationItems]
-    : publicNavigationItems;
 
   const drawer = (
     <Box onClick={onToggle} sx={{ textAlign: 'center' }}>

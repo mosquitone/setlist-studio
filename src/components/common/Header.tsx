@@ -11,11 +11,17 @@ import { DesktopNavigation } from './header/DesktopNavigation';
 import { MobileNavigation } from './header/MobileNavigation';
 import { UserMenu } from './header/UserMenu';
 import { AuthButton } from './header/AuthButton';
+import { authenticatedNavigationItems, publicNavigationItems } from './header/navigationItems';
 
 export default function Header() {
   const { isLoggedIn, logout } = useAuth();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  // ログイン状態に応じて表示するナビゲーション項目を決定（共通化）
+  const navigationItems = isLoggedIn
+    ? [...publicNavigationItems, ...authenticatedNavigationItems]
+    : publicNavigationItems;
 
   const handleAuthClick = () => {
     if (isLoggedIn) {
@@ -34,6 +40,7 @@ export default function Header() {
       <AppBar position="sticky" sx={{ borderRadius: 0 }}>
         <Toolbar>
           <MobileNavigation
+            items={navigationItems}
             mobileOpen={mobileOpen}
             onToggle={handleDrawerToggle}
             onAuthClick={handleAuthClick}
@@ -41,7 +48,7 @@ export default function Header() {
 
           <HeaderLogo />
 
-          <DesktopNavigation />
+          <DesktopNavigation items={navigationItems} />
 
           <Box sx={{ flexGrow: 1 }} />
 
