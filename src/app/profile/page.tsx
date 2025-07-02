@@ -21,7 +21,7 @@ import { ja } from 'date-fns/locale';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
 function ProfileContent() {
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [username, setUsername] = useState('');
   const [error, setError] = useState('');
@@ -58,6 +58,42 @@ function ProfileContent() {
       },
     });
   };
+
+  // ローディング中の表示
+  if (isLoading) {
+    return (
+      <Container maxWidth="sm" sx={{ mt: 4, mb: 4 }}>
+        <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
+          <Box
+            sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 300 }}
+          >
+            <Typography>読み込み中...</Typography>
+          </Box>
+        </Paper>
+      </Container>
+    );
+  }
+
+  // ユーザー情報が取得できない場合の表示
+  if (!user) {
+    return (
+      <Container maxWidth="sm" sx={{ mt: 4, mb: 4 }}>
+        <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
+          <Box sx={{ textAlign: 'center' }}>
+            <Typography variant="h6" color="error" gutterBottom>
+              プロフィール情報を取得できませんでした
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              ページを再読み込みするか、再度ログインしてください。
+            </Typography>
+            <Button variant="contained" sx={{ mt: 2 }} onClick={() => window.location.reload()}>
+              ページを再読み込み
+            </Button>
+          </Box>
+        </Paper>
+      </Container>
+    );
+  }
 
   const currentUser = user;
 

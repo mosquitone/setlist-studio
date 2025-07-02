@@ -1,4 +1,6 @@
 // セキュアな認証クライアント（HttpOnly Cookie使用）
+import { apolloClient } from './apollo-client';
+import { GET_ME_QUERY } from '../server/graphql/apollo-operations';
 
 export interface User {
   id: string;
@@ -35,17 +37,50 @@ class SecureAuthClient {
   // 認証状態の確認
   async checkAuthStatus(): Promise<AuthState> {
     try {
+      // まず、Cookieが存在するか確認
       const response = await fetch('/api/auth', {
         credentials: 'include', // HttpOnly Cookieを含める
       });
 
       if (response.ok) {
         const data = await response.json();
-        this.updateState({
-          authenticated: data.authenticated,
-          user: data.user || null,
-          loading: false,
-        });
+        if (data.authenticated) {
+          // Cookieが有効な場合、GraphQLでユーザー情報を取得
+          try {
+            const { data: graphqlData } = await apolloClient.query({
+              query: GET_ME_QUERY,
+              fetchPolicy: 'network-only', // キャッシュを使わず常に最新データを取得
+            });
+
+            if (graphqlData?.me) {
+              this.updateState({
+                authenticated: true,
+                user: graphqlData.me,
+                loading: false,
+              });
+            } else {
+              this.updateState({
+                authenticated: false,
+                user: null,
+                loading: false,
+              });
+            }
+          } catch (graphqlError) {
+            console.error('GraphQL query failed:', graphqlError);
+            // GraphQLエラーの場合はCookieの情報を使用
+            this.updateState({
+              authenticated: data.authenticated,
+              user: data.user || null,
+              loading: false,
+            });
+          }
+        } else {
+          this.updateState({
+            authenticated: false,
+            user: null,
+            loading: false,
+          });
+        }
       } else {
         this.updateState({
           authenticated: false,
@@ -80,13 +115,36 @@ class SecureAuthClient {
       const data = await response.json();
 
       if (response.ok && data.success) {
-        this.updateState({
-          authenticated: true,
-          user: data.user,
-          loading: false,
-        });
+        // Cookieが設定された後、GraphQLでユーザー情報を取得
+        try {
+          const { data: graphqlData } = await apolloClient.query({
+            query: GET_ME_QUERY,
+            fetchPolicy: 'network-only',
+          });
 
-        return { success: true, user: data.user };
+          if (graphqlData?.me) {
+            this.updateState({
+              authenticated: true,
+              user: graphqlData.me,
+              loading: false,
+            });
+
+            return { success: true, user: graphqlData.me };
+          } else {
+            // GraphQLでユーザー情報が取得できない場合
+            return { success: false, error: 'Failed to fetch user data' };
+          }
+        } catch (graphqlError) {
+          console.error('GraphQL query failed after login:', graphqlError);
+          // GraphQLエラーの場合は、Cookieの情報を使用
+          this.updateState({
+            authenticated: true,
+            user: data.user,
+            loading: false,
+          });
+
+          return { success: true, user: data.user };
+        }
       } else {
         return { success: false, error: data.error || 'Login failed' };
       }
