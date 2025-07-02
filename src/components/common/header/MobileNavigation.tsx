@@ -11,7 +11,7 @@ import Button from '@mui/material/Button';
 import Skeleton from '@mui/material/Skeleton';
 import MenuIcon from '@mui/icons-material/Menu';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/components/providers/AuthProvider';
 
 interface NavigationItem {
@@ -25,7 +25,6 @@ interface MobileNavigationProps {
   isLoading: boolean;
   mobileOpen: boolean;
   onToggle: () => void;
-  onAuthClick: () => void;
 }
 
 export function MobileNavigation({
@@ -33,10 +32,18 @@ export function MobileNavigation({
   isLoading,
   mobileOpen,
   onToggle,
-  onAuthClick,
 }: MobileNavigationProps) {
-  const { isLoggedIn, user } = useAuth();
+  const { isLoggedIn, user, logout } = useAuth();
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleAuthClick = () => {
+    if (isLoggedIn) {
+      logout();
+    } else {
+      router.push('/login');
+    }
+  };
 
   const drawer = (
     <Box onClick={onToggle} sx={{ textAlign: 'center' }}>
@@ -101,7 +108,7 @@ export function MobileNavigation({
         <Button
           fullWidth
           variant="outlined"
-          onClick={onAuthClick}
+          onClick={handleAuthClick}
           disabled={isLoading}
           sx={{
             borderRadius: 10,
