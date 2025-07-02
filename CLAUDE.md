@@ -238,9 +238,11 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 │   │   ├── ImageGenerator.tsx # ワンクリックダウンロード付き簡素化画像生成
 │   │   ├── SetlistActions.tsx # アクションボタン（編集、ダウンロードなど）
 │   │   └── SetlistPreview.tsx # セットリストプレビュー表示
-│   ├── setlist-themes/     # テーマシステム
-│   │   ├── BlackTheme.tsx     # Black/darkテーマ
-│   │   ├── WhiteTheme.tsx     # White/lightテーマ
+│   ├── setlist-themes/     # テーマシステム（共通化アーキテクチャ）
+│   │   ├── BaseTheme.tsx      # 共通テーマベースコンポーネント
+│   │   ├── BlackTheme.tsx     # Black/darkテーマ（BaseTheme使用）
+│   │   ├── WhiteTheme.tsx     # White/lightテーマ（BaseTheme使用）
+│   │   ├── themeColors.ts     # テーマカラーパレット設定
 │   │   ├── SetlistRenderer.tsx # テーマレンダラー
 │   │   ├── constants.ts       # テーマ定数
 │   │   ├── index.ts          # テーマエクスポート
@@ -619,6 +621,14 @@ const isValid = timingSafeEqual(
 - ✅ Vercel Functions互換性
 
 ## 更新履歴と記録
+
+### テーマコンポーネント共通化リファクタリング (2025-07-02)
+- **BaseTheme.tsx実装**: BlackTheme/WhiteThemeの共通ロジックを統一ベースコンポーネントに集約
+- **themeColors.ts分離**: カラーパレット設定をコンポーネントから分離し、テーマごとのカラー定義を独立化
+- **コード重複削除**: 175行×2ファイル（350行）を8行×2ファイル（16行）に削減、300行以上のコード削減を達成
+- **保守性向上**: 新テーマ追加時はカラー設定追加のみで実装可能、テーマロジック変更は1箇所のみ修正
+- **型安全性強化**: ThemeColors型定義でカラー設定の型保証を追加
+- **既存機能維持**: 全テーマレンダリング機能とQRコード統合を完全に保持
 
 ### リポジトリ管理
 - **Claude.mdとReadme.mdを必要に応じて更新**: 継続的プロジェクトメンテナンスの一環としてドキュメントファイル更新タスクを追加
