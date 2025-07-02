@@ -1,11 +1,18 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { Box, Typography, Chip, Fade } from '@mui/material'
 import { MusicNote as MusicNoteIcon } from '@mui/icons-material'
 
 export function WelcomeSection() {
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   return (
-    <Fade in timeout={800}>
+    <Fade in={mounted} timeout={800}>
       <Box sx={{ textAlign: 'center', mb: 6 }}>
         <Box sx={{ mb: 3 }}>
           <MusicNoteIcon sx={{ fontSize: 80, color: 'primary.main', mb: 2 }} />

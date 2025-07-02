@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { Box, Typography, Card, Button, Grid, Avatar, Chip, Fade, Stack } from '@mui/material'
 import {
   PlaylistPlay as PlaylistPlayIcon,
@@ -21,9 +22,15 @@ interface SetlistDashboardProps {
 }
 
 export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashboardProps) {
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   if (setlistsLoading) {
     return (
-      <Fade in timeout={1000} style={{ transitionDelay: '400ms' }}>
+      <Fade in={mounted} timeout={1000} style={{ transitionDelay: '400ms' }}>
         <Box sx={{ mb: 8 }}>
           <Typography variant="h4" component="h2" gutterBottom sx={{ mb: 4 }}>
             あなたのセットリスト
@@ -40,7 +47,7 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
 
   if (!setlistsData?.setlists?.length) {
     return (
-      <Fade in timeout={1000} style={{ transitionDelay: '400ms' }}>
+      <Fade in={mounted} timeout={1000} style={{ transitionDelay: '400ms' }}>
         <Box sx={{ mb: 8 }}>
           <Typography variant="h4" component="h2" gutterBottom sx={{ mb: 4 }}>
             あなたのセットリスト
@@ -70,7 +77,7 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
   }
 
   return (
-    <Fade in timeout={1000} style={{ transitionDelay: '400ms' }}>
+    <Fade in={mounted} timeout={1000} style={{ transitionDelay: '400ms' }}>
       <Box sx={{ mb: 8 }}>
         <Typography variant="h4" component="h2" gutterBottom sx={{ mb: 4 }}>
           あなたのセットリスト
