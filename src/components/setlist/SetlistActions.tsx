@@ -11,14 +11,15 @@ import {
   Public as PublicIcon,
   Lock as LockIcon,
 } from '@mui/icons-material';
+import { Theme } from '@/types/common';
 
 interface SetlistActionsProps {
   onEdit: () => void;
   onDownload: () => void;
   onShare: () => void;
   onDuplicate: () => void;
-  selectedTheme: 'black' | 'white';
-  onThemeChange: (theme: 'black' | 'white') => void;
+  selectedTheme: Theme;
+  onThemeChange: (theme: Theme) => void;
   showDebugToggle?: boolean;
   showDebug?: boolean;
   onDebugToggle?: () => void;
@@ -120,7 +121,7 @@ export function SetlistActions({
           <FormControl size="small">
             <Select
               value={selectedTheme}
-              onChange={(e) => onThemeChange(e.target.value as 'black' | 'white')}
+              onChange={(e) => onThemeChange(e.target.value as Theme)}
               displayEmpty
               IconComponent={ExpandMoreIcon}
               sx={{ minWidth: 140 }}
