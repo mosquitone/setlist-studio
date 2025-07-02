@@ -1,5 +1,5 @@
 import React from 'react';
-import { SetlistData, SetlistThemeProps } from './types';
+import { SetlistData, SetlistThemeProps } from '@/types/components';
 import { BlackTheme } from './BlackTheme';
 import { WhiteTheme } from './WhiteTheme';
 

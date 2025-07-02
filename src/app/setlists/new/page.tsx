@@ -4,7 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { useMutation, useQuery } from '@apollo/client';
 import { CREATE_SETLIST, GET_SETLIST, GET_SETLISTS } from '@/lib/server/graphql/apollo-operations';
 import { useRouter, useSearchParams } from 'next/navigation';
-import SetlistForm, { SetlistFormValues } from '@/components/forms/SetlistForm';
+import SetlistForm from '@/components/forms/SetlistForm';
+import { SetlistFormValues } from '@/types/components';
 import { GetSetlistResponse, SetlistItem } from '@/types/graphql';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
