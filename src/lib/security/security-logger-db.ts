@@ -10,6 +10,7 @@ import {
   sanitizeObjectForLog,
   formatSecurityLog,
 } from './log-sanitizer';
+import { Timestamp } from '@/types/common';
 
 export enum SecurityEventType {
   // 認証関連
@@ -57,7 +58,7 @@ export interface SecurityEvent {
   id: string;
   type: SecurityEventType;
   severity: SecurityEventSeverity;
-  timestamp: Date;
+  timestamp: Timestamp;
   userId?: string;
   ipAddress?: string;
   userAgent?: string;

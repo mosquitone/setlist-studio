@@ -3,7 +3,7 @@
 import { PrismaClient } from '@prisma/client';
 import { NextRequest } from 'next/server';
 import { getSecureClientIP } from './security-utils';
-import { StringArray } from '@/types/common';
+import { StringArray, Timestamp } from '@/types/common';
 
 export enum ThreatType {
   BRUTE_FORCE_ATTACK = 'BRUTE_FORCE_ATTACK',
@@ -21,7 +21,7 @@ export enum ThreatSeverity {
 }
 
 export interface ThreatEvidence {
-  timestamp: Date;
+  timestamp: Timestamp;
   action: string;
   details: Record<string, unknown>;
   ipAddress?: string;
@@ -37,7 +37,7 @@ export interface ThreatAlert {
   id: string;
   type: ThreatType;
   severity: ThreatSeverity;
-  timestamp: Date;
+  timestamp: Timestamp;
   description: string;
   ipAddress?: string;
   userId?: string;
