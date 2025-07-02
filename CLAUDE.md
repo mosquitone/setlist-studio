@@ -179,7 +179,14 @@ For detailed deployment instructions, see [VERCEL_DEPLOYMENT_GUIDE.md](./VERCEL_
 │       └── new/           # Create new song
 ├── src/components/         # React components
 │   ├── common/             # Common UI components
-│   │   ├── Header.tsx      # Application header component
+│   │   ├── Header.tsx      # Main application header component (refactored)
+│   │   ├── header/         # Header subcomponents (modular architecture)
+│   │   │   ├── HeaderLogo.tsx        # Logo component
+│   │   │   ├── DesktopNavigation.tsx # Desktop navigation with icons
+│   │   │   ├── MobileNavigation.tsx  # Mobile drawer navigation
+│   │   │   ├── UserMenu.tsx          # User menu with avatar and dropdown
+│   │   │   ├── AuthButton.tsx        # Login/logout button
+│   │   │   └── navigationItems.ts    # Navigation configuration
 │   │   └── Footer.tsx      # Application footer component
 │   ├── forms/              # Form-related components
 │   │   ├── SetlistForm.tsx # Main setlist form with validation
