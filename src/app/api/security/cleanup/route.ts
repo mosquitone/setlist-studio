@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
     console.log('Security cleanup completed:', result);
 
     return NextResponse.json(result);
-  } catch {
+  } catch (error) {
     console.error('Security cleanup error:', error);
 
     return NextResponse.json(
