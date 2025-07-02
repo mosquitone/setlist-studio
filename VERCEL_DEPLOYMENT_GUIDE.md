@@ -6,7 +6,7 @@
 
 ### 🚀 ハイブリッドアーキテクチャによる最適化
 - **静的ページ**: ログイン・登録ページが10倍高速化
-- **ISRページ**: ホームページが5倍高速化（1時間キャッシュ）
+- **SSRページ**: ホームページが認証状態に応じた動的レンダリング
 - **Vercel Functions**: GraphQL APIが自動スケール
 - **CDN最適化**: 世界規模での高速コンテンツ配信
 
@@ -49,7 +49,7 @@
 | ページ | レンダリング戦略 | パフォーマンス効果 |
 |--------|------------------|-------------------|
 | `/login`, `/register` | **静的生成** | 10倍高速化（CDN配信） |
-| `/` (ホーム) | **ISR** | 5倍高速化（1時間キャッシュ） |
+| `/` (ホーム) | **SSR** | 認証状態対応（動的） |
 | `/setlists/[id]` | **SSR** | セキュリティ重視 |
 | `/songs`, `/profile` | **SSR** | 認証必須 |
 
@@ -167,7 +167,7 @@
 1. 「Settings」→「Functions」→「Cron Jobs」を選択
 2. 「Add Cron Job」をクリック
 3. 以下の設定を入力:
-   - **Function**: `/api/cron/cleanup`
+   - **Function**: `/api/security/cleanup`
    - **Schedule**: `0 2 * * *` （毎日午前2時に実行）
    - **Environment**: Production
 
@@ -191,6 +191,10 @@
         {
           "key": "Referrer-Policy",
           "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=31536000; includeSubDomains"
         }
       ]
     }
