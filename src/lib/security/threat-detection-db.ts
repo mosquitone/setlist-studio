@@ -3,7 +3,6 @@
 import { PrismaClient } from '@prisma/client'
 import { NextRequest } from 'next/server'
 import { getSecureClientIP } from './security-utils'
-import { logSecurityEventDB, SecurityEventType, SecurityEventSeverity } from './security-logger-db'
 
 export enum ThreatType {
   BRUTE_FORCE_ATTACK = 'BRUTE_FORCE_ATTACK',

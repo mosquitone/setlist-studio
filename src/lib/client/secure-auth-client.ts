@@ -4,6 +4,7 @@ export interface User {
   id: string
   email: string
   username: string
+  createdAt?: string
 }
 
 export interface AuthResponse {
@@ -113,7 +114,7 @@ class SecureAuthClient {
       loading: false,
     })
 
-      // 認証状態をクリア
+    // 認証状態をクリア
   }
 
   // 状態の更新とリスナーへの通知
@@ -141,9 +142,7 @@ class SecureAuthClient {
   getState(): AuthState {
     return { ...this.currentState }
   }
-
 }
 
 // シングルトンインスタンス
 export const secureAuthClient = new SecureAuthClient()
-

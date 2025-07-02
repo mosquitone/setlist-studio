@@ -69,76 +69,76 @@ export default function NewSongPage() {
         >
           {({ values, errors, touched, handleChange, handleBlur }) => (
             <Form>
-            <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                <TextField
-                  fullWidth
-                  name="title"
-                  label="楽曲名"
-                  value={values.title}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.title && Boolean(errors.title)}
-                  helperText={touched.title && errors.title}
-                  required
-                />
-                <TextField
-                  fullWidth
-                  name="artist"
-                  label="アーティスト"
-                  value={values.artist}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.artist && Boolean(errors.artist)}
-                  helperText={touched.artist && errors.artist}
-                  required
-                />
-                <TextField
-                  fullWidth
-                  name="key"
-                  label="キー"
-                  value={values.key}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
-                <TextField
-                  fullWidth
-                  name="tempo"
-                  label="テンポ (BPM)"
-                  type="number"
-                  value={values.tempo}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.tempo && Boolean(errors.tempo)}
-                  helperText={touched.tempo && errors.tempo}
-                />
-                <TextField
-                  fullWidth
-                  name="notes"
-                  label="メモ"
-                  multiline
-                  rows={3}
-                  value={values.notes}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
+              <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                  <TextField
+                    fullWidth
+                    name="title"
+                    label="楽曲名"
+                    value={values.title}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.title && Boolean(errors.title)}
+                    helperText={touched.title && errors.title}
+                    required
+                  />
+                  <TextField
+                    fullWidth
+                    name="artist"
+                    label="アーティスト"
+                    value={values.artist}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.artist && Boolean(errors.artist)}
+                    helperText={touched.artist && errors.artist}
+                    required
+                  />
+                  <TextField
+                    fullWidth
+                    name="key"
+                    label="キー"
+                    value={values.key}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  />
+                  <TextField
+                    fullWidth
+                    name="tempo"
+                    label="テンポ (BPM)"
+                    type="number"
+                    value={values.tempo}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.tempo && Boolean(errors.tempo)}
+                    helperText={touched.tempo && errors.tempo}
+                  />
+                  <TextField
+                    fullWidth
+                    name="notes"
+                    label="メモ"
+                    multiline
+                    rows={3}
+                    value={values.notes}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  />
+                </Box>
+              </Paper>
+
+              {error && (
+                <Alert severity="error" sx={{ mb: 2 }}>
+                  楽曲の作成に失敗しました: {error.message}
+                </Alert>
+              )}
+
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+                <Button disabled={loading} onClick={() => router.back()}>
+                  キャンセル
+                </Button>
+                <Button type="submit" variant="contained" disabled={loading}>
+                  {loading ? '作成中...' : '作成'}
+                </Button>
               </Box>
-            </Paper>
-
-            {error && (
-              <Alert severity="error" sx={{ mb: 2 }}>
-                楽曲の作成に失敗しました: {error.message}
-              </Alert>
-            )}
-
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
-              <Button disabled={loading} onClick={() => router.back()}>
-                キャンセル
-              </Button>
-              <Button type="submit" variant="contained" disabled={loading}>
-                {loading ? '作成中...' : '作成'}
-              </Button>
-            </Box>
             </Form>
           )}
         </Formik>

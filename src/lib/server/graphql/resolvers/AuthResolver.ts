@@ -6,9 +6,6 @@ import {
   AuthPayload,
   RegisterInput,
   LoginInput,
-  PasswordResetRequestInput,
-  PasswordResetInput,
-  PasswordResetResponse,
 } from '../types/Auth'
 import {
   logAuthSuccessDB,
@@ -121,7 +118,7 @@ export class AuthResolver {
 
       // 脅威検知分析（データベースベース）
       const threatDetection = new DatabaseThreatDetection(ctx.prisma)
-      const threats = await threatDetection.analyzeLoginAttempt(
+      await threatDetection.analyzeLoginAttempt(
         input.email,
         false,
         getClientIP(ctx),
@@ -144,7 +141,7 @@ export class AuthResolver {
 
       // 脅威検知分析（データベースベース）
       const threatDetection = new DatabaseThreatDetection(ctx.prisma)
-      const threats = await threatDetection.analyzeLoginAttempt(
+      await threatDetection.analyzeLoginAttempt(
         input.email,
         false,
         getClientIP(ctx),
@@ -167,7 +164,7 @@ export class AuthResolver {
 
     // 成功時の脅威検知分析（異常なパターンがないかチェック）
     const threatDetection = new DatabaseThreatDetection(ctx.prisma)
-    const threats = await threatDetection.analyzeLoginAttempt(
+    await threatDetection.analyzeLoginAttempt(
       input.email,
       true,
       getClientIP(ctx),

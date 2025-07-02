@@ -40,7 +40,7 @@ export default function LoginPage() {
       if (result.success) {
         router.push('/')
       } else {
-        setError(result.error || 'Login failed')
+        setError('Login failed')
       }
     },
     onError: error => {

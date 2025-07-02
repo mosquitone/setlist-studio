@@ -26,10 +26,7 @@ export class UserResolver {
 
   @Mutation(() => User)
   @UseMiddleware(AuthMiddleware)
-  async updateUser(
-    @Arg('username') username: string,
-    @Ctx() ctx: Context
-  ): Promise<User> {
+  async updateUser(@Arg('username') username: string, @Ctx() ctx: Context): Promise<User> {
     if (!ctx.userId) {
       throw new Error('認証が必要です')
     }
