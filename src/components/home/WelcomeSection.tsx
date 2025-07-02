@@ -1,54 +1,42 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import { Box, Typography, Chip } from '@mui/material'
 import { MusicNote as MusicNoteIcon } from '@mui/icons-material'
+import { FadeInBox } from '@/components/common/FadeInBox'
 
 export function WelcomeSection() {
-  const [visible, setVisible] = useState(false)
-
-  useEffect(() => {
-    setVisible(true)
-  }, [])
-
   return (
-    <Box sx={{ 
-      textAlign: 'center', 
-      mb: 6,
-      opacity: visible ? 1 : 0,
-      transform: visible ? 'translateY(0)' : 'translateY(20px)',
-      transition: 'opacity 0.8s ease-out, transform 0.8s ease-out'
-    }}>
-        <Box sx={{ mb: 3 }}>
-          <MusicNoteIcon sx={{ fontSize: 80, color: 'primary.main', mb: 2 }} />
-        </Box>
-        <Typography
-          variant="h1"
-          component="h1"
-          gutterBottom
-          sx={{
-            background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
-            backgroundClip: 'text',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            mb: 2,
-          }}
-        >
-          セットリストジェネレーター v2
-        </Typography>
-        <Typography
-          variant="h6"
-          component="p"
-          color="text.secondary"
-          sx={{ mb: 4, maxWidth: 600, mx: 'auto' }}
-        >
-          あなたの楽曲を管理して、素敵なセットリストを作成しましょう
-        </Typography>
-        <Chip
-          label="🎵 エモーショナルなセットリスト作成ツール"
-          variant="outlined"
-          sx={{ fontSize: '1rem', py: 2 }}
-        />
-    </Box>
+    <FadeInBox delay={0} sx={{ textAlign: 'center', mb: 6 }}>
+      <Box sx={{ mb: 3 }}>
+        <MusicNoteIcon sx={{ fontSize: 80, color: 'primary.main', mb: 2 }} />
+      </Box>
+      <Typography
+        variant="h1"
+        component="h1"
+        gutterBottom
+        sx={{
+          background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+          backgroundClip: 'text',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          mb: 2,
+        }}
+      >
+        セットリストジェネレーター v2
+      </Typography>
+      <Typography
+        variant="h6"
+        component="p"
+        color="text.secondary"
+        sx={{ mb: 4, maxWidth: 600, mx: 'auto' }}
+      >
+        あなたの楽曲を管理して、素敵なセットリストを作成しましょう
+      </Typography>
+      <Chip
+        label="🎵 エモーショナルなセットリスト作成ツール"
+        variant="outlined"
+        sx={{ fontSize: '1rem', py: 2 }}
+      />
+    </FadeInBox>
   )
 }
