@@ -18,7 +18,6 @@ import Divider from '@mui/material/Divider'
 import Avatar from '@mui/material/Avatar'
 import Typography from '@mui/material/Typography'
 import MenuIcon from '@mui/icons-material/Menu'
-import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import Link from 'next/link'
 import { useAuth } from '@/components/providers/AuthProvider'
 
@@ -64,7 +63,7 @@ export default function Header() {
       {isLoggedIn && (
         <>
           <List>
-            {navigationItems.map((item) => (
+            {navigationItems.map(item => (
               <ListItem key={item.path} disablePadding>
                 <ListItemButton
                   component={Link}
@@ -128,7 +127,7 @@ export default function Header() {
               <MenuIcon />
             </IconButton>
           )}
-          
+
           <Link href="/" passHref>
             <Box
               component="img"
@@ -137,33 +136,34 @@ export default function Header() {
               sx={{ height: 40, cursor: 'pointer' }}
             />
           </Link>
-          
+
           <Box sx={{ flexGrow: 1, display: { xs: 'none', sm: 'flex' }, ml: 4 }}>
-            {isLoggedIn && navigationItems.map((item) => (
-              <Button
-                key={item.path}
-                component={Link}
-                href={item.path}
-                sx={{
-                  color: 'white',
-                  textTransform: 'none',
-                  fontSize: '16px',
-                  fontWeight: pathname === item.path ? 700 : 500,
-                  mx: 1,
-                  borderBottom: pathname === item.path ? '2px solid white' : 'none',
-                  borderRadius: 0,
-                  '&:hover': {
-                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                  },
-                }}
-              >
-                {item.label}
-              </Button>
-            ))}
+            {isLoggedIn &&
+              navigationItems.map(item => (
+                <Button
+                  key={item.path}
+                  component={Link}
+                  href={item.path}
+                  sx={{
+                    color: 'white',
+                    textTransform: 'none',
+                    fontSize: '16px',
+                    fontWeight: pathname === item.path ? 700 : 500,
+                    mx: 1,
+                    borderBottom: pathname === item.path ? '2px solid white' : 'none',
+                    borderRadius: 0,
+                    '&:hover': {
+                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    },
+                  }}
+                >
+                  {item.label}
+                </Button>
+              ))}
           </Box>
-          
+
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', sm: 'none' } }} />
-          
+
           {isLoggedIn && user ? (
             <>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -203,17 +203,21 @@ export default function Header() {
                   horizontal: 'right',
                 }}
               >
-                <MenuItem onClick={() => {
-                  handleUserMenuClose()
-                  router.push('/profile')
-                }}>
+                <MenuItem
+                  onClick={() => {
+                    handleUserMenuClose()
+                    router.push('/profile')
+                  }}
+                >
                   プロフィール
                 </MenuItem>
                 <Divider />
-                <MenuItem onClick={() => {
-                  handleUserMenuClose()
-                  handleAuthClick()
-                }}>
+                <MenuItem
+                  onClick={() => {
+                    handleUserMenuClose()
+                    handleAuthClick()
+                  }}
+                >
                   ログアウト
                 </MenuItem>
               </Menu>
@@ -249,7 +253,7 @@ export default function Header() {
           )}
         </Toolbar>
       </AppBar>
-      
+
       <Drawer
         variant="temporary"
         open={mobileOpen}

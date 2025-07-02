@@ -10,15 +10,13 @@ interface ProtectedRouteProps {
   redirectTo?: string
   loadingMessage?: string
   requireAuth?: boolean // 認証が絶対必要かどうか
-  onAuthError?: (error: any) => void // 認証エラー時のカスタムハンドリング
 }
 
-export function ProtectedRoute({ 
-  children, 
+export function ProtectedRoute({
+  children,
   redirectTo = '/login',
   loadingMessage = 'ログイン状態を確認中...',
   requireAuth = true,
-  onAuthError
 }: ProtectedRouteProps) {
   const { isLoggedIn, isLoading } = useAuth()
   const router = useRouter()
@@ -61,11 +59,11 @@ interface SetlistProtectedRouteProps {
   error?: any
 }
 
-export function SetlistProtectedRoute({ 
-  children, 
-  setlistData, 
+export function SetlistProtectedRoute({
+  children,
+  setlistData,
   isLoading = false,
-  error
+  error,
 }: SetlistProtectedRouteProps) {
   const { isLoggedIn, isLoading: authLoading } = useAuth()
   const router = useRouter()
@@ -75,12 +73,12 @@ export function SetlistProtectedRoute({
     // エラーチェック関数をuseEffect内に移動
     const getAuthErrorMessage = (error: any) => {
       if (!error) return null
-      
+
       // 直接的なエラーメッセージをチェック
       if (error.message === 'Authentication required to access private setlist') {
         return error.message
       }
-      
+
       // GraphQLエラーの配列をチェック
       if (error.graphQLErrors && error.graphQLErrors.length > 0) {
         for (const gqlError of error.graphQLErrors) {
@@ -89,7 +87,7 @@ export function SetlistProtectedRoute({
           }
         }
       }
-      
+
       return null
     }
 
@@ -119,8 +117,8 @@ export function SetlistProtectedRoute({
 
   // 認証エラーの場合
   if (error && error.graphQLErrors && error.graphQLErrors.length > 0) {
-    const authError = error.graphQLErrors.find((e: any) => 
-      e.message === 'Authentication required to access private setlist'
+    const authError = error.graphQLErrors.find(
+      (e: any) => e.message === 'Authentication required to access private setlist',
     )
     if (authError) {
       return (

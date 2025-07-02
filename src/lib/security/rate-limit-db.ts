@@ -185,7 +185,7 @@ export function createDatabaseRateLimit(prisma: PrismaClient, options: RateLimit
 export function createAuthRateLimit(prisma: PrismaClient) {
   // 開発環境では制限を緩和
   const isDevelopment = process.env.NODE_ENV === 'development'
-  
+
   return createDatabaseRateLimit(prisma, {
     windowMs: isDevelopment ? 5 * 60 * 1000 : 15 * 60 * 1000, // 開発: 5分, 本番: 15分
     maxRequests: isDevelopment ? 20 : 5, // 開発: 20回, 本番: 5回

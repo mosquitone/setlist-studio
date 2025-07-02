@@ -1,7 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
 import Container from '@mui/material/Container'
 import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
@@ -10,52 +9,41 @@ import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import Avatar from '@mui/material/Avatar'
 import Divider from '@mui/material/Divider'
-import CircularProgress from '@mui/material/CircularProgress'
 import Alert from '@mui/material/Alert'
 import PersonIcon from '@mui/icons-material/Person'
 import EmailIcon from '@mui/icons-material/Email'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import { useAuth } from '@/components/providers/AuthProvider'
-import { useMutation, useQuery } from '@apollo/client'
-import { GET_ME_QUERY, UPDATE_USER_MUTATION } from '@/lib/server/graphql/apollo-operations'
+import { useMutation } from '@apollo/client'
+import { UPDATE_USER_MUTATION } from '@/lib/server/graphql/apollo-operations'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 
-export default function ProfilePage() {
-  const { isLoggedIn, isLoading: authLoading, user } = useAuth()
-  const router = useRouter()
+function ProfileContent() {
+  const { user } = useAuth()
   const [isEditing, setIsEditing] = useState(false)
   const [username, setUsername] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
-  const { data, loading: queryLoading, refetch } = useQuery(GET_ME_QUERY, {
-    skip: !isLoggedIn,
-  })
-
   const [updateUser, { loading: updateLoading }] = useMutation(UPDATE_USER_MUTATION, {
     onCompleted: () => {
       setSuccess('プロフィールを更新しました')
       setIsEditing(false)
-      refetch()
-      setTimeout(() => setSuccess(''), 3000)
+      // ページをリロードして最新のユーザー情報を反映
+      window.location.reload()
     },
-    onError: (error) => {
+    onError: error => {
       setError(error.message)
     },
   })
 
   useEffect(() => {
-    if (!authLoading && !isLoggedIn) {
-      router.push('/login')
+    if (user) {
+      setUsername(user.username || '')
     }
-  }, [isLoggedIn, authLoading, router])
-
-  useEffect(() => {
-    if (data?.me) {
-      setUsername(data.me.username || '')
-    }
-  }, [data])
+  }, [user])
 
   const handleUpdateProfile = async () => {
     setError('')
@@ -64,26 +52,14 @@ export default function ProfilePage() {
       return
     }
 
-    try {
-      await updateUser({
-        variables: {
-          username: username.trim(),
-        },
-      })
-    } catch (err) {
-      // Error handled in onError
-    }
+    await updateUser({
+      variables: {
+        username: username.trim(),
+      },
+    })
   }
 
-  if (authLoading || queryLoading) {
-    return (
-      <Container maxWidth="sm" sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
-        <CircularProgress />
-      </Container>
-    )
-  }
-
-  const currentUser = data?.me || user
+  const currentUser = user
 
   return (
     <Container maxWidth="sm" sx={{ mt: 4, mb: 4 }}>
@@ -132,18 +108,15 @@ export default function ProfilePage() {
                 fullWidth
                 label="ユーザー名"
                 value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                onChange={e => setUsername(e.target.value)}
                 size="small"
-                autoFocus
               />
             ) : (
               <Box>
                 <Typography variant="body2" color="text.secondary">
                   ユーザー名
                 </Typography>
-                <Typography variant="body1">
-                  {currentUser?.username || '未設定'}
-                </Typography>
+                <Typography variant="body1">{currentUser?.username || '未設定'}</Typography>
               </Box>
             )}
           </Box>
@@ -154,9 +127,7 @@ export default function ProfilePage() {
               <Typography variant="body2" color="text.secondary">
                 メールアドレス
               </Typography>
-              <Typography variant="body1">
-                {currentUser?.email}
-              </Typography>
+              <Typography variant="body1">{currentUser?.email}</Typography>
             </Box>
           </Box>
 
@@ -184,18 +155,14 @@ export default function ProfilePage() {
                 variant="outlined"
                 onClick={() => {
                   setIsEditing(false)
-                  setUsername(data?.me?.username || '')
+                  setUsername(user?.username || '')
                   setError('')
                 }}
                 disabled={updateLoading}
               >
                 キャンセル
               </Button>
-              <Button
-                variant="contained"
-                onClick={handleUpdateProfile}
-                disabled={updateLoading}
-              >
+              <Button variant="contained" onClick={handleUpdateProfile} disabled={updateLoading}>
                 {updateLoading ? '更新中...' : '保存'}
               </Button>
             </>
@@ -217,5 +184,13 @@ export default function ProfilePage() {
         </Box>
       </Paper>
     </Container>
+  )
+}
+
+export default function ProfilePage() {
+  return (
+    <ProtectedRoute>
+      <ProfileContent />
+    </ProtectedRoute>
   )
 }

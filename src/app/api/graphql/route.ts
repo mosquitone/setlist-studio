@@ -62,7 +62,7 @@ async function getServerInstance() {
 function createSecureContext(req: NextRequest) {
   // Cookiesオブジェクトを作成（認証ミドルウェア用）
   const cookies: { [key: string]: string } = {}
-  req.cookies.getAll().forEach((cookie) => {
+  req.cookies.getAll().forEach(cookie => {
     cookies[cookie.name] = cookie.value
   })
 

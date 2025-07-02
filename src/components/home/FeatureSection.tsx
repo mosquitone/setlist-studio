@@ -24,7 +24,7 @@ export function FeatureSection() {
               '&:hover': { transform: 'translateY(-4px)' },
             }}
           >
-            <CardActionArea component={Link} href={isLoggedIn ? "/songs" : "/login"}>
+            <CardActionArea component={Link} href={isLoggedIn ? '/songs' : '/login'}>
               <CardContent sx={{ p: 4 }}>
                 <LibraryMusicIcon sx={{ fontSize: 48, color: 'primary.main', mb: 2 }} />
                 <Typography variant="h5" component="h3" gutterBottom>
@@ -43,7 +43,7 @@ export function FeatureSection() {
               '&:hover': { transform: 'translateY(-4px)' },
             }}
           >
-            <CardActionArea component={Link} href={isLoggedIn ? "/setlists/new" : "/login"}>
+            <CardActionArea component={Link} href={isLoggedIn ? '/setlists/new' : '/login'}>
               <CardContent sx={{ p: 4 }}>
                 <PlaylistPlayIcon sx={{ fontSize: 48, color: 'secondary.main', mb: 2 }} />
                 <Typography variant="h5" component="h3" gutterBottom>

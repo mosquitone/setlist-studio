@@ -25,6 +25,10 @@ import {
 interface Context {
   prisma: PrismaClient
   userId?: string
+  req?: {
+    cookies: { [key: string]: string }
+    headers: { [key: string]: string }
+  }
 }
 
 @InputType()
@@ -148,7 +152,7 @@ export class SetlistResolver {
       }
       const jwt = require('jsonwebtoken')
       const payload = jwt.verify(token, jwtSecret) as { userId: string }
-      
+
       // セキュリティチェック: 所有者のみアクセス可能
       if (setlist.userId !== payload.userId) {
         // 不正アクセス試行をログに記録（データベースベース）

@@ -42,7 +42,6 @@ export default function SetlistDetailPage() {
     skip: !setlistId,
   })
 
-
   const [toggleVisibility] = useMutation(TOGGLE_SETLIST_VISIBILITY)
 
   const { handleEdit, handleDelete, handleShare, handleDuplicate, deleteLoading } =
@@ -95,99 +94,99 @@ export default function SetlistDetailPage() {
   }, [data?.setlist, themeInitialized])
 
   // setlistDataを安全に作成
-  const setlistData: SetlistData | null = data?.setlist ? {
-    id: data.setlist.id,
-    title: data.setlist.title,
-    bandName: data.setlist.bandName,
-    eventName: data.setlist.eventName,
-    eventDate: data.setlist.eventDate,
-    openTime: data.setlist.openTime,
-    startTime: data.setlist.startTime,
-    theme: data.setlist.theme,
-    items: [...data.setlist.items].sort((a: any, b: any) => a.order - b.order),
-  } : null
+  const setlistData: SetlistData | null = data?.setlist
+    ? {
+        id: data.setlist.id,
+        title: data.setlist.title,
+        bandName: data.setlist.bandName,
+        eventName: data.setlist.eventName,
+        eventDate: data.setlist.eventDate,
+        openTime: data.setlist.openTime,
+        startTime: data.setlist.startTime,
+        theme: data.setlist.theme,
+        items: [...data.setlist.items].sort((a: any, b: any) => a.order - b.order),
+      }
+    : null
 
   const handleThemeChange = (theme: 'black' | 'white') => {
     setSelectedTheme(theme)
   }
 
   return (
-    <SetlistProtectedRoute 
-      setlistData={data?.setlist} 
+    <SetlistProtectedRoute
+      setlistData={data?.setlist}
       isLoading={loading || authLoading}
       error={error}
     >
       <Container maxWidth="lg" sx={{ py: 4 }}>
         {/* データがない場合はSetlistProtectedRouteがハンドリング */}
-        {!setlistData ? null : (
-          /* テーマ初期化中の場合はローディングを表示 */
-          selectedTheme === null ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-              <CircularProgress />
-            </Box>
-          ) : (
-            <>
-              {/* Success Banner */}
-              {showSuccess && (
-                <Alert severity="success" sx={{ mb: 3 }}>
-                  Setlist Generated !
-                </Alert>
-              )}
-
-        <SetlistActions
-          onEdit={handleEdit}
-          onDownload={onDownload}
-          onShare={handleShare}
-          onDuplicate={handleDuplicate}
-          selectedTheme={selectedTheme}
-          onThemeChange={handleThemeChange}
-          showDebugToggle={isDev}
-          showDebug={showDebug}
-          onDebugToggle={handleDebugToggle}
-          isPublic={data?.setlist?.isPublic}
-          onToggleVisibility={handleToggleVisibility}
-          isOwner={isOwner}
-        />
-
-        {setlistData && (
+        {!setlistData ? null /* テーマ初期化中の場合はローディングを表示 */ : selectedTheme ===
+          null ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+            <CircularProgress />
+          </Box>
+        ) : (
           <>
-            <SetlistPreview
-              data={{ ...setlistData, theme: selectedTheme }}
+            {/* Success Banner */}
+            {showSuccess && (
+              <Alert severity="success" sx={{ mb: 3 }}>
+                Setlist Generated !
+              </Alert>
+            )}
+
+            <SetlistActions
+              onEdit={handleEdit}
+              onDownload={onDownload}
+              onShare={handleShare}
+              onDuplicate={handleDuplicate}
               selectedTheme={selectedTheme}
+              onThemeChange={handleThemeChange}
+              showDebugToggle={isDev}
               showDebug={showDebug}
-              isGeneratingPreview={isGeneratingPreview}
-              previewImage={previewImage}
-              qrCodeURL={`${typeof window !== 'undefined' ? window.location.origin : ''}/setlists/${setlistId}`}
+              onDebugToggle={handleDebugToggle}
+              isPublic={data?.setlist?.isPublic}
+              onToggleVisibility={handleToggleVisibility}
+              isOwner={isOwner}
             />
 
-            <Box sx={{ display: 'none' }}>
-              <ImageGenerator
-                data={{ ...setlistData, theme: selectedTheme }}
-                selectedTheme={selectedTheme}
-                onDownloadReady={handleDownloadReady}
-                onPreviewReady={handlePreviewReady}
-                onPreviewGenerationStart={handlePreviewGenerationStart}
-              />
-            </Box>
-          </>
-        )}
+            {setlistData && (
+              <>
+                <SetlistPreview
+                  data={{ ...setlistData, theme: selectedTheme }}
+                  selectedTheme={selectedTheme}
+                  showDebug={showDebug}
+                  isGeneratingPreview={isGeneratingPreview}
+                  previewImage={previewImage}
+                  qrCodeURL={`${typeof window !== 'undefined' ? window.location.origin : ''}/setlists/${setlistId}`}
+                />
 
-        <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
-          <DialogTitle>セットリストを削除</DialogTitle>
-          <DialogContent>
-            <Typography>
-              「{data?.setlist?.title}」を削除してもよろしいですか？ この操作は取り消せません。
-            </Typography>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setDeleteDialogOpen(false)}>キャンセル</Button>
-            <Button onClick={handleDelete} color="error" disabled={deleteLoading}>
-              {deleteLoading ? '削除中...' : '削除'}
-            </Button>
-          </DialogActions>
-        </Dialog>
-            </>
-          )
+                <Box sx={{ display: 'none' }}>
+                  <ImageGenerator
+                    data={{ ...setlistData, theme: selectedTheme }}
+                    selectedTheme={selectedTheme}
+                    onDownloadReady={handleDownloadReady}
+                    onPreviewReady={handlePreviewReady}
+                    onPreviewGenerationStart={handlePreviewGenerationStart}
+                  />
+                </Box>
+              </>
+            )}
+
+            <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
+              <DialogTitle>セットリストを削除</DialogTitle>
+              <DialogContent>
+                <Typography>
+                  「{data?.setlist?.title}」を削除してもよろしいですか？ この操作は取り消せません。
+                </Typography>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => setDeleteDialogOpen(false)}>キャンセル</Button>
+                <Button onClick={handleDelete} color="error" disabled={deleteLoading}>
+                  {deleteLoading ? '削除中...' : '削除'}
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </>
         )}
       </Container>
     </SetlistProtectedRoute>
