@@ -62,7 +62,7 @@ export interface SecurityEvent {
   ipAddress?: string;
   userAgent?: string;
   resource?: string;
-  details?: Record<string, any>;
+  details?: Record<string, unknown>;
 }
 
 // Vercel互換性：データベースベースのセキュリティログシステム
@@ -93,7 +93,7 @@ export class DatabaseSecurityLogger {
           ipAddress: sanitizedEvent.ipAddress,
           userAgent: sanitizedEvent.userAgent,
           resource: sanitizedEvent.resource,
-          details: sanitizedEvent.details || {},
+          details: (sanitizedEvent.details || {}) as any,
         },
       });
 
@@ -210,7 +210,7 @@ export class DatabaseSecurityLogger {
           ipAddress: event.ipAddress || undefined,
           userAgent: event.userAgent || undefined,
           resource: event.resource || undefined,
-          details: (event.details as Record<string, any>) || undefined,
+          details: (event.details as Record<string, unknown>) || undefined,
         })),
       };
     } catch (error) {
@@ -246,7 +246,7 @@ export class DatabaseSecurityLogger {
         ipAddress: event.ipAddress || undefined,
         userAgent: event.userAgent || undefined,
         resource: event.resource || undefined,
-        details: (event.details as Record<string, any>) || undefined,
+        details: (event.details as Record<string, unknown>) || undefined,
       }));
     } catch (error) {
       console.error('Failed to get events by time range:', error);

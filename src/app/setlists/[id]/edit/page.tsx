@@ -53,8 +53,8 @@ export default function EditSetlistPage() {
     startTime: setlist.startTime || '',
     theme: setlist.theme || 'black',
     items: [...setlist.items]
-      .sort((a: any, b: any) => a.order - b.order)
-      .map((item: any) => ({
+      .sort((a, b) => a.order - b.order)
+      .map((item) => ({
         id: item.id,
         title: item.title || '',
         note: item.note || '',

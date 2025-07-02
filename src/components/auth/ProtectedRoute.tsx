@@ -56,7 +56,7 @@ interface SetlistProtectedRouteProps {
   children: React.ReactNode;
   setlistData?: { isPublic?: boolean } | null;
   isLoading?: boolean;
-  error?: any;
+  error?: Error | string;
 }
 
 export function SetlistProtectedRoute({
@@ -71,17 +71,24 @@ export function SetlistProtectedRoute({
   // 全てのuseEffectを最初に配置
   useEffect(() => {
     // エラーチェック関数をuseEffect内に移動
-    const getAuthErrorMessage = (error: any) => {
+    const getAuthErrorMessage = (error: Error | string | undefined) => {
       if (!error) return null;
 
-      // 直接的なエラーメッセージをチェック
-      if (error.message === 'Authentication required to access private setlist') {
-        return error.message;
+      // 文字列エラーの場合
+      if (typeof error === 'string') {
+        return error.includes('Authentication required') ? error : null;
       }
 
-      // GraphQLエラーの配列をチェック
-      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
-        for (const gqlError of error.graphQLErrors) {
+      // Error オブジェクトの場合
+      if (typeof error === 'object' && error.message) {
+        if (error.message === 'Authentication required to access private setlist') {
+          return error.message;
+        }
+      }
+
+      // GraphQLエラーの配列をチェック（Apollo Error の場合）
+      if (typeof error === 'object' && 'graphQLErrors' in error && Array.isArray((error as any).graphQLErrors)) {
+        for (const gqlError of (error as any).graphQLErrors) {
           if (gqlError.message === 'Authentication required to access private setlist') {
             return gqlError.message;
           }
@@ -116,8 +123,8 @@ export function SetlistProtectedRoute({
   }
 
   // 認証エラーの場合
-  if (error && error.graphQLErrors && error.graphQLErrors.length > 0) {
-    const authError = error.graphQLErrors.find(
+  if (error && typeof error === 'object' && 'graphQLErrors' in error && Array.isArray((error as any).graphQLErrors)) {
+    const authError = (error as any).graphQLErrors.find(
       (e: any) => e.message === 'Authentication required to access private setlist',
     );
     if (authError) {
