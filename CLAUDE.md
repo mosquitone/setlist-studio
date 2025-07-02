@@ -173,17 +173,41 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 ```
 /                           # Next.jsアプリケーションルート
 ├── src/app/                # Next.js App Router
-│   ├── api/graphql/        # GraphQL APIルート（Vercel Function）
-│   │   └── route.ts        # Apollo Server統合
+│   ├── api/               # APIルート（Vercel Functions）
+│   │   ├── auth/          # 認証API
+│   │   │   └── route.ts   # JWTトークン認証エンドポイント
+│   │   ├── csrf/          # CSRF保護API
+│   │   │   └── route.ts   # CSRFトークン生成
+│   │   ├── csrf-token/    # CSRF代替エンドポイント
+│   │   │   └── route.ts   # CSRFトークン配布
+│   │   ├── graphql/       # GraphQL APIルート（Vercel Function）
+│   │   │   └── route.ts   # Apollo Server統合
+│   │   └── security/      # セキュリティAPI
+│   │       └── cleanup/   # セキュリティデータクリーンアップクロンジョブ
+│   │           └── route.ts
+│   ├── HomeClient.tsx     # ホームページクライアントコンポーネント
 │   ├── login/             # ユーザー認証ページ
+│   │   ├── LoginClient.tsx
+│   │   └── page.tsx
 │   ├── register/          # ユーザー登録
+│   │   ├── RegisterClient.tsx
+│   │   └── page.tsx
+│   ├── profile/           # ユーザープロフィールページ
+│   │   └── page.tsx
 │   ├── setlists/          # セットリスト管理ページ
 │   │   ├── [id]/          # 個別セットリスト表示/編集
-│   │   │   └── edit/      # セットリスト編集ページ
+│   │   │   ├── edit/      # セットリスト編集ページ
+│   │   │   │   └── page.tsx
+│   │   │   └── page.tsx   # セットリスト詳細表示
 │   │   └── new/           # 新規セットリスト作成
+│   │       └── page.tsx
 │   └── songs/             # 楽曲管理ページ
-│       └── new/           # 新規楽曲作成
+│       ├── new/           # 新規楽曲作成
+│       │   └── page.tsx
+│       └── page.tsx       # 楽曲一覧ページ
 ├── src/components/         # Reactコンポーネント
+│   ├── auth/              # 認証関連コンポーネント
+│   │   └── ProtectedRoute.tsx # ルート保護コンポーネント
 │   ├── common/             # 共通UIコンポーネント
 │   │   ├── Header.tsx      # メインアプリケーションヘッダーコンポーネント（リファクタ済み）
 │   │   ├── header/         # ヘッダーサブコンポーネント（モジュラーアーキテクチャ）
@@ -193,25 +217,46 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 │   │   │   ├── UserMenu.tsx          # アバターとドロップダウン付きユーザーメニュー
 │   │   │   ├── AuthButton.tsx        # ログイン/ログアウトボタン
 │   │   │   └── navigationItems.ts    # ナビゲーション設定
-│   │   ├── NoSSR.tsx       # SSR無効化コンポーネント
-│   │   └── Footer.tsx      # アプリケーションフッターコンポーネント
+│   │   ├── Footer.tsx      # アプリケーションフッターコンポーネント
+│   │   ├── LoadingFallback.tsx # ローディング状態コンポーネント
+│   │   └── NoSSR.tsx       # SSR無効化コンポーネント
 │   ├── forms/              # フォーム関連コンポーネント
 │   │   ├── SetlistForm.tsx # バリデーション付きメインセットリストフォーム
 │   │   ├── SetlistFormFields.tsx # フォームフィールドコンポーネント
 │   │   └── SongItemInput.tsx # 個別楽曲入力コンポーネント
+│   ├── home/              # ホームページ専用コンポーネント
+│   │   ├── AuthActions.tsx    # 認証アクションボタン
+│   │   ├── FeatureSection.tsx # 機能紹介セクション
+│   │   ├── SetlistDashboard.tsx # セットリストダッシュボード
+│   │   └── WelcomeSection.tsx # ウェルカムセクション
+│   ├── providers/          # コンテキストプロバイダー
+│   │   ├── ApolloProvider.tsx # GraphQLクライアントプロバイダー
+│   │   ├── AuthProvider.tsx   # 認証状態プロバイダー
+│   │   ├── CSRFProvider.tsx   # CSRF保護プロバイダー
+│   │   └── MUIProvider.tsx    # Material-UIテーマプロバイダー
 │   ├── setlist/            # セットリスト専用コンポーネント
 │   │   ├── ImageGenerator.tsx # ワンクリックダウンロード付き簡素化画像生成
 │   │   ├── SetlistActions.tsx # アクションボタン（編集、ダウンロードなど）
 │   │   └── SetlistPreview.tsx # セットリストプレビュー表示
-│   ├── providers/          # コンテキストプロバイダー（MUI、Apollo）
-│   └── setlist-themes/     # テーマレンダラー
-│       ├── BlackTheme.tsx  # Black/darkテーマ
-│       ├── WhiteTheme.tsx  # White/lightテーマ
-│       └── SetlistRenderer.tsx
+│   ├── setlist-themes/     # テーマシステム
+│   │   ├── BlackTheme.tsx     # Black/darkテーマ
+│   │   ├── WhiteTheme.tsx     # White/lightテーマ
+│   │   ├── SetlistRenderer.tsx # テーマレンダラー
+│   │   ├── constants.ts       # テーマ定数
+│   │   ├── index.ts          # テーマエクスポート
+│   │   └── types.ts          # テーマ型定義
+│   └── songs/             # 楽曲管理コンポーネント
+│       ├── SongEditDialog.tsx # 楽曲編集ダイアログ
+│       ├── SongPageHeader.tsx # 楽曲ページヘッダー
+│       └── SongTable.tsx      # 楽曲テーブル
+├── src/hooks/             # カスタムReactフック
+│   ├── useCSRF.ts            # CSRF保護フック
+│   ├── useImageGeneration.ts # 画像生成フック
+│   ├── useSetlistActions.ts  # セットリストアクションフック
+│   └── useSongs.ts           # 楽曲管理フック
 ├── src/lib/               # 機能別に整理された共有ユーティリティ
 │   ├── client/            # クライアントサイドユーティリティ
-│   │   ├── apollo-client.ts    # GraphQLクライアント設定
-│   │   ├── auth-utils.ts       # クライアントサイド認証ユーティリティ
+│   │   ├── apollo-client.ts      # GraphQLクライアント設定
 │   │   └── secure-auth-client.ts # セキュア認証クライアント
 │   ├── server/            # サーバーサイドユーティリティ
 │   │   └── graphql/       # GraphQLスキーマと操作
@@ -220,7 +265,8 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 │   │       │   ├── AuthResolver.ts
 │   │       │   ├── SetlistResolver.ts
 │   │       │   ├── SetlistItemResolver.ts
-│   │       │   └── SongResolver.ts
+│   │       │   ├── SongResolver.ts
+│   │       │   └── UserResolver.ts
 │   │       ├── types/     # GraphQL型定義
 │   │       │   ├── Auth.ts
 │   │       │   ├── Setlist.ts
@@ -239,10 +285,21 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 │   │   └── validation-rules.ts   # 入力検証ルール
 │   └── shared/            # クライアント/サーバー共有ユーティリティ
 │       └── dateUtils.ts   # 日付フォーマットユーティリティ
-├── prisma/                 # データベーススキーマとマイグレーション
-│   └── schema.prisma       # Prismaスキーマ定義
-├── public/                 # テーマロゴを含む静的アセット
-└── docker-compose.yml      # ローカル開発用PostgreSQL
+├── src/types/             # TypeScript型定義
+│   └── graphql.ts         # GraphQL関連型定義
+├── prisma/                # データベーススキーマとマイグレーション
+│   ├── migrations/        # データベースマイグレーション
+│   │   ├── 20250701120235_add_security_tables/
+│   │   │   └── migration.sql
+│   │   └── migration_lock.toml
+│   └── schema.prisma      # Prismaスキーマ定義
+├── public/                # 静的アセット
+│   ├── MQTN_LOGO_white_ver_nonback.png # ロゴ（白背景用）
+│   ├── MQT_LOGO_BLACK.png # ロゴ（黒背景用）
+│   └── [その他のアセット]
+├── scripts/               # 開発スクリプト
+│   └── setup-db.sh        # データベースセットアップスクリプト
+└── docker-compose.yml     # ローカル開発用PostgreSQL
 ```
 
 ### 現在のステータス

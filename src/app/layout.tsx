@@ -16,7 +16,8 @@ export const metadata: Metadata = {
     template: '%s | Setlist Studio',
     default: 'Setlist Studio - バンド向けセットリスト管理ツール',
   },
-  description: 'あなたの楽曲を管理して、素敵なセットリストを作成しましょう。Setlist Studioでプロフェッショナルなパフォーマンスを実現。',
+  description:
+    'あなたの楽曲を管理して、素敵なセットリストを作成しましょう。Setlist Studioでプロフェッショナルなパフォーマンスを実現。',
 };
 
 export default function RootLayout({
