@@ -24,9 +24,7 @@ export default function NewSetlistPage() {
   });
 
   const [createSetlist, { loading, error }] = useMutation(CREATE_SETLIST, {
-    refetchQueries: [
-      { query: GET_SETLISTS }
-    ],
+    refetchQueries: [{ query: GET_SETLISTS }],
     awaitRefetchQueries: true,
   });
 

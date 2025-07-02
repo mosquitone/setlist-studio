@@ -192,6 +192,8 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 │   ├── register/          # ユーザー登録
 │   │   ├── RegisterClient.tsx
 │   │   └── page.tsx
+│   ├── guide/             # 利用ガイドページ（静的生成）
+│   │   └── page.tsx       # 認証不要利用ガイド
 │   ├── profile/           # ユーザープロフィールページ
 │   │   └── page.tsx
 │   ├── setlists/          # セットリスト管理ページ
