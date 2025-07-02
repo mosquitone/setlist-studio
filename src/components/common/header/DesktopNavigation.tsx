@@ -2,17 +2,19 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useAuth } from '@/components/providers/AuthProvider';
-import { authenticatedNavigationItems, publicNavigationItems } from './navigationItems';
 
-export function DesktopNavigation() {
-  const { isLoggedIn } = useAuth();
+interface NavigationItem {
+  label: string;
+  path: string;
+  icon: React.ComponentType;
+}
+
+interface DesktopNavigationProps {
+  items: NavigationItem[];
+}
+
+export function DesktopNavigation({ items }: DesktopNavigationProps) {
   const pathname = usePathname();
-
-  // ログイン状態に応じて表示するナビゲーション項目を決定
-  const items = isLoggedIn
-    ? [...publicNavigationItems, ...authenticatedNavigationItems]
-    : publicNavigationItems;
 
   return (
     <Box sx={{ flexGrow: 1, display: { xs: 'none', sm: 'flex' }, ml: 4 }}>
