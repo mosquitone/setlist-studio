@@ -1,6 +1,5 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import { Box, Typography, Card, Button, Grid, Avatar, Chip, Stack } from '@mui/material'
 import {
   PlaylistPlay as PlaylistPlayIcon,
@@ -15,6 +14,7 @@ import {
 } from '@mui/icons-material'
 import Link from 'next/link'
 import { Setlist } from '../../types/graphql'
+import { FadeInBox } from '@/components/common/FadeInBox'
 
 interface SetlistDashboardProps {
   setlistsData: { setlists: Setlist[] } | undefined
@@ -22,270 +22,248 @@ interface SetlistDashboardProps {
 }
 
 export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashboardProps) {
-  const [visible, setVisible] = useState(false)
-
-  useEffect(() => {
-    const timer = setTimeout(() => setVisible(true), 400)
-    return () => clearTimeout(timer)
-  }, [])
-
   if (setlistsLoading) {
     return (
-      <Box sx={{ 
-        mb: 8,
-        opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(20px)',
-        transition: 'opacity 1s ease-out, transform 1s ease-out'
-      }}>
-          <Typography variant="h4" component="h2" gutterBottom sx={{ mb: 4 }}>
-            あなたのセットリスト
+      <FadeInBox delay={400} sx={{ mb: 8 }}>
+        <Typography variant="h4" component="h2" gutterBottom sx={{ mb: 4 }}>
+          あなたのセットリスト
+        </Typography>
+        <Box sx={{ textAlign: 'center', py: 8 }}>
+          <Typography variant="h6" color="text.secondary">
+            セットリストを読み込み中...
           </Typography>
-          <Box sx={{ textAlign: 'center', py: 8 }}>
-            <Typography variant="h6" color="text.secondary">
-              セットリストを読み込み中...
-            </Typography>
-          </Box>
-      </Box>
+        </Box>
+      </FadeInBox>
     )
   }
 
   if (!setlistsData?.setlists?.length) {
     return (
-      <Box sx={{ 
-        mb: 8,
-        opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(20px)',
-        transition: 'opacity 1s ease-out, transform 1s ease-out'
-      }}>
-          <Typography variant="h4" component="h2" gutterBottom sx={{ mb: 4 }}>
-            あなたのセットリスト
+      <FadeInBox delay={400} sx={{ mb: 8 }}>
+        <Typography variant="h4" component="h2" gutterBottom sx={{ mb: 4 }}>
+          あなたのセットリスト
+        </Typography>
+        <Card sx={{ p: 6, textAlign: 'center', bgcolor: 'grey.50' }}>
+          <PlaylistPlayIcon sx={{ fontSize: 64, color: 'grey.400', mb: 3 }} />
+          <Typography variant="h5" gutterBottom color="text.secondary">
+            まだセットリストがありません
           </Typography>
-          <Card sx={{ p: 6, textAlign: 'center', bgcolor: 'grey.50' }}>
-            <PlaylistPlayIcon sx={{ fontSize: 64, color: 'grey.400', mb: 3 }} />
-            <Typography variant="h5" gutterBottom color="text.secondary">
-              まだセットリストがありません
-            </Typography>
-            <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-              最初のセットリストを作成して、素敵な演奏リストを管理しましょう
-            </Typography>
-            <Button
-              variant="contained"
-              component={Link}
-              href="/setlists/new"
-              startIcon={<AddIcon />}
-              size="large"
-              sx={{ borderRadius: 3 }}
-            >
-              セットリストを作成
-            </Button>
-          </Card>
-      </Box>
+          <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
+            最初のセットリストを作成して、素敵な演奏リストを管理しましょう
+          </Typography>
+          <Button
+            variant="contained"
+            component={Link}
+            href="/setlists/new"
+            startIcon={<AddIcon />}
+            size="large"
+            sx={{ borderRadius: 3 }}
+          >
+            セットリストを作成
+          </Button>
+        </Card>
+      </FadeInBox>
     )
   }
 
   return (
-    <Box sx={{ 
-      mb: 8,
-      opacity: visible ? 1 : 0,
-      transform: visible ? 'translateY(0)' : 'translateY(20px)',
-      transition: 'opacity 1s ease-out, transform 1s ease-out'
-    }}>
-        <Typography variant="h4" component="h2" gutterBottom sx={{ mb: 4 }}>
-          あなたのセットリスト
-        </Typography>
-        <Grid container spacing={2}>
-          {setlistsData.setlists.map((setlist: Setlist) => (
-            <Grid item xs={12} sm={6} md={4} key={setlist.id}>
-              <Card
+    <FadeInBox delay={400} sx={{ mb: 8 }}>
+      <Typography variant="h4" component="h2" gutterBottom sx={{ mb: 4 }}>
+        あなたのセットリスト
+      </Typography>
+      <Grid container spacing={2}>
+        {setlistsData.setlists.map((setlist: Setlist) => (
+          <Grid item xs={12} sm={6} md={4} key={setlist.id}>
+            <Card
+              sx={{
+                height: 278,
+                display: 'flex',
+                flexDirection: 'column',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                '&:hover': {
+                  transform: 'translateY(-8px)',
+                  boxShadow: '0 12px 40px rgba(0,0,0,0.15)',
+                },
+                borderRadius: 3,
+                overflow: 'hidden',
+              }}
+            >
+              <Box
                 sx={{
-                  height: 278,
+                  background: `linear-gradient(135deg, ${
+                    setlist.theme === 'white'
+                      ? '#f8fafc 0%, #e2e8f0 100%'
+                      : '#1e293b 0%, #0f172a 100%'
+                  })`,
+                  p: 1.5,
+                  color: setlist.theme === 'white' ? 'text.primary' : 'white',
+                  flex: 1,
                   display: 'flex',
                   flexDirection: 'column',
-                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                  '&:hover': {
-                    transform: 'translateY(-8px)',
-                    boxShadow: '0 12px 40px rgba(0,0,0,0.15)',
-                  },
-                  borderRadius: 3,
-                  overflow: 'hidden',
                 }}
               >
                 <Box
                   sx={{
-                    background: `linear-gradient(135deg, ${
-                      setlist.theme === 'white'
-                        ? '#f8fafc 0%, #e2e8f0 100%'
-                        : '#1e293b 0%, #0f172a 100%'
-                    })`,
-                    p: 1.5,
-                    color: setlist.theme === 'white' ? 'text.primary' : 'white',
-                    flex: 1,
                     display: 'flex',
-                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                    mb: 1.5,
                   }}
                 >
-                  <Box
+                  <Avatar
                     sx={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'flex-start',
-                      mb: 1.5,
+                      bgcolor: setlist.theme === 'white' ? 'primary.main' : 'secondary.main',
+                      width: 40,
+                      height: 40,
                     }}
                   >
-                    <Avatar
-                      sx={{
-                        bgcolor: setlist.theme === 'white' ? 'primary.main' : 'secondary.main',
-                        width: 40,
-                        height: 40,
-                      }}
-                    >
-                      <PlaylistPlayIcon />
-                    </Avatar>
-                    <Stack direction="row" spacing={0.5}>
-                      <Chip
-                        icon={setlist.isPublic ? <PublicIcon /> : <LockIcon />}
-                        label={setlist.isPublic ? '公開' : '非公開'}
-                        size="small"
-                        sx={{
-                          bgcolor: setlist.isPublic
-                            ? 'rgba(34, 197, 94, 0.1)'
-                            : 'rgba(156, 163, 175, 0.1)',
-                          color: setlist.isPublic ? '#16a34a' : '#6b7280',
-                          fontWeight: 600,
-                          '& .MuiChip-icon': {
-                            fontSize: '0.8rem',
-                          },
-                        }}
-                      />
-                      <Chip
-                        label={setlist.theme === 'white' ? 'ホワイト' : 'ブラック'}
-                        size="small"
-                        sx={{
-                          bgcolor:
-                            setlist.theme === 'white'
-                              ? 'rgba(59, 130, 246, 0.1)'
-                              : 'rgba(239, 68, 68, 0.2)',
-                          color: setlist.theme === 'white' ? 'primary.main' : '#ef4444',
-                          fontWeight: 600,
-                        }}
-                      />
-                    </Stack>
-                  </Box>
-                  <Typography
-                    variant="h6"
-                    component="h3"
-                    sx={{
-                      fontWeight: 700,
-                      mb: 0.5,
-                      fontSize: '1.1rem',
-                      lineHeight: 1.3,
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      display: '-webkit-box',
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: 'vertical',
-                    }}
-                  >
-                    {setlist.title}
-                  </Typography>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1 }}>
-                    {setlist.bandName && (
-                      <>
-                        <GroupIcon sx={{ fontSize: 14 }} />
-                        <Typography
-                          variant="caption"
-                          sx={{
-                            fontSize: '0.75rem',
-                            opacity: 0.8,
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
-                            maxWidth: '100px',
-                          }}
-                        >
-                          {setlist.bandName}
-                        </Typography>
-                      </>
-                    )}
-                    {setlist.eventName && (
-                      <>
-                        <EventIcon sx={{ fontSize: 14, ml: setlist.bandName ? 1 : 0 }} />
-                        <Typography
-                          variant="caption"
-                          sx={{
-                            fontSize: '0.75rem',
-                            opacity: 0.8,
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
-                            maxWidth: '100px',
-                          }}
-                        >
-                          {setlist.eventName}
-                        </Typography>
-                      </>
-                    )}
-                  </Box>
-                  {setlist.eventDate && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1 }}>
-                      <ScheduleIcon sx={{ fontSize: 14 }} />
-                      <Typography variant="caption" sx={{ fontSize: '0.75rem', opacity: 0.8 }}>
-                        {new Date(setlist.eventDate).toLocaleDateString('ja-JP')}
-                      </Typography>
-                    </Box>
-                  )}
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontSize: '0.8rem',
-                      opacity: 0.7,
-                      mt: 'auto',
-                      mb: 1,
-                    }}
-                  >
-                    {setlist.items.length}曲
-                  </Typography>
-                </Box>
-                <Box sx={{ p: 1.5, bgcolor: 'background.paper' }}>
-                  <Stack direction="row" spacing={1}>
-                    <Button
-                      component={Link}
-                      href={`/setlists/${setlist.id}`}
-                      variant="outlined"
+                    <PlaylistPlayIcon />
+                  </Avatar>
+                  <Stack direction="row" spacing={0.5}>
+                    <Chip
+                      icon={setlist.isPublic ? <PublicIcon /> : <LockIcon />}
+                      label={setlist.isPublic ? '公開' : '非公開'}
                       size="small"
-                      startIcon={<VisibilityIcon />}
                       sx={{
-                        flex: 1,
-                        borderRadius: 2,
-                        fontSize: '0.75rem',
-                        py: 0.5,
-                        textTransform: 'none',
+                        bgcolor: setlist.isPublic
+                          ? 'rgba(34, 197, 94, 0.1)'
+                          : 'rgba(156, 163, 175, 0.1)',
+                        color: setlist.isPublic ? '#16a34a' : '#6b7280',
+                        fontWeight: 600,
+                        '& .MuiChip-icon': {
+                          fontSize: '0.8rem',
+                        },
                       }}
-                    >
-                      表示
-                    </Button>
-                    <Button
-                      component={Link}
-                      href={`/setlists/${setlist.id}/edit`}
-                      variant="contained"
+                    />
+                    <Chip
+                      label={setlist.theme === 'white' ? 'ホワイト' : 'ブラック'}
                       size="small"
-                      startIcon={<EditIcon />}
                       sx={{
-                        flex: 1,
-                        borderRadius: 2,
-                        fontSize: '0.75rem',
-                        py: 0.5,
-                        textTransform: 'none',
+                        bgcolor:
+                          setlist.theme === 'white'
+                            ? 'rgba(59, 130, 246, 0.1)'
+                            : 'rgba(239, 68, 68, 0.2)',
+                        color: setlist.theme === 'white' ? 'primary.main' : '#ef4444',
+                        fontWeight: 600,
                       }}
-                    >
-                      編集
-                    </Button>
+                    />
                   </Stack>
                 </Box>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-    </Box>
+                <Typography
+                  variant="h6"
+                  component="h3"
+                  sx={{
+                    fontWeight: 700,
+                    mb: 0.5,
+                    fontSize: '1.1rem',
+                    lineHeight: 1.3,
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                  }}
+                >
+                  {setlist.title}
+                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1 }}>
+                  {setlist.bandName && (
+                    <>
+                      <GroupIcon sx={{ fontSize: 14 }} />
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          fontSize: '0.75rem',
+                          opacity: 0.8,
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                          maxWidth: '100px',
+                        }}
+                      >
+                        {setlist.bandName}
+                      </Typography>
+                    </>
+                  )}
+                  {setlist.eventName && (
+                    <>
+                      <EventIcon sx={{ fontSize: 14, ml: setlist.bandName ? 1 : 0 }} />
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          fontSize: '0.75rem',
+                          opacity: 0.8,
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                          maxWidth: '100px',
+                        }}
+                      >
+                        {setlist.eventName}
+                      </Typography>
+                    </>
+                  )}
+                </Box>
+                {setlist.eventDate && (
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1 }}>
+                    <ScheduleIcon sx={{ fontSize: 14 }} />
+                    <Typography variant="caption" sx={{ fontSize: '0.75rem', opacity: 0.8 }}>
+                      {new Date(setlist.eventDate).toLocaleDateString('ja-JP')}
+                    </Typography>
+                  </Box>
+                )}
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontSize: '0.8rem',
+                    opacity: 0.7,
+                    mt: 'auto',
+                    mb: 1,
+                  }}
+                >
+                  {setlist.items.length}曲
+                </Typography>
+              </Box>
+              <Box sx={{ p: 1.5, bgcolor: 'background.paper' }}>
+                <Stack direction="row" spacing={1}>
+                  <Button
+                    component={Link}
+                    href={`/setlists/${setlist.id}`}
+                    variant="outlined"
+                    size="small"
+                    startIcon={<VisibilityIcon />}
+                    sx={{
+                      flex: 1,
+                      borderRadius: 2,
+                      fontSize: '0.75rem',
+                      py: 0.5,
+                      textTransform: 'none',
+                    }}
+                  >
+                    表示
+                  </Button>
+                  <Button
+                    component={Link}
+                    href={`/setlists/${setlist.id}/edit`}
+                    variant="contained"
+                    size="small"
+                    startIcon={<EditIcon />}
+                    sx={{
+                      flex: 1,
+                      borderRadius: 2,
+                      fontSize: '0.75rem',
+                      py: 0.5,
+                      textTransform: 'none',
+                    }}
+                  >
+                    編集
+                  </Button>
+                </Stack>
+              </Box>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+    </FadeInBox>
   )
 }
