@@ -29,7 +29,7 @@ function ProfileContent() {
   const [success, setSuccess] = useState('');
 
   const [updateUser, { loading: updateLoading }] = useMutation(UPDATE_USER_MUTATION, {
-    onCompleted: data => {
+    onCompleted: (data) => {
       try {
         // Apollo Clientのキャッシュを更新
         // secureAuthClientは自動的にGET_ME_QUERYの変更を検知する
@@ -47,7 +47,7 @@ function ProfileContent() {
         setError('キャッシュの更新に失敗しました');
       }
     },
-    onError: error => {
+    onError: (error) => {
       setError(error.message);
     },
   });
@@ -142,7 +142,7 @@ function ProfileContent() {
                 fullWidth
                 label="ユーザー名"
                 value={username}
-                onChange={e => setUsername(e.target.value)}
+                onChange={(e) => setUsername(e.target.value)}
                 size="small"
               />
             ) : (

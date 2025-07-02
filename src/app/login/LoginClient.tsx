@@ -35,7 +35,7 @@ export default function LoginClient() {
   const { login: authLogin } = useAuth();
 
   const [loginMutation, { loading }] = useMutation(LOGIN, {
-    onCompleted: async data => {
+    onCompleted: async (data) => {
       const result = await authLogin(data.login.token);
       if (result.success) {
         router.push('/');
@@ -43,7 +43,7 @@ export default function LoginClient() {
         setError(result.error || 'Login failed');
       }
     },
-    onError: error => {
+    onError: (error) => {
       setError(error.message);
     },
   });
@@ -95,7 +95,7 @@ export default function LoginClient() {
               label="メールアドレス"
               type="email"
               value={email}
-              onChange={e => setEmail(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
               margin="normal"
               required
               autoComplete="email"
@@ -105,7 +105,7 @@ export default function LoginClient() {
               label="パスワード"
               type={showPassword ? 'text' : 'password'}
               value={password}
-              onChange={e => setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
               margin="normal"
               required
               autoComplete="current-password"

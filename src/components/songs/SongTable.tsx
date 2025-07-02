@@ -59,7 +59,7 @@ export function SongTable({ songs, loading, onEdit, onDelete }: SongTableProps) 
           </TableRow>
         </TableHead>
         <TableBody>
-          {songs.map(song => (
+          {songs.map((song) => (
             <TableRow
               key={song.id}
               hover
@@ -72,7 +72,7 @@ export function SongTable({ songs, loading, onEdit, onDelete }: SongTableProps) 
                   outlineOffset: '-2px',
                 },
               }}
-              onKeyDown={event => {
+              onKeyDown={(event) => {
                 if (event.key === 'Enter' || event.key === ' ') {
                   event.preventDefault();
                   onEdit(song);

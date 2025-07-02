@@ -70,7 +70,7 @@ export function SetlistFormFields({
           <FormControl fullWidth>
             <InputLabel>テーマ</InputLabel>
             <Select name="theme" value={values.theme} onChange={handleChange} label="テーマ">
-              {themes.map(theme => (
+              {themes.map((theme) => (
                 <MenuItem key={theme.value} value={theme.value}>
                   {theme.label}
                 </MenuItem>

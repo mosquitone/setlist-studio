@@ -137,7 +137,7 @@ export default function SetlistForm({
         onSubmit={onSubmit}
         enableReinitialize
       >
-        {formik => {
+        {(formik) => {
           const { values } = formik;
 
           return (
@@ -171,7 +171,7 @@ export default function SetlistForm({
                         {enableDragAndDrop ? (
                           <DragDropContext onDragEnd={handleDragEnd}>
                             <Droppable droppableId="setlist-items">
-                              {provided => (
+                              {(provided) => (
                                 <div {...provided.droppableProps} ref={provided.innerRef}>
                                   {values.items.map((item, index) => (
                                     <Draggable

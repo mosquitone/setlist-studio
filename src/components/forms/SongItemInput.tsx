@@ -69,7 +69,7 @@ export function SongItemInput({
         <Autocomplete
           fullWidth
           options={songs}
-          getOptionLabel={option => (typeof option === 'string' ? option : option.title)}
+          getOptionLabel={(option) => (typeof option === 'string' ? option : option.title)}
           value={null}
           inputValue={item.title}
           onChange={(event, newValue) => {
@@ -90,7 +90,7 @@ export function SongItemInput({
             });
           }}
           freeSolo
-          renderInput={params => (
+          renderInput={(params) => (
             <TextField
               {...params}
               label="楽曲名"

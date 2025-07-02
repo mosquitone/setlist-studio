@@ -33,7 +33,7 @@ export class DatabaseRateLimit {
 
     try {
       // トランザクションでアトミックな操作を保証
-      const result = await this.prisma.$transaction(async tx => {
+      const result = await this.prisma.$transaction(async (tx) => {
         // 期限切れエントリの削除
         await tx.rateLimitEntry.deleteMany({
           where: {

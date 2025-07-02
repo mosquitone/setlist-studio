@@ -30,7 +30,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setIsLoading(currentState.loading);
 
     // 認証状態の変更をリッスン
-    const unsubscribe = secureAuthClient.subscribe(authState => {
+    const unsubscribe = secureAuthClient.subscribe((authState) => {
       setIsLoggedIn(authState.authenticated);
       setUser(authState.user);
       setIsLoading(authState.loading);

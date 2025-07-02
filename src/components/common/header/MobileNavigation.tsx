@@ -53,7 +53,7 @@ export function MobileNavigation({
       <Divider />
       {isLoading ? (
         <List>
-          {[1, 2].map(i => (
+          {[1, 2].map((i) => (
             <ListItem key={i} disablePadding>
               <Skeleton
                 variant="rounded"
@@ -70,7 +70,7 @@ export function MobileNavigation({
         </List>
       ) : (
         <List>
-          {items.map(item => {
+          {items.map((item) => {
             const IconComponent = item.icon;
             return (
               <ListItem key={item.path} disablePadding>

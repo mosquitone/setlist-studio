@@ -21,7 +21,7 @@ export function DesktopNavigation({ items, isLoading }: DesktopNavigationProps) 
   if (isLoading) {
     return (
       <Box sx={{ flexGrow: 1, display: { xs: 'none', sm: 'flex' }, ml: 4 }}>
-        {[1, 2].map(i => (
+        {[1, 2].map((i) => (
           <Skeleton
             key={i}
             variant="rounded"
@@ -39,7 +39,7 @@ export function DesktopNavigation({ items, isLoading }: DesktopNavigationProps) 
 
   return (
     <Box sx={{ flexGrow: 1, display: { xs: 'none', sm: 'flex' }, ml: 4 }}>
-      {items.map(item => {
+      {items.map((item) => {
         const IconComponent = item.icon;
         return (
           <Button
