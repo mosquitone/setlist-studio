@@ -14,9 +14,6 @@ import { validateAndSanitizeInput } from '@/lib/security/security-utils';
 
 import { SetlistFormValues } from '@/types/components';
 
-// 後方互換性のため再エクスポート
-export type { SetlistFormItem as SetlistItem, SetlistFormValues } from '@/types/components';
-
 interface SetlistFormProps {
   title: string;
   initialValues: SetlistFormValues;

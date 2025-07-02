@@ -16,7 +16,7 @@ import {
 import { useQuery, useMutation } from '@apollo/client';
 import { useParams } from 'next/navigation';
 import { GET_SETLIST, TOGGLE_SETLIST_VISIBILITY } from '@/lib/server/graphql/apollo-operations';
-import { SetlistData } from '@/components/setlist-themes/types';
+import { SetlistData } from '@/types/components';
 import { Theme } from '@/types/common';
 import { ImageGenerator } from '@/components/setlist/ImageGenerator';
 import { SetlistActions } from '@/components/setlist/SetlistActions';

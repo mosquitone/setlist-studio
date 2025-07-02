@@ -5,7 +5,7 @@ import { Box, Button, Alert, CircularProgress } from '@mui/material';
 import { Image as ImageIcon } from '@mui/icons-material';
 import html2canvas from 'html2canvas';
 import QRCode from 'qrcode';
-import { SetlistData } from '../setlist-themes/types';
+import { SetlistData } from '@/types/components';
 import { Theme } from '@/types/common';
 import { SetlistRenderer } from '../setlist-themes/SetlistRenderer';
 import { isValidUrl } from '@/lib/security/security-utils';

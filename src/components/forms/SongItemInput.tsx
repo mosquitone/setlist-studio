@@ -4,7 +4,10 @@ import React from 'react';
 import { Paper, TextField, IconButton, Typography, Autocomplete } from '@mui/material';
 import { Delete as DeleteIcon, DragHandle as DragHandleIcon } from '@mui/icons-material';
 import { FormikProps } from 'formik';
-import { SetlistFormValues, SetlistItem } from './SetlistForm';
+import { SetlistFormValues, SetlistFormItem } from '@/types/components';
+
+// 後方互換性のため型エイリアス
+type SetlistItem = SetlistFormItem;
 
 interface SongItemInputProps {
   item: SetlistItem;

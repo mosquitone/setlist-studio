@@ -247,8 +247,7 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 │   │   ├── themeColors.ts     # テーマカラーパレット設定
 │   │   ├── SetlistRenderer.tsx # テーマレンダラー
 │   │   ├── constants.ts       # テーマ定数
-│   │   ├── index.ts          # テーマエクスポート
-│   │   └── types.ts          # テーマ型定義
+│   │   └── index.ts          # テーマエクスポート
 │   └── songs/             # 楽曲管理コンポーネント
 │       ├── SongEditDialog.tsx # 楽曲編集ダイアログ
 │       ├── SongPageHeader.tsx # 楽曲ページヘッダー
