@@ -2,11 +2,7 @@ import { Resolver, Mutation, Arg, Ctx } from 'type-graphql'
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import {
-  AuthPayload,
-  RegisterInput,
-  LoginInput,
-} from '../types/Auth'
+import { AuthPayload, RegisterInput, LoginInput } from '../types/Auth'
 import {
   logAuthSuccessDB,
   logAuthFailureDB,
