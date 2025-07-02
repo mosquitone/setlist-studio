@@ -1,137 +1,136 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+このファイルは、Claude Code（claude.ai/code）がこのリポジトリでコード作業を行う際のガイダンスを提供します。
 
-## Project Overview
+## プロジェクト概要
 
-This is mosquitone Emotional Setlist Studio, a modern setlist generator application built for music bands, featuring user authentication, song management, and setlist creation. The application uses a unified Next.js architecture with GraphQL API routes powered by Vercel Functions, ready for production deployment.
+mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセットリスト生成アプリケーションです。ユーザー認証、楽曲管理、セットリスト作成機能を備えています。Vercel Functionsを活用したGraphQL APIルートを持つ統一されたNext.jsアーキテクチャを使用し、本番環境デプロイ対応済みです。
 
-## Development Commands
+## 開発コマンド
 
-### Core Development
-- **Start development server**: `pnpm dev` (runs Next.js with GraphQL API on http://localhost:3000)
-- **Build for production**: `pnpm build`
-- **Lint code**: `pnpm lint`
-- **Fix lint issues**: `pnpm lint:fix`
-- **TypeScript type check**: `npx tsc --noEmit`
+### 基本開発コマンド
+- **開発サーバー起動**: `pnpm dev` (Next.js + GraphQL API を http://localhost:3000 で実行)
+- **本番ビルド**: `pnpm build`
+- **コードチェック**: `pnpm lint`
+- **lint問題の修正**: `pnpm lint:fix`
+- **TypeScript型チェック**: `npx tsc --noEmit`
 
-### Database Operations
-- **Initial setup**: `pnpm db:setup` (first-time PostgreSQL setup with security)
-- **Start PostgreSQL**: `docker-compose up -d postgres`
-- **Apply schema changes**: `pnpm db:push`
-- **Generate Prisma client**: `pnpm generate`
-- **Open database studio**: `pnpm db:studio`
-- **Create migration**: `pnpm db:migrate`
+### データベース操作
+- **初期セットアップ**: `pnpm db:setup` (セキュリティ対応PostgreSQL初回セットアップ)
+- **PostgreSQL起動**: `docker-compose up -d postgres`
+- **スキーマ変更適用**: `pnpm db:push`
+- **Prismaクライアント生成**: `pnpm generate`
+- **データベーススタジオ開く**: `pnpm db:studio`
+- **マイグレーション作成**: `pnpm db:migrate`
 
-### Environment Setup
-- **Install dependencies**: `pnpm install`
-- **Environment variables setup**: `cp .env.example .env.local`
-- **Required environment variables** (in `.env.local`):
-  - `DATABASE_URL`: PostgreSQL connection string
-  - `JWT_SECRET`: Secret key for JWT token generation (32+ chars)
-  - `CSRF_SECRET`: CSRF protection secret, different from JWT_SECRET (32+ chars)
-  - `IP_HASH_SALT`: Salt for IP address hashing (16+ chars)
-  - `CRON_SECRET`: Secret for Vercel cron job authentication (32+ chars)
-  - `POSTGRES_PASSWORD`: PostgreSQL password for Docker (local development only)
+### 環境セットアップ
+- **依存関係インストール**: `pnpm install`
+- **環境変数セットアップ**: `cp .env.example .env.local`
+- **必須環境変数** (`.env.local`内):
+  - `DATABASE_URL`: PostgreSQL接続文字列
+  - `JWT_SECRET`: JWTトークン生成用シークレットキー (32文字以上)
+  - `CSRF_SECRET`: CSRF保護シークレット、JWT_SECRETとは別 (32文字以上)
+  - `IP_HASH_SALT`: IPアドレスハッシュ化用ソルト (16文字以上)
+  - `CRON_SECRET`: Vercelクロンジョブ認証用シークレット (32文字以上)
+  - `POSTGRES_PASSWORD`: Docker用PostgreSQLパスワード (ローカル開発のみ)
 
-### Environment Variables Details
+### 環境変数詳細
 
-| Variable | Purpose | Local Development | Production (Vercel) | Generation |
+| 変数 | 用途 | ローカル開発 | 本番環境 (Vercel) | 生成方法 |
 |----------|---------|-------------------|---------------------|------------|
-| `DATABASE_URL` | Database connection | `postgresql://postgres:postgres@localhost:5432/setlist_generator` | Managed DB connection string | Provider gives this |
-| `JWT_SECRET` | JWT token signing | Any 32+ char string | Strong random string | `openssl rand -base64 32` |
-| `CSRF_SECRET` | CSRF token signing | Any 32+ char string | Different from JWT_SECRET | `openssl rand -base64 32` |
-| `IP_HASH_SALT` | IP anonymization | Any 16+ char string | Strong random string | `openssl rand -base64 16` |
-| `CRON_SECRET` | Cron job auth | Any 32+ char string | Strong random string | `openssl rand -base64 32` |
-| `POSTGRES_PASSWORD` | Docker PostgreSQL | `postgres` | Not used (managed DB) | N/A |
-| `NODE_ENV` | Environment mode | `development` | Auto-set by Vercel | N/A |
+| `DATABASE_URL` | データベース接続 | `postgresql://postgres:postgres@localhost:5432/setlist_generator` | マネージドDB接続文字列 | プロバイダから提供 |
+| `JWT_SECRET` | JWTトークン署名 | 32文字以上の任意文字列 | 強力なランダム文字列 | `openssl rand -base64 32` |
+| `CSRF_SECRET` | CSRFトークン署名 | 32文字以上の任意文字列 | JWT_SECRETとは別の文字列 | `openssl rand -base64 32` |
+| `IP_HASH_SALT` | IP匿名化 | 16文字以上の任意文字列 | 強力なランダム文字列 | `openssl rand -base64 16` |
+| `CRON_SECRET` | クロンジョブ認証 | 32文字以上の任意文字列 | 強力なランダム文字列 | `openssl rand -base64 32` |
+| `POSTGRES_PASSWORD` | Docker PostgreSQL | `postgres` | 未使用 (マネージドDB) | N/A |
+| `NODE_ENV` | 環境モード | `development` | Vercelで自動設定 | N/A |
 
-## Architecture Overview
+## アーキテクチャ概要
 
-### Hybrid Next.js Architecture (Static + Serverless)
-The application uses a modern, performance-optimized hybrid architecture:
+### ハイブリッドNext.jsアーキテクチャ (Static + Serverless)
+アプリケーションは、モダンで性能最適化されたハイブリッドアーキテクチャを使用しています：
 
-**Frontend & Backend (Next.js 15.3.4)**
-- Next.js 15.3.4 App Router with TypeScript 5 and hybrid rendering strategy
-- Material-UI v5.17.1 for component library with custom theme and package optimization
-- Apollo Client 3.13.8 for GraphQL state management
-- Client-side authentication state management
-- React 19.0.0 with strict mode
+**フロントエンド & バックエンド (Next.js 15.3.4)**
+- Next.js 15.3.4 App Router、TypeScript 5、ハイブリッドレンダリング戦略
+- Material-UI v5.17.1（カスタムテーマとパッケージ最適化付き）
+- Apollo Client 3.13.8 for GraphQL状態管理
+- クライアントサイド認証状態管理
+- React 19.0.0（strict mode）
 
-**Performance Optimization**
-- **Static Pages**: Login/Register pages fully static-generated for CDN delivery (10x faster)
-- **ISR Pages**: Home page with 1-hour cache for optimal balance (5x faster)
-- **SSR Pages**: Dynamic pages (setlists, songs) remain server-rendered for security
-- **Image Optimization**: WebP/AVIF format support with 1-day cache TTL
-- **Bundle Optimization**: Package imports optimized for MUI components
+**性能最適化**
+- **静的ページ**: ログイン/登録ページは完全静的生成でCDN配信 (10倍高速)
+- **SSRページ**: 動的ページ（セットリスト、楽曲）はセキュリティのためサーバーレンダリング
+- **画像最適化**: WebP/AVIF形式サポート、1日キャッシュTTL
+- **バンドル最適化**: MUIコンポーネント用に最適化されたパッケージインポート
 
 **GraphQL API (Vercel Functions)**
-- Apollo Server v4.12.2 running as Next.js API route at `/api/graphql`
-- Type-GraphQL 1.1.1 for schema-first API development
-- Prisma 6.11.0 as ORM with PostgreSQL
-- HttpOnly Cookie authentication with JWT tokens and bcryptjs 3.0.2
-- Security enhancements: query depth limiting, request size limiting, introspection control
-- Field resolvers for handling relations without circular dependencies
+- Apollo Server v4.12.2が`/api/graphql`でNext.js APIルートとして動作
+- Type-GraphQL 1.1.1によるスキーマファーストAPI開発
+- PostgreSQL用ORM Prisma 6.11.0
+- JWTトークンとbcryptjs 3.0.2によるHttpOnly Cookie認証
+- セキュリティ強化: クエリ深度制限、リクエストサイズ制限、イントロスペクション制御
+- 循環依存なしでリレーションを処理するフィールドリゾルバー
 
-**Database**
-- PostgreSQL 15 running in Docker container
-- Prisma schema with User, Song, Setlist, and SetlistItem models
-- CUID-based IDs for all entities
+**データベース**
+- DockerコンテナでPostgreSQL 15を実行
+- User、Song、Setlist、SetlistItemモデルを含むPrismaスキーマ
+- 全エンティティでCUIDベースのID
 
-### Key Components
+### 主要コンポーネント
 
-**Data Models**
-- `User`: Authentication and user management with unique email/username
-- `Song`: Music tracks with metadata (title, artist, key, tempo, duration, notes)
-- `Setlist`: Collections of songs for performances with band/venue information
-- `SetlistItem`: Junction table linking songs to setlists with ordering and timing
+**データモデル**
+- `User`: 一意のemail/usernameによる認証とユーザー管理
+- `Song`: メタデータ付き楽曲（タイトル、アーティスト、キー、テンポ、長さ、メモ）
+- `Setlist`: バンド/会場情報付きパフォーマンス用楽曲コレクション
+- `SetlistItem`: セットリストと楽曲を順序・タイミング付きで結ぶ中間テーブル
 
-**Key Features**
-- **Setlist Management**: Create, edit, delete, duplicate setlists with drag-and-drop song ordering
-- **Image Generation**: Generate professional setlist images with streamlined UI - theme selection + one-click download
-- **QR Code Integration**: Automatic QR codes linking to setlist pages
-- **Theme System**: Black and White themes with dropdown selector
-- **Duplication System**: Clone existing setlists via URL query parameters
-- **Authentication**: HttpOnly Cookie-based user system with JWT tokens and protected routes
+**主要機能**
+- **セットリスト管理**: ドラッグ&ドロップ楽曲順序付きでセットリストの作成、編集、削除、複製
+- **画像生成**: 合理化されたUIでプロフェッショナルなセットリスト画像生成 - テーマ選択 + ワンクリックダウンロード
+- **QRコード統合**: セットリストページへのリンク付き自動QRコード
+- **テーマシステム**: ドロップダウンセレクター付きBlack/Whiteテーマ
+- **複製システム**: URLクエリパラメータによる既存セットリストのクローン
+- **認証**: JWTトークンと保護ルート付きHttpOnly Cookieベースユーザーシステム
 
-**Frontend Architecture**
-- Provider pattern with separate MUIProvider and ApolloProvider
-- Custom MUI theme with blue/red color scheme and Inter font
-- Apollo Client configured with HttpOnly Cookie authentication and CSRF protection
-- Client-side routing with NextJS App Router
-- Advanced image generation system using html2canvas and QR code integration
-- Simplified theme system with Black/White options for better UX
-- Responsive design with Material-UI components
+**フロントエンドアーキテクチャ**
+- MUIProviderとApolloProviderを分離したProviderパターン
+- 青/赤カラースキーム、Interフォント付きカスタムMUIテーマ
+- HttpOnly Cookie認証とCSRF保護が設定されたApollo Client
+- NextJS App Routerによるクライアントサイドルーティング
+- html2canvasとQRコード統合を使用した高度な画像生成システム
+- UX向上のためのBlack/White選択による簡素化テーマシステム
+- Material-UIコンポーネントによるレスポンシブデザイン
 
-**GraphQL Integration**
-- Apollo Client uses HttpOnly Cookies for automatic authentication
-- GraphQL API uses AuthMiddleware with cookie-based JWT token validation
-- CSRF protection with token-based validation for mutations
-- Unified GraphQL version: v15.8.0 (with pnpm override for compatibility)
+**GraphQL統合**
+- Apollo ClientはHttpOnly Cookieによる自動認証を使用
+- GraphQL APIはCookieベースJWTトークン検証のAuthMiddlewareを使用
+- ミューテーション用トークンベース検証によるCSRF保護
+- 統一GraphQLバージョン: v15.8.0（pnpm overrideによる互換性）
 
-### Authentication Flow
-- JWT tokens stored in secure HttpOnly cookies
-- Protected GraphQL resolvers use AuthMiddleware decorator with cookie validation
-- User registration/login through GraphQL mutations with cookie management
-- Client-side auth state management via secureAuthClient with subscription pattern
-- Automatic CSRF protection for state-changing operations
+### 認証フロー
+- セキュアなHttpOnly CookieにJWTトークンを保存
+- 保護されたGraphQLリゾルバーはCookie検証付きAuthMiddlewareデコレーターを使用
+- Cookie管理付きGraphQLミューテーションによるユーザー登録/ログイン
+- サブスクリプションパターンのsecureAuthClientによるクライアントサイド認証状態管理
+- 状態変更操作の自動CSRF保護
 
-## Important Configuration Notes
+## 重要な設定ノート
 
-### GraphQL Version Management
-- Unified GraphQL version: v15.8.0 enforced via pnpm override
-- Compatible with both Apollo Client 3.13.8 and Type-GraphQL 1.1.1
-- Single package.json for simplified dependency management
+### GraphQLバージョン管理
+- pnpm overrideによる統一GraphQLバージョン: v15.8.0
+- Apollo Client 3.13.8とType-GraphQL 1.1.1の両方と互換性
+- 依存関係管理簡素化のための単一package.json
 
-### Package Management
-- Uses pnpm 10.12.1 for package management with Node.js 20.11.1 requirement
-- Single unified package.json in project root
-- ESLint 9.x with TypeScript 5 and Prettier 3.6.2 for code formatting
-- **ESLint Configuration**: Uses flat config format (eslint.config.mjs) with ignores property
+### パッケージ管理
+- Node.js 20.11.1要件でpnpm 10.12.1を使用
+- プロジェクトルートの単一統合package.json
+- コードフォーマット用ESLint 9.x、TypeScript 5、Prettier 3.6.2
+- **ESLint設定**: ignoresプロパティ付きフラット設定形式（eslint.config.mjs）を使用
 
-### Development Workflow (Local)
-1. Install dependencies: `pnpm install`
-2. Start PostgreSQL (初回セットアップ):
+### 開発ワークフロー（ローカル）
+1. 依存関係インストール: `pnpm install`
+2. PostgreSQL起動（初回セットアップ）:
    ```bash
    pnpm db:setup
    ```
@@ -151,291 +150,292 @@ The application uses a modern, performance-optimized hybrid architecture:
    sed -i.bak 's/# read_only: true/read_only: true/' docker-compose.yml
    docker-compose up -d postgres
    ```
-3. Start development server: `pnpm dev`
+3. 開発サーバー起動: `pnpm dev`
 4. 以降の起動: `docker-compose up -d postgres && pnpm dev`
 
-### Production Deployment (Vercel)
-- **Database**: Use Vercel Postgres or external managed database service (Supabase, Neon, Railway)
-- **Environment Variables**: Set in Vercel Dashboard (all are required):
-  - `DATABASE_URL`: Connection string to production database (with SSL)
-  - `JWT_SECRET`: Strong production secret (32+ chars, unique)
-  - `CSRF_SECRET`: Different from JWT_SECRET (32+ chars, unique)
-  - `IP_HASH_SALT`: For IP address anonymization (16+ chars, unique)
-  - `CRON_SECRET`: For cron job authentication (32+ chars, unique)
-- **Cron Jobs**: Configure in Vercel Dashboard
-  - Path: `/api/cron/cleanup`
-  - Schedule: `0 2 * * *` (daily at 2 AM)
-- **Security Headers**: Automatically applied via vercel.json
-- **Note**: docker-compose.yml is for local development only, not used in Vercel
+### 本番デプロイ（Vercel）
+- **データベース**: Vercel Postgresまたは外部マネージドDBサービス（Supabase、Neon、Railway）を使用
+- **環境変数**: Vercelダッシュボードで設定（全て必須）:
+  - `DATABASE_URL`: 本番データベースへの接続文字列（SSL付き）
+  - `JWT_SECRET`: 強力な本番シークレット（32文字以上、一意）
+  - `CSRF_SECRET`: JWT_SECRETとは別（32文字以上、一意）
+  - `IP_HASH_SALT`: IPアドレス匿名化用（16文字以上、一意）
+  - `CRON_SECRET`: クロンジョブ認証用（32文字以上、一意）
+- **クロンジョブ**: Vercelダッシュボードで設定
+  - path: `/api/cron/cleanup`
+  - スケジュール: `0 2 * * *`（毎日午前2時）
+- **セキュリティヘッダー**: vercel.jsonにより自動適用
+- **注意**: docker-compose.ymlはローカル開発のみ、Vercelでは未使用
 
-For detailed deployment instructions, see [VERCEL_DEPLOYMENT_GUIDE.md](./VERCEL_DEPLOYMENT_GUIDE.md)
+詳細なデプロイ手順は [VERCEL_DEPLOYMENT_GUIDE.md](./VERCEL_DEPLOYMENT_GUIDE.md) を参照
 
-### Project Structure
+### プロジェクト構造
 ```
-/                           # Next.js application root
+/                           # Next.jsアプリケーションルート
 ├── src/app/                # Next.js App Router
-│   ├── api/graphql/        # GraphQL API route (Vercel Function)
-│   │   └── route.ts        # Apollo Server integration
-│   ├── login/             # User authentication pages
-│   ├── register/          # User registration
-│   ├── setlists/          # Setlist management pages
-│   │   ├── [id]/          # Individual setlist view/edit
-│   │   │   └── edit/      # Edit setlist page
-│   │   └── new/           # Create new setlist
-│   └── songs/             # Song management pages
-│       └── new/           # Create new song
-├── src/components/         # React components
-│   ├── common/             # Common UI components
-│   │   ├── Header.tsx      # Main application header component (refactored)
-│   │   ├── header/         # Header subcomponents (modular architecture)
-│   │   │   ├── HeaderLogo.tsx        # Logo component
-│   │   │   ├── DesktopNavigation.tsx # Desktop navigation with icons
-│   │   │   ├── MobileNavigation.tsx  # Mobile drawer navigation
-│   │   │   ├── UserMenu.tsx          # User menu with avatar and dropdown
-│   │   │   ├── AuthButton.tsx        # Login/logout button
-│   │   │   └── navigationItems.ts    # Navigation configuration
-│   │   └── Footer.tsx      # Application footer component
-│   ├── forms/              # Form-related components
-│   │   ├── SetlistForm.tsx # Main setlist form with validation
-│   │   ├── SetlistFormFields.tsx # Form field components
-│   │   └── SongItemInput.tsx # Individual song input component
-│   ├── setlist/            # Setlist-specific components
-│   │   ├── ImageGenerator.tsx # Simplified image generation with one-click download
-│   │   ├── SetlistActions.tsx # Action buttons (Edit, Download, etc.)
-│   │   └── SetlistPreview.tsx # Setlist preview display
-│   ├── providers/          # Context providers (MUI, Apollo)
-│   └── setlist-themes/     # Theme renderers
-│       ├── BlackTheme.tsx  # Black/dark theme
-│       ├── WhiteTheme.tsx  # White/light theme
+│   ├── api/graphql/        # GraphQL APIルート（Vercel Function）
+│   │   └── route.ts        # Apollo Server統合
+│   ├── login/             # ユーザー認証ページ
+│   ├── register/          # ユーザー登録
+│   ├── setlists/          # セットリスト管理ページ
+│   │   ├── [id]/          # 個別セットリスト表示/編集
+│   │   │   └── edit/      # セットリスト編集ページ
+│   │   └── new/           # 新規セットリスト作成
+│   └── songs/             # 楽曲管理ページ
+│       └── new/           # 新規楽曲作成
+├── src/components/         # Reactコンポーネント
+│   ├── common/             # 共通UIコンポーネント
+│   │   ├── Header.tsx      # メインアプリケーションヘッダーコンポーネント（リファクタ済み）
+│   │   ├── header/         # ヘッダーサブコンポーネント（モジュラーアーキテクチャ）
+│   │   │   ├── HeaderLogo.tsx        # ロゴコンポーネント
+│   │   │   ├── DesktopNavigation.tsx # アイコン付きデスクトップナビゲーション
+│   │   │   ├── MobileNavigation.tsx  # モバイルドロワーナビゲーション
+│   │   │   ├── UserMenu.tsx          # アバターとドロップダウン付きユーザーメニュー
+│   │   │   ├── AuthButton.tsx        # ログイン/ログアウトボタン
+│   │   │   └── navigationItems.ts    # ナビゲーション設定
+│   │   ├── NoSSR.tsx       # SSR無効化コンポーネント
+│   │   └── Footer.tsx      # アプリケーションフッターコンポーネント
+│   ├── forms/              # フォーム関連コンポーネント
+│   │   ├── SetlistForm.tsx # バリデーション付きメインセットリストフォーム
+│   │   ├── SetlistFormFields.tsx # フォームフィールドコンポーネント
+│   │   └── SongItemInput.tsx # 個別楽曲入力コンポーネント
+│   ├── setlist/            # セットリスト専用コンポーネント
+│   │   ├── ImageGenerator.tsx # ワンクリックダウンロード付き簡素化画像生成
+│   │   ├── SetlistActions.tsx # アクションボタン（編集、ダウンロードなど）
+│   │   └── SetlistPreview.tsx # セットリストプレビュー表示
+│   ├── providers/          # コンテキストプロバイダー（MUI、Apollo）
+│   └── setlist-themes/     # テーマレンダラー
+│       ├── BlackTheme.tsx  # Black/darkテーマ
+│       ├── WhiteTheme.tsx  # White/lightテーマ
 │       └── SetlistRenderer.tsx
-├── src/lib/               # Shared utilities organized by function
-│   ├── client/            # Client-side utilities
-│   │   ├── apollo-client.ts    # GraphQL client configuration
-│   │   ├── auth-utils.ts       # Client-side authentication utilities
-│   │   └── secure-auth-client.ts # Secure authentication client
-│   ├── server/            # Server-side utilities
-│   │   └── graphql/       # GraphQL schema and operations
-│   │       ├── apollo-operations.ts  # All GraphQL queries, mutations, and subscriptions
-│   │       ├── resolvers/ # GraphQL resolvers
+├── src/lib/               # 機能別に整理された共有ユーティリティ
+│   ├── client/            # クライアントサイドユーティリティ
+│   │   ├── apollo-client.ts    # GraphQLクライアント設定
+│   │   ├── auth-utils.ts       # クライアントサイド認証ユーティリティ
+│   │   └── secure-auth-client.ts # セキュア認証クライアント
+│   ├── server/            # サーバーサイドユーティリティ
+│   │   └── graphql/       # GraphQLスキーマと操作
+│   │       ├── apollo-operations.ts  # 全GraphQLクエリ、ミューテーション、サブスクリプション
+│   │       ├── resolvers/ # GraphQLリゾルバー
 │   │       │   ├── AuthResolver.ts
 │   │       │   ├── SetlistResolver.ts
 │   │       │   ├── SetlistItemResolver.ts
 │   │       │   └── SongResolver.ts
-│   │       ├── types/     # GraphQL type definitions
+│   │       ├── types/     # GraphQL型定義
 │   │       │   ├── Auth.ts
 │   │       │   ├── Setlist.ts
 │   │       │   ├── SetlistItem.ts
 │   │       │   ├── Song.ts
 │   │       │   └── User.ts
-│   │       └── middleware/ # Authentication middleware
+│   │       └── middleware/ # 認証ミドルウェア
 │   │           └── jwt-auth-middleware.ts
-│   ├── security/          # Security-related utilities
-│   │   ├── csrf-protection.ts    # CSRF protection middleware
-│   │   ├── log-sanitizer.ts      # Log sanitization utilities
-│   │   ├── rate-limit-db.ts      # Database-based rate limiting
-│   │   ├── security-logger-db.ts # Security event logging
-│   │   ├── security-utils.ts     # General security utilities
-│   │   ├── threat-detection-db.ts # Threat detection system
-│   │   └── validation-rules.ts   # Input validation rules
-│   └── shared/            # Shared utilities across client/server
-│       └── dateUtils.ts   # Date formatting utilities
-├── prisma/                 # Database schema and migrations
-│   └── schema.prisma       # Prisma schema definition
-├── public/                 # Static assets including theme logos
-└── docker-compose.yml      # PostgreSQL for local development
+│   ├── security/          # セキュリティ関連ユーティリティ
+│   │   ├── csrf-protection.ts    # CSRF保護ミドルウェア
+│   │   ├── log-sanitizer.ts      # ログサニタイゼーションユーティリティ
+│   │   ├── rate-limit-db.ts      # データベースベースレート制限
+│   │   ├── security-logger-db.ts # セキュリティイベントログ
+│   │   ├── security-utils.ts     # 一般セキュリティユーティリティ
+│   │   ├── threat-detection-db.ts # 脅威検出システム
+│   │   └── validation-rules.ts   # 入力検証ルール
+│   └── shared/            # クライアント/サーバー共有ユーティリティ
+│       └── dateUtils.ts   # 日付フォーマットユーティリティ
+├── prisma/                 # データベーススキーマとマイグレーション
+│   └── schema.prisma       # Prismaスキーマ定義
+├── public/                 # テーマロゴを含む静的アセット
+└── docker-compose.yml      # ローカル開発用PostgreSQL
 ```
 
-### Current Status
-- **Architecture**: Hybrid Next.js application with optimized static/SSR rendering strategy
-- **Performance**: 10x faster login/register pages (static), home page optimized for authentication
-- **Database**: PostgreSQL with complete schema applied via Prisma
-- **Authentication**: Complete GraphQL resolvers for register/login with JWT tokens
-- **Frontend**: Full application with performance-optimized pages and setlist management
-- **Setlist Management**: Complete CRUD operations with duplication functionality
-- **User Interface**: Streamlined setlist detail page with action buttons (Edit, Download, Share, Duplicate)
-- **Image Generation**: Simplified one-click download system with theme selection dropdown and debug preview modes
-- **Theme System**: Black and White themes with real-time preview updates, loading states, and proper theme persistence
-- **Branding**: Unified "Setlist Studio" title system with template-based metadata
-- **Duplication Feature**: Clone setlists via query parameters (/setlists/new?duplicate=ID)
-- **Development**: Hybrid-optimized Next.js setup with hot reload and API routes
-- **Code Quality**: Type-GraphQL circular dependencies resolved, all TypeScript warnings resolved
-- **Security**: Apollo Server v4 with enhanced security features and EOL vulnerability fixes
-- **Deployment**: Production-ready with hybrid architecture optimizations for Vercel
+### 現在のステータス
+- **アーキテクチャ**: 最適化されたstatic/SSRレンダリング戦略によるハイブリッドNext.jsアプリケーション
+- **パフォーマンス**: ログイン/登録ページ10倍高速化（静的）、認証最適化されたホームページ
+- **データベース**: Prisma経由で完全スキーマが適用されたPostgreSQL
+- **認証**: JWTトークン付きregister/login用完全GraphQLリゾルバー
+- **フロントエンド**: パフォーマンス最適化ページとセットリスト管理を持つ完全アプリケーション
+- **セットリスト管理**: 複製機能付き完全CRUD操作
+- **ユーザーインターフェース**: アクションボタン付き合理化セットリスト詳細ページ（編集、ダウンロード、共有、複製）
+- **画像生成**: テーマ選択ドロップダウンとデバッグプレビューモード付き簡素化ワンクリックダウンロードシステム
+- **テーマシステム**: リアルタイムプレビュー更新、ローディング状態、適切なテーマ永続化付きBlack/Whiteテーマ
+- **ブランディング**: テンプレートベースメタデータ付き統一"Setlist Studio"タイトルシステム
+- **複製機能**: クエリパラメータ経由でセットリストをクローン（/setlists/new?duplicate=ID）
+- **開発**: ホットリロードとAPIルート付きハイブリッド最適化Next.jsセットアップ
+- **コード品質**: Type-GraphQL循環依存解決、全TypeScript警告解決
+- **セキュリティ**: 強化セキュリティ機能とEOL脆弱性修正付きApollo Server v4
+- **デプロイ**: Vercel用ハイブリッドアーキテクチャ最適化で本番対応
 
-## Performance Optimization (Hybrid Architecture)
+## パフォーマンス最適化（ハイブリッドアーキテクチャ）
 
-### Rendering Strategy Optimization
-The application implements a strategic hybrid approach for optimal performance:
+### レンダリング戦略最適化
+アプリケーションは最適なパフォーマンスのための戦略的ハイブリッドアプローチを実装：
 
-| Page Type | Strategy | Performance Gain | Caching |
+| ページタイプ | 戦略 | パフォーマンス向上 | キャッシュ |
 |-----------|----------|------------------|---------|
-| `/login`, `/register` | **Static Generation** | **10x faster** | CDN forever |
-| `/` (Home) | **SSR** | Authentication dependent | No cache |
-| `/setlists/[id]` | **SSR** | Security focused | No cache |
-| `/songs`, `/profile` | **SSR** | Authentication required | No cache |
+| `/login`, `/register` | **静的生成** | **10倍高速** | CDN永続 |
+| `/` (ホーム) | **SSR** | 認証依存 | キャッシュなし |
+| `/setlists/[id]` | **SSR** | セキュリティ重視 | キャッシュなし |
+| `/songs`, `/profile` | **SSR** | 認証必須 | キャッシュなし |
 
-### Technical Implementation
-- **Static Pages**: Pre-built at build time, served instantly from CDN
-- **SSR Pages**: Server-rendered for each request (protected content)
-- **API Routes**: Serverless functions for all GraphQL operations
+### 技術実装
+- **静的ページ**: ビルド時事前構築、CDNから即座に配信
+- **SSRページ**: リクエスト毎サーバーレンダリング（保護コンテンツ）
+- **APIルート**: 全GraphQL操作用サーバーレス関数
 
-### SEO & Performance Benefits
-- **Core Web Vitals**: Dramatically improved loading scores
-- **Search Engine Optimization**: Static pages indexed immediately
-- **User Experience**: Near-instant page loads for authentication pages
-- **Cost Efficiency**: Reduced server load through strategic caching
+### SEO & パフォーマンス利点
+- **Core Web Vitals**: 劇的に向上したローディングスコア
+- **検索エンジン最適化**: 静的ページの即座インデックス
+- **ユーザーエクスペリエンス**: 認証ページのほぼ瞬時ページロード
+- **コスト効率**: 戦略的キャッシュによるサーバー負荷軽減
 
-## Recent UI/UX Improvements
+## 最近のUI/UX改善
 
-### Setlist Detail Page (/setlists/[id])
-- **Simplified Layout**: Removed tabbed interface for cleaner, single-page experience
-- **Action Button Row**: Horizontal layout with Edit, Download, Share, Duplicate buttons
-- **Theme Selector**: Top-right dropdown with "Theme: basic/white" format
-- **Success Notifications**: "Setlist Generated !" banner after successful image downloads
-- **One-Click Downloads**: Direct image generation and download without preview tabs
+### セットリスト詳細ページ (/setlists/[id])
+- **簡素化レイアウト**: よりクリーンな単一ページ体験のためタブインターフェースを削除
+- **アクションボタン行**: 編集、ダウンロード、共有、複製ボタンの水平レイアウト
+- **テーマセレクター**: "Theme: basic/white"形式の右上ドロップダウン
+- **成功通知**: 画像ダウンロード成功後の"Setlist Generated !"バナー
+- **ワンクリックダウンロード**: プレビュータブなしの直接画像生成・ダウンロード
 
-### Image Generation System
-- **Streamlined Component**: Simplified ImageGenerator to single download button
-- **Real-time Preview**: Theme changes update preview immediately with loading states
-- **Download Integration**: Uses useRef to prevent automatic downloads, only on button click
-- **QR Code Integration**: Automatic QR codes included in generated images
-- **Debug Mode**: Development-only toggle between DOM preview and image preview
-- **Unified Preview Size**: 700px × 990px (A4 ratio) for consistent display across modes
+### 画像生成システム
+- **合理化コンポーネント**: ImageGeneratorを単一ダウンロードボタンに簡素化
+- **リアルタイムプレビュー**: テーマ変更でローディング状態付きプレビューを即座更新
+- **ダウンロード統合**: useRefを使用して自動ダウンロードを防止、ボタンクリック時のみ
+- **QRコード統合**: 生成画像に自動QRコードを含める
+- **デバッグモード**: DOMプレビューと画像プレビュー間の開発専用トグル
+- **統一プレビューサイズ**: 全モードで一貫表示のための700px × 990px（A4比率）
 
-### Duplication Workflow
-- **Query Parameter System**: `/setlists/new?duplicate={id}` for seamless cloning
-- **Auto-populated Forms**: Original setlist data pre-fills form with "(コピー)" suffix
-- **Preserved Structure**: Maintains song order, timing, and all metadata in duplicates
+### 複製ワークフロー
+- **クエリパラメータシステム**: シームレスクローンのための`/setlists/new?duplicate={id}`
+- **自動入力フォーム**: 元セットリストデータが"(コピー)"サフィックス付きでフォームを事前入力
+- **構造保持**: 複製で楽曲順序、タイミング、全メタデータを維持
 
-### Home Page Enhancements (2025-06-30)
-- **Setlist Dashboard**: Implemented stylish setlist listing on home page for logged-in users
-- **Responsive Grid Layout**: 3-column desktop, 2-column tablet, 1-column mobile responsive design
-- **Theme-aware Cards**: Dynamic gradient backgrounds based on setlist theme (white/black)
-- **Interactive Card Design**: Hover animations with lift effect and enhanced shadows
-- **Unified Card Sizing**: Standardized 278px height for consistent layout across all cards
-- **Action Buttons**: Direct view/edit access buttons at bottom of each card
-- **Empty State Handling**: Friendly message and call-to-action for users with no setlists
-- **Button Design Consistency**: Unified button styling throughout application with rounded corners and proper color scheme
-- **Header Navigation**: Updated header logout button design to match application style
-- **Compact Information Display**: Optimized space usage with smaller icons, reduced padding, and appropriate font sizes
+### ホームページ強化 (2025-06-30)
+- **セットリストダッシュボード**: ログインユーザー向けホームページにスタイリッシュなセットリスト一覧を実装
+- **レスポンシブグリッドレイアウト**: デスクトップ3列、タブレット2列、モバイル1列のレスポンシブデザイン
+- **テーマ対応カード**: セットリストテーマ（白/黒）に基づく動的グラデーション背景
+- **インタラクティブカードデザイン**: リフト効果と強化シャドウ付きホバーアニメーション
+- **統一カードサイズ**: 全カードで一貫レイアウトのための標準278px高さ
+- **アクションボタン**: 各カード下部の直接表示/編集アクセスボタン
+- **空状態処理**: セットリストなしユーザー向けの親しみやすいメッセージとコールトゥアクション
+- **ボタンデザイン一貫性**: 角丸と適切なカラースキーム付きアプリケーション全体の統一ボタンスタイル
+- **ヘッダーナビゲーション**: アプリケーションスタイルに合わせたヘッダーログアウトボタンデザイン更新
+- **コンパクト情報表示**: より小さなアイコン、パディング削減、適切なフォントサイズによる空間使用最適化
 
-### Recent Bug Fixes (2025-06-30)
-- **Theme Persistence**: Fixed issue where saved themes from database weren't being displayed on setlist detail pages
-- **Theme Naming Consistency**: Resolved "basic"/"black" naming inconsistency in UI components
-- **Database Integration**: Improved theme selection to properly initialize from stored setlist data
-- **Theme Layout Improvements**: Updated font sizes and spacing to match reference design - larger band names (48px), improved song list readability (20-32px), cleaner layout without numbered songs
-- **React Hooks Order**: Fixed hooks order violation in SetlistDetailPage that was causing React development errors
-- **Debug Mode Layout**: Corrected debug mode preview dimensions and removed unwanted margins to match image preview sizing
-- **Error Handling**: Replaced confusing fallback DOM preview with proper error message and retry functionality when image generation fails
-- **Grid Layout Issues**: Resolved card height overflow problems by optimizing content spacing and card dimensions
+### 最近のバグ修正 (2025-06-30)
+- **テーマ永続化**: データベースから保存されたテーマがセットリスト詳細ページで表示されない問題を修正
+- **テーマ命名一貫性**: UIコンポーネントの"basic"/"black"命名不一致を解決
+- **データベース統合**: 保存されたセットリストデータから適切に初期化するテーマ選択を改善
+- **テーマレイアウト改善**: 参照デザインに合わせたフォントサイズと間隔の更新 - より大きなバンド名（48px）、楽曲リスト可読性向上（20-32px）、番号なしでよりクリーンなレイアウト
+- **React Hooks順序**: React開発エラーを引き起こしていたSetlistDetailPageのフック順序違反を修正
+- **デバッグモードレイアウト**: デバッグモードプレビュー寸法を修正し、画像プレビューサイズに合わせて不要なマージンを削除
+- **エラーハンドリング**: 画像生成失敗時の混乱を招くフォールバックDOMプレビューを適切なエラーメッセージとリトライ機能に置換
+- **グリッドレイアウト問題**: コンテンツ間隔とカード寸法最適化によりカード高さオーバーフロー問題を解決
 
-### Theme System Bug Fixes (2025-07-01)
-- **Page Reload Theme Issue**: Fixed issue where white theme setlists would display as black theme after page reload
-- **Theme Change Interference**: Resolved problem where manual theme changes were being overridden by database initialization
-- **Theme Initialization Logic**: Implemented proper theme state management with initialization flags to prevent conflicts between database values and user selections
-- **Loading State Management**: Added proper loading states during theme initialization to prevent flickering between themes
+### テーマシステムバグ修正 (2025-07-01)
+- **ページリロードテーマ問題**: ページリロード後に白テーマセットリストが黒テーマで表示される問題を修正
+- **テーマ変更干渉**: 手動テーマ変更がデータベース初期化により上書きされる問題を解決
+- **テーマ初期化ロジック**: データベース値とユーザー選択間の競合を防ぐ初期化フラグ付き適切なテーマ状態管理を実装
+- **ローディング状態管理**: テーマ初期化中のテーマ間ちらつきを防ぐ適切なローディング状態を追加
 
-### Semantic File Organization (2025-06-30)
-- **GraphQL Server Entry Point**: Renamed `src/index.ts` to `src/apollo-server.ts` for better semantic clarity
-- **GraphQL Operations**: Renamed `src/lib/graphql/queries.ts` to `apollo-operations.ts` to reflect it contains both queries and mutations
-- **Authentication Middleware**: Renamed `src/middleware/auth.ts` to `jwt-auth-middleware.ts` for clearer purpose indication
-- **Import Path Updates**: Updated all frontend files to use new `apollo-operations` import path and all GraphQL resolvers to use new middleware path
-- **Package.json Updates**: Updated GraphQL server scripts and main entry point to reflect apollo-server.ts naming
-- **Build Compatibility**: Verified all changes work correctly with both local development and Vercel deployment
+### セマンティックファイル整理 (2025-06-30)
+- **GraphQLサーバーエントリーポイント**: より良いセマンティック明確性のため`src/index.ts`を`src/apollo-server.ts`にリネーム
+- **GraphQL操作**: クエリとミューテーション両方を含むことを反映して`src/lib/graphql/queries.ts`を`apollo-operations.ts`にリネーム
+- **認証ミドルウェア**: より明確な目的表示のため`src/middleware/auth.ts`を`jwt-auth-middleware.ts`にリネーム
+- **インポートパス更新**: 全フロントエンドファイルで新しい`apollo-operations`インポートパス、全GraphQLリゾルバーで新しいミドルウェアパスを使用するよう更新
+- **Package.json更新**: apollo-server.ts命名を反映するGraphQLサーバースクリプトとメインエントリーポイントを更新
+- **ビルド互換性**: ローカル開発とVercelデプロイ両方で全変更が正しく動作することを確認
 
-### ESLint Configuration Migration (2025-06-30)
-- **Flat Config Migration**: Migrated from deprecated `.eslintignore` file to modern flat config format
-- **Ignore Patterns**: Moved all ignore patterns to `ignores` property in `eslint.config.mjs`
-- **Plugin Dependencies**: Added missing `@next/eslint-plugin-next` dependency to resolve plugin loading issues
-- **Warning Resolution**: Eliminated ESLintIgnoreWarning about deprecated .eslintignore file
-- **Code Quality**: Auto-fixed formatting issues with `pnpm lint:fix` while maintaining existing code structure
+### ESLint設定移行 (2025-06-30)
+- **フラット設定移行**: 非推奨の`.eslintignore`ファイルからモダンなフラット設定形式に移行
+- **無視パターン**: 全無視パターンを`eslint.config.mjs`の`ignores`プロパティに移動
+- **プラグイン依存関係**: プラグインローディング問題解決のため不足していた`@next/eslint-plugin-next`依存関係を追加
+- **警告解決**: 非推奨の.eslintignoreファイルに関するESLintIgnoreWarningを排除
+- **コード品質**: 既存コード構造を維持しながら`pnpm lint:fix`でフォーマット問題を自動修正
 
-### Apollo Server v4 Security Migration (2025-06-30)
-- **Version Upgrade**: Migrated from deprecated Apollo Server v3 (EOL) to Apollo Server v4.12.2
-- **Security Enhancements**: Added query depth limiting (max 10 levels), request size limiting (50MB), and production introspection controls
-- **Architecture Modernization**: Replaced legacy apollo-server-express with @apollo/server and expressMiddleware pattern
-- **Validation Integration**: Added class-validator decorators to LoginInput and RegisterInput types for proper argument validation
-- **Vulnerability Resolution**: Eliminated all known security vulnerabilities from deprecated Apollo Server v3 dependencies
+### Apollo Server v4セキュリティ移行 (2025-06-30)
+- **バージョンアップグレード**: 非推奨のApollo Server v3（EOL）からApollo Server v4.12.2に移行
+- **セキュリティ強化**: クエリ深度制限（最大10レベル）、リクエストサイズ制限（50MB）、本番イントロスペクション制御を追加
+- **アーキテクチャモダナイゼーション**: レガシーapollo-server-expressを@apollo/serverとexpressMiddlewareパターンに置換
+- **バリデーション統合**: 適切な引数検証のためLoginInputとRegisterInput型にclass-validatorデコレーターを追加
+- **脆弱性解決**: 非推奨のApollo Server v3依存関係から既知のセキュリティ脆弱性を全て排除
 
-### Vercel Functions Migration (2025-07-01)
-- **Architecture Unification**: Migrated from dual-server architecture to unified Next.js with Vercel Functions
-- **GraphQL API Routes**: Converted standalone GraphQL server to Next.js API route at `/api/graphql`
-- **Type-GraphQL Integration**: Successfully integrated Type-GraphQL with Next.js API routes using buildSchema
-- **Circular Dependency Resolution**: Resolved Type-GraphQL circular dependencies using field resolvers instead of direct type relations
-- **Dependency Cleanup**: Removed redundant graphql-server directory and consolidated all dependencies into single package.json
-- **Environment Configuration**: Unified environment variable management with `.env` and `.env.local` files
-- **Production Ready**: Application now fully compatible with Vercel Functions deployment
+### Vercel Functions移行 (2025-07-01)
+- **アーキテクチャ統一**: デュアルサーバーアーキテクチャからVercel Functions付き統一Next.jsに移行
+- **GraphQL APIルート**: スタンドアロンGraphQLサーバーを`/api/graphql`のNext.js APIルートに変換
+- **Type-GraphQL統合**: buildSchemaを使用してType-GraphQLをNext.js APIルートと正常に統合
+- **循環依存解決**: 直接型関係の代わりにフィールドリゾルバーを使用してType-GraphQL循環依存を解決
+- **依存関係クリーンアップ**: 冗長なgraphql-serverディレクトリを削除し、全依存関係を単一package.jsonに統合
+- **環境設定**: `.env`と`.env.local`ファイルによる統一環境変数管理
+- **本番対応**: アプリケーションがVercel Functionsデプロイと完全互換
 
-### CSRF & CSP Implementation (2025-07-01)
-- **CSRF Token API**: Added `/api/csrf` endpoint for secure token generation and distribution
-- **CSP Development Fix**: Updated Content Security Policy to allow `unsafe-inline` and `unsafe-eval` in development only
-- **Apollo Client Integration**: Automatic CSRF token fetching and header injection for all GraphQL mutations
-- **Centralized CSRF Management**: Single CSRFProvider handles app-wide token initialization, removed duplicate useCSRF calls
-- **Production Security**: Maintains strict CSP in production while enabling Next.js development features
+### CSRF & CSP実装 (2025-07-01)
+- **CSRFトークンAPI**: セキュアなトークン生成と配布のため`/api/csrf`エンドポイントを追加
+- **CSP開発修正**: 開発時のみ`unsafe-inline`と`unsafe-eval`を許可するようContent Security Policyを更新
+- **Apollo Client統合**: 全GraphQLミューテーション用の自動CSRFトークン取得とヘッダー注入
+- **集約CSRF管理**: 単一CSRFProviderがアプリ全体のトークン初期化を処理、重複useCSRF呼び出しを削除
+- **本番セキュリティ**: Next.js開発機能を有効にしながら本番で厳格なCSPを維持
 
-## Security Architecture (2025-07-01)
+## セキュリティアーキテクチャ (2025-07-01)
 
-### Comprehensive Security Implementation
-This application is designed to meet enterprise-level security requirements:
+### 包括的セキュリティ実装
+このアプリケーションは企業レベルのセキュリティ要件を満たすよう設計されています：
 
-#### Authentication & Authorization
-- **HttpOnly Cookie Authentication**: Secure token management preventing XSS attacks
-- **JWT Token Validation**: Digital signatures for tamper prevention
-- **Automatic Migration**: localStorage → HttpOnly Cookie automatic migration
-- **Access Control**: Strict access control for private/public setlists
+#### 認証・認可
+- **HttpOnly Cookie認証**: XSS攻撃を防ぐセキュアなトークン管理
+- **JWTトークン検証**: 改ざん防止のためのデジタル署名
+- **自動移行**: localStorage → HttpOnly Cookie自動移行
+- **アクセス制御**: プライベート/パブリックセットリストの厳格なアクセス制御
 
-#### Security Monitoring & Logging
-- **Database-based Security Logging**: Persistent logging system compatible with Vercel Functions
-- **Threat Detection Engine**: Detection of brute force and credential stuffing attacks
-- **Real-time Security Events**: Immediate recording and analysis of unauthorized access attempts
-- **Automated Cleanup**: Automatic deletion of old security data via Vercel Cron
+#### セキュリティモニタリング・ログ
+- **データベースベースセキュリティログ**: Vercel Functions互換の永続ログシステム
+- **脅威検出エンジン**: ブルートフォースと認証情報詰込み攻撃の検出
+- **リアルタイムセキュリティイベント**: 不正アクセス試行の即座記録と解析
+- **自動クリーンアップ**: Vercelクロン経由での古いセキュリティデータ自動削除
 
-#### Attack Prevention
-- **CSRF Protection**: Timing attack resistant Double Submit Cookie + HMAC
-- **Rate Limiting**: Database-based distributed rate limiting with IP spoofing prevention
-- **Log Injection Protection**: Sanitization of newlines, control characters, and special characters
-- **IP Spoofing Prevention**: Trusted proxy validation and secure IP extraction
+#### 攻撃防御
+- **CSRF保護**: タイミング攻撃耐性のDouble Submit Cookie + HMAC
+- **レート制限**: IPスプーフィング防止付きデータベースベース分散レート制限
+- **ログインジェクション保護**: 改行文字、制御文字、特殊文字のサニタイゼーション
+- **IPスプーフィング防止**: 信頼できるプロキシ検証と安全なIP抽出
 
-#### Data Protection
-- **Input Sanitization**: DOMPurify + custom validation
-- **SQL Injection Prevention**: Prisma ORM + parameterized queries
-- **Password Security**: bcrypt 12 rounds + complexity requirements
-- **Sensitive Data Masking**: Protection of confidential information in log outputs
+#### データ保護
+- **入力サニタイゼーション**: DOMPurify + カスタムバリデーション
+- **SQLインジェクション防止**: Prisma ORM + パラメータ化クエリ
+- **パスワードセキュリティ**: bcrypt 12ラウンド + 複雑性要件
+- **機密データマスキング**: ログ出力での機密情報保護
 
-#### Infrastructure Security
-- **Docker Hardening**: Non-privileged users, read-only root FS, SCRAM-SHA-256 authentication
-- **Environment Isolation**: Complete separation of production/development environments
-- **Secure Headers**: Security headers including CSP, X-Frame-Options
-- **Network Security**: localhost-only binding, custom network isolation
+#### インフラストラクチャセキュリティ
+- **Docker強化**: 非特権ユーザー、読み取り専用ルートFS、SCRAM-SHA-256認証
+- **環境分離**: 本番/開発環境の完全分離
+- **セキュリティヘッダー**: CSP、X-Frame-Optionsを含むセキュリティヘッダー
+- **ネットワークセキュリティ**: localhost専用バインド、カスタムネットワーク分離
 
-### Security Tables (Database Schema)
+### セキュリティテーブル（データベーススキーマ）
 ```sql
--- Rate limiting tracking
+-- レート制限追跡
 RateLimitEntry: key, count, resetTime
 
--- Security event logging
+-- セキュリティイベントログ
 SecurityEvent: type, severity, timestamp, userId, ipAddress, details
 
--- Threat activity analysis
+-- 脅威活動解析
 ThreatActivity: ipAddress, activityType, userId, timestamp, metadata
 ```
 
-### Token Architecture & Implementation Details
+### トークンアーキテクチャ・実装詳細
 
-#### 1. JWT Authentication Token
-**Purpose**: User authentication and session management
+#### 1. JWT認証トークン
+**目的**: ユーザー認証とセッション管理
 
-**Storage Method**: HttpOnly Cookie
+**保存方法**: HttpOnly Cookie
 ```javascript
 Cookie Name: 'auth_token'
-HttpOnly: true          // XSS attack protection
-Secure: production      // HTTPS only in production
-SameSite: 'strict'      // CSRF attack protection
-Path: '/'               // All paths
-MaxAge: 86400           // 24 hours in seconds
+HttpOnly: true          // XSS攻撃保護
+Secure: production      // 本番でHTTPS専用
+SameSite: 'strict'      // CSRF攻撃保護
+Path: '/'               // 全パス
+MaxAge: 86400           // 24時間（秒）
 ```
 
-**JWT Payload Structure**:
+**JWTペイロード構造**:
 ```json
 {
   "userId": "cuid_user_id",
@@ -446,26 +446,26 @@ MaxAge: 86400           // 24 hours in seconds
 }
 ```
 
-**Signing Algorithm**: HMAC SHA-256 with `JWT_SECRET`
+**署名アルゴリズム**: `JWT_SECRET`によるHMAC SHA-256
 
-**Authentication Flow**:
-1. GraphQL Login → JWT token generation
-2. `POST /api/auth` → Token verification → HttpOnly Cookie setup
-3. Subsequent requests → Automatic cookie transmission → GraphQL authentication
-4. `DELETE /api/auth` → Cookie deletion → Logout
+**認証フロー**:
+1. GraphQLログイン → JWTトークン生成
+2. `POST /api/auth` → トークン検証 → HttpOnly Cookie設定
+3. 後続リクエスト → 自動Cookie送信 → GraphQL認証
+4. `DELETE /api/auth` → Cookie削除 → ログアウト
 
-#### 2. CSRF Protection Token
-**Purpose**: Cross-Site Request Forgery attack protection
+#### 2. CSRF保護トークン
+**目的**: クロスサイトリクエストフォージェリ攻撃保護
 
-**Implementation**: Double Submit Cookie + HMAC Pattern
+**実装**: Double Submit Cookie + HMACパターン
 
-**Token Format**:
+**トークン形式**:
 ```
-Format: timestamp.randomValue.hmacSignature
-Example: 1704067200000.a1b2c3d4e5f6789.8f7e6d5c4b3a2190
+形式: timestamp.randomValue.hmacSignature
+例: 1704067200000.a1b2c3d4e5f6789.8f7e6d5c4b3a2190
 ```
 
-**Generation Process**:
+**生成プロセス**:
 ```javascript
 const timestamp = Date.now().toString()
 const randomValue = randomBytes(16).toString('hex')
@@ -474,124 +474,124 @@ const signature = createHmac('sha256', CSRF_SECRET).update(payload).digest('hex'
 const token = `${payload}.${signature}`
 ```
 
-**Distribution Method**:
-- **Cookie**: `csrf_token` (HttpOnly, temporary)
-- **Header**: `x-csrf-token` (JavaScript readable)
+**配布方法**:
+- **Cookie**: `csrf_token`（HttpOnly、一時的）
+- **ヘッダー**: `x-csrf-token`（JavaScript読み取り可能）
 
-**Verification Process**:
-1. Extract CSRF token from request headers
-2. Retrieve corresponding token from cookie
-3. HMAC signature verification (using `timingSafeEqual`)
-4. Timestamp validity check
-5. Match confirmation → Request approval
+**検証プロセス**:
+1. リクエストヘッダーからCSRFトークンを抽出
+2. Cookieから対応するトークンを取得
+3. HMAC署名検証（`timingSafeEqual`使用）
+4. タイムスタンプ有効性チェック
+5. マッチ確認 → リクエスト承認
 
-#### 3. Security Secrets Management
+#### 3. セキュリティシークレット管理
 
-| Secret | Purpose | Requirements | Storage | Rotation |
+| シークレット | 目的 | 要件 | 保存 | ローテーション |
 |--------|---------|--------------|---------|----------|
-| `JWT_SECRET` | JWT signing & verification | 32+ chars | Environment variable | Regular |
-| `CSRF_SECRET` | CSRF HMAC signing | 32+ chars, ≠ JWT | Environment variable | Regular |
-| `IP_HASH_SALT` | IP anonymization salt | 16+ chars | Environment variable | Rare |
-| `CRON_SECRET` | Cron authentication | 32+ chars | Environment variable | Rare |
+| `JWT_SECRET` | JWT署名・検証 | 32文字以上 | 環境変数 | 定期 |
+| `CSRF_SECRET` | CSRF HMAC署名 | 32文字以上、JWT≠ | 環境変数 | 定期 |
+| `IP_HASH_SALT` | IP匿名化ソルト | 16文字以上 | 環境変数 | 稀 |
+| `CRON_SECRET` | クロン認証 | 32文字以上 | 環境変数 | 稀 |
 
-#### 4. Token Security Features
+#### 4. トークンセキュリティ機能
 
-**Timing Attack Resistance**:
+**タイミング攻撃耐性**:
 ```javascript
-// CSRF token verification
+// CSRFトークン検証
 const isValid = timingSafeEqual(
   Buffer.from(receivedToken, 'hex'),
   Buffer.from(expectedToken, 'hex')
 )
 ```
 
-**XSS Protection**:
-- JWT Token: HttpOnly Cookie → JavaScript inaccessible
-- CSRF Token: Header distribution → Limited access only
+**XSS保護**:
+- JWTトークン: HttpOnly Cookie → JavaScriptアクセス不可
+- CSRFトークン: ヘッダー配布 → 限定アクセスのみ
 
-**CSRF Protection**:
-- Double Submit Pattern: Both Cookie + Header required
-- HMAC Signature: Server-side verification
-- SameSite Cookie: Browser-level protection
+**CSRF保護**:
+- Double Submitパターン: Cookie + ヘッダー両方必須
+- HMAC署名: サーバーサイド検証
+- SameSite Cookie: ブラウザレベル保護
 
-**Tampering Protection**:
-- JWT: Digital signature for integrity guarantee
-- CSRF: HMAC-SHA256 for tampering detection
+**改ざん保護**:
+- JWT: 整合性保証のためのデジタル署名
+- CSRF: 改ざん検出のためのHMAC-SHA256
 
-#### 5. Token Lifecycle & Management
+#### 5. トークンライフサイクル・管理
 
-**JWT Token Lifecycle**:
+**JWTトークンライフサイクル**:
 ```
-Login → Generate → Store in HttpOnly Cookie → Auto-refresh (24h) → Logout/Expire
-```
-
-**CSRF Token Lifecycle**:  
-```
-Request → Generate → Store (Cookie+Header) → Validate → Discard
+ログイン → 生成 → HttpOnly Cookieに保存 → 自動更新（24時間） → ログアウト/期限切れ
 ```
 
-**Automatic Cleanup**:
-- Expired rate limit entries: Auto-deletion
-- Security logs: Periodic deletion via Vercel Cron
-- Invalid cookie clearing: Auto-execution on auth failure
+**CSRFトークンライフサイクル**:  
+```
+リクエスト → 生成 → 保存（Cookie+ヘッダー） → 検証 → 破棄
+```
 
-#### 6. Development vs Production Configurations
+**自動クリーンアップ**:
+- 期限切れレート制限エントリ: 自動削除
+- セキュリティログ: Vercelクロン経由の定期削除
+- 無効Cookie消去: 認証失敗時の自動実行
 
-**Development Environment**:
-- Cookie Secure: false (HTTP allowed)
-- Rate Limiting: Relaxed (20 attempts/5min)
-- Verbose Logging: Enabled
+#### 6. 開発環境 vs 本番環境設定
 
-**Production Environment**:
-- Cookie Secure: true (HTTPS required)
-- Rate Limiting: Strict (5 attempts/15min)
-- Security Logging: Database persistence
+**開発環境**:
+- Cookie Secure: false（HTTP許可）
+- レート制限: 緩和（20回/5分）
+- 詳細ログ: 有効
 
-This implementation satisfies OWASP Top 10 compliance and enterprise-level security requirements.
+**本番環境**:
+- Cookie Secure: true（HTTPS必須）
+- レート制限: 厳格（5回/15分）
+- セキュリティログ: データベース永続化
 
-### Production Security Checklist
-- ✅ All critical vulnerabilities fixed
-- ✅ CSRF timing attack mitigation
-- ✅ IP spoofing prevention  
-- ✅ localStorage XSS vulnerability eliminated
-- ✅ Race condition prevention in rate limiting
-- ✅ Threat detection logic error fixed
-- ✅ Log injection attack prevention
-- ✅ Comprehensive security event monitoring
-- ✅ Automated security data cleanup
-- ✅ Vercel Functions compatibility
+この実装はOWASP Top 10準拠と企業レベルセキュリティ要件を満たします。
 
-## Updates and Memories
+### 本番セキュリティチェックリスト
+- ✅ 全重要脆弱性修正
+- ✅ CSRFタイミング攻撃緩和
+- ✅ IPスプーフィング防止  
+- ✅ localStorage XSS脆弱性排除
+- ✅ レート制限での競合状態防止
+- ✅ 脅威検出ロジックエラー修正
+- ✅ ログインジェクション攻撃防止
+- ✅ 包括的セキュリティイベント監視
+- ✅ セキュリティデータ自動クリーンアップ
+- ✅ Vercel Functions互換性
 
-### Repository Management
-- **Claude.mdとReadme.mdを必要に応じて更新**: Added task to keep documentation files updated as part of ongoing project maintenance
+## 更新履歴と記録
 
-### GraphQL Architecture Documentation (2025-07-01)
-- **GraphQL-Architecture-Guide.md作成**: Created comprehensive GraphQL architecture guide with restaurant metaphor
-- **Resolver詳細解説**: Added detailed explanation of GraphQL Resolvers as "specialized chefs"
-- **レストラン比喩拡張**: Extended restaurant metaphor to include complete data flow from React to Database
-- **初心者向けセクション**: Added beginner-friendly explanations comparing REST API vs GraphQL
-- **実践的コード例**: Included real Setlist Studio code examples for all architecture layers
-- **プロジェクト構造図**: Visual representation of file relationships and responsibilities
+### リポジトリ管理
+- **Claude.mdとReadme.mdを必要に応じて更新**: 継続的プロジェクトメンテナンスの一環としてドキュメントファイル更新タスクを追加
 
-### Library Structure Reorganization (2025-07-01)
-- **Hierarchical Organization**: Reorganized src/lib directory into functional categories (client, server, security, shared)
-- **Client Directory**: Moved apollo-client.ts, auth-utils.ts, secure-auth-client.ts to client/ subdirectory
-- **Server Directory**: Moved GraphQL-related files (apollo-operations.ts, resolvers/, types/, middleware/) to server/graphql/ subdirectory
-- **Security Directory**: Consolidated all security-related utilities (csrf-protection.ts, rate-limit-db.ts, security-logger-db.ts, etc.) into security/ subdirectory  
-- **Shared Directory**: Moved dateUtils.ts to shared/ for utilities used by both client and server
-- **Import Path Updates**: Updated all import statements across the codebase to reflect new directory structure
-- **Type Safety**: Maintained full TypeScript compatibility with zero compilation errors
-- **Documentation Update**: Updated CLAUDE.md project structure section to reflect new organization
+### GraphQLアーキテクチャドキュメント (2025-07-01)
+- **GraphQL-Architecture-Guide.md作成**: レストラン比喩による包括的GraphQLアーキテクチャガイドを作成
+- **Resolver詳細解説**: GraphQLリゾルバーを「専門シェフ」として詳細説明を追加
+- **レストラン比喩拡張**: ReactからDatabaseまでの完全データフローを含むレストラン比喩を拡張
+- **初心者向けセクション**: REST API vs GraphQLを比較した初心者向け説明を追加
+- **実践的コード例**: 全アーキテクチャレイヤーの実際のSetlist Studioコード例を含める
+- **プロジェクト構造図**: ファイル関係と責任の視覚的表現
 
-### Authentication and Authorization Updates (2025-07-01)
-- **SetlistProtectedRoute Implementation**: Implemented access control for private/public setlists
-- **React Hooks Order Error Fix**: Moved useEffect hooks before conditional statements to resolve React errors
-- **GraphQL Error Handling Improvement**: Enhanced proper retrieval and processing of authentication error messages
-- **Private Setlist Access Control**: Automatic redirect to login page when unauthenticated users access private setlists
-- **Authentication Protection Applied to All Pages**: Applied ProtectedRoute to the following pages:
-  - `/songs`: Song list page
-  - `/songs/new`: New song creation page
-  - `/setlists/new`: New setlist creation page
-  - `/setlists/[id]/edit`: Setlist edit page
-- **SetlistResolver Authentication Logic**: Implemented manual authentication check for private setlists (public setlists remain accessible to everyone)
+### ライブラリ構造再編成 (2025-07-01)
+- **階層構造**: src/libディレクトリを機能カテゴリ（client、server、security、shared）に再編成
+- **Clientディレクトリ**: apollo-client.ts、auth-utils.ts、secure-auth-client.tsをclient/サブディレクトリに移動
+- **Serverディレクトリ**: GraphQL関連ファイル（apollo-operations.ts、resolvers/、types/、middleware/）をserver/graphql/サブディレクトリに移動
+- **Securityディレクトリ**: 全セキュリティ関連ユーティリティ（csrf-protection.ts、rate-limit-db.ts、security-logger-db.tsなど）をsecurity/サブディレクトリに統合  
+- **Sharedディレクトリ**: クライアント・サーバー両方で使用されるユーティリティのためdateUtils.tsをshared/に移動
+- **インポートパス更新**: 新しいディレクトリ構造を反映してコードベース全体のインポート文を更新
+- **型安全性**: コンパイルエラーゼロでTypeScript完全互換性を維持
+- **ドキュメント更新**: 新組織を反映してCLAUDE.mdプロジェクト構造セクションを更新
+
+### 認証・認可更新 (2025-07-01)
+- **SetlistProtectedRoute実装**: プライベート/パブリックセットリスト用アクセス制御を実装
+- **React Hooksエラー修正**: React順序エラー解決のため条件文前にuseEffectフックを移動
+- **GraphQLエラーハンドリング改善**: 認証エラーメッセージの適切な取得と処理を強化
+- **プライベートセットリストアクセス制御**: 未認証ユーザーがプライベートセットリストにアクセス時の自動ログインページリダイレクト
+- **全ページ認証保護適用**: 以下のページにProtectedRouteを適用:
+  - `/songs`: 楽曲リストページ
+  - `/songs/new`: 新規楽曲作成ページ
+  - `/setlists/new`: 新規セットリスト作成ページ
+  - `/setlists/[id]/edit`: セットリスト編集ページ
+- **SetlistResolver認証ロジック**: プライベートセットリスト用手動認証チェックを実装（パブリックセットリストは全員がアクセス可能のまま）
