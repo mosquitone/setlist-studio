@@ -44,13 +44,17 @@ export function verifyAndValidateJWT(token: string, secret: string): JWTPayload 
     const payload = jwt.verify(token, secret);
 
     if (!isValidJWTPayload(payload)) {
-      console.error('JWT payload validation failed:', payload);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('JWT payload validation failed:', payload);
+      }
       throw new Error('Invalid JWT payload structure');
     }
 
     return payload;
   } catch (error) {
-    console.error('JWT verification error:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('JWT verification error:', error);
+    }
     throw new Error('JWT verification failed');
   }
 }
