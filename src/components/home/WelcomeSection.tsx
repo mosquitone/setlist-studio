@@ -20,7 +20,7 @@ export function WelcomeSection() {
           mb: 2,
         }}
       >
-        セットリストジェネレーター v2
+        Setlist Studio
       </Typography>
       <Typography
         variant="h6"
@@ -28,7 +28,7 @@ export function WelcomeSection() {
         color="text.secondary"
         sx={{ mb: 4, maxWidth: 600, mx: 'auto' }}
       >
-        あなたの楽曲を管理して、素敵なセットリストを作成しましょう
+        バンド向けプロフェッショナルセットリスト管理ツール
       </Typography>
       <Chip
         label="🎵 エモーショナルなセットリスト作成ツール"
