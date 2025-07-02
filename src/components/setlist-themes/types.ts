@@ -1,14 +1,14 @@
-import { Theme } from '@/types/common';
+import { Theme, EntityId } from '@/types/common';
 
 export interface SetlistItem {
-  id: string;
+  id: EntityId;
   title: string;
   note?: string;
   order: number;
 }
 
 export interface SetlistData {
-  id: string;
+  id: EntityId;
   title: string;
   bandName: string;
   eventName?: string;
