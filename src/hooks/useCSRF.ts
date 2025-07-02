@@ -10,7 +10,9 @@ export function useCSRF() {
           credentials: 'include',
         });
       } catch (error) {
-        console.warn('Failed to initialize CSRF token:', error);
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('Failed to initialize CSRF token:', error);
+        }
       }
     };
 

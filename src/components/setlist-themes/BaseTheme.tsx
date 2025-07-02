@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Box, Typography } from '@mui/material';
 import { SETLIST_FOOTER_TEXT } from './constants';
 import { SetlistThemeProps } from '@/types/components';
@@ -34,8 +34,9 @@ export const BaseTheme: React.FC<BaseThemeProps> = ({ data, className, colors })
   const A4_WIDTH = 794;
   const A4_HEIGHT = 1123;
 
-  // Dynamic font size based on number of songs for A4 compatibility
-  const getFontSize = (count: number): string => {
+  // Dynamic font size based on number of songs for A4 compatibility (memoized)
+  const fontSize = useMemo(() => {
+    const count = items.length;
     if (count <= 6) return '40px';
     if (count <= 8) return '34px';
     if (count <= 10) return '30px';
@@ -44,9 +45,7 @@ export const BaseTheme: React.FC<BaseThemeProps> = ({ data, className, colors })
     if (count <= 18) return '22px';
     if (count <= 25) return '20px';
     return '18px';
-  };
-
-  const fontSize = getFontSize(items.length);
+  }, [items.length]);
 
   return (
     <div

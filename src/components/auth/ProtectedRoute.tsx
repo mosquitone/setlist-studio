@@ -103,9 +103,13 @@ export function SetlistProtectedRoute({
     };
 
     const authErrorMessage = getAuthErrorMessage(error);
-    console.log('Auth error check:', { error, authErrorMessage });
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Auth error check:', { error, authErrorMessage });
+    }
     if (authErrorMessage) {
-      console.log('Redirecting to login due to auth error');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Redirecting to login due to auth error');
+      }
       router.push('/login');
     }
   }, [error, router]);

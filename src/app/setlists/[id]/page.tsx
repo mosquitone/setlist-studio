@@ -58,7 +58,9 @@ export default function SetlistDetailPage() {
       // Force page reload to refresh data with correct authentication context
       window.location.reload();
     } catch (error) {
-      console.error('Failed to toggle visibility:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Failed to toggle visibility:', error);
+      }
     }
   };
 
