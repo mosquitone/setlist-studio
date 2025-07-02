@@ -87,7 +87,11 @@ export function SetlistProtectedRoute({
       }
 
       // GraphQLエラーの配列をチェック（Apollo Error の場合）
-      if (typeof error === 'object' && 'graphQLErrors' in error && Array.isArray((error as any).graphQLErrors)) {
+      if (
+        typeof error === 'object' &&
+        'graphQLErrors' in error &&
+        Array.isArray((error as any).graphQLErrors)
+      ) {
         for (const gqlError of (error as any).graphQLErrors) {
           if (gqlError.message === 'Authentication required to access private setlist') {
             return gqlError.message;
@@ -123,7 +127,12 @@ export function SetlistProtectedRoute({
   }
 
   // 認証エラーの場合
-  if (error && typeof error === 'object' && 'graphQLErrors' in error && Array.isArray((error as any).graphQLErrors)) {
+  if (
+    error &&
+    typeof error === 'object' &&
+    'graphQLErrors' in error &&
+    Array.isArray((error as any).graphQLErrors)
+  ) {
     const authError = (error as any).graphQLErrors.find(
       (e: any) => e.message === 'Authentication required to access private setlist',
     );
