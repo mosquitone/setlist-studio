@@ -1,59 +1,59 @@
-'use client'
+'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
-import { secureAuthClient, User } from '@/lib/client/secure-auth-client'
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { secureAuthClient, User } from '@/lib/client/secure-auth-client';
 
 interface AuthContextType {
-  isLoggedIn: boolean
-  isLoading: boolean
-  user: User | null
-  login: (token: string, userData: User) => Promise<{ success: boolean; user?: User }>
-  logout: () => Promise<void>
+  isLoggedIn: boolean;
+  isLoading: boolean;
+  user: User | null;
+  login: (token: string, userData: User) => Promise<{ success: boolean; user?: User }>;
+  logout: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined)
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 interface AuthProviderProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
-  const [user, setUser] = useState<User | null>(null)
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     // 既存の認証状態を取得（重複APIコールを避けるため）
-    const currentState = secureAuthClient.getState()
-    setIsLoggedIn(currentState.authenticated)
-    setUser(currentState.user)
-    setIsLoading(currentState.loading)
+    const currentState = secureAuthClient.getState();
+    setIsLoggedIn(currentState.authenticated);
+    setUser(currentState.user);
+    setIsLoading(currentState.loading);
 
     // 認証状態の変更をリッスン
     const unsubscribe = secureAuthClient.subscribe(authState => {
-      setIsLoggedIn(authState.authenticated)
-      setUser(authState.user)
-      setIsLoading(authState.loading)
-    })
+      setIsLoggedIn(authState.authenticated);
+      setUser(authState.user);
+      setIsLoading(authState.loading);
+    });
 
-    return unsubscribe
-  }, [])
+    return unsubscribe;
+  }, []);
 
   const login = async (token: string, userData: User) => {
-    const result = await secureAuthClient.login(token)
+    const result = await secureAuthClient.login(token);
     if (result.success) {
-      setIsLoggedIn(true)
-      setUser(result.user || userData)
+      setIsLoggedIn(true);
+      setUser(result.user || userData);
     }
-    return result
-  }
+    return result;
+  };
 
   const logout = async () => {
-    await secureAuthClient.logout()
-    setIsLoggedIn(false)
-    setUser(null)
-    window.location.reload()
-  }
+    await secureAuthClient.logout();
+    setIsLoggedIn(false);
+    setUser(null);
+    window.location.reload();
+  };
 
   const value = {
     isLoggedIn,
@@ -61,15 +61,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
     user,
     login,
     logout,
-  }
+  };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
-  const context = useContext(AuthContext)
+  const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider')
+    throw new Error('useAuth must be used within an AuthProvider');
   }
-  return context
+  return context;
 }

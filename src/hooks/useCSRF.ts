@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect } from 'react';
 
 export function useCSRF() {
   useEffect(() => {
@@ -8,18 +8,18 @@ export function useCSRF() {
         await fetch('/api/csrf', {
           method: 'GET',
           credentials: 'include',
-        })
+        });
       } catch (error) {
-        console.warn('Failed to initialize CSRF token:', error)
+        console.warn('Failed to initialize CSRF token:', error);
       }
-    }
+    };
 
     // Only initialize if we don't already have a token
     if (typeof window !== 'undefined') {
-      const hasToken = document.cookie.includes('csrf_token=')
+      const hasToken = document.cookie.includes('csrf_token=');
       if (!hasToken) {
-        initializeCSRF()
+        initializeCSRF();
       }
     }
-  }, [])
+  }, []);
 }

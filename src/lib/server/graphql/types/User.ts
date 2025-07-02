@@ -1,21 +1,21 @@
-import { ObjectType, Field, ID } from 'type-graphql'
+import { ObjectType, Field, ID } from 'type-graphql';
 
 @ObjectType()
 export class User {
   @Field(() => ID)
-  id!: string
+  id!: string;
 
   @Field()
-  email!: string
+  email!: string;
 
   @Field()
-  username!: string
+  username!: string;
 
   @Field()
-  createdAt!: Date
+  createdAt!: Date;
 
   @Field()
-  updatedAt!: Date
+  updatedAt!: Date;
 
   // Note: Song and Setlist relations removed to avoid circular dependencies
   // These would be resolved through GraphQL resolvers if needed

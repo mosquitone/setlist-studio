@@ -1,7 +1,7 @@
-'use client'
+'use client';
 
-import React from 'react'
-import { Box, Button, FormControl, Select, MenuItem, IconButton, Tooltip } from '@mui/material'
+import React from 'react';
+import { Box, Button, FormControl, Select, MenuItem, IconButton, Tooltip } from '@mui/material';
 import {
   Edit as EditIcon,
   Download as DownloadIcon,
@@ -10,21 +10,21 @@ import {
   ExpandMore as ExpandMoreIcon,
   Public as PublicIcon,
   Lock as LockIcon,
-} from '@mui/icons-material'
+} from '@mui/icons-material';
 
 interface SetlistActionsProps {
-  onEdit: () => void
-  onDownload: () => void
-  onShare: () => void
-  onDuplicate: () => void
-  selectedTheme: 'black' | 'white'
-  onThemeChange: (theme: 'black' | 'white') => void
-  showDebugToggle?: boolean
-  showDebug?: boolean
-  onDebugToggle?: () => void
-  isPublic?: boolean
-  onToggleVisibility?: () => void
-  isOwner?: boolean
+  onEdit: () => void;
+  onDownload: () => void;
+  onShare: () => void;
+  onDuplicate: () => void;
+  selectedTheme: 'black' | 'white';
+  onThemeChange: (theme: 'black' | 'white') => void;
+  showDebugToggle?: boolean;
+  showDebug?: boolean;
+  onDebugToggle?: () => void;
+  isPublic?: boolean;
+  onToggleVisibility?: () => void;
+  isOwner?: boolean;
 }
 
 export function SetlistActions({
@@ -125,9 +125,9 @@ export function SetlistActions({
               IconComponent={ExpandMoreIcon}
               sx={{ minWidth: 140 }}
               renderValue={value => {
-                if (value === 'black') return 'Theme: black'
-                if (value === 'white') return 'Theme: white'
-                return 'Theme: black'
+                if (value === 'black') return 'Theme: black';
+                if (value === 'white') return 'Theme: white';
+                return 'Theme: black';
               }}
             >
               <MenuItem value="black">black</MenuItem>
@@ -137,5 +137,5 @@ export function SetlistActions({
         )}
       </Box>
     </Box>
-  )
+  );
 }

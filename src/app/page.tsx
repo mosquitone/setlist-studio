@@ -1,18 +1,18 @@
-'use client'
+'use client';
 
-import { Container, Box, Typography } from '@mui/material'
-import { useQuery } from '@apollo/client'
-import { GET_SETLISTS } from '@/lib/server/graphql/apollo-operations'
-import { GetSetlistsResponse } from '../types/graphql'
-import { useAuth } from '@/components/providers/AuthProvider'
-import { WelcomeSection } from '../components/home/WelcomeSection'
-import { FeatureSection } from '../components/home/FeatureSection'
-import { SetlistDashboard } from '../components/home/SetlistDashboard'
-import { AuthActions } from '../components/home/AuthActions'
-import { PageFooter } from '../components/home/PageFooter'
+import { Container, Box, Typography } from '@mui/material';
+import { useQuery } from '@apollo/client';
+import { GET_SETLISTS } from '@/lib/server/graphql/apollo-operations';
+import { GetSetlistsResponse } from '../types/graphql';
+import { useAuth } from '@/components/providers/AuthProvider';
+import { WelcomeSection } from '../components/home/WelcomeSection';
+import { FeatureSection } from '../components/home/FeatureSection';
+import { SetlistDashboard } from '../components/home/SetlistDashboard';
+import { AuthActions } from '../components/home/AuthActions';
+import { PageFooter } from '../components/home/PageFooter';
 
 export default function HomePage() {
-  const { isLoggedIn, isLoading } = useAuth()
+  const { isLoggedIn, isLoading } = useAuth();
 
   const { data: setlistsData, loading: setlistsLoading } = useQuery<GetSetlistsResponse>(
     GET_SETLISTS,
@@ -20,7 +20,7 @@ export default function HomePage() {
       skip: !isLoggedIn,
       errorPolicy: 'all',
     },
-  )
+  );
 
   if (isLoading) {
     return (
@@ -38,7 +38,7 @@ export default function HomePage() {
           </Typography>
         </Box>
       </Container>
-    )
+    );
   }
 
   return (
@@ -56,5 +56,5 @@ export default function HomePage() {
         <PageFooter />
       </Box>
     </Container>
-  )
+  );
 }

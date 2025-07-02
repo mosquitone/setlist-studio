@@ -1,11 +1,11 @@
-'use client'
+'use client';
 
-import { Container, Box, Alert } from '@mui/material'
-import { SongPageHeader } from '@/components/songs/SongPageHeader'
-import { SongTable } from '@/components/songs/SongTable'
-import { SongEditDialog } from '@/components/songs/SongEditDialog'
-import { useSongs } from '@/hooks/useSongs'
-import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
+import { Container, Box, Alert } from '@mui/material';
+import { SongPageHeader } from '@/components/songs/SongPageHeader';
+import { SongTable } from '@/components/songs/SongTable';
+import { SongEditDialog } from '@/components/songs/SongEditDialog';
+import { useSongs } from '@/hooks/useSongs';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
 export default function SongsPage() {
   const {
@@ -18,7 +18,7 @@ export default function SongsPage() {
     handleSaveSong,
     handleDeleteSong,
     closeEditDialog,
-  } = useSongs()
+  } = useSongs();
 
   return (
     <ProtectedRoute>
@@ -48,5 +48,5 @@ export default function SongsPage() {
         </Box>
       </Container>
     </ProtectedRoute>
-  )
+  );
 }

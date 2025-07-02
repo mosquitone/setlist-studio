@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
+import { useState } from 'react';
 import {
   Container,
   Paper,
@@ -11,53 +11,53 @@ import {
   Alert,
   IconButton,
   InputAdornment,
-} from '@mui/material'
+} from '@mui/material';
 import {
   Login as LoginIcon,
   Visibility,
   VisibilityOff,
   ArrowBack as ArrowBackIcon,
-} from '@mui/icons-material'
-import { useMutation } from '@apollo/client'
-import { LOGIN } from '@/lib/server/graphql/apollo-operations'
-import Link from 'next/link'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { useAuth } from '@/components/providers/AuthProvider'
+} from '@mui/icons-material';
+import { useMutation } from '@apollo/client';
+import { LOGIN } from '@/lib/server/graphql/apollo-operations';
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useAuth } from '@/components/providers/AuthProvider';
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
-  const [error, setError] = useState('')
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const successMessage = searchParams.get('message')
-  const { login: authLogin } = useAuth()
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const successMessage = searchParams.get('message');
+  const { login: authLogin } = useAuth();
 
   const [loginMutation, { loading }] = useMutation(LOGIN, {
     onCompleted: async data => {
-      const result = await authLogin(data.login.token, data.login.user)
+      const result = await authLogin(data.login.token, data.login.user);
       if (result.success) {
-        router.push('/')
+        router.push('/');
       } else {
-        setError('Login failed')
+        setError('Login failed');
       }
     },
     onError: error => {
-      setError(error.message)
+      setError(error.message);
     },
-  })
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
+    e.preventDefault();
+    setError('');
 
     await loginMutation({
       variables: {
         input: { email, password },
       },
-    })
-  }
+    });
+  };
 
   return (
     <Container maxWidth="sm">
@@ -142,5 +142,5 @@ export default function LoginPage() {
         </Paper>
       </Box>
     </Container>
-  )
+  );
 }

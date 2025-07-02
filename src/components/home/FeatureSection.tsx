@@ -1,14 +1,14 @@
-'use client'
+'use client';
 
-import { Box, Typography, Card, CardActionArea, CardContent } from '@mui/material'
+import { Box, Typography, Card, CardActionArea, CardContent } from '@mui/material';
 import {
   LibraryMusic as LibraryMusicIcon,
   PlaylistPlay as PlaylistPlayIcon,
-} from '@mui/icons-material'
-import Link from 'next/link'
-import { useAuth } from '@/components/providers/AuthProvider'
+} from '@mui/icons-material';
+import Link from 'next/link';
+import { useAuth } from '@/components/providers/AuthProvider';
 export function FeatureSection() {
-  const { isLoggedIn } = useAuth()
+  const { isLoggedIn } = useAuth();
 
   return (
     <Box sx={{ mb: 8 }}>
@@ -56,5 +56,5 @@ export function FeatureSection() {
         </Card>
       </Box>
     </Box>
-  )
+  );
 }

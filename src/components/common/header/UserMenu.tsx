@@ -1,32 +1,32 @@
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
-import IconButton from '@mui/material/IconButton'
-import Menu from '@mui/material/Menu'
-import MenuItem from '@mui/material/MenuItem'
-import Avatar from '@mui/material/Avatar'
-import Divider from '@mui/material/Divider'
-import { useAuth } from '@/components/providers/AuthProvider'
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Avatar from '@mui/material/Avatar';
+import Divider from '@mui/material/Divider';
+import { useAuth } from '@/components/providers/AuthProvider';
 
 interface UserMenuProps {
-  onAuthClick: () => void
+  onAuthClick: () => void;
 }
 
 export function UserMenu({ onAuthClick }: UserMenuProps) {
-  const { user } = useAuth()
-  const router = useRouter()
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const { user } = useAuth();
+  const router = useRouter();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleUserMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget)
-  }
+    setAnchorEl(event.currentTarget);
+  };
 
   const handleUserMenuClose = () => {
-    setAnchorEl(null)
-  }
+    setAnchorEl(null);
+  };
 
-  if (!user) return null
+  if (!user) return null;
 
   return (
     <>
@@ -69,8 +69,8 @@ export function UserMenu({ onAuthClick }: UserMenuProps) {
       >
         <MenuItem
           onClick={() => {
-            handleUserMenuClose()
-            router.push('/profile')
+            handleUserMenuClose();
+            router.push('/profile');
           }}
         >
           プロフィール
@@ -78,13 +78,13 @@ export function UserMenu({ onAuthClick }: UserMenuProps) {
         <Divider />
         <MenuItem
           onClick={() => {
-            handleUserMenuClose()
-            onAuthClick()
+            handleUserMenuClose();
+            onAuthClick();
           }}
         >
           ログアウト
         </MenuItem>
       </Menu>
     </>
-  )
+  );
 }

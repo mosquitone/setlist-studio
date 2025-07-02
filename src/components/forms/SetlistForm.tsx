@@ -1,43 +1,43 @@
-'use client'
+'use client';
 
-import React, { useState } from 'react'
-import { Box, Container, Typography, Button, Paper, Alert } from '@mui/material'
-import { Add as AddIcon } from '@mui/icons-material'
-import { Formik, Form, FieldArray } from 'formik'
-import * as Yup from 'yup'
-import { useQuery } from '@apollo/client'
-import { GET_SONGS } from '@/lib/server/graphql/apollo-operations'
-import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd'
-import { SetlistFormFields } from './SetlistFormFields'
-import { SongItemInput } from './SongItemInput'
-import { validateAndSanitizeInput } from '@/lib/security/security-utils'
+import React, { useState } from 'react';
+import { Box, Container, Typography, Button, Paper, Alert } from '@mui/material';
+import { Add as AddIcon } from '@mui/icons-material';
+import { Formik, Form, FieldArray } from 'formik';
+import * as Yup from 'yup';
+import { useQuery } from '@apollo/client';
+import { GET_SONGS } from '@/lib/server/graphql/apollo-operations';
+import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
+import { SetlistFormFields } from './SetlistFormFields';
+import { SongItemInput } from './SongItemInput';
+import { validateAndSanitizeInput } from '@/lib/security/security-utils';
 
 export interface SetlistItem {
-  id?: string
-  title: string
-  note: string
+  id?: string;
+  title: string;
+  note: string;
 }
 
 export interface SetlistFormValues {
-  title: string
-  bandName: string
-  eventName: string
-  eventDate: string
-  openTime: string
-  startTime: string
-  theme: string
-  items: SetlistItem[]
+  title: string;
+  bandName: string;
+  eventName: string;
+  eventDate: string;
+  openTime: string;
+  startTime: string;
+  theme: string;
+  items: SetlistItem[];
 }
 
 interface SetlistFormProps {
-  title: string
-  initialValues: SetlistFormValues
-  onSubmit: (values: SetlistFormValues) => Promise<void>
-  loading: boolean
-  error?: Error | null
-  submitButtonText: string
-  loadingButtonText: string
-  enableDragAndDrop?: boolean
+  title: string;
+  initialValues: SetlistFormValues;
+  onSubmit: (values: SetlistFormValues) => Promise<void>;
+  loading: boolean;
+  error?: Error | null;
+  submitButtonText: string;
+  loadingButtonText: string;
+  enableDragAndDrop?: boolean;
 }
 
 const validationSchema = Yup.object({
@@ -45,35 +45,35 @@ const validationSchema = Yup.object({
     .required('セットリスト名は必須です')
     .max(100, 'セットリスト名は100文字以下にしてください')
     .test('sanitize', 'セットリスト名に無効な文字が含まれています', function (value) {
-      if (!value) return true
+      if (!value) return true;
       try {
-        validateAndSanitizeInput(value, 100)
-        return true
+        validateAndSanitizeInput(value, 100);
+        return true;
       } catch {
-        return false
+        return false;
       }
     }),
   bandName: Yup.string()
     .required('バンド名は必須です')
     .max(100, 'バンド名は100文字以下にしてください')
     .test('sanitize', 'バンド名に無効な文字が含まれています', function (value) {
-      if (!value) return true
+      if (!value) return true;
       try {
-        validateAndSanitizeInput(value, 100)
-        return true
+        validateAndSanitizeInput(value, 100);
+        return true;
       } catch {
-        return false
+        return false;
       }
     }),
   eventName: Yup.string()
     .max(200, 'イベント名は200文字以下にしてください')
     .test('sanitize', 'イベント名に無効な文字が含まれています', function (value) {
-      if (!value) return true
+      if (!value) return true;
       try {
-        validateAndSanitizeInput(value, 200)
-        return true
+        validateAndSanitizeInput(value, 200);
+        return true;
       } catch {
-        return false
+        return false;
       }
     }),
   eventDate: Yup.string(),
@@ -87,29 +87,29 @@ const validationSchema = Yup.object({
           .required('楽曲名は必須です')
           .max(200, '楽曲名は200文字以下にしてください')
           .test('sanitize', '楽曲名に無効な文字が含まれています', function (value) {
-            if (!value) return true
+            if (!value) return true;
             try {
-              validateAndSanitizeInput(value, 200)
-              return true
+              validateAndSanitizeInput(value, 200);
+              return true;
             } catch {
-              return false
+              return false;
             }
           }),
         note: Yup.string()
           .max(500, 'ノートは500文字以下にしてください')
           .test('sanitize', 'ノートに無効な文字が含まれています', function (value) {
-            if (!value) return true
+            if (!value) return true;
             try {
-              validateAndSanitizeInput(value, 500)
-              return true
+              validateAndSanitizeInput(value, 500);
+              return true;
             } catch {
-              return false
+              return false;
             }
           }),
       }),
     )
     .min(1, '少なくとも1曲は必要です'),
-})
+});
 
 export default function SetlistForm({
   title,
@@ -121,9 +121,9 @@ export default function SetlistForm({
   loadingButtonText,
   enableDragAndDrop = true,
 }: SetlistFormProps) {
-  const [expandedOptions, setExpandedOptions] = useState(false)
-  const { data: songsData } = useQuery(GET_SONGS)
-  const songs = songsData?.songs || []
+  const [expandedOptions, setExpandedOptions] = useState(false);
+  const { data: songsData } = useQuery(GET_SONGS);
+  const songs = songsData?.songs || [];
 
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
@@ -138,7 +138,7 @@ export default function SetlistForm({
         enableReinitialize
       >
         {formik => {
-          const { values } = formik
+          const { values } = formik;
 
           return (
             <Form>
@@ -158,13 +158,13 @@ export default function SetlistForm({
                 <FieldArray name="items">
                   {({ push, remove, move }) => {
                     const handleDragEnd = (result: DropResult) => {
-                      if (!result.destination) return
+                      if (!result.destination) return;
 
-                      const sourceIndex = result.source.index
-                      const destinationIndex = result.destination.index
+                      const sourceIndex = result.source.index;
+                      const destinationIndex = result.destination.index;
 
-                      move(sourceIndex, destinationIndex)
-                    }
+                      move(sourceIndex, destinationIndex);
+                    };
 
                     return (
                       <>
@@ -238,7 +238,7 @@ export default function SetlistForm({
                           楽曲を追加
                         </Button>
                       </>
-                    )
+                    );
                   }}
                 </FieldArray>
               </Paper>
@@ -263,9 +263,9 @@ export default function SetlistForm({
                 </Button>
               </Box>
             </Form>
-          )
+          );
         }}
       </Formik>
     </Container>
-  )
+  );
 }

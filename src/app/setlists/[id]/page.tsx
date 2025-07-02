@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import {
   Container,
   Alert,
@@ -12,54 +12,54 @@ import {
   Button,
   Typography,
   Box,
-} from '@mui/material'
-import { useQuery, useMutation } from '@apollo/client'
-import { useParams } from 'next/navigation'
-import { GET_SETLIST, TOGGLE_SETLIST_VISIBILITY } from '@/lib/server/graphql/apollo-operations'
-import { SetlistData } from '@/components/setlist-themes/types'
-import { ImageGenerator } from '@/components/setlist/ImageGenerator'
-import { SetlistActions } from '@/components/setlist/SetlistActions'
-import { SetlistPreview } from '@/components/setlist/SetlistPreview'
-import { useSetlistActions } from '@/hooks/useSetlistActions'
-import { useImageGeneration } from '@/hooks/useImageGeneration'
-import { useAuth } from '@/components/providers/AuthProvider'
-import { SetlistProtectedRoute } from '@/components/auth/ProtectedRoute'
+} from '@mui/material';
+import { useQuery, useMutation } from '@apollo/client';
+import { useParams } from 'next/navigation';
+import { GET_SETLIST, TOGGLE_SETLIST_VISIBILITY } from '@/lib/server/graphql/apollo-operations';
+import { SetlistData } from '@/components/setlist-themes/types';
+import { ImageGenerator } from '@/components/setlist/ImageGenerator';
+import { SetlistActions } from '@/components/setlist/SetlistActions';
+import { SetlistPreview } from '@/components/setlist/SetlistPreview';
+import { useSetlistActions } from '@/hooks/useSetlistActions';
+import { useImageGeneration } from '@/hooks/useImageGeneration';
+import { useAuth } from '@/components/providers/AuthProvider';
+import { SetlistProtectedRoute } from '@/components/auth/ProtectedRoute';
 
 export default function SetlistDetailPage() {
-  const params = useParams()
-  const setlistId = params.id as string
+  const params = useParams();
+  const setlistId = params.id as string;
 
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [selectedTheme, setSelectedTheme] = useState<'black' | 'white' | null>(null)
-  const [themeInitialized, setThemeInitialized] = useState(false)
-  const [showSuccess, setShowSuccess] = useState(false)
-  const isDev = process.env.NODE_ENV === 'development'
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedTheme, setSelectedTheme] = useState<'black' | 'white' | null>(null);
+  const [themeInitialized, setThemeInitialized] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const isDev = process.env.NODE_ENV === 'development';
 
-  const { user, isLoggedIn, isLoading: authLoading } = useAuth()
+  const { user, isLoggedIn, isLoading: authLoading } = useAuth();
 
   const { data, loading, error } = useQuery(GET_SETLIST, {
     variables: { id: setlistId },
     skip: !setlistId,
-  })
+  });
 
-  const [toggleVisibility] = useMutation(TOGGLE_SETLIST_VISIBILITY)
+  const [toggleVisibility] = useMutation(TOGGLE_SETLIST_VISIBILITY);
 
   const { handleEdit, handleDelete, handleShare, handleDuplicate, deleteLoading } =
-    useSetlistActions({ setlistId, setlist: data?.setlist })
+    useSetlistActions({ setlistId, setlist: data?.setlist });
 
   const isOwner = React.useMemo(() => {
-    return isLoggedIn && user && data?.setlist && data.setlist.userId === user.id
-  }, [isLoggedIn, user, data?.setlist])
+    return isLoggedIn && user && data?.setlist && data.setlist.userId === user.id;
+  }, [isLoggedIn, user, data?.setlist]);
 
   const handleToggleVisibility = async () => {
     try {
-      await toggleVisibility({ variables: { id: setlistId } })
+      await toggleVisibility({ variables: { id: setlistId } });
       // Force page reload to refresh data with correct authentication context
-      window.location.reload()
+      window.location.reload();
     } catch (error) {
-      console.error('Failed to toggle visibility:', error)
+      console.error('Failed to toggle visibility:', error);
     }
-  }
+  };
 
   const {
     isGeneratingPreview,
@@ -72,10 +72,10 @@ export default function SetlistDetailPage() {
     handleDebugToggle,
   } = useImageGeneration({
     onSuccess: () => {
-      setShowSuccess(true)
-      setTimeout(() => setShowSuccess(false), 3000)
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 3000);
     },
-  })
+  });
 
   // Initialize selectedTheme with the saved theme from database (only once)
   React.useEffect(() => {
@@ -84,14 +84,14 @@ export default function SetlistDetailPage() {
         data.setlist.theme &&
         (data.setlist.theme === 'black' || data.setlist.theme === 'white')
       ) {
-        setSelectedTheme(data.setlist.theme)
+        setSelectedTheme(data.setlist.theme);
       } else {
         // Fallback to black if no theme is saved
-        setSelectedTheme('black')
+        setSelectedTheme('black');
       }
-      setThemeInitialized(true)
+      setThemeInitialized(true);
     }
-  }, [data?.setlist, themeInitialized])
+  }, [data?.setlist, themeInitialized]);
 
   // setlistDataを安全に作成
   const setlistData: SetlistData | null = data?.setlist
@@ -106,11 +106,11 @@ export default function SetlistDetailPage() {
         theme: data.setlist.theme,
         items: [...data.setlist.items].sort((a: any, b: any) => a.order - b.order),
       }
-    : null
+    : null;
 
   const handleThemeChange = (theme: 'black' | 'white') => {
-    setSelectedTheme(theme)
-  }
+    setSelectedTheme(theme);
+  };
 
   return (
     <SetlistProtectedRoute
@@ -190,5 +190,5 @@ export default function SetlistDetailPage() {
         )}
       </Container>
     </SetlistProtectedRoute>
-  )
+  );
 }

@@ -1,29 +1,29 @@
-import React from 'react'
-import { Box, Typography } from '@mui/material'
-import { SetlistThemeProps } from './types'
-import { formatEventDateJST } from '@/lib/shared/dateUtils'
-import { isValidUrl } from '@/lib/security/security-utils'
+import React from 'react';
+import { Box, Typography } from '@mui/material';
+import { SetlistThemeProps } from './types';
+import { formatEventDateJST } from '@/lib/shared/dateUtils';
+import { isValidUrl } from '@/lib/security/security-utils';
 
 export const WhiteTheme: React.FC<SetlistThemeProps> = ({ data, className }) => {
-  const { bandName, eventName, eventDate, openTime, startTime, items, qrCodeURL } = data
+  const { bandName, eventName, eventDate, openTime, startTime, items, qrCodeURL } = data;
 
   // A4 dimensions: 210mm x 297mm (roughly 794px x 1123px at 96 DPI)
-  const A4_WIDTH = 794
-  const A4_HEIGHT = 1123
+  const A4_WIDTH = 794;
+  const A4_HEIGHT = 1123;
 
   // Dynamic font size based on number of songs for A4 compatibility
   const getFontSize = (count: number): string => {
-    if (count <= 6) return '40px'
-    if (count <= 8) return '34px'
-    if (count <= 10) return '30px'
-    if (count <= 12) return '26px'
-    if (count <= 15) return '24px'
-    if (count <= 18) return '22px'
-    if (count <= 25) return '20px'
-    return '18px'
-  }
+    if (count <= 6) return '40px';
+    if (count <= 8) return '34px';
+    if (count <= 10) return '30px';
+    if (count <= 12) return '26px';
+    if (count <= 15) return '24px';
+    if (count <= 18) return '22px';
+    if (count <= 25) return '20px';
+    return '18px';
+  };
 
-  const fontSize = getFontSize(items.length)
+  const fontSize = getFontSize(items.length);
 
   return (
     <div
@@ -172,5 +172,5 @@ export const WhiteTheme: React.FC<SetlistThemeProps> = ({ data, className }) => 
         </Typography>
       </Box>
     </div>
-  )
-}
+  );
+};

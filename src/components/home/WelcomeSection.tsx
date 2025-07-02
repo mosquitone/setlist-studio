@@ -1,7 +1,7 @@
-'use client'
+'use client';
 
-import { Box, Typography, Chip } from '@mui/material'
-import { MusicNote as MusicNoteIcon } from '@mui/icons-material'
+import { Box, Typography, Chip } from '@mui/material';
+import { MusicNote as MusicNoteIcon } from '@mui/icons-material';
 export function WelcomeSection() {
   return (
     <Box sx={{ textAlign: 'center', mb: 6 }}>
@@ -36,5 +36,5 @@ export function WelcomeSection() {
         sx={{ fontSize: '1rem', py: 2 }}
       />
     </Box>
-  )
+  );
 }

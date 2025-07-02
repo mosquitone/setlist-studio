@@ -1,17 +1,17 @@
-'use client'
+'use client';
 
-import React, { useEffect, useState } from 'react'
-import { useMutation, useQuery } from '@apollo/client'
-import { CREATE_SETLIST, GET_SETLIST } from '@/lib/server/graphql/apollo-operations'
-import { useRouter, useSearchParams } from 'next/navigation'
-import SetlistForm, { SetlistFormValues } from '@/components/forms/SetlistForm'
-import { GetSetlistResponse, SetlistItem } from '@/types/graphql'
-import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
+import React, { useEffect, useState } from 'react';
+import { useMutation, useQuery } from '@apollo/client';
+import { CREATE_SETLIST, GET_SETLIST } from '@/lib/server/graphql/apollo-operations';
+import { useRouter, useSearchParams } from 'next/navigation';
+import SetlistForm, { SetlistFormValues } from '@/components/forms/SetlistForm';
+import { GetSetlistResponse, SetlistItem } from '@/types/graphql';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
 export default function NewSetlistPage() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const duplicateId = searchParams.get('duplicate')
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const duplicateId = searchParams.get('duplicate');
   const [initialValues, setInitialValues] = useState<SetlistFormValues>({
     title: '',
     bandName: '',
@@ -21,9 +21,9 @@ export default function NewSetlistPage() {
     startTime: '',
     theme: 'black',
     items: [{ title: '', note: '' }],
-  })
+  });
 
-  const [createSetlist, { loading, error }] = useMutation(CREATE_SETLIST)
+  const [createSetlist, { loading, error }] = useMutation(CREATE_SETLIST);
 
   const { data: duplicateData, loading: duplicateLoading } = useQuery<GetSetlistResponse>(
     GET_SETLIST,
@@ -31,7 +31,7 @@ export default function NewSetlistPage() {
       variables: { id: duplicateId },
       skip: !duplicateId,
     },
-  )
+  );
 
   const handleSubmit = async (values: SetlistFormValues) => {
     const { data } = await createSetlist({
@@ -51,16 +51,16 @@ export default function NewSetlistPage() {
           })),
         },
       },
-    })
+    });
 
     if (data?.createSetlist) {
-      router.push(`/setlists/${data.createSetlist.id}`)
+      router.push(`/setlists/${data.createSetlist.id}`);
     }
-  }
+  };
 
   useEffect(() => {
     if (duplicateData?.setlist) {
-      const setlist = duplicateData.setlist
+      const setlist = duplicateData.setlist;
       setInitialValues({
         title: `${setlist.title} (コピー)`,
         bandName: setlist.bandName || '',
@@ -78,12 +78,14 @@ export default function NewSetlistPage() {
                   note: item.note || '',
                 }))
             : [{ title: '', note: '' }],
-      })
+      });
     }
-  }, [duplicateData])
+  }, [duplicateData]);
 
-  const createError = error ? new Error(`セットリストの作成に失敗しました: ${error.message}`) : null
-  const isLoading = loading || duplicateLoading
+  const createError = error
+    ? new Error(`セットリストの作成に失敗しました: ${error.message}`)
+    : null;
+  const isLoading = loading || duplicateLoading;
 
   return (
     <ProtectedRoute>
@@ -98,5 +100,5 @@ export default function NewSetlistPage() {
         enableDragAndDrop={true}
       />
     </ProtectedRoute>
-  )
+  );
 }

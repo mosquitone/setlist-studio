@@ -1,4 +1,4 @@
-import { Container, CircularProgress, Typography, Box } from '@mui/material'
+import { Container, CircularProgress, Typography, Box } from '@mui/material';
 
 export default function LoadingFallback() {
   return (
@@ -10,5 +10,5 @@ export default function LoadingFallback() {
         </Typography>
       </Box>
     </Container>
-  )
+  );
 }

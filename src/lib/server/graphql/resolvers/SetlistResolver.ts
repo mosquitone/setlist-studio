@@ -11,96 +11,96 @@ import {
   Int,
   FieldResolver,
   Root,
-} from 'type-graphql'
-import { PrismaClient } from '@prisma/client'
-import { Setlist } from '../types/Setlist'
-import { SetlistItem } from '../types/SetlistItem'
-import { AuthMiddleware } from '@/lib/server/graphql/middleware/jwt-auth-middleware'
+} from 'type-graphql';
+import { PrismaClient } from '@prisma/client';
+import { Setlist } from '../types/Setlist';
+import { SetlistItem } from '../types/SetlistItem';
+import { AuthMiddleware } from '@/lib/server/graphql/middleware/jwt-auth-middleware';
 import {
   logSecurityEventDB,
   SecurityEventType,
   SecurityEventSeverity,
-} from '../../../security/security-logger-db'
+} from '../../../security/security-logger-db';
 
 interface Context {
-  prisma: PrismaClient
-  userId?: string
+  prisma: PrismaClient;
+  userId?: string;
   req?: {
-    cookies: { [key: string]: string }
-    headers: { [key: string]: string }
-  }
+    cookies: { [key: string]: string };
+    headers: { [key: string]: string };
+  };
 }
 
 @InputType()
 export class CreateSetlistItemForSetlistInput {
   @Field()
-  title: string
+  title: string;
 
   @Field({ nullable: true })
-  note?: string
+  note?: string;
 
   @Field(() => Int)
-  order: number
+  order: number;
 }
 
 @InputType()
 export class CreateSetlistInput {
   @Field()
-  title: string
+  title: string;
 
   @Field()
-  bandName: string
+  bandName: string;
 
   @Field({ nullable: true })
-  eventName?: string
+  eventName?: string;
 
   @Field({ nullable: true })
-  eventDate?: Date
+  eventDate?: Date;
 
   @Field({ nullable: true })
-  openTime?: string
+  openTime?: string;
 
   @Field({ nullable: true })
-  startTime?: string
+  startTime?: string;
 
   @Field()
-  theme: string
+  theme: string;
 
   @Field({ defaultValue: false })
-  isPublic: boolean
+  isPublic: boolean;
 
   @Field(() => [CreateSetlistItemForSetlistInput], { nullable: true })
-  items?: CreateSetlistItemForSetlistInput[]
+  items?: CreateSetlistItemForSetlistInput[];
 }
 
 @InputType()
 export class UpdateSetlistInput {
   @Field({ nullable: true })
-  title?: string
+  title?: string;
 
   @Field({ nullable: true })
-  bandName?: string
+  bandName?: string;
 
   @Field({ nullable: true })
-  eventName?: string
+  eventName?: string;
 
   @Field({ nullable: true })
-  eventDate?: Date
+  eventDate?: Date;
 
   @Field({ nullable: true })
-  openTime?: string
+  openTime?: string;
 
   @Field({ nullable: true })
-  startTime?: string
+  startTime?: string;
 
   @Field({ nullable: true })
-  theme?: string
+  theme?: string;
 
   @Field({ nullable: true })
-  isPublic?: boolean
+  isPublic?: boolean;
 
   @Field(() => [CreateSetlistItemForSetlistInput], { nullable: true })
-  items?: CreateSetlistItemForSetlistInput[]
+  items?: CreateSetlistItemForSetlistInput[];
 }
 
 @Resolver(() => Setlist)
@@ -116,7 +116,7 @@ export class SetlistResolver {
         },
       },
       orderBy: { createdAt: 'desc' },
-    }) as Promise<Setlist[]>
+    }) as Promise<Setlist[]>;
   }
 
   @Query(() => Setlist, { nullable: true })
@@ -128,30 +128,30 @@ export class SetlistResolver {
           orderBy: { order: 'asc' },
         },
       },
-    })
+    });
 
     if (!setlist) {
-      return null
+      return null;
     }
 
     // 公開セットリストは誰でもアクセス可能
     if (setlist.isPublic) {
-      return setlist as Setlist
+      return setlist as Setlist;
     }
 
     // プライベートセットリストは認証が必要 - 手動で認証をチェック
-    const token = ctx.req?.cookies?.auth_token
+    const token = ctx.req?.cookies?.auth_token;
     if (!token) {
-      throw new Error('Authentication required to access private setlist')
+      throw new Error('Authentication required to access private setlist');
     }
 
     try {
-      const jwtSecret = process.env.JWT_SECRET
+      const jwtSecret = process.env.JWT_SECRET;
       if (!jwtSecret) {
-        throw new Error('JWT_SECRET environment variable is not configured')
+        throw new Error('JWT_SECRET environment variable is not configured');
       }
-      const jwt = require('jsonwebtoken')
-      const payload = jwt.verify(token, jwtSecret) as { userId: string }
+      const jwt = require('jsonwebtoken');
+      const payload = jwt.verify(token, jwtSecret) as { userId: string };
 
       // セキュリティチェック: 所有者のみアクセス可能
       if (setlist.userId !== payload.userId) {
@@ -167,15 +167,15 @@ export class SetlistResolver {
             attemptedUserId: payload.userId,
             isPublic: setlist.isPublic,
           },
-        })
-        throw new Error('Unauthorized access to private setlist')
+        });
+        throw new Error('Unauthorized access to private setlist');
       }
     } catch (error) {
-      console.error('JWT verification failed:', error)
-      throw new Error('Authentication required to access private setlist')
+      console.error('JWT verification failed:', error);
+      throw new Error('Authentication required to access private setlist');
     }
 
-    return setlist as Setlist
+    return setlist as Setlist;
   }
 
   @Mutation(() => Setlist)
@@ -184,7 +184,7 @@ export class SetlistResolver {
     @Arg('input') input: CreateSetlistInput,
     @Ctx() ctx: Context,
   ): Promise<Setlist> {
-    const { items, ...setlistData } = input
+    const { items, ...setlistData } = input;
 
     const setlist = await ctx.prisma.setlist.create({
       data: {
@@ -205,9 +205,9 @@ export class SetlistResolver {
           orderBy: { order: 'asc' },
         },
       },
-    })
+    });
 
-    return setlist as Setlist
+    return setlist as Setlist;
   }
 
   @Mutation(() => Boolean)
@@ -218,18 +218,18 @@ export class SetlistResolver {
   ): Promise<boolean> {
     const setlist = await ctx.prisma.setlist.findFirst({
       where: { id, userId: ctx.userId },
-    })
+    });
 
     if (!setlist) {
-      throw new Error('Setlist not found')
+      throw new Error('Setlist not found');
     }
 
     await ctx.prisma.setlist.update({
       where: { id },
       data: { isPublic: !setlist.isPublic },
-    })
+    });
 
-    return true
+    return true;
   }
 
   @Mutation(() => Setlist)
@@ -241,13 +241,13 @@ export class SetlistResolver {
   ): Promise<Setlist> {
     const setlist = await ctx.prisma.setlist.findFirst({
       where: { id, userId: ctx.userId },
-    })
+    });
 
     if (!setlist) {
-      throw new Error('Setlist not found')
+      throw new Error('Setlist not found');
     }
 
-    const { items, ...setlistData } = input
+    const { items, ...setlistData } = input;
 
     // Update setlist and handle items
     const updatedSetlist = await ctx.prisma.setlist.update({
@@ -270,9 +270,9 @@ export class SetlistResolver {
           orderBy: { order: 'asc' },
         },
       },
-    })
+    });
 
-    return updatedSetlist as Setlist
+    return updatedSetlist as Setlist;
   }
 
   @Mutation(() => Boolean)
@@ -280,17 +280,17 @@ export class SetlistResolver {
   async deleteSetlist(@Arg('id', () => ID) id: string, @Ctx() ctx: Context): Promise<boolean> {
     const setlist = await ctx.prisma.setlist.findFirst({
       where: { id, userId: ctx.userId },
-    })
+    });
 
     if (!setlist) {
-      throw new Error('Setlist not found')
+      throw new Error('Setlist not found');
     }
 
     await ctx.prisma.setlist.delete({
       where: { id },
-    })
+    });
 
-    return true
+    return true;
   }
 
   // Field resolver for items relation
@@ -303,7 +303,7 @@ export class SetlistResolver {
           orderBy: { order: 'asc' },
         },
       },
-    })
-    return (setlistData?.items || []) as SetlistItem[]
+    });
+    return (setlistData?.items || []) as SetlistItem[];
   }
 }

@@ -1,65 +1,65 @@
-'use client'
+'use client';
 
-import { useState, useEffect } from 'react'
-import Container from '@mui/material/Container'
-import Paper from '@mui/material/Paper'
-import Typography from '@mui/material/Typography'
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import TextField from '@mui/material/TextField'
-import Avatar from '@mui/material/Avatar'
-import Divider from '@mui/material/Divider'
-import Alert from '@mui/material/Alert'
-import PersonIcon from '@mui/icons-material/Person'
-import EmailIcon from '@mui/icons-material/Email'
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
-import { useAuth } from '@/components/providers/AuthProvider'
-import { useMutation } from '@apollo/client'
-import { UPDATE_USER_MUTATION } from '@/lib/server/graphql/apollo-operations'
-import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
-import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
+import { useState, useEffect } from 'react';
+import Container from '@mui/material/Container';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import Avatar from '@mui/material/Avatar';
+import Divider from '@mui/material/Divider';
+import Alert from '@mui/material/Alert';
+import PersonIcon from '@mui/icons-material/Person';
+import EmailIcon from '@mui/icons-material/Email';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import { useAuth } from '@/components/providers/AuthProvider';
+import { useMutation } from '@apollo/client';
+import { UPDATE_USER_MUTATION } from '@/lib/server/graphql/apollo-operations';
+import { format } from 'date-fns';
+import { ja } from 'date-fns/locale';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
 function ProfileContent() {
-  const { user } = useAuth()
-  const [isEditing, setIsEditing] = useState(false)
-  const [username, setUsername] = useState('')
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
+  const { user } = useAuth();
+  const [isEditing, setIsEditing] = useState(false);
+  const [username, setUsername] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   const [updateUser, { loading: updateLoading }] = useMutation(UPDATE_USER_MUTATION, {
     onCompleted: () => {
-      setSuccess('プロフィールを更新しました')
-      setIsEditing(false)
+      setSuccess('プロフィールを更新しました');
+      setIsEditing(false);
       // ページをリロードして最新のユーザー情報を反映
-      window.location.reload()
+      window.location.reload();
     },
     onError: error => {
-      setError(error.message)
+      setError(error.message);
     },
-  })
+  });
 
   useEffect(() => {
     if (user) {
-      setUsername(user.username || '')
+      setUsername(user.username || '');
     }
-  }, [user])
+  }, [user]);
 
   const handleUpdateProfile = async () => {
-    setError('')
+    setError('');
     if (!username.trim()) {
-      setError('ユーザー名を入力してください')
-      return
+      setError('ユーザー名を入力してください');
+      return;
     }
 
     await updateUser({
       variables: {
         username: username.trim(),
       },
-    })
-  }
+    });
+  };
 
-  const currentUser = user
+  const currentUser = user;
 
   return (
     <Container maxWidth="sm" sx={{ mt: 4, mb: 4 }}>
@@ -154,9 +154,9 @@ function ProfileContent() {
               <Button
                 variant="outlined"
                 onClick={() => {
-                  setIsEditing(false)
-                  setUsername(user?.username || '')
-                  setError('')
+                  setIsEditing(false);
+                  setUsername(user?.username || '');
+                  setError('');
                 }}
                 disabled={updateLoading}
               >
@@ -184,7 +184,7 @@ function ProfileContent() {
         </Box>
       </Paper>
     </Container>
-  )
+  );
 }
 
 export default function ProfilePage() {
@@ -192,5 +192,5 @@ export default function ProfilePage() {
     <ProtectedRoute>
       <ProfileContent />
     </ProtectedRoute>
-  )
+  );
 }

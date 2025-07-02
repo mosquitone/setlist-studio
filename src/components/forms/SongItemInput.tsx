@@ -1,21 +1,21 @@
-'use client'
+'use client';
 
-import React from 'react'
-import { Paper, TextField, IconButton, Typography, Autocomplete } from '@mui/material'
-import { Delete as DeleteIcon, DragHandle as DragHandleIcon } from '@mui/icons-material'
-import { FormikProps } from 'formik'
-import { SetlistFormValues, SetlistItem } from './SetlistForm'
+import React from 'react';
+import { Paper, TextField, IconButton, Typography, Autocomplete } from '@mui/material';
+import { Delete as DeleteIcon, DragHandle as DragHandleIcon } from '@mui/icons-material';
+import { FormikProps } from 'formik';
+import { SetlistFormValues, SetlistItem } from './SetlistForm';
 
 interface SongItemInputProps {
-  item: SetlistItem
-  index: number
-  formik: FormikProps<SetlistFormValues>
-  onRemove: (index: number) => void
-  songs: Array<{ id: string; title: string }>
-  enableDragAndDrop: boolean
-  isDragDisabled?: boolean
-  onMoveUp?: (index: number) => void
-  onMoveDown?: (index: number) => void
+  item: SetlistItem;
+  index: number;
+  formik: FormikProps<SetlistFormValues>;
+  onRemove: (index: number) => void;
+  songs: Array<{ id: string; title: string }>;
+  enableDragAndDrop: boolean;
+  isDragDisabled?: boolean;
+  onMoveUp?: (index: number) => void;
+  onMoveDown?: (index: number) => void;
 }
 
 export function SongItemInput({
@@ -29,17 +29,17 @@ export function SongItemInput({
   onMoveUp,
   onMoveDown,
 }: SongItemInputProps) {
-  const { values, errors, touched, handleChange, handleBlur } = formik
+  const { values, errors, touched, handleChange, handleBlur } = formik;
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'ArrowUp' && event.ctrlKey && onMoveUp) {
-      event.preventDefault()
-      onMoveUp(index)
+      event.preventDefault();
+      onMoveUp(index);
     } else if (event.key === 'ArrowDown' && event.ctrlKey && onMoveDown) {
-      event.preventDefault()
-      onMoveDown(index)
+      event.preventDefault();
+      onMoveDown(index);
     }
-  }
+  };
 
   return (
     <Paper
@@ -73,13 +73,13 @@ export function SongItemInput({
           value={null}
           inputValue={item.title}
           onChange={(event, newValue) => {
-            const value = typeof newValue === 'string' ? newValue : newValue?.title || ''
+            const value = typeof newValue === 'string' ? newValue : newValue?.title || '';
             handleChange({
               target: {
                 name: `items.${index}.title`,
                 value: value,
               },
-            })
+            });
           }}
           onInputChange={(event, newInputValue) => {
             handleChange({
@@ -87,7 +87,7 @@ export function SongItemInput({
                 name: `items.${index}.title`,
                 value: newInputValue,
               },
-            })
+            });
           }}
           freeSolo
           renderInput={params => (
@@ -162,5 +162,5 @@ export function SongItemInput({
         <DeleteIcon />
       </IconButton>
     </Paper>
-  )
+  );
 }

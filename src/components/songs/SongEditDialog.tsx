@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -9,14 +9,14 @@ import {
   TextField,
   Button,
   Box,
-} from '@mui/material'
-import { Song } from '../../types/graphql'
+} from '@mui/material';
+import { Song } from '../../types/graphql';
 
 interface SongEditDialogProps {
-  open: boolean
-  song: Song | null
-  onClose: () => void
-  onSave: (songData: Omit<Song, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>
+  open: boolean;
+  song: Song | null;
+  onClose: () => void;
+  onSave: (songData: Omit<Song, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
 }
 
 export function SongEditDialog({ open, song, onClose, onSave }: SongEditDialogProps) {
@@ -27,8 +27,8 @@ export function SongEditDialog({ open, song, onClose, onSave }: SongEditDialogPr
     tempo: null,
     duration: null,
     notes: '',
-  })
-  const titleRef = useRef<HTMLInputElement>(null)
+  });
+  const titleRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (song) {
@@ -39,27 +39,27 @@ export function SongEditDialog({ open, song, onClose, onSave }: SongEditDialogPr
         tempo: song.tempo ?? null,
         duration: song.duration ?? null,
         notes: song.notes ?? '',
-      })
+      });
     }
-  }, [song])
+  }, [song]);
 
   useEffect(() => {
     if (open && titleRef.current) {
-      setTimeout(() => titleRef.current?.focus(), 100)
+      setTimeout(() => titleRef.current?.focus(), 100);
     }
-  }, [open])
+  }, [open]);
 
   const handleFieldChange = (field: keyof typeof formValues, value: string) => {
     setFormValues(prev => ({
       ...prev,
       [field]: field === 'tempo' ? (value === '' ? null : Number(value)) : value,
-    }))
-  }
+    }));
+  };
 
   const handleSave = async () => {
-    await onSave(formValues)
-    onClose()
-  }
+    await onSave(formValues);
+    onClose();
+  };
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -111,5 +111,5 @@ export function SongEditDialog({ open, song, onClose, onSave }: SongEditDialogPr
         </Button>
       </DialogActions>
     </Dialog>
-  )
+  );
 }

@@ -1,20 +1,20 @@
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { useAuth } from '@/components/providers/AuthProvider'
-import { navigationItems } from './navigationItems'
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useAuth } from '@/components/providers/AuthProvider';
+import { navigationItems } from './navigationItems';
 
 export function DesktopNavigation() {
-  const { isLoggedIn } = useAuth()
-  const pathname = usePathname()
+  const { isLoggedIn } = useAuth();
+  const pathname = usePathname();
 
-  if (!isLoggedIn) return null
+  if (!isLoggedIn) return null;
 
   return (
     <Box sx={{ flexGrow: 1, display: { xs: 'none', sm: 'flex' }, ml: 4 }}>
       {navigationItems.map(item => {
-        const IconComponent = item.icon
+        const IconComponent = item.icon;
         return (
           <Button
             key={item.path}
@@ -36,8 +36,8 @@ export function DesktopNavigation() {
           >
             {item.label}
           </Button>
-        )
+        );
       })}
     </Box>
-  )
+  );
 }

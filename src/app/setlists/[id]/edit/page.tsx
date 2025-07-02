@@ -1,17 +1,17 @@
-'use client'
+'use client';
 
-import React from 'react'
-import { Container, Alert, CircularProgress, Typography } from '@mui/material'
-import { useQuery, useMutation } from '@apollo/client'
-import { useParams, useRouter } from 'next/navigation'
-import { GET_SETLIST, UPDATE_SETLIST } from '@/lib/server/graphql/apollo-operations'
-import SetlistForm, { SetlistFormValues } from '@/components/forms/SetlistForm'
-import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
+import React from 'react';
+import { Container, Alert, CircularProgress, Typography } from '@mui/material';
+import { useQuery, useMutation } from '@apollo/client';
+import { useParams, useRouter } from 'next/navigation';
+import { GET_SETLIST, UPDATE_SETLIST } from '@/lib/server/graphql/apollo-operations';
+import SetlistForm, { SetlistFormValues } from '@/components/forms/SetlistForm';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
 export default function EditSetlistPage() {
-  const params = useParams()
-  const router = useRouter()
-  const setlistId = params.id as string
+  const params = useParams();
+  const router = useRouter();
+  const setlistId = params.id as string;
 
   const {
     data,
@@ -20,10 +20,10 @@ export default function EditSetlistPage() {
   } = useQuery(GET_SETLIST, {
     variables: { id: setlistId },
     skip: !setlistId,
-  })
+  });
 
   const [updateSetlist, { loading: updateLoading, error: updateError }] =
-    useMutation(UPDATE_SETLIST)
+    useMutation(UPDATE_SETLIST);
 
   if (queryLoading) {
     return (
@@ -31,7 +31,7 @@ export default function EditSetlistPage() {
         <CircularProgress />
         <Typography sx={{ mt: 2 }}>セットリストを読み込み中...</Typography>
       </Container>
-    )
+    );
   }
 
   if (queryError || !data?.setlist) {
@@ -39,10 +39,10 @@ export default function EditSetlistPage() {
       <Container maxWidth="md" sx={{ py: 4 }}>
         <Alert severity="error">セットリストが見つかりません。</Alert>
       </Container>
-    )
+    );
   }
 
-  const setlist = data.setlist
+  const setlist = data.setlist;
 
   const initialValues: SetlistFormValues = {
     title: setlist.title || '',
@@ -59,7 +59,7 @@ export default function EditSetlistPage() {
         title: item.title || '',
         note: item.note || '',
       })),
-  }
+  };
 
   const handleSubmit = async (values: SetlistFormValues) => {
     const { data } = await updateSetlist({
@@ -80,16 +80,16 @@ export default function EditSetlistPage() {
           })),
         },
       },
-    })
+    });
 
     if (data?.updateSetlist) {
-      router.push(`/setlists/${setlistId}`)
+      router.push(`/setlists/${setlistId}`);
     }
-  }
+  };
 
   const updateErrorMessage = updateError
     ? new Error(`セットリストの更新に失敗しました: ${updateError.message}`)
-    : null
+    : null;
 
   return (
     <ProtectedRoute>
@@ -104,5 +104,5 @@ export default function EditSetlistPage() {
         enableDragAndDrop={true}
       />
     </ProtectedRoute>
-  )
+  );
 }

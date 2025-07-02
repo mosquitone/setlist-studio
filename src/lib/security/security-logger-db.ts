@@ -1,6 +1,6 @@
 // Vercel互換性のためのデータベースベースセキュリティログ
 
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client';
 import {
   sanitizeForLog,
   sanitizeEmailForLog,
@@ -9,7 +9,7 @@ import {
   sanitizeResourceForLog,
   sanitizeObjectForLog,
   formatSecurityLog,
-} from './log-sanitizer'
+} from './log-sanitizer';
 
 export enum SecurityEventType {
   // 認証関連
@@ -54,23 +54,23 @@ export enum SecurityEventSeverity {
 }
 
 export interface SecurityEvent {
-  id: string
-  type: SecurityEventType
-  severity: SecurityEventSeverity
-  timestamp: Date
-  userId?: string
-  ipAddress?: string
-  userAgent?: string
-  resource?: string
-  details?: Record<string, any>
+  id: string;
+  type: SecurityEventType;
+  severity: SecurityEventSeverity;
+  timestamp: Date;
+  userId?: string;
+  ipAddress?: string;
+  userAgent?: string;
+  resource?: string;
+  details?: Record<string, any>;
 }
 
 // Vercel互換性：データベースベースのセキュリティログシステム
 export class DatabaseSecurityLogger {
-  private prisma: PrismaClient
+  private prisma: PrismaClient;
 
   constructor(prisma: PrismaClient) {
-    this.prisma = prisma
+    this.prisma = prisma;
   }
 
   async logEvent(event: Omit<SecurityEvent, 'id' | 'timestamp'>): Promise<void> {
@@ -81,7 +81,7 @@ export class DatabaseSecurityLogger {
       userAgent: event.userAgent ? sanitizeUserAgentForLog(event.userAgent) : undefined,
       resource: event.resource ? sanitizeResourceForLog(event.resource) : undefined,
       details: event.details ? sanitizeObjectForLog(event.details) : undefined,
-    }
+    };
 
     try {
       // データベースに保存
@@ -95,14 +95,14 @@ export class DatabaseSecurityLogger {
           resource: sanitizedEvent.resource,
           details: sanitizedEvent.details || {},
         },
-      })
+      });
 
       // 重要度に応じてコンソール出力
       this.logToConsole({
         id: 'db_logged',
         timestamp: new Date(),
         ...sanitizedEvent,
-      })
+      });
 
       // 緊急度が高い場合は即座に通知
       if (event.severity === SecurityEventSeverity.CRITICAL) {
@@ -110,16 +110,16 @@ export class DatabaseSecurityLogger {
           id: 'critical_alert',
           timestamp: new Date(),
           ...sanitizedEvent,
-        })
+        });
       }
     } catch (error) {
-      console.error('Failed to log security event to database:', error)
+      console.error('Failed to log security event to database:', error);
       // フォールバック：最低限コンソールには出力
       this.logToConsole({
         id: 'fallback_log',
         timestamp: new Date(),
         ...sanitizedEvent,
-      })
+      });
     }
   }
 
@@ -129,7 +129,7 @@ export class DatabaseSecurityLogger {
         ? 'error'
         : event.severity === SecurityEventSeverity.HIGH
           ? 'warn'
-          : 'info'
+          : 'info';
 
     // セキュアなログフォーマットを使用
     const secureLogEntry = formatSecurityLog({
@@ -145,9 +145,9 @@ export class DatabaseSecurityLogger {
         resource: event.resource,
         details: event.details,
       },
-    })
+    });
 
-    console[logLevel]('🔒', secureLogEntry)
+    console[logLevel]('🔒', secureLogEntry);
   }
 
   private async sendCriticalAlert(event: SecurityEvent): Promise<void> {
@@ -156,7 +156,7 @@ export class DatabaseSecurityLogger {
       type: event.type,
       details: event.details,
       timestamp: event.timestamp.toISOString(),
-    })
+    });
 
     // TODO: 実際の通知システム実装
     // await sendSlackAlert(event)
@@ -165,10 +165,10 @@ export class DatabaseSecurityLogger {
 
   // 統計情報取得
   async getEventStatistics(): Promise<{
-    totalEvents: number
-    eventsByType: Record<string, number>
-    eventsBySeverity: Record<string, number>
-    recentEvents: SecurityEvent[]
+    totalEvents: number;
+    eventsByType: Record<string, number>;
+    eventsBySeverity: Record<string, number>;
+    recentEvents: SecurityEvent[];
   }> {
     try {
       const [totalEvents, eventsByType, eventsBySeverity, recentEvents] = await Promise.all([
@@ -185,17 +185,17 @@ export class DatabaseSecurityLogger {
           orderBy: { timestamp: 'desc' },
           take: 10,
         }),
-      ])
+      ]);
 
-      const eventsByTypeMap: Record<string, number> = {}
+      const eventsByTypeMap: Record<string, number> = {};
       eventsByType.forEach(item => {
-        eventsByTypeMap[item.type] = item._count.type
-      })
+        eventsByTypeMap[item.type] = item._count.type;
+      });
 
-      const eventsBySeverityMap: Record<string, number> = {}
+      const eventsBySeverityMap: Record<string, number> = {};
       eventsBySeverity.forEach(item => {
-        eventsBySeverityMap[item.severity] = item._count.severity
-      })
+        eventsBySeverityMap[item.severity] = item._count.severity;
+      });
 
       return {
         totalEvents,
@@ -212,15 +212,15 @@ export class DatabaseSecurityLogger {
           resource: event.resource || undefined,
           details: (event.details as Record<string, any>) || undefined,
         })),
-      }
+      };
     } catch (error) {
-      console.error('Failed to get security statistics:', error)
+      console.error('Failed to get security statistics:', error);
       return {
         totalEvents: 0,
         eventsByType: {},
         eventsBySeverity: {},
         recentEvents: [],
-      }
+      };
     }
   }
 
@@ -235,7 +235,7 @@ export class DatabaseSecurityLogger {
           },
         },
         orderBy: { timestamp: 'desc' },
-      })
+      });
 
       return events.map(event => ({
         id: event.id,
@@ -247,10 +247,10 @@ export class DatabaseSecurityLogger {
         userAgent: event.userAgent || undefined,
         resource: event.resource || undefined,
         details: (event.details as Record<string, any>) || undefined,
-      }))
+      }));
     } catch (error) {
-      console.error('Failed to get events by time range:', error)
-      return []
+      console.error('Failed to get events by time range:', error);
+      return [];
     }
   }
 
@@ -258,7 +258,7 @@ export class DatabaseSecurityLogger {
   async cleanup(): Promise<void> {
     try {
       // 90日以上古いイベントを削除
-      const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000)
+      const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
 
       const result = await this.prisma.securityEvent.deleteMany({
         where: {
@@ -266,11 +266,11 @@ export class DatabaseSecurityLogger {
             lt: ninetyDaysAgo,
           },
         },
-      })
+      });
 
-      console.log(`Cleaned up ${result.count} old security events`)
+      console.log(`Cleaned up ${result.count} old security events`);
     } catch (error) {
-      console.error('Security event cleanup error:', error)
+      console.error('Security event cleanup error:', error);
     }
   }
 }
@@ -280,8 +280,8 @@ export async function logSecurityEventDB(
   prisma: PrismaClient,
   event: Omit<SecurityEvent, 'id' | 'timestamp'>,
 ): Promise<void> {
-  const logger = new DatabaseSecurityLogger(prisma)
-  await logger.logEvent(event)
+  const logger = new DatabaseSecurityLogger(prisma);
+  await logger.logEvent(event);
 }
 
 // 認証関連のログヘルパー
@@ -298,7 +298,7 @@ export const logAuthSuccessDB = (
     ipAddress,
     userAgent,
     details: { success: true },
-  })
+  });
 
 export const logAuthFailureDB = (
   prisma: PrismaClient,
@@ -317,7 +317,7 @@ export const logAuthFailureDB = (
       reason: sanitizeForLog(reason),
       failed: true,
     },
-  })
+  });
 
 export const logRateLimitExceededDB = (
   prisma: PrismaClient,
@@ -332,12 +332,12 @@ export const logRateLimitExceededDB = (
     userAgent,
     resource: endpoint,
     details: { rateLimitExceeded: true },
-  })
+  });
 
 // バックグラウンドクリーンアップ用（Vercel Cronジョブで実行可能）
 export async function cleanupOldSecurityEvents(prisma: PrismaClient): Promise<number> {
   try {
-    const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000)
+    const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
 
     const result = await prisma.securityEvent.deleteMany({
       where: {
@@ -345,11 +345,11 @@ export async function cleanupOldSecurityEvents(prisma: PrismaClient): Promise<nu
           lt: ninetyDaysAgo,
         },
       },
-    })
+    });
 
-    return result.count
+    return result.count;
   } catch (error) {
-    console.error('Security event cleanup error:', error)
-    return 0
+    console.error('Security event cleanup error:', error);
+    return 0;
   }
 }
