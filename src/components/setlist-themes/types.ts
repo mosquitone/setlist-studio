@@ -1,3 +1,5 @@
+import { Theme } from '@/types/common';
+
 export interface SetlistItem {
   id: string;
   title: string;
@@ -13,7 +15,7 @@ export interface SetlistData {
   eventDate?: string;
   openTime?: string;
   startTime?: string;
-  theme: 'black' | 'white';
+  theme: Theme;
   items: SetlistItem[];
   qrCodeURL?: string;
 }

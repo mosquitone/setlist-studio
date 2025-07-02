@@ -6,12 +6,13 @@ import { Image as ImageIcon } from '@mui/icons-material';
 import html2canvas from 'html2canvas';
 import QRCode from 'qrcode';
 import { SetlistData } from '../setlist-themes/types';
+import { Theme } from '@/types/common';
 import { SetlistRenderer } from '../setlist-themes/SetlistRenderer';
 import { isValidUrl } from '@/lib/security/security-utils';
 
 interface ImageGeneratorProps {
   data: SetlistData;
-  selectedTheme: 'black' | 'white';
+  selectedTheme: Theme;
   onDownloadReady?: (downloadFn: () => Promise<void>) => void;
   onPreviewReady?: (imageUrl: string) => void;
   onPreviewGenerationStart?: () => void;
@@ -73,7 +74,7 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
         const qrCodeURL = await generateQRCode(data.id);
 
         // Create data with QR code
-        const dataWithQR = { ...data, theme: theme as 'black' | 'white', qrCodeURL };
+        const dataWithQR = { ...data, theme: theme as Theme, qrCodeURL };
 
         // Create a temporary container for rendering
         const container = document.createElement('div');
