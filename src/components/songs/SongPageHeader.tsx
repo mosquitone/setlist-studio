@@ -1,7 +1,7 @@
 'use client';
 
 import { Box, Typography, Button, Stack, useTheme, useMediaQuery } from '@mui/material';
-import { Add as AddIcon, Home as HomeIcon } from '@mui/icons-material';
+import { Add as AddIcon } from '@mui/icons-material';
 import Link from 'next/link';
 
 export function SongPageHeader() {
@@ -20,32 +20,16 @@ export function SongPageHeader() {
         <Typography variant={isMobile ? "h5" : "h4"} component="h1">
           楽曲管理
         </Typography>
-        <Stack 
-          direction={isMobile ? "column" : "row"} 
-          spacing={isMobile ? 1 : 2}
-          sx={isMobile ? { width: '100%' } : {}}
+        <Button 
+          component={Link} 
+          href="/songs/new" 
+          variant="contained" 
+          startIcon={<AddIcon />}
+          size={isMobile ? "medium" : "medium"}
+          sx={isMobile ? { minHeight: 40 } : {}}
         >
-          <Button 
-            component={Link} 
-            href="/" 
-            variant="outlined" 
-            startIcon={<HomeIcon />}
-            size={isMobile ? "medium" : "medium"}
-            sx={isMobile ? { minHeight: 40 } : {}}
-          >
-            ホーム
-          </Button>
-          <Button 
-            component={Link} 
-            href="/songs/new" 
-            variant="contained" 
-            startIcon={<AddIcon />}
-            size={isMobile ? "medium" : "medium"}
-            sx={isMobile ? { minHeight: 40 } : {}}
-          >
-            新しい楽曲を追加
-          </Button>
-        </Stack>
+          新しい楽曲を追加
+        </Button>
       </Stack>
       <Typography variant="body1" color="text.secondary">
         楽曲の管理と編集ができます。楽曲をクリックして詳細を編集できます。
