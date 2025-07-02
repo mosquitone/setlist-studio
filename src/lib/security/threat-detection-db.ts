@@ -3,6 +3,7 @@
 import { PrismaClient } from '@prisma/client';
 import { NextRequest } from 'next/server';
 import { getSecureClientIP } from './security-utils';
+import { StringArray } from '@/types/common';
 
 export enum ThreatType {
   BRUTE_FORCE_ATTACK = 'BRUTE_FORCE_ATTACK',
@@ -41,7 +42,7 @@ export interface ThreatAlert {
   ipAddress?: string;
   userId?: string;
   evidence: ThreatEvidence[];
-  recommendations: string[];
+  recommendations: StringArray;
   autoMitigated: boolean;
 }
 
@@ -301,7 +302,7 @@ export class DatabaseThreatDetection {
     criticalEvents: number;
     recentFailedLogins: number;
     rateLimitViolations: number;
-    topRiskyIPs: string[];
+    topRiskyIPs: StringArray;
   }> {
     try {
       const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);

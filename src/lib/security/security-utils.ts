@@ -3,6 +3,7 @@
 import { NextRequest } from 'next/server';
 import DOMPurify from 'dompurify';
 import { createHash } from 'crypto';
+import { StringArray } from '@/types/common';
 
 // 信頼できるプロキシのリスト（環境に応じて設定）
 const TRUSTED_PROXIES = new Set([
@@ -190,9 +191,9 @@ export function getIPInfo(request: NextRequest): {
  */
 export function assessRequestSecurity(request: NextRequest): {
   riskLevel: 'low' | 'medium' | 'high';
-  reasons: string[];
+  reasons: StringArray;
 } {
-  const reasons: string[] = [];
+  const reasons: StringArray = [];
   let riskLevel: 'low' | 'medium' | 'high' = 'low';
 
   const ip = getSecureClientIP(request);
