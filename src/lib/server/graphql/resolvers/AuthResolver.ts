@@ -35,6 +35,12 @@ function getClientIP(context: Context): string | undefined {
 
 @Resolver()
 export class AuthResolver {
+  /**
+   * 新規ユーザー登録
+   * @param input - 登録用入力データ（email, username, password）
+   * @param ctx - GraphQLコンテキスト
+   * @returns 認証トークンとユーザー情報
+   */
   @Mutation(() => AuthPayload)
   async register(@Arg('input') input: RegisterInput, @Ctx() ctx: Context): Promise<AuthPayload> {
     const existingUser = await ctx.prisma.user.findFirst({
@@ -104,6 +110,12 @@ export class AuthResolver {
     };
   }
 
+  /**
+   * ユーザーログイン認証
+   * @param input - ログイン用入力データ（email, password）
+   * @param ctx - GraphQLコンテキスト
+   * @returns 認証トークンとユーザー情報
+   */
   @Mutation(() => AuthPayload)
   async login(@Arg('input') input: LoginInput, @Ctx() ctx: Context): Promise<AuthPayload> {
     const user = await ctx.prisma.user.findUnique({

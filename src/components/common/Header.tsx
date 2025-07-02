@@ -14,6 +14,11 @@ import { UserMenu } from './header/UserMenu';
 import { AuthButton } from './header/AuthButton';
 import { authenticatedNavigationItems, publicNavigationItems } from './header/navigationItems';
 
+/**
+ * アプリケーションヘッダーコンポーネント
+ * 認証状態に応じてナビゲーションとユーザーメニューを表示
+ * デスクトップ・モバイル両対応のレスポンシブデザイン
+ */
 export default function Header() {
   const { isLoggedIn, isLoading, logout } = useAuth();
   const router = useRouter();

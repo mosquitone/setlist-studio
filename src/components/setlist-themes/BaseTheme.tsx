@@ -18,6 +18,15 @@ interface BaseThemeProps extends SetlistThemeProps {
   colors: ThemeColors;
 }
 
+/**
+ * セットリストテーマの共通ベースコンポーネント
+ * A4サイズ対応、テーマ別カラーパレット適用
+ *
+ * @param data - セットリストデータ（楽曲リスト、イベント情報等）
+ * @param className - 追加のCSSクラス名
+ * @param colors - テーマカラー設定オブジェクト
+ */
+
 export const BaseTheme: React.FC<BaseThemeProps> = ({ data, className, colors }) => {
   const { bandName, eventName, eventDate, openTime, startTime, items, qrCodeURL } = data;
 

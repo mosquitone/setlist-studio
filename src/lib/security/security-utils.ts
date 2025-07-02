@@ -77,6 +77,8 @@ function isTrustedProxy(ip: string): boolean {
 /**
  * 信頼できるクライアントIPアドレスの取得
  * IP偽装攻撃を防ぐため、信頼できるプロキシからのみヘッダーを読み取る
+ * @param request - Next.jsのリクエストオブジェクト
+ * @returns 検証済みのクライアントIPアドレス
  */
 export function getSecureClientIP(request: NextRequest): string {
   // 直接接続の場合（最も信頼できる）
@@ -129,6 +131,8 @@ export function getSecureClientIP(request: NextRequest): string {
 /**
  * IPアドレスのハッシュ化（プライバシー保護）
  * GDPR等の規制対応のため、IPアドレスをハッシュ化して保存
+ * @param ip - ハッシュ化対象のIPアドレス
+ * @returns SHA256ハッシュ化されたIP（16文字に短縮）
  */
 export function hashIP(ip: string): string {
   const salt = process.env.IP_HASH_SALT || 'default-salt-change-in-production';
@@ -286,6 +290,13 @@ export const isValidUrl = (url: string): boolean => {
   }
 };
 
+/**
+ * 入力値の検証とサニタイゼーション
+ * @param input - 検証対象の文字列
+ * @param maxLength - 最大文字数（デフォルト: 1000）
+ * @returns サニタイズされた安全な文字列
+ * @throws 文字数制限を超えた場合にエラーをスロー
+ */
 export const validateAndSanitizeInput = (input: string, maxLength: number = 1000): string => {
   if (!input || typeof input !== 'string') {
     return '';

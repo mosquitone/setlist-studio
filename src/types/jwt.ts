@@ -8,7 +8,11 @@ export interface JWTPayload {
   exp: number;
 }
 
-// ランタイム型ガード関数
+/**
+ * JWTペイロードの型安全性を保証するランタイム型ガード関数
+ * @param payload - 検証対象のオブジェクト
+ * @returns JWTPayload型として有効かどうか
+ */
 export function isValidJWTPayload(payload: unknown): payload is JWTPayload {
   if (typeof payload !== 'object' || payload === null) {
     return false;
@@ -28,7 +32,13 @@ export function isValidJWTPayload(payload: unknown): payload is JWTPayload {
   );
 }
 
-// 安全なJWT検証関数
+/**
+ * JWTトークンの署名検証と構造検証を統合した安全な検証関数
+ * @param token - 検証対象のJWTトークン
+ * @param secret - JWT署名用の秘密鍵
+ * @returns 検証済みのJWTペイロード
+ * @throws JWT検証失敗時にエラーをスロー
+ */
 export function verifyAndValidateJWT(token: string, secret: string): JWTPayload {
   try {
     const payload = jwt.verify(token, secret);
