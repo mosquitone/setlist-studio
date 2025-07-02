@@ -88,7 +88,9 @@ export function MobileNavigation({
                     },
                   }}
                 >
-                  <IconComponent sx={{ mr: 2 }} />
+                  <Box sx={{ mr: 2, display: 'flex', alignItems: 'center' }}>
+                    <IconComponent />
+                  </Box>
                   <ListItemText primary={item.label} />
                 </ListItemButton>
               </ListItem>
