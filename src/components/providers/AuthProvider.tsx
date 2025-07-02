@@ -1,13 +1,13 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { secureAuthClient, User } from '@/lib/client/secure-auth-client';
+import { secureAuthClient, User, AuthResponse } from '@/lib/client/secure-auth-client';
 
 interface AuthContextType {
   isLoggedIn: boolean;
   isLoading: boolean;
   user: User | null;
-  login: (token: string, userData: User) => Promise<{ success: boolean; user?: User }>;
+  login: (token: string) => Promise<AuthResponse>;
   logout: () => Promise<void>;
 }
 
@@ -39,19 +39,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return unsubscribe;
   }, []);
 
-  const login = async (token: string, userData: User) => {
-    const result = await secureAuthClient.login(token);
-    if (result.success) {
-      setIsLoggedIn(true);
-      setUser(result.user || userData);
-    }
-    return result;
+  const login = async (token: string) => {
+    // secureAuthClientが状態を更新し、subscribeで自動的に反映される
+    return await secureAuthClient.login(token);
   };
 
   const logout = async () => {
     await secureAuthClient.logout();
-    setIsLoggedIn(false);
-    setUser(null);
+    // 状態はsecureAuthClientのsubscribeで自動的に更新される
     window.location.reload();
   };
 

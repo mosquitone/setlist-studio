@@ -36,11 +36,11 @@ export default function LoginClient() {
 
   const [loginMutation, { loading }] = useMutation(LOGIN, {
     onCompleted: async data => {
-      const result = await authLogin(data.login.token, data.login.user);
+      const result = await authLogin(data.login.token);
       if (result.success) {
         router.push('/');
       } else {
-        setError('Login failed');
+        setError(result.error || 'Login failed');
       }
     },
     onError: error => {
