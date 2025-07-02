@@ -81,7 +81,7 @@ export class AuthResolver {
       },
       jwtSecret,
       {
-        expiresIn: '7d',
+        expiresIn: '2h',
       },
     );
 
@@ -167,7 +167,7 @@ export class AuthResolver {
       },
       jwtSecret,
       {
-        expiresIn: '7d',
+        expiresIn: '2h',
       },
     );
 
