@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Box from '@mui/material/Box';
+import Skeleton from '@mui/material/Skeleton';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { HeaderLogo } from './header/HeaderLogo';
 import { DesktopNavigation } from './header/DesktopNavigation';
@@ -14,7 +15,7 @@ import { AuthButton } from './header/AuthButton';
 import { authenticatedNavigationItems, publicNavigationItems } from './header/navigationItems';
 
 export default function Header() {
-  const { isLoggedIn, logout } = useAuth();
+  const { isLoggedIn, isLoading, logout } = useAuth();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -41,6 +42,7 @@ export default function Header() {
         <Toolbar>
           <MobileNavigation
             items={navigationItems}
+            isLoading={isLoading}
             mobileOpen={mobileOpen}
             onToggle={handleDrawerToggle}
             onAuthClick={handleAuthClick}
@@ -48,11 +50,18 @@ export default function Header() {
 
           <HeaderLogo />
 
-          <DesktopNavigation items={navigationItems} />
+          <DesktopNavigation items={navigationItems} isLoading={isLoading} />
 
           <Box sx={{ flexGrow: 1 }} />
 
-          {isLoggedIn ? (
+          {isLoading ? (
+            <Skeleton
+              variant="rounded"
+              width={80}
+              height={36}
+              sx={{ borderRadius: 5, bgcolor: 'rgba(255, 255, 255, 0.1)' }}
+            />
+          ) : isLoggedIn ? (
             <UserMenu onAuthClick={handleAuthClick} />
           ) : (
             <AuthButton onClick={handleAuthClick} />

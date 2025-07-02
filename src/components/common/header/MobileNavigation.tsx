@@ -8,6 +8,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import Button from '@mui/material/Button';
+import Skeleton from '@mui/material/Skeleton';
 import MenuIcon from '@mui/icons-material/Menu';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -21,13 +22,20 @@ interface NavigationItem {
 
 interface MobileNavigationProps {
   items: NavigationItem[];
+  isLoading: boolean;
   mobileOpen: boolean;
   onToggle: () => void;
   onAuthClick: () => void;
 }
 
-export function MobileNavigation({ items, mobileOpen, onToggle, onAuthClick }: MobileNavigationProps) {
-  const { isLoggedIn, isLoading, user } = useAuth();
+export function MobileNavigation({
+  items,
+  isLoading,
+  mobileOpen,
+  onToggle,
+  onAuthClick,
+}: MobileNavigationProps) {
+  const { isLoggedIn, user } = useAuth();
   const pathname = usePathname();
 
   const drawer = (
@@ -36,33 +44,52 @@ export function MobileNavigation({ items, mobileOpen, onToggle, onAuthClick }: M
         Setlist Studio
       </Typography>
       <Divider />
-      <List>
-        {items.map(item => {
-          const IconComponent = item.icon;
-          return (
-            <ListItem key={item.path} disablePadding>
-              <ListItemButton
-                component={Link}
-                href={item.path}
-                selected={pathname === item.path}
+      {isLoading ? (
+        <List>
+          {[1, 2].map(i => (
+            <ListItem key={i} disablePadding>
+              <Skeleton
+                variant="rounded"
+                width="100%"
+                height={48}
                 sx={{
-                  '&.Mui-selected': {
-                    backgroundColor: 'primary.main',
-                    color: 'white',
-                    '&:hover': {
-                      backgroundColor: 'primary.dark',
-                    },
-                  },
+                  mx: 2,
+                  my: 1,
+                  bgcolor: 'rgba(0, 0, 0, 0.05)',
                 }}
-              >
-                <IconComponent sx={{ mr: 2 }} />
-                <ListItemText primary={item.label} />
-              </ListItemButton>
+              />
             </ListItem>
-          );
-        })}
-      </List>
-      {items.length > 0 && <Divider />}
+          ))}
+        </List>
+      ) : (
+        <List>
+          {items.map(item => {
+            const IconComponent = item.icon;
+            return (
+              <ListItem key={item.path} disablePadding>
+                <ListItemButton
+                  component={Link}
+                  href={item.path}
+                  selected={pathname === item.path}
+                  sx={{
+                    '&.Mui-selected': {
+                      backgroundColor: 'primary.main',
+                      color: 'white',
+                      '&:hover': {
+                        backgroundColor: 'primary.dark',
+                      },
+                    },
+                  }}
+                >
+                  <IconComponent sx={{ mr: 2 }} />
+                  <ListItemText primary={item.label} />
+                </ListItemButton>
+              </ListItem>
+            );
+          })}
+        </List>
+      )}
+      {!isLoading && items.length > 0 && <Divider />}
       {isLoggedIn && user && (
         <Box sx={{ p: 2 }}>
           <Typography variant="body2" sx={{ mb: 1 }}>
