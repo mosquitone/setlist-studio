@@ -12,6 +12,12 @@ import {
   CircularProgress,
   Box,
   Typography,
+  useTheme,
+  useMediaQuery,
+  Card,
+  CardContent,
+  Stack,
+  Chip,
 } from '@mui/material';
 import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 import { Song } from '../../types/graphql';
@@ -24,6 +30,9 @@ interface SongTableProps {
 }
 
 export function SongTable({ songs, loading, onEdit, onDelete }: SongTableProps) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
@@ -45,6 +54,87 @@ export function SongTable({ songs, loading, onEdit, onDelete }: SongTableProps) 
     );
   }
 
+  // モバイル版: カード表示
+  if (isMobile) {
+    return (
+      <Stack spacing={2}>
+        {songs.map((song) => (
+          <Card 
+            key={song.id}
+            sx={{ 
+              '&:hover': { backgroundColor: 'action.hover' },
+              cursor: 'pointer',
+            }}
+            onClick={() => onEdit(song)}
+          >
+            <CardContent>
+              <Stack spacing={1}>
+                <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
+                  <Box sx={{ flex: 1, minWidth: 0 }}>
+                    <Typography variant="h6" component="h3" noWrap>
+                      {song.title}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" noWrap>
+                      {song.artist}
+                    </Typography>
+                  </Box>
+                  <Stack direction="row" spacing={1}>
+                    <IconButton
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onEdit(song);
+                      }}
+                      color="primary"
+                      size="small"
+                      aria-label={`${song.title}を編集`}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete(song.id);
+                      }}
+                      color="error"
+                      size="small"
+                      aria-label={`${song.title}を削除`}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Stack>
+                </Stack>
+                
+                <Stack direction="row" spacing={1} flexWrap="wrap">
+                  {song.key && (
+                    <Chip 
+                      label={`キー: ${song.key}`} 
+                      size="small" 
+                      variant="outlined"
+                    />
+                  )}
+                  {song.tempo && (
+                    <Chip 
+                      label={`テンポ: ${song.tempo}`} 
+                      size="small" 
+                      variant="outlined"
+                    />
+                  )}
+                </Stack>
+                
+                {song.notes && (
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                    {song.notes}
+                  </Typography>
+                )}
+              </Stack>
+            </CardContent>
+          </Card>
+        ))}
+      </Stack>
+    );
+  }
+
+  // デスクトップ版: テーブル表示
   return (
     <TableContainer component={Paper}>
       <Table>
