@@ -25,6 +25,20 @@ interface SetlistFormProps {
   enableDragAndDrop?: boolean;
 }
 
+/**
+ * セットリスト作成・編集フォームコンポーネント
+ * ドラッグ&ドロップ対応、バリデーション機能付き
+ *
+ * @param title - フォームのタイトル
+ * @param initialValues - フォームの初期値
+ * @param onSubmit - フォーム送信時のハンドラー関数
+ * @param loading - 送信中のローディング状態
+ * @param error - エラーオブジェクト
+ * @param submitButtonText - 送信ボタンのテキスト
+ * @param loadingButtonText - ローディング中のボタンテキスト
+ * @param enableDragAndDrop - ドラッグ&ドロップ機能の有効/無効
+ */
+
 const validationSchema = Yup.object({
   title: Yup.string()
     .required('セットリスト名は必須です')

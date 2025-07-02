@@ -18,7 +18,10 @@ function getCSRFSecret(): string {
   return secret;
 }
 
-// 暗号学的に安全なCSRFトークン生成
+/**
+ * 暗号学的に安全なCSRFトークン生成（ダブルサブミットクッキーパターン）
+ * @returns CSRFトークンペア（ヘッダー用・クッキー用）
+ */
 export function generateCSRFTokens(): CSRFTokens {
   const secret = getCSRFSecret();
   const timestamp = Date.now().toString();
@@ -32,7 +35,11 @@ export function generateCSRFTokens(): CSRFTokens {
   return { token, cookieToken: token };
 }
 
-// タイミング攻撃耐性のあるトークン検証
+/**
+ * タイミング攻撃耐性のあるCSRFトークン検証
+ * @param request - Next.jsリクエストオブジェクト
+ * @returns トークンが有効かどうか
+ */
 export function verifyCSRFToken(request: NextRequest): boolean {
   const headerToken = request.headers.get('x-csrf-token');
   const cookieToken = request.cookies.get('csrf_token')?.value;

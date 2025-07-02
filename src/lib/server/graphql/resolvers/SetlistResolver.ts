@@ -106,6 +106,11 @@ export class UpdateSetlistInput {
 
 @Resolver(() => Setlist)
 export class SetlistResolver {
+  /**
+   * ユーザーのセットリスト一覧を取得
+   * @param ctx - GraphQLコンテキスト（認証済みユーザー情報含む）
+   * @returns ユーザーが作成したセットリストの配列
+   */
   @Query(() => [Setlist])
   @UseMiddleware(AuthMiddleware)
   async setlists(@Ctx() ctx: Context): Promise<Setlist[]> {
@@ -120,6 +125,12 @@ export class SetlistResolver {
     }) as Promise<Setlist[]>;
   }
 
+  /**
+   * 特定のセットリストを取得（公開設定と認証に基づくアクセス制御付き）
+   * @param id - セットリストID
+   * @param ctx - GraphQLコンテキスト
+   * @returns セットリストデータまたはnull
+   */
   @Query(() => Setlist, { nullable: true })
   async setlist(@Arg('id', () => ID) id: string, @Ctx() ctx: Context): Promise<Setlist | null> {
     const setlist = await ctx.prisma.setlist.findUnique({
@@ -178,6 +189,12 @@ export class SetlistResolver {
     return setlist as Setlist;
   }
 
+  /**
+   * 新しいセットリストを作成
+   * @param input - セットリスト作成用の入力データ
+   * @param ctx - GraphQLコンテキスト（認証済みユーザー情報含む）
+   * @returns 作成されたセットリストデータ
+   */
   @Mutation(() => Setlist)
   @UseMiddleware(AuthMiddleware)
   async createSetlist(
