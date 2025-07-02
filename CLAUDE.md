@@ -246,8 +246,8 @@ For detailed deployment instructions, see [VERCEL_DEPLOYMENT_GUIDE.md](./VERCEL_
 ```
 
 ### Current Status
-- **Architecture**: Hybrid Next.js application with optimized static/ISR/SSR rendering strategy
-- **Performance**: 10x faster login/register pages (static), 5x faster home page (ISR)
+- **Architecture**: Hybrid Next.js application with optimized static/SSR rendering strategy
+- **Performance**: 10x faster login/register pages (static), home page optimized for authentication
 - **Database**: PostgreSQL with complete schema applied via Prisma
 - **Authentication**: Complete GraphQL resolvers for register/login with JWT tokens
 - **Frontend**: Full application with performance-optimized pages and setlist management
@@ -270,13 +270,12 @@ The application implements a strategic hybrid approach for optimal performance:
 | Page Type | Strategy | Performance Gain | Caching |
 |-----------|----------|------------------|---------|
 | `/login`, `/register` | **Static Generation** | **10x faster** | CDN forever |
-| `/` (Home) | **ISR** | **5x faster** | 1 hour |
+| `/` (Home) | **SSR** | Authentication dependent | No cache |
 | `/setlists/[id]` | **SSR** | Security focused | No cache |
 | `/songs`, `/profile` | **SSR** | Authentication required | No cache |
 
 ### Technical Implementation
 - **Static Pages**: Pre-built at build time, served instantly from CDN
-- **ISR Pages**: Generated on first request, cached for specified duration
 - **SSR Pages**: Server-rendered for each request (protected content)
 - **API Routes**: Serverless functions for all GraphQL operations
 
