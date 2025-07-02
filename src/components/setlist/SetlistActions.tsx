@@ -61,67 +61,68 @@ export function SetlistActions({
     return (
       <Stack spacing={2} sx={{ mb: 3 }}>
         {/* アクションボタン群 */}
-        <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+        <Stack spacing={1}>
+          {/* 編集系ボタン（オーナーのみ） */}
           {isOwner && (
+            <Stack direction="row" spacing={1}>
+              <Button 
+                variant="outlined" 
+                startIcon={<EditIcon />} 
+                onClick={onEdit}
+                size="small"
+                sx={{ 
+                  flex: 1,
+                  fontSize: '0.75rem',
+                  px: 1
+                }}
+              >
+                Edit
+              </Button>
+              <Button 
+                variant="outlined" 
+                startIcon={<DuplicateIcon />} 
+                onClick={onDuplicate}
+                size="small"
+                sx={{ 
+                  flex: 1,
+                  fontSize: '0.75rem',
+                  px: 1
+                }}
+              >
+                Duplicate
+              </Button>
+            </Stack>
+          )}
+          
+          {/* 共有系ボタン（全ユーザー） */}
+          <Stack direction="row" spacing={1}>
             <Button 
               variant="outlined" 
-              startIcon={<EditIcon />} 
-              onClick={onEdit}
+              startIcon={<DownloadIcon />} 
+              onClick={onDownload}
               size="small"
               sx={{ 
-                minWidth: 80, 
-                flex: '1 1 auto',
+                flex: 1,
                 fontSize: '0.75rem',
                 px: 1
               }}
             >
-              Edit
+              Download
             </Button>
-          )}
-          {isOwner && (
             <Button 
               variant="outlined" 
-              startIcon={<DuplicateIcon />} 
-              onClick={onDuplicate}
+              startIcon={<ShareIcon />} 
+              onClick={onShare}
               size="small"
               sx={{ 
-                minWidth: 80, 
-                flex: '1 1 auto',
+                flex: 1,
                 fontSize: '0.75rem',
                 px: 1
               }}
             >
-              Duplicate
+              Share
             </Button>
-          )}
-          <Button 
-            variant="outlined" 
-            startIcon={<DownloadIcon />} 
-            onClick={onDownload}
-            size="small"
-            sx={{ 
-              minWidth: 80, 
-              flex: '1 1 auto',
-              fontSize: '0.75rem',
-              px: 1
-            }}
-          >
-            Download
-          </Button>
-          <Button 
-            variant="outlined" 
-            startIcon={<ShareIcon />} 
-            onClick={onShare}
-            size="small"
-            sx={{ 
-              minWidth: 80, 
-              flex: '1 1 auto',
-              fontSize: '0.75rem',
-              px: 1
-            }}
-          >
-            Share
-          </Button>
+          </Stack>
         </Stack>
 
         {/* 設定・ツール群 */}
