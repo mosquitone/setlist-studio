@@ -12,7 +12,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/components/providers/AuthProvider';
-import { navigationItems } from './navigationItems';
+import { authenticatedNavigationItems, publicNavigationItems } from './navigationItems';
 
 interface MobileNavigationProps {
   mobileOpen: boolean;
@@ -24,43 +24,44 @@ export function MobileNavigation({ mobileOpen, onToggle, onAuthClick }: MobileNa
   const { isLoggedIn, isLoading, user } = useAuth();
   const pathname = usePathname();
 
+  // ログイン状態に応じて表示するナビゲーション項目を決定
+  const items = isLoggedIn
+    ? [...publicNavigationItems, ...authenticatedNavigationItems]
+    : publicNavigationItems;
+
   const drawer = (
     <Box onClick={onToggle} sx={{ textAlign: 'center' }}>
       <Typography variant="h6" sx={{ my: 2 }}>
         Setlist Studio
       </Typography>
       <Divider />
-      {isLoggedIn && (
-        <>
-          <List>
-            {navigationItems.map(item => {
-              const IconComponent = item.icon;
-              return (
-                <ListItem key={item.path} disablePadding>
-                  <ListItemButton
-                    component={Link}
-                    href={item.path}
-                    selected={pathname === item.path}
-                    sx={{
-                      '&.Mui-selected': {
-                        backgroundColor: 'primary.main',
-                        color: 'white',
-                        '&:hover': {
-                          backgroundColor: 'primary.dark',
-                        },
-                      },
-                    }}
-                  >
-                    <IconComponent sx={{ mr: 2 }} />
-                    <ListItemText primary={item.label} />
-                  </ListItemButton>
-                </ListItem>
-              );
-            })}
-          </List>
-          <Divider />
-        </>
-      )}
+      <List>
+        {items.map(item => {
+          const IconComponent = item.icon;
+          return (
+            <ListItem key={item.path} disablePadding>
+              <ListItemButton
+                component={Link}
+                href={item.path}
+                selected={pathname === item.path}
+                sx={{
+                  '&.Mui-selected': {
+                    backgroundColor: 'primary.main',
+                    color: 'white',
+                    '&:hover': {
+                      backgroundColor: 'primary.dark',
+                    },
+                  },
+                }}
+              >
+                <IconComponent sx={{ mr: 2 }} />
+                <ListItemText primary={item.label} />
+              </ListItemButton>
+            </ListItem>
+          );
+        })}
+      </List>
+      {items.length > 0 && <Divider />}
       {isLoggedIn && user && (
         <Box sx={{ p: 2 }}>
           <Typography variant="body2" sx={{ mb: 1 }}>
@@ -88,17 +89,15 @@ export function MobileNavigation({ mobileOpen, onToggle, onAuthClick }: MobileNa
 
   return (
     <>
-      {isLoggedIn && (
-        <IconButton
-          color="inherit"
-          aria-label="open drawer"
-          edge="start"
-          onClick={onToggle}
-          sx={{ mr: 2, display: { sm: 'none' } }}
-        >
-          <MenuIcon />
-        </IconButton>
-      )}
+      <IconButton
+        color="inherit"
+        aria-label="open drawer"
+        edge="start"
+        onClick={onToggle}
+        sx={{ mr: 2, display: { sm: 'none' } }}
+      >
+        <MenuIcon />
+      </IconButton>
 
       <Drawer
         variant="temporary"

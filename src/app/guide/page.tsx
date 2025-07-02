@@ -23,7 +23,6 @@ import {
   Visibility,
   Share,
   Download,
-  QrCode,
   PersonAdd,
   Lock,
   Public,
@@ -86,9 +85,6 @@ export default function GuidePage() {
         <CardContent>
           <Typography variant="h4" component="h2" gutterBottom>
             利用可能機能一覧
-          </Typography>
-          <Typography variant="body1" paragraph>
-            登録・未登録ユーザーで利用できる機能の違いを一目で確認できます。
           </Typography>
 
           <TableContainer component={Paper}>
@@ -206,6 +202,65 @@ export default function GuidePage() {
               </TableBody>
             </Table>
           </TableContainer>
+        </CardContent>
+      </Card>
+
+      {/* アカウント作成の利点 */}
+      <Card sx={{ mb: 4 }}>
+        <CardContent>
+          <Typography
+            variant="h4"
+            component="h2"
+            gutterBottom
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <PersonAdd sx={{ mr: 2, color: 'warning.main' }} />
+            アカウント作成でさらに便利に
+          </Typography>
+          <Typography variant="body1" paragraph>
+            無料のアカウントを作成すると、パブリック機能に加えて以下の機能が利用できます：
+          </Typography>
+
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={4}>
+              <Paper sx={{ p: 2, textAlign: 'center', height: '100%' }}>
+                <PlaylistAdd sx={{ fontSize: 40, color: 'primary.main', mb: 1 }} />
+                <Typography variant="h6" gutterBottom>
+                  セットリスト作成
+                </Typography>
+                <Typography variant="body2">
+                  独自のセットリストを無制限に作成・編集できます
+                </Typography>
+              </Paper>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <Paper sx={{ p: 2, textAlign: 'center', height: '100%' }}>
+                <LibraryMusic sx={{ fontSize: 40, color: 'info.main', mb: 1 }} />
+                <Typography variant="h6" gutterBottom>
+                  楽曲管理
+                </Typography>
+                <Typography variant="body2">
+                  個人の楽曲データベースで曲情報を効率的に管理
+                </Typography>
+              </Paper>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <Paper sx={{ p: 2, textAlign: 'center', height: '100%' }}>
+                <Lock sx={{ fontSize: 40, color: 'secondary.main', mb: 1 }} />
+                <Typography variant="h6" gutterBottom>
+                  プライベート機能
+                </Typography>
+                <Typography variant="body2">非公開セットリストや個人設定などの管理機能</Typography>
+              </Paper>
+            </Grid>
+          </Grid>
+
+          <Alert severity="info" sx={{ mt: 3 }}>
+            <Typography variant="body2">
+              <strong>今すぐ始める:</strong> 右上の「登録」ボタンからアカウントを作成できます。
+              メールアドレスとパスワードのみで、すぐに全機能をご利用いただけます。
+            </Typography>
+          </Alert>
         </CardContent>
       </Card>
 
@@ -488,93 +543,7 @@ export default function GuidePage() {
                 </List>
               </Paper>
             </Grid>
-
-            {/* 利用ガイド */}
-            <Grid item xs={12} md={6}>
-              <Paper sx={{ p: 3, height: '100%' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <QrCode sx={{ mr: 2, color: 'success.main' }} />
-                  <Typography variant="h6">利用ガイドページ</Typography>
-                </Box>
-                <Typography variant="body2" paragraph>
-                  <strong>認証不要:</strong> このページです。全機能の説明を確認できます。
-                </Typography>
-                <List dense>
-                  <ListItem sx={{ pl: 0 }}>
-                    <ListItemText primary="• 機能一覧と利用方法" />
-                  </ListItem>
-                  <ListItem sx={{ pl: 0 }}>
-                    <ListItemText primary="• 登録・未登録での機能比較" />
-                  </ListItem>
-                  <ListItem sx={{ pl: 0 }}>
-                    <ListItemText primary="• 各ページの詳細説明" />
-                  </ListItem>
-                  <ListItem sx={{ pl: 0 }}>
-                    <ListItemText primary="• 使用方法のステップガイド" />
-                  </ListItem>
-                </List>
-              </Paper>
-            </Grid>
           </Grid>
-        </CardContent>
-      </Card>
-
-      {/* アカウント作成の利点 */}
-      <Card sx={{ mb: 4 }}>
-        <CardContent>
-          <Typography
-            variant="h4"
-            component="h2"
-            gutterBottom
-            sx={{ display: 'flex', alignItems: 'center' }}
-          >
-            <PersonAdd sx={{ mr: 2, color: 'warning.main' }} />
-            アカウント作成でさらに便利に
-          </Typography>
-          <Typography variant="body1" paragraph>
-            無料のアカウントを作成すると、パブリック機能に加えて以下の機能が利用できます：
-          </Typography>
-
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={4}>
-              <Paper sx={{ p: 2, textAlign: 'center', height: '100%' }}>
-                <PlaylistAdd sx={{ fontSize: 40, color: 'primary.main', mb: 1 }} />
-                <Typography variant="h6" gutterBottom>
-                  セットリスト作成
-                </Typography>
-                <Typography variant="body2">
-                  独自のセットリストを無制限に作成・編集できます
-                </Typography>
-              </Paper>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <Paper sx={{ p: 2, textAlign: 'center', height: '100%' }}>
-                <LibraryMusic sx={{ fontSize: 40, color: 'info.main', mb: 1 }} />
-                <Typography variant="h6" gutterBottom>
-                  楽曲管理
-                </Typography>
-                <Typography variant="body2">
-                  個人の楽曲データベースで曲情報を効率的に管理
-                </Typography>
-              </Paper>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <Paper sx={{ p: 2, textAlign: 'center', height: '100%' }}>
-                <Lock sx={{ fontSize: 40, color: 'secondary.main', mb: 1 }} />
-                <Typography variant="h6" gutterBottom>
-                  プライベート機能
-                </Typography>
-                <Typography variant="body2">非公開セットリストや個人設定などの管理機能</Typography>
-              </Paper>
-            </Grid>
-          </Grid>
-
-          <Alert severity="info" sx={{ mt: 3 }}>
-            <Typography variant="body2">
-              <strong>今すぐ始める:</strong> 右上の「登録」ボタンからアカウントを作成できます。
-              メールアドレスとパスワードのみで、すぐに全機能をご利用いただけます。
-            </Typography>
-          </Alert>
         </CardContent>
       </Card>
     </Container>
