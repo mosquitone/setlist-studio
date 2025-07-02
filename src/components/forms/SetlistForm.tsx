@@ -12,7 +12,7 @@ import { SetlistFormFields } from './SetlistFormFields';
 import { SongItemInput } from './SongItemInput';
 import { validateAndSanitizeInput } from '@/lib/security/security-utils';
 
-import { SetlistFormItem, SetlistFormValues } from '@/types/components';
+import { SetlistFormValues } from '@/types/components';
 
 // 後方互換性のため再エクスポート
 export type { SetlistFormItem as SetlistItem, SetlistFormValues } from '@/types/components';
