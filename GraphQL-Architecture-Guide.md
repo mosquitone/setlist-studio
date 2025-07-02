@@ -1,13 +1,15 @@
-# 3つのファイルの関係性を超わかりやすく解説！
+# GraphQLアーキテクチャ完全ガイド - Setlist Studio
 
-この3つのファイルは**GraphQLの送受信**を支える重要な構成要素です。**レストラン**に例えて説明します！
+この文書では、Setlist StudioのGraphQLアーキテクチャを**レストラン**に例えて、初心者にもわかりやすく解説します。
 
 ## 🏢 全体の仕組み（レストラン例）
 
 ```
 お客さん → ウェイター → キッチン → シェフ → データベース
-(React)   (Apollo)    (API Route)  (Resolver)  (PostgreSQL)
+(React)   (Apollo)    (Next.js API Route)  (Resolver)  (PostgreSQL)
 ```
+
+このアプリケーションは**統一Next.jsアーキテクチャ**を採用し、Vercel Functions互換の設計になっています。
 
 ---
 
@@ -56,28 +58,51 @@ export const apolloClient = new ApolloClient({
 
 ### 3️⃣ **route.ts** = "キッチン（料理を作る場所）"
 ```typescript
-// キッチンの設備とシェフ
-const server = new ApolloServer({
-  schema: graphqlSchema, // レシピ本
+// /api/graphql/route.ts - Next.js API Route
+import { buildSchema } from 'type-graphql'
+import { ApolloServer } from '@apollo/server'
+import { startServerAndCreateNextHandler } from '@as-integrations/next'
+
+// Type-GraphQLでスキーマを構築（シェフたちを配置）
+const graphqlSchema = await buildSchema({
   resolvers: [SetlistResolver, SongResolver, AuthResolver], // シェフたち
+  dateScalarMode: 'isoDate',
 })
 
-// 注文を受け取る窓口
+// キッチンの設備（Apollo Server v4）
+const server = new ApolloServer({
+  schema: graphqlSchema, // シェフたちが入ったレシピ本
+  introspection: process.env.NODE_ENV !== 'production',
+  validationRules: [depthLimit(10)], // セキュリティ制限
+  formatError: (err) => {
+    // 本番環境でのエラーハンドリング
+    if (process.env.NODE_ENV === 'production') {
+      return { message: 'サーバーエラーが発生しました' }
+    }
+    return err
+  }
+})
+
+// Next.js APIルートハンドラー（注文受付窓口）
+const handler = startServerAndCreateNextHandler(server, {
+  context: async (req) => createSecureContext(req),
+})
+
 export async function POST(request: NextRequest) {
-  // セキュリティチェック
+  // セキュリティチェック「この人大丈夫？」
   const rateLimitResponse = await rateLimitFunction(request)
   const csrfResponse = await csrfProtection(request, prisma)
   
   // 注文をシェフに渡す
-  const handler = startServerAndCreateNextHandler(server, {
-    context: async (req) => createSecureContext(req),
-  })
   return handler(request)
 }
 ```
 
 **役割**: 
+- Next.js API Routeとして動作（Vercel Functions互換）
 - 注文（GraphQLクエリ）を受け取る
+- Type-GraphQLでスキーマを構築
+- Apollo Server v4でセキュリティ強化
 - 適切なシェフ（Resolver）に調理を依頼
 - 料理（データ）を完成させてウェイターに渡す
 
