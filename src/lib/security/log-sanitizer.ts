@@ -1,5 +1,7 @@
 // ログインジェクション攻撃対策
 
+import { Timestamp } from '@/types/common';
+
 /**
  * ログインジェクション攻撃を防ぐためのサニタイゼーション関数
  * 改行文字、制御文字、およびログ解析を妨害する可能性のある文字を除去
@@ -181,7 +183,7 @@ export function validateLogEntry(logEntry: string): boolean {
  * 構造化ログ形式でのセキュアな出力
  */
 export function formatSecurityLog(data: {
-  timestamp: Date;
+  timestamp: Timestamp;
   level: string;
   type: string;
   message: string;
