@@ -1,16 +1,16 @@
 'use client';
 
 import React from 'react';
-import { 
-  Paper, 
-  TextField, 
-  IconButton, 
-  Typography, 
-  Autocomplete, 
+import {
+  Paper,
+  TextField,
+  IconButton,
+  Typography,
+  Autocomplete,
   Box,
   Stack,
   useTheme,
-  useMediaQuery 
+  useMediaQuery,
 } from '@mui/material';
 import { Delete as DeleteIcon, DragHandle as DragHandleIcon } from '@mui/icons-material';
 import { FormikProps } from 'formik';
@@ -186,11 +186,7 @@ export function SongItemInput({
         </Stack>
       ) : (
         // デスクトップ版: 従来のレイアウト
-        <Stack 
-          direction="row" 
-          alignItems="center" 
-          spacing={2}
-        >
+        <Stack direction="row" alignItems="center" spacing={2}>
           {/* ヘッダー部分（ドラッグハンドル + 番号 + 削除ボタン） */}
           <Stack direction="row" alignItems="center" spacing={1} sx={{ minWidth: '120px' }}>
             <IconButton

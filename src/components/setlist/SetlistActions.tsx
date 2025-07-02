@@ -1,17 +1,17 @@
 'use client';
 
 import React from 'react';
-import { 
-  Box, 
-  Button, 
-  FormControl, 
-  Select, 
-  MenuItem, 
-  IconButton, 
+import {
+  Box,
+  Button,
+  FormControl,
+  Select,
+  MenuItem,
+  IconButton,
   Tooltip,
   Stack,
   useTheme,
-  useMediaQuery 
+  useMediaQuery,
 } from '@mui/material';
 import {
   Edit as EditIcon,
@@ -65,59 +65,59 @@ export function SetlistActions({
           {/* 編集系ボタン（オーナーのみ） */}
           {isOwner && (
             <Stack direction="row" spacing={1}>
-              <Button 
-                variant="outlined" 
-                startIcon={<EditIcon />} 
+              <Button
+                variant="outlined"
+                startIcon={<EditIcon />}
                 onClick={onEdit}
                 size="small"
-                sx={{ 
+                sx={{
                   flex: 1,
                   fontSize: '0.75rem',
-                  px: 1
+                  px: 1,
                 }}
               >
                 Edit
               </Button>
-              <Button 
-                variant="outlined" 
-                startIcon={<DuplicateIcon />} 
+              <Button
+                variant="outlined"
+                startIcon={<DuplicateIcon />}
                 onClick={onDuplicate}
                 size="small"
-                sx={{ 
+                sx={{
                   flex: 1,
                   fontSize: '0.75rem',
-                  px: 1
+                  px: 1,
                 }}
               >
                 Duplicate
               </Button>
             </Stack>
           )}
-          
+
           {/* 共有系ボタン（全ユーザー） */}
           <Stack direction="row" spacing={1}>
-            <Button 
-              variant="outlined" 
-              startIcon={<DownloadIcon />} 
+            <Button
+              variant="outlined"
+              startIcon={<DownloadIcon />}
               onClick={onDownload}
               size="small"
-              sx={{ 
+              sx={{
                 flex: 1,
                 fontSize: '0.75rem',
-                px: 1
+                px: 1,
               }}
             >
               Download
             </Button>
-            <Button 
-              variant="outlined" 
-              startIcon={<ShareIcon />} 
+            <Button
+              variant="outlined"
+              startIcon={<ShareIcon />}
               onClick={onShare}
               size="small"
-              sx={{ 
+              sx={{
                 flex: 1,
                 fontSize: '0.75rem',
-                px: 1
+                px: 1,
               }}
             >
               Share
@@ -136,7 +136,9 @@ export function SetlistActions({
                   color: isPublic ? '#16a34a' : '#6b7280',
                   backgroundColor: isPublic ? 'rgba(34, 197, 94, 0.1)' : 'rgba(156, 163, 175, 0.1)',
                   '&:hover': {
-                    backgroundColor: isPublic ? 'rgba(34, 197, 94, 0.2)' : 'rgba(156, 163, 175, 0.2)',
+                    backgroundColor: isPublic
+                      ? 'rgba(34, 197, 94, 0.2)'
+                      : 'rgba(156, 163, 175, 0.2)',
                   },
                 }}
               >

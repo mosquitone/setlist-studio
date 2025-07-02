@@ -1,7 +1,15 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Box, Paper, CircularProgress, Typography, Button, useTheme, useMediaQuery } from '@mui/material';
+import {
+  Box,
+  Paper,
+  CircularProgress,
+  Typography,
+  Button,
+  useTheme,
+  useMediaQuery,
+} from '@mui/material';
 import QRCode from 'qrcode';
 import { SetlistData } from '@/types/components';
 import { Theme } from '@/types/common';
@@ -72,10 +80,10 @@ export function SetlistPreview({
             position: 'relative',
           }}
         >
-          <Box 
-            sx={{ 
-              transform: isMobile ? `scale(${previewWidth / 700})` : 'scale(0.88)', 
-              transformOrigin: 'top left' 
+          <Box
+            sx={{
+              transform: isMobile ? `scale(${previewWidth / 700})` : 'scale(0.88)',
+              transformOrigin: 'top left',
             }}
           >
             <SetlistRenderer data={{ ...data, theme: selectedTheme, qrCodeURL: generatedQrCode }} />
@@ -134,17 +142,17 @@ export function SetlistPreview({
           backgroundColor: '#f5f5f5',
         }}
       >
-        <Typography 
-          variant={isMobile ? "body1" : "h6"} 
+        <Typography
+          variant={isMobile ? 'body1' : 'h6'}
           sx={{ mb: 2, color: 'text.secondary', textAlign: 'center', px: 2 }}
         >
           画像が生成されませんでした
         </Typography>
-        <Button 
-          variant="contained" 
-          onClick={() => window.location.reload()} 
+        <Button
+          variant="contained"
+          onClick={() => window.location.reload()}
           sx={{ mt: 1 }}
-          size={isMobile ? "small" : "medium"}
+          size={isMobile ? 'small' : 'medium'}
         >
           画像生成を再試行
         </Button>
@@ -154,12 +162,14 @@ export function SetlistPreview({
 
   return (
     <Paper sx={{ width: '100%', p: isMobile ? 1 : 3 }}>
-      <Box sx={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        minHeight: isMobile ? 300 : 400,
-        overflow: 'auto' 
-      }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          minHeight: isMobile ? 300 : 400,
+          overflow: 'auto',
+        }}
+      >
         {renderPreview()}
       </Box>
     </Paper>

@@ -10,22 +10,22 @@ export function SongPageHeader() {
 
   return (
     <Box sx={{ mb: 4 }}>
-      <Stack 
-        direction={isMobile ? "column" : "row"} 
-        justifyContent="space-between" 
-        alignItems={isMobile ? "stretch" : "center"} 
+      <Stack
+        direction={isMobile ? 'column' : 'row'}
+        justifyContent="space-between"
+        alignItems={isMobile ? 'stretch' : 'center'}
         spacing={isMobile ? 2 : 0}
         sx={{ mb: 2 }}
       >
-        <Typography variant={isMobile ? "h5" : "h4"} component="h1">
+        <Typography variant={isMobile ? 'h5' : 'h4'} component="h1">
           楽曲管理
         </Typography>
-        <Button 
-          component={Link} 
-          href="/songs/new" 
-          variant="contained" 
+        <Button
+          component={Link}
+          href="/songs/new"
+          variant="contained"
           startIcon={<AddIcon />}
-          size={isMobile ? "medium" : "medium"}
+          size={isMobile ? 'medium' : 'medium'}
           sx={isMobile ? { minHeight: 40 } : {}}
         >
           新しい楽曲を追加
