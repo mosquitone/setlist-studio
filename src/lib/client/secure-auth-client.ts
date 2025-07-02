@@ -4,10 +4,6 @@ import { GET_ME_QUERY } from '../server/graphql/apollo-operations';
 import { User } from '@/types/entities';
 import { AuthResponse } from '@/types/api';
 
-// 後方互換性のため再エクスポート
-export type { User } from '@/types/entities';
-export type { AuthResponse } from '@/types/api';
-
 export interface AuthState {
   authenticated: boolean;
   user: User | null;
