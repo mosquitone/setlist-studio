@@ -2,9 +2,19 @@
 
 🎵 エモーショナルなセットリスト作成ツール
 
+**バージョン**: 1.0.0 (2025-07)  
+**ステータス**: 本番稼働中
+
 ## 概要
 
 音楽バンド向けの現代的なセットリスト生成アプリケーションです。Next.js + Vercel Functions によるGraphQL API統合アーキテクチャで、ユーザー認証、楽曲管理、セットリスト作成機能を提供します。
+
+### 🛠️ 技術構成
+
+- **フロントエンド**: Next.js 15.3.4, React 19, TypeScript 5, Material-UI v5
+- **バックエンド**: GraphQL (Apollo Server 4), Prisma ORM, PostgreSQL 15
+- **認証**: JWT + HttpOnly Cookie
+- **ホスティング**: Vercel Platform (Static Generation + Serverless Functions)
 
 ## 主な機能
 
