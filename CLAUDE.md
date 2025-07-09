@@ -15,6 +15,11 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 - **lint問題の修正**: `pnpm lint:fix`
 - **TypeScript型チェック**: `npx tsc --noEmit`
 
+### GraphQL開発
+- **GraphQLスキーマ生成**: `pnpm generate:schema` (デバッグ用スキーマファイルを生成)
+- **GraphQLスキーマファイル**: `src/lib/server/graphql/schema.graphql`
+- **TypeScript生成スキーマ**: `src/lib/server/graphql/generated-schema.ts`
+
 ### データベース操作
 - **初期セットアップ**: `pnpm db:setup` (セキュリティ対応PostgreSQL初回セットアップ)
 - **PostgreSQL起動**: `docker-compose up -d postgres`

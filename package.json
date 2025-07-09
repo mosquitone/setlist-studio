@@ -4,11 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "pnpm generate:schema && next build",
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "generate": "dotenv -e .env.local -- prisma generate",
+    "generate:schema": "dotenv -e .env.local -- tsx scripts/generate-schema.ts",
     "db:push": "dotenv -e .env.local -- prisma db push",
     "db:migrate": "dotenv -e .env.local -- prisma migrate dev",
     "db:studio": "dotenv -e .env.local -- prisma studio",
@@ -68,6 +69,7 @@
     "prettier": "^3.6.2",
     "prisma": "^6.11.0",
     "terser-webpack-plugin": "^5.3.14",
+    "tsx": "^4.20.3",
     "typescript": "^5"
   },
   "engines": {

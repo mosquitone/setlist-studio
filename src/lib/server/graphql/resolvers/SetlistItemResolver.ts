@@ -21,10 +21,10 @@ interface Context {
 
 @InputType()
 export class CreateSetlistItemInput {
-  @Field()
+  @Field(() => String)
   title: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   note?: string;
 
   @Field(() => Int)
@@ -36,10 +36,10 @@ export class CreateSetlistItemInput {
 
 @InputType()
 export class UpdateSetlistItemInput {
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   title?: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   note?: string;
 
   @Field(() => Int, { nullable: true })
@@ -103,7 +103,7 @@ export class SetlistItemResolver {
   @Mutation(() => SetlistItem)
   @UseMiddleware(AuthMiddleware)
   async createSetlistItem(
-    @Arg('input') input: CreateSetlistItemInput,
+    @Arg('input', () => CreateSetlistItemInput) input: CreateSetlistItemInput,
     @Ctx() ctx: Context,
   ): Promise<SetlistItem> {
     // First verify that the setlist belongs to the authenticated user
@@ -124,7 +124,7 @@ export class SetlistItemResolver {
   @UseMiddleware(AuthMiddleware)
   async updateSetlistItem(
     @Arg('id', () => ID) id: string,
-    @Arg('input') input: UpdateSetlistItemInput,
+    @Arg('input', () => UpdateSetlistItemInput) input: UpdateSetlistItemInput,
     @Ctx() ctx: Context,
   ): Promise<SetlistItem> {
     // First get the item with setlist relation for auth check

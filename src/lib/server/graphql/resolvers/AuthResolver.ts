@@ -42,7 +42,10 @@ export class AuthResolver {
    * @returns 認証トークンとユーザー情報
    */
   @Mutation(() => AuthPayload)
-  async register(@Arg('input') input: RegisterInput, @Ctx() ctx: Context): Promise<AuthPayload> {
+  async register(
+    @Arg('input', () => RegisterInput) input: RegisterInput,
+    @Ctx() ctx: Context,
+  ): Promise<AuthPayload> {
     const existingUser = await ctx.prisma.user.findFirst({
       where: {
         OR: [{ email: input.email }, { username: input.username }],
@@ -117,7 +120,10 @@ export class AuthResolver {
    * @returns 認証トークンとユーザー情報
    */
   @Mutation(() => AuthPayload)
-  async login(@Arg('input') input: LoginInput, @Ctx() ctx: Context): Promise<AuthPayload> {
+  async login(
+    @Arg('input', () => LoginInput) input: LoginInput,
+    @Ctx() ctx: Context,
+  ): Promise<AuthPayload> {
     const user = await ctx.prisma.user.findUnique({
       where: { email: input.email },
     });

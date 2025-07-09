@@ -34,10 +34,10 @@ interface Context {
 
 @InputType()
 export class CreateSetlistItemForSetlistInput {
-  @Field()
+  @Field(() => String)
   title: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   note?: string;
 
   @Field(() => Int)
@@ -46,28 +46,28 @@ export class CreateSetlistItemForSetlistInput {
 
 @InputType()
 export class CreateSetlistInput {
-  @Field()
+  @Field(() => String)
   title: string;
 
-  @Field()
+  @Field(() => String)
   bandName: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   eventName?: string;
 
-  @Field({ nullable: true })
+  @Field(() => Date, { nullable: true })
   eventDate?: Date;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   openTime?: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   startTime?: string;
 
-  @Field()
+  @Field(() => String)
   theme: string;
 
-  @Field({ defaultValue: false })
+  @Field(() => Boolean, { defaultValue: false })
   isPublic: boolean;
 
   @Field(() => [CreateSetlistItemForSetlistInput], { nullable: true })
@@ -76,28 +76,28 @@ export class CreateSetlistInput {
 
 @InputType()
 export class UpdateSetlistInput {
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   title?: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   bandName?: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   eventName?: string;
 
-  @Field({ nullable: true })
+  @Field(() => Date, { nullable: true })
   eventDate?: Date;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   openTime?: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   startTime?: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   theme?: string;
 
-  @Field({ nullable: true })
+  @Field(() => Boolean, { nullable: true })
   isPublic?: boolean;
 
   @Field(() => [CreateSetlistItemForSetlistInput], { nullable: true })
@@ -198,7 +198,7 @@ export class SetlistResolver {
   @Mutation(() => Setlist)
   @UseMiddleware(AuthMiddleware)
   async createSetlist(
-    @Arg('input') input: CreateSetlistInput,
+    @Arg('input', () => CreateSetlistInput) input: CreateSetlistInput,
     @Ctx() ctx: Context,
   ): Promise<Setlist> {
     const { items, ...setlistData } = input;
@@ -253,7 +253,7 @@ export class SetlistResolver {
   @UseMiddleware(AuthMiddleware)
   async updateSetlist(
     @Arg('id', () => ID) id: string,
-    @Arg('input') input: UpdateSetlistInput,
+    @Arg('input', () => UpdateSetlistInput) input: UpdateSetlistInput,
     @Ctx() ctx: Context,
   ): Promise<Setlist> {
     const setlist = await ctx.prisma.setlist.findFirst({

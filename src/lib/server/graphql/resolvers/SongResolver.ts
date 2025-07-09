@@ -22,11 +22,11 @@ interface Context {
 
 @InputType()
 export class CreateSongInput {
-  @Field()
+  @Field(() => String)
   @IsString()
   title: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsOptional()
   @IsString()
   artist?: string;
@@ -37,7 +37,7 @@ export class CreateSongInput {
   @Min(1)
   duration?: number;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsOptional()
   @IsString()
   key?: string;
@@ -49,7 +49,7 @@ export class CreateSongInput {
   @Max(300)
   tempo?: number;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsOptional()
   @IsString()
   notes?: string;
@@ -57,12 +57,12 @@ export class CreateSongInput {
 
 @InputType()
 export class UpdateSongInput {
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsOptional()
   @IsString()
   title?: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsOptional()
   @IsString()
   artist?: string;
@@ -73,7 +73,7 @@ export class UpdateSongInput {
   @Min(1)
   duration?: number;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsOptional()
   @IsString()
   key?: string;
@@ -85,7 +85,7 @@ export class UpdateSongInput {
   @Max(300)
   tempo?: number;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsOptional()
   @IsString()
   notes?: string;
@@ -112,7 +112,10 @@ export class SongResolver {
 
   @Mutation(() => Song)
   @UseMiddleware(AuthMiddleware)
-  async createSong(@Arg('input') input: CreateSongInput, @Ctx() ctx: Context): Promise<Song> {
+  async createSong(
+    @Arg('input', () => CreateSongInput) input: CreateSongInput,
+    @Ctx() ctx: Context,
+  ): Promise<Song> {
     return ctx.prisma.song.create({
       data: {
         ...input,
@@ -125,7 +128,7 @@ export class SongResolver {
   @UseMiddleware(AuthMiddleware)
   async updateSong(
     @Arg('id', () => ID) id: string,
-    @Arg('input') input: UpdateSongInput,
+    @Arg('input', () => UpdateSongInput) input: UpdateSongInput,
     @Ctx() ctx: Context,
   ): Promise<Song> {
     const song = await ctx.prisma.song.findFirst({

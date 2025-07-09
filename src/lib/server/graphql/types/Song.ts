@@ -5,31 +5,31 @@ export class Song {
   @Field(() => ID)
   id!: string;
 
-  @Field()
+  @Field(() => String)
   title!: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   artist?: string;
 
   @Field(() => Int, { nullable: true })
   duration?: number;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   key?: string;
 
   @Field(() => Int, { nullable: true })
   tempo?: number;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   notes?: string;
 
-  @Field()
+  @Field(() => String)
   userId!: string;
 
-  @Field()
+  @Field(() => Date)
   createdAt!: Date;
 
-  @Field()
+  @Field(() => Date)
   updatedAt!: Date;
 
   // Note: User relation removed to avoid circular dependencies

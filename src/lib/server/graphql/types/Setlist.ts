@@ -5,37 +5,37 @@ export class Setlist {
   @Field(() => ID)
   id!: string;
 
-  @Field()
+  @Field(() => String)
   title!: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   bandName?: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   eventName?: string;
 
-  @Field({ nullable: true })
+  @Field(() => Date, { nullable: true })
   eventDate?: Date;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   openTime?: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   startTime?: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   theme?: string;
 
-  @Field()
+  @Field(() => Boolean)
   isPublic!: boolean;
 
-  @Field()
+  @Field(() => String)
   userId!: string;
 
-  @Field()
+  @Field(() => Date)
   createdAt!: Date;
 
-  @Field()
+  @Field(() => Date)
   updatedAt!: Date;
 
   // Note: Relations removed to avoid circular dependencies

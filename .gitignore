@@ -47,3 +47,7 @@ next-env.d.ts
 
 # Database
 postgres_data/
+
+# Generated GraphQL schema files
+src/lib/server/graphql/schema.graphql
+src/lib/server/graphql/generated-schema.ts
