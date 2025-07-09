@@ -16,7 +16,16 @@ const nextConfig: NextConfig = {
   },
   // Compress assets
   compress: true,
-
+  jsc: {
+    minify: {
+      compress: {
+        keep_fnames: true,
+      },
+      mangle: {
+        keep_fnames: true,
+      },
+    },
+  },
   async headers() {
     return [
       {
