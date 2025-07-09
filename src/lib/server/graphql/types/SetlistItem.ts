@@ -5,16 +5,16 @@ export class SetlistItem {
   @Field(() => ID)
   id!: string;
 
-  @Field()
+  @Field(() => String)
   title!: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   note?: string;
 
   @Field(() => Int)
   order!: number;
 
-  @Field()
+  @Field(() => String)
   setlistId!: string;
 
   // Note: Setlist relation removed to avoid circular dependencies

@@ -5,16 +5,16 @@ export class User {
   @Field(() => ID)
   id!: string;
 
-  @Field()
+  @Field(() => String)
   email!: string;
 
-  @Field()
+  @Field(() => String)
   username!: string;
 
-  @Field()
+  @Field(() => Date)
   createdAt!: Date;
 
-  @Field()
+  @Field(() => Date)
   updatedAt!: Date;
 
   // Note: Song and Setlist relations removed to avoid circular dependencies

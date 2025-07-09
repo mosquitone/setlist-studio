@@ -4,7 +4,7 @@ import { User } from './User';
 
 @ObjectType()
 export class AuthPayload {
-  @Field()
+  @Field(() => String)
   token!: string;
 
   @Field(() => User)
@@ -13,12 +13,12 @@ export class AuthPayload {
 
 @InputType()
 export class RegisterInput {
-  @Field()
+  @Field(() => String)
   @IsEmail({}, { message: '有効なメールアドレスを入力してください' })
   @MaxLength(254, { message: 'メールアドレスは254文字以内で入力してください' })
   email!: string;
 
-  @Field()
+  @Field(() => String)
   @IsString()
   @MinLength(1, { message: 'ユーザー名は必須です' })
   @MaxLength(50, { message: 'ユーザー名は50文字以内で入力してください' })
@@ -27,7 +27,7 @@ export class RegisterInput {
   })
   username!: string;
 
-  @Field()
+  @Field(() => String)
   @IsString()
   @MinLength(8, { message: 'パスワードは8文字以上である必要があります' })
   @MaxLength(128, { message: 'パスワードは128文字以内で入力してください' })
@@ -39,11 +39,11 @@ export class RegisterInput {
 
 @InputType()
 export class LoginInput {
-  @Field()
+  @Field(() => String)
   @IsEmail()
   email!: string;
 
-  @Field()
+  @Field(() => String)
   @IsString()
   @MinLength(1)
   password!: string;
@@ -51,24 +51,24 @@ export class LoginInput {
 
 @InputType()
 export class PasswordResetRequestInput {
-  @Field()
+  @Field(() => String)
   @IsEmail({}, { message: '有効なメールアドレスを入力してください' })
   email!: string;
 }
 
 @InputType()
 export class PasswordResetInput {
-  @Field()
+  @Field(() => String)
   @IsString()
   @MinLength(1, { message: 'トークンは必須です' })
   token!: string;
 
-  @Field()
+  @Field(() => String)
   @IsString()
   @MinLength(1, { message: 'リクエストIDは必須です' })
   requestId!: string;
 
-  @Field()
+  @Field(() => String)
   @IsString()
   @MinLength(8, { message: 'パスワードは8文字以上である必要があります' })
   @MaxLength(128, { message: 'パスワードは128文字以内で入力してください' })
@@ -80,12 +80,12 @@ export class PasswordResetInput {
 
 @ObjectType()
 export class PasswordResetResponse {
-  @Field()
+  @Field(() => Boolean)
   success!: boolean;
 
-  @Field()
+  @Field(() => String)
   message!: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   requestId?: string;
 }

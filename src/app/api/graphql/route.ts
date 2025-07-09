@@ -2,39 +2,31 @@ import 'reflect-metadata';
 import { ApolloServer } from '@apollo/server';
 import { startServerAndCreateNextHandler } from '@as-integrations/next';
 import { NextRequest } from 'next/server';
-import { buildSchema } from 'type-graphql';
 import { PrismaClient } from '@prisma/client';
 import { GraphQLSchema } from 'graphql';
 import depthLimit from 'graphql-depth-limit';
 import { createApiRateLimit, createAuthRateLimit } from '../../../lib/security/rate-limit-db';
 import { csrfProtection } from '../../../lib/security/csrf-protection';
 
-// Import resolvers
-import { SetlistResolver } from '../../../lib/server/graphql/resolvers/SetlistResolver';
-import { SongResolver } from '../../../lib/server/graphql/resolvers/SongResolver';
-import { AuthResolver } from '../../../lib/server/graphql/resolvers/AuthResolver';
-import { UserResolver } from '../../../lib/server/graphql/resolvers/UserResolver';
+// Import pre-built schema
+import { getPreBuiltSchema } from '../../../lib/server/graphql/generated-schema';
 
 // Initialize Prisma Client
 const prisma = new PrismaClient();
 
-// Build schema from Type-GraphQL resolvers
+// Use pre-built schema for better performance
 let schema: GraphQLSchema | null = null;
 
-async function getSchema() {
+function getSchema() {
   if (!schema) {
-    schema = await buildSchema({
-      resolvers: [SetlistResolver, SongResolver, AuthResolver, UserResolver],
-      validate: false, // Disable validation for better performance
-      authChecker: undefined, // We use middleware instead
-    });
+    schema = getPreBuiltSchema();
   }
   return schema;
 }
 
 // Create Apollo Server with enhanced security
 async function createServer() {
-  const graphqlSchema = await getSchema();
+  const graphqlSchema = getSchema();
 
   return new ApolloServer({
     schema: graphqlSchema,
