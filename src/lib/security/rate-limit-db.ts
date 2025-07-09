@@ -34,14 +34,17 @@ export class DatabaseRateLimit {
     try {
       // トランザクションでアトミックな操作を保証
       const result = await this.prisma.$transaction(async (tx) => {
-        // 期限切れエントリの削除
-        await tx.rateLimitEntry.deleteMany({
-          where: {
-            resetTime: {
-              lt: now,
+        // 本番環境では期限切れエントリの削除を10%の確率で実行（パフォーマンス最適化）
+        const isProduction = process.env.NODE_ENV === 'production';
+        if (!isProduction || Math.random() < 0.1) {
+          await tx.rateLimitEntry.deleteMany({
+            where: {
+              resetTime: {
+                lt: now,
+              },
             },
-          },
-        });
+          });
+        }
 
         // 既存エントリの確認・更新
         const existingEntry = await tx.rateLimitEntry.findUnique({
@@ -194,9 +197,12 @@ export function createAuthRateLimit(prisma: PrismaClient) {
 }
 
 export function createApiRateLimit(prisma: PrismaClient) {
+  // 本番環境では制限を大幅に緩和してパフォーマンスを優先
+  const isProduction = process.env.NODE_ENV === 'production';
+  
   return createDatabaseRateLimit(prisma, {
-    windowMs: 60 * 1000, // 1分
-    maxRequests: 60, // 一般API制限
+    windowMs: isProduction ? 5 * 60 * 1000 : 60 * 1000, // 本番: 5分, 開発: 1分
+    maxRequests: isProduction ? 300 : 60, // 本番: 300回, 開発: 60回
     message: 'リクエスト数が上限に達しました。しばらく時間をおいてから再試行してください',
   });
 }
