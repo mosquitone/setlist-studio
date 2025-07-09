@@ -1,4 +1,5 @@
 import type { NextConfig } from 'next';
+import TerserPlugin from 'terser-webpack-plugin';
 
 const nextConfig: NextConfig = {
   // Optimize for hybrid approach (static + serverless)
@@ -16,15 +17,30 @@ const nextConfig: NextConfig = {
   },
   // Compress assets
   compress: true,
-  jsc: {
-    minify: {
-      compress: {
-        keep_fnames: true,
-      },
-      mangle: {
-        keep_fnames: true,
-      },
-    },
+  webpack: (config, options) => {
+    if (!options.dev && config.optimization.minimizer) {
+      // 既存のminimizerを保持しつつ、TerserPluginを設定
+      config.optimization.minimizer = config.optimization.minimizer.map((plugin: any) => {
+        if (plugin.constructor.name === 'TerserPlugin') {
+          return new TerserPlugin({
+            terserOptions: {
+              compress: {
+                drop_console: false,
+                passes: 2,
+              },
+              mangle: {
+                keep_classnames: true,
+                keep_fnames: true,
+              },
+              keep_classnames: true,
+              keep_fnames: true,
+            },
+          });
+        }
+        return plugin;
+      });
+    }
+    return config;
   },
   async headers() {
     return [
