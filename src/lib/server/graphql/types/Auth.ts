@@ -30,8 +30,9 @@ export class RegisterInput {
   @Field()
   @IsString()
   @MinLength(8, { message: 'パスワードは8文字以上である必要があります' })
-  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/, {
-    message: 'パスワードは大文字・小文字・数字・特殊文字（@$!%*?&）を含む必要があります',
+  @MaxLength(128, { message: 'パスワードは128文字以内で入力してください' })
+  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/, {
+    message: 'パスワードは8文字以上で、大文字・小文字・数字を含む必要があります',
   })
   password!: string;
 }
@@ -70,8 +71,9 @@ export class PasswordResetInput {
   @Field()
   @IsString()
   @MinLength(8, { message: 'パスワードは8文字以上である必要があります' })
-  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/, {
-    message: 'パスワードは大文字・小文字・数字・特殊文字（@$!%*?&）を含む必要があります',
+  @MaxLength(128, { message: 'パスワードは128文字以内で入力してください' })
+  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/, {
+    message: 'パスワードは8文字以上で、大文字・小文字・数字を含む必要があります',
   })
   newPassword!: string;
 }
