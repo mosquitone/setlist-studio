@@ -27,12 +27,5 @@
         }
       ]
     }
-  ],
-  "env": {
-    "DATABASE_URL": "@database_url",
-    "JWT_SECRET": "@jwt_secret",
-    "CSRF_SECRET": "@csrf_secret",
-    "IP_HASH_SALT": "@ip_hash_salt",
-    "CRON_SECRET": "@cron_secret"
-  }
+  ]
 }
