@@ -199,7 +199,7 @@ export function createAuthRateLimit(prisma: PrismaClient) {
 export function createApiRateLimit(prisma: PrismaClient) {
   // 本番環境では制限を大幅に緩和してパフォーマンスを優先
   const isProduction = process.env.NODE_ENV === 'production';
-  
+
   return createDatabaseRateLimit(prisma, {
     windowMs: isProduction ? 5 * 60 * 1000 : 60 * 1000, // 本番: 5分, 開発: 1分
     maxRequests: isProduction ? 300 : 60, // 本番: 300回, 開発: 60回
