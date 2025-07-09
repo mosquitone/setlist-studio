@@ -61,11 +61,11 @@
 
 ### GraphQL API (Vercel Functions)
 - **Apollo Server v4.12.2** - Next.js API Routesで動作するGraphQL API（セキュリティ強化済み）
-- **Type-GraphQL 1.1.1** - スキーマファーストAPI開発
+- **Type-GraphQL 1.1.1** - スキーマファーストAPI開発 + 事前生成スキーマ
 - **Prisma 6.11.0** - 型安全データベースORM
 - **PostgreSQL 15** - メインデータベース + セキュリティログ
 - **HttpOnly Cookie + JWT** - XSS耐性のあるセキュア認証システム
-- **Rate Limiting** - データベースベース分散レート制限
+- **Rate Limiting** - データベースベース分散レート制限（本番環境最適化済み）
 - **CSRF Protection** - Double Submit Cookie + HMAC パターン
 - **Threat Detection** - リアルタイム脅威検知エンジン
 
@@ -168,9 +168,12 @@ pnpm dev
 ```bash
 # 開発
 pnpm dev          # 開発サーバー起動（Next.js + GraphQL API）
-pnpm build        # プロダクションビルド
+pnpm build        # プロダクションビルド（GraphQLスキーマ自動生成含む）
 pnpm lint         # ESLint実行
 pnpm lint:fix     # ESLint自動修正
+
+# GraphQL開発
+pnpm generate:schema  # GraphQLスキーマ事前生成（パフォーマンス向上）
 
 # データベース
 docker-compose up -d postgres  # PostgreSQL起動
