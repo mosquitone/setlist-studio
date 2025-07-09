@@ -20,6 +20,7 @@ import {
 } from '@mui/icons-material';
 import { useMutation } from '@apollo/client';
 import { REGISTER } from '@/lib/server/graphql/apollo-operations';
+import { validateField, ValidationRules } from '@/lib/security/validation-rules';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -44,20 +45,8 @@ export default function RegisterClient() {
   });
 
   const validatePassword = (password: string): string | null => {
-    if (password.length < 8) {
-      return 'パスワードは8文字以上である必要があります';
-    }
-
-    const hasLowercase = /[a-z]/.test(password);
-    const hasUppercase = /[A-Z]/.test(password);
-    const hasNumber = /\d/.test(password);
-    const hasSpecialChar = /[@$!%*?&]/.test(password);
-
-    if (!hasLowercase || !hasUppercase || !hasNumber || !hasSpecialChar) {
-      return 'パスワードは大文字・小文字・数字・特殊文字（@$!%*?&）を含む必要があります';
-    }
-
-    return null;
+    const result = validateField(password, 'password');
+    return result.isValid ? null : result.message || 'パスワードが無効です';
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -136,6 +125,13 @@ export default function RegisterClient() {
               margin="normal"
               required
               autoComplete="new-password"
+              helperText={ValidationRules.password.message}
+              inputProps={{
+                pattern: ValidationRules.password.pattern.source,
+                title: ValidationRules.password.message,
+                minLength: ValidationRules.password.minLength,
+                maxLength: ValidationRules.password.maxLength,
+              }}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
