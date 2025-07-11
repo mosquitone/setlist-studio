@@ -3,7 +3,6 @@
 import React from 'react';
 import {
   Box,
-  Button,
   FormControl,
   Select,
   MenuItem,
@@ -13,6 +12,7 @@ import {
   useTheme,
   useMediaQuery,
 } from '@mui/material';
+import { Button } from '@/components/common/Button';
 import {
   Edit as EditIcon,
   Download as DownloadIcon,
@@ -166,7 +166,7 @@ export function SetlistActions({
 
           {showDebugToggle && onDebugToggle && (
             <Button
-              variant={showDebug ? 'contained' : 'outlined'}
+              variant={showDebug ? undefined : 'outlined'}
               onClick={onDebugToggle}
               size="small"
               sx={{
@@ -266,7 +266,7 @@ export function SetlistActions({
         )}
         {showDebugToggle && onDebugToggle && (
           <Button
-            variant={showDebug ? 'contained' : 'outlined'}
+            variant={showDebug ? undefined : 'outlined'}
             onClick={onDebugToggle}
             size="small"
             sx={{

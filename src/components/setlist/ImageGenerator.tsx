@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Box, Button, Alert, CircularProgress } from '@mui/material';
+import { Box, Alert, CircularProgress } from '@mui/material';
+import { Button } from '@/components/common/Button';
 import { Image as ImageIcon } from '@mui/icons-material';
 import html2canvas from 'html2canvas';
 import QRCode from 'qrcode';
@@ -216,7 +217,6 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
 
       <Box sx={{ display: 'inline-flex', gap: 1, mb: 2 }}>
         <Button
-          variant="contained"
           startIcon={isGenerating ? <CircularProgress size={20} /> : <ImageIcon />}
           onClick={handleDownloadImage}
           disabled={isGenerating}

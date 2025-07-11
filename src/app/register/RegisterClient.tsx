@@ -5,13 +5,13 @@ import {
   Container,
   Paper,
   TextField,
-  Button,
   Typography,
   Box,
   Alert,
   IconButton,
   InputAdornment,
 } from '@mui/material';
+import { Button } from '@/components/common/Button';
 import {
   PersonAdd as PersonAddIcon,
   Visibility,
@@ -167,7 +167,6 @@ export default function RegisterClient() {
             <Button
               type="submit"
               fullWidth
-              variant="contained"
               size="large"
               disabled={loading}
               sx={{ mt: 3, mb: 2, py: 1.5 }}

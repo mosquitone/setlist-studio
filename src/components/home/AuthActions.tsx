@@ -1,6 +1,7 @@
 'use client';
 
-import { Box, Button, Stack, Fade } from '@mui/material';
+import { Box, Stack, Fade } from '@mui/material';
+import { Button } from '@/components/common/Button';
 import { Login as LoginIcon, PersonAdd as PersonAddIcon } from '@mui/icons-material';
 import Link from 'next/link';
 

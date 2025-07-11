@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { Box, Container, Typography, Button, Paper, Alert } from '@mui/material';
+import { Box, Container, Typography, Paper, Alert } from '@mui/material';
+import { Button } from '@/components/common/Button';
 import { Add as AddIcon } from '@mui/icons-material';
 import { Formik, Form, FieldArray } from 'formik';
 import * as Yup from 'yup';
@@ -262,7 +263,7 @@ export default function SetlistForm({
                 >
                   キャンセル
                 </Button>
-                <Button type="submit" variant="contained" disabled={loading} size="large">
+                <Button type="submit" disabled={loading} size="large">
                   {loading ? loadingButtonText : submitButtonText}
                 </Button>
               </Box>

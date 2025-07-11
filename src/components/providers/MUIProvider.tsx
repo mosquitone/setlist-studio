@@ -43,25 +43,6 @@ const theme = createTheme({
     },
   },
   components: {
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          borderRadius: 12,
-          textTransform: 'none',
-          fontSize: '1rem',
-          fontWeight: 500,
-          padding: '12px 24px',
-        },
-        containedPrimary: {
-          background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
-          boxShadow: '0 4px 14px 0 rgba(37, 99, 235, 0.39)',
-          '&:hover': {
-            background: 'linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%)',
-            boxShadow: '0 6px 20px 0 rgba(37, 99, 235, 0.49)',
-          },
-        },
-      },
-    },
     MuiPaper: {
       styleOverrides: {
         root: {
