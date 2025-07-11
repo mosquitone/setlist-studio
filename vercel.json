@@ -5,7 +5,7 @@
       "memory": 1024
     }
   },
-  "regions": ["nrt1"],
+  "regions": ["nrt"],
   "crons": [
     {
       "path": "/api/security/cleanup",
