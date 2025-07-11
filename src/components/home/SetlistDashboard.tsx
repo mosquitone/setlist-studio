@@ -1,18 +1,21 @@
 'use client';
 
-import { Box, Typography, Card, Button, Grid, Avatar, Chip, Stack } from '@mui/material';
+import { useState } from 'react';
+import { Box, Typography, Card, Button, Grid, Avatar, Chip, Stack, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, CardActionArea } from '@mui/material';
 import {
   PlaylistPlay as PlaylistPlayIcon,
   Add as AddIcon,
   Event as EventIcon,
   Schedule as ScheduleIcon,
   Group as GroupIcon,
-  Visibility as VisibilityIcon,
   Edit as EditIcon,
   Public as PublicIcon,
   Lock as LockIcon,
+  Delete as DeleteIcon,
 } from '@mui/icons-material';
 import Link from 'next/link';
+import { useMutation } from '@apollo/client';
+import { DELETE_SETLIST, GET_SETLISTS } from '@/lib/server/graphql/apollo-operations';
 import { Setlist } from '../../types/graphql';
 
 interface SetlistDashboardProps {
@@ -21,6 +24,37 @@ interface SetlistDashboardProps {
 }
 
 export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashboardProps) {
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [setlistToDelete, setSetlistToDelete] = useState<Setlist | null>(null);
+  
+  const [deleteSetlist, { loading: deleteLoading }] = useMutation(DELETE_SETLIST, {
+    refetchQueries: [{ query: GET_SETLISTS }],
+    onCompleted: () => {
+      setDeleteDialogOpen(false);
+      setSetlistToDelete(null);
+    },
+  });
+
+  const handleDeleteClick = (setlist: Setlist, event: React.MouseEvent) => {
+    event.stopPropagation();
+    setSetlistToDelete(setlist);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (setlistToDelete) {
+      try {
+        await deleteSetlist({ variables: { id: setlistToDelete.id } });
+      } catch (error) {
+        console.error('Failed to delete setlist:', error);
+      }
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteDialogOpen(false);
+    setSetlistToDelete(null);
+  };
   if (setlistsLoading) {
     return (
       <Box sx={{ mb: 8 }}>
@@ -85,22 +119,34 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
                 },
                 borderRadius: 3,
                 overflow: 'hidden',
+                position: 'relative',
               }}
             >
-              <Box
-                sx={{
-                  background: `linear-gradient(135deg, ${
-                    setlist.theme === 'white'
-                      ? '#f8fafc 0%, #e2e8f0 100%'
-                      : '#1e293b 0%, #0f172a 100%'
-                  })`,
-                  p: 1.5,
-                  color: setlist.theme === 'white' ? 'text.primary' : 'white',
-                  flex: 1,
-                  display: 'flex',
+              <CardActionArea
+                component={Link}
+                href={`/setlists/${setlist.id}`}
+                sx={{ 
+                  flex: 1, 
+                  display: 'flex', 
                   flexDirection: 'column',
+                  height: '100%'
                 }}
               >
+                <Box
+                  sx={{
+                    background: `linear-gradient(135deg, ${
+                      setlist.theme === 'white'
+                        ? '#f8fafc 0%, #e2e8f0 100%'
+                        : '#1e293b 0%, #0f172a 100%'
+                    })`,
+                    p: 1.5,
+                    color: setlist.theme === 'white' ? 'text.primary' : 'white',
+                    flex: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    width: '100%',
+                  }}
+                >
                 <Box
                   sx={{
                     display: 'flex',
@@ -223,46 +269,84 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
                   {setlist.items.length}曲
                 </Typography>
               </Box>
-              <Box sx={{ p: 1.5, bgcolor: 'background.paper' }}>
-                <Stack direction="row" spacing={1}>
-                  <Button
-                    component={Link}
-                    href={`/setlists/${setlist.id}`}
-                    variant="outlined"
-                    size="small"
-                    startIcon={<VisibilityIcon />}
-                    sx={{
-                      flex: 1,
-                      borderRadius: 2,
-                      fontSize: '0.75rem',
-                      py: 0.5,
-                      textTransform: 'none',
-                    }}
-                  >
-                    表示
-                  </Button>
-                  <Button
-                    component={Link}
-                    href={`/setlists/${setlist.id}/edit`}
-                    variant="contained"
-                    size="small"
-                    startIcon={<EditIcon />}
-                    sx={{
-                      flex: 1,
-                      borderRadius: 2,
-                      fontSize: '0.75rem',
-                      py: 0.5,
-                      textTransform: 'none',
-                    }}
-                  >
-                    編集
-                  </Button>
-                </Stack>
+              </CardActionArea>
+              <Box sx={{ p: 1.5, bgcolor: 'background.paper', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Button
+                  component={Link}
+                  href={`/setlists/${setlist.id}/edit`}
+                  variant="outlined"
+                  size="small"
+                  startIcon={<EditIcon />}
+                  sx={{
+                    borderRadius: 3,
+                    fontSize: '0.75rem',
+                    py: 0.75,
+                    px: 2,
+                    textTransform: 'none',
+                    borderColor: 'primary.main',
+                    color: 'primary.main',
+                    bgcolor: 'transparent',
+                    '&:hover': {
+                      bgcolor: 'primary.main',
+                      color: 'white',
+                      borderColor: 'primary.main',
+                    },
+                    fontWeight: 600,
+                    minWidth: 80,
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  編集
+                </Button>
+                <IconButton
+                  onClick={(e) => handleDeleteClick(setlist, e)}
+                  disabled={deleteLoading}
+                  sx={{
+                    color: 'error.main',
+                    '&:hover': {
+                      bgcolor: 'error.lighter',
+                      color: 'error.dark',
+                    },
+                    transition: 'all 0.2s ease-in-out',
+                  }}
+                >
+                  <DeleteIcon sx={{ fontSize: 20 }} />
+                </IconButton>
               </Box>
             </Card>
           </Grid>
         ))}
       </Grid>
+      
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={handleDeleteCancel}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>セットリストを削除</DialogTitle>
+        <DialogContent>
+          <Typography>
+            「{setlistToDelete?.title}」を削除しますか？
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+            この操作は取り消せません。
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDeleteCancel} disabled={deleteLoading}>
+            キャンセル
+          </Button>
+          <Button
+            onClick={handleDeleteConfirm}
+            color="error"
+            variant="contained"
+            disabled={deleteLoading}
+          >
+            削除
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }
