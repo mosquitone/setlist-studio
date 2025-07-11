@@ -15,7 +15,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/components/providers/AuthProvider';
-import { AuthLink } from '@/components/common/LoginLink';
+import { AuthLink } from '@/components/common/auth/LoginLink';
 
 interface NavigationItem {
   label: string;

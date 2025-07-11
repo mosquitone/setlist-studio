@@ -1,7 +1,7 @@
 'use client';
 
 import { Box, Stack, Fade } from '@mui/material';
-import { AuthLink } from '@/components/common/LoginLink';
+import { AuthLink } from '@/components/common/auth/LoginLink';
 
 export function AuthActions() {
   return (

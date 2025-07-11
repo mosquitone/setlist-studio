@@ -1,7 +1,7 @@
 'use client';
 
 import { Box, Typography, Stack, useTheme, useMediaQuery } from '@mui/material';
-import { Button } from '@/components/common/Button';
+import { Button } from '@/components/common/ui/Button';
 import { Add as AddIcon } from '@mui/icons-material';
 import Link from 'next/link';
 

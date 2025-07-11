@@ -5,7 +5,7 @@ import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import { Button } from '@/components/common/Button';
+import { Button } from '@/components/common/ui/Button';
 import TextField from '@mui/material/TextField';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';

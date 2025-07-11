@@ -1,7 +1,7 @@
 'use client';
 
 import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, Box } from '@mui/material';
-import { Button } from '@/components/common/Button';
+import { Button } from '@/components/common/ui/Button';
 
 interface DeleteConfirmModalProps {
   open: boolean;

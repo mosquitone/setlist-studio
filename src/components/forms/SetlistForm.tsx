@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { Box, Container, Typography, Paper, Alert } from '@mui/material';
-import { Button } from '@/components/common/Button';
+import { Button } from '@/components/common/ui/Button';
 import { Add as AddIcon } from '@mui/icons-material';
 import { Formik, Form, FieldArray } from 'formik';
 import * as Yup from 'yup';

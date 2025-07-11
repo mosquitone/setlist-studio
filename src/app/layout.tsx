@@ -5,9 +5,9 @@ import MUIProvider from '@/components/providers/MUIProvider';
 import ApolloProviderWrapper from '@/components/providers/ApolloProvider';
 import CSRFProvider from '@/components/providers/CSRFProvider';
 import { AuthProvider } from '@/components/providers/AuthProvider';
-import Header from '@/components/common/Header';
-import Footer from '@/components/common/Footer';
-import LoadingFallback from '@/components/common/LoadingFallback';
+import Header from '@/components/common/layout/Header';
+import Footer from '@/components/common/layout/Footer';
+import LoadingFallback from '@/components/common/ui/LoadingFallback';
 
 const inter = Inter({ subsets: ['latin'] });
 
