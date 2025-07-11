@@ -182,6 +182,13 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 ### プロジェクト構造
 ```
 /                           # Next.jsアプリケーションルート
+├── docs/                   # 技術ドキュメント
+│   ├── GraphQL-Architecture-Guide.md    # GraphQLアーキテクチャガイド
+│   ├── PRISMA_OPTIMIZATION_GUIDE.md     # Prisma最適化ガイド
+│   ├── SECURITY_TEST_PLAN.md            # セキュリティテストプラン
+│   ├── SUPABASE_OPTIMIZATION_CHECKLIST.md # Supabase最適化チェックリスト
+│   ├── SUPABASE_RLS_SECURITY_FIX_CORRECTED.sql # RLSセキュリティ修正SQL
+│   └── VERCEL_DEPLOYMENT_GUIDE.md       # Vercelデプロイガイド
 ├── src/app/                # Next.js App Router
 │   ├── api/               # APIルート（Vercel Functions）
 │   │   ├── auth/          # 認証API
@@ -280,6 +287,8 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 │   ├── server/            # サーバーサイドユーティリティ
 │   │   └── graphql/       # GraphQLスキーマと操作
 │   │       ├── apollo-operations.ts  # 全GraphQLクエリ、ミューテーション、サブスクリプション
+│   │       ├── generated-schema.ts  # 事前生成GraphQLスキーマ（パフォーマンス最適化）
+│   │       ├── schema.graphql       # GraphQLスキーマファイル（デバッグ用）
 │   │       ├── resolvers/ # GraphQLリゾルバー
 │   │       │   ├── AuthResolver.ts
 │   │       │   ├── SetlistResolver.ts
@@ -292,6 +301,8 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 │   │       │   ├── SetlistItem.ts
 │   │       │   ├── Song.ts
 │   │       │   └── User.ts
+│   │       ├── utils/     # GraphQLユーティリティ
+│   │       │   └── query-optimization.ts # クエリ最適化ユーティリティ
 │   │       └── middleware/ # 認証ミドルウェア
 │   │           └── jwt-auth-middleware.ts
 │   ├── security/          # セキュリティ関連ユーティリティ
@@ -322,6 +333,7 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 │   ├── MQT_LOGO_BLACK.png # ロゴ（黒背景用）
 │   └── [その他のアセット]
 ├── scripts/               # 開発スクリプト
+│   ├── generate-schema.ts # GraphQLスキーマ事前生成スクリプト
 │   └── setup-db.sh        # データベースセットアップスクリプト
 └── docker-compose.yml     # ローカル開発用PostgreSQL
 ```
