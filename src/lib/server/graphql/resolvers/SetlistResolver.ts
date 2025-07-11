@@ -114,11 +114,19 @@ export class SetlistResolver {
   @Query(() => [Setlist])
   @UseMiddleware(AuthMiddleware)
   async setlists(@Ctx() ctx: Context): Promise<Setlist[]> {
+    // 最適化されたクエリを使用
     return ctx.prisma.setlist.findMany({
       where: { userId: ctx.userId },
       include: {
         items: {
           orderBy: { order: 'asc' },
+          select: {
+            id: true,
+            title: true,
+            note: true,
+            order: true,
+            setlistId: true,
+          },
         },
       },
       orderBy: { createdAt: 'desc' },
