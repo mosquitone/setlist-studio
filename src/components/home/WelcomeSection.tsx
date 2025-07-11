@@ -49,21 +49,9 @@ export function WelcomeSection() {
         <Box component="span" sx={{ display: 'block' }}>
           エクセルや手書きの時代はもう終わりです。
         </Box>
-      </Typography>
-
-      <Typography
-        variant="body1"
-        sx={{
-          fontWeight: 500,
-          color: 'text.primary',
-          maxWidth: { xs: '100%', md: '600px' },
-          mx: 'auto',
-          px: { xs: 2, md: 0 },
-          fontSize: { xs: '0.95rem', md: '1rem' },
-          lineHeight: 1.6,
-        }}
-      >
-        このアプリの作成者もバンドをやっているので、自信を持ってお勧めします。
+        <Box component="span" sx={{ display: 'block', mt: 2 }}>
+          このアプリの作成者もバンドをやっているので、自信を持ってお勧めします。
+        </Box>
       </Typography>
     </Box>
   );
