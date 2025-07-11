@@ -76,7 +76,7 @@ export function SetlistActions({
                   px: 1,
                 }}
               >
-                Edit
+                編集
               </Button>
               <Button
                 variant="outlined"
@@ -89,7 +89,7 @@ export function SetlistActions({
                   px: 1,
                 }}
               >
-                Duplicate
+                複製
               </Button>
             </Stack>
           )}
@@ -107,7 +107,7 @@ export function SetlistActions({
                 px: 1,
               }}
             >
-              Download
+              ダウンロード
             </Button>
             <Button
               variant="outlined"
@@ -120,7 +120,7 @@ export function SetlistActions({
                 px: 1,
               }}
             >
-              Share
+              共有
             </Button>
           </Stack>
         </Stack>
@@ -214,18 +214,18 @@ export function SetlistActions({
       <Box sx={{ display: 'flex', gap: 2 }}>
         {isOwner && (
           <Button variant="outlined" startIcon={<EditIcon />} onClick={onEdit}>
-            Edit
+            編集
           </Button>
         )}
         <Button variant="outlined" startIcon={<DownloadIcon />} onClick={onDownload}>
-          Download
+          ダウンロード
         </Button>
         <Button variant="outlined" startIcon={<ShareIcon />} onClick={onShare}>
-          Share
+          共有
         </Button>
         {isOwner && (
           <Button variant="outlined" startIcon={<DuplicateIcon />} onClick={onDuplicate}>
-            Duplicate
+            複製
           </Button>
         )}
       </Box>
