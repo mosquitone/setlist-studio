@@ -53,7 +53,7 @@ export const BaseTheme: React.FC<BaseThemeProps> = ({ data, className, colors })
       style={{
         backgroundColor: colors.background,
         color: colors.text,
-        padding: '40px',
+        padding: '30px',
         width: `${A4_WIDTH}px`,
         height: `${A4_HEIGHT}px`,
         margin: '0 auto',
@@ -196,7 +196,7 @@ export const BaseTheme: React.FC<BaseThemeProps> = ({ data, className, colors })
           borderTop: `1px solid ${colors.borderColor}`,
         }}
       >
-        <Typography sx={{ fontSize: '12px', color: colors.footerText }}>
+        <Typography sx={{ fontSize: '20px', color: colors.footerText, fontWeight: 500 }}>
           {SETLIST_FOOTER_TEXT}
         </Typography>
       </Box>
