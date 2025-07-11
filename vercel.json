@@ -1,6 +1,6 @@
 {
   "functions": {
-    "src/app/api/graphql/route.ts": {
+    "app/api/graphql/route.ts": {
       "maxDuration": 60,
       "memory": 1024
     }
