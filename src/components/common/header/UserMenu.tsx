@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
@@ -7,6 +6,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
+import Link from '@mui/material/Link';
 import { useAuth } from '@/components/providers/AuthProvider';
 
 interface UserMenuProps {
@@ -15,7 +15,6 @@ interface UserMenuProps {
 
 export function UserMenu({ onAuthClick }: UserMenuProps) {
   const { user } = useAuth();
-  const router = useRouter();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleUserMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -67,13 +66,10 @@ export function UserMenu({ onAuthClick }: UserMenuProps) {
           horizontal: 'right',
         }}
       >
-        <MenuItem
-          onClick={() => {
-            handleUserMenuClose();
-            router.push('/profile');
-          }}
-        >
-          プロフィール
+        <MenuItem onClick={handleUserMenuClose}>
+          <Link href="/profile" underline="none" color="inherit">
+            プロフィール
+          </Link>
         </MenuItem>
         <Divider />
         <MenuItem

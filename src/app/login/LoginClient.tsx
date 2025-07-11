@@ -12,12 +12,7 @@ import {
   InputAdornment,
 } from '@mui/material';
 import { Button } from '@/components/common/Button';
-import {
-  Login as LoginIcon,
-  Visibility,
-  VisibilityOff,
-  ArrowBack as ArrowBackIcon,
-} from '@mui/icons-material';
+import { Login as LoginIcon, Visibility, VisibilityOff } from '@mui/icons-material';
 import { useMutation } from '@apollo/client';
 import { LOGIN } from '@/lib/server/graphql/apollo-operations';
 import Link from 'next/link';
@@ -62,10 +57,6 @@ export default function LoginClient() {
   return (
     <Container maxWidth="sm">
       <Box sx={{ mt: 4, mb: 4 }}>
-        <Button component={Link} href="/" startIcon={<ArrowBackIcon />} sx={{ mb: 3 }}>
-          ホームに戻る
-        </Button>
-
         <Paper elevation={3} sx={{ p: 4, borderRadius: 3 }}>
           <Box sx={{ textAlign: 'center', mb: 4 }}>
             <LoginIcon sx={{ fontSize: 64, color: 'primary.main', mb: 2 }} />

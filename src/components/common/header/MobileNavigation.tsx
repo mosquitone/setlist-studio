@@ -11,8 +11,9 @@ import Button from '@mui/material/Button';
 import Skeleton from '@mui/material/Skeleton';
 import MenuIcon from '@mui/icons-material/Menu';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useAuth } from '@/components/providers/AuthProvider';
+import { LoginLink } from '@/components/common/LoginLink';
 
 interface NavigationItem {
   label: string;
@@ -35,14 +36,9 @@ export function MobileNavigation({
 }: MobileNavigationProps) {
   const { isLoggedIn, user, logout } = useAuth();
   const pathname = usePathname();
-  const router = useRouter();
 
-  const handleAuthClick = () => {
-    if (isLoggedIn) {
-      logout();
-    } else {
-      router.push('/login');
-    }
+  const handleLogout = () => {
+    logout();
   };
 
   const drawer = (
@@ -80,11 +76,14 @@ export function MobileNavigation({
                   selected={pathname === item.path}
                   sx={{
                     '&.Mui-selected': {
-                      backgroundColor: 'primary.main',
+                      backgroundColor: '#3b82f6',
                       color: 'white',
                       '&:hover': {
-                        backgroundColor: 'primary.dark',
+                        backgroundColor: '#2563eb',
                       },
+                    },
+                    '&:hover': {
+                      backgroundColor: 'rgba(59, 130, 246, 0.04)',
                     },
                   }}
                 >
@@ -107,19 +106,36 @@ export function MobileNavigation({
         </Box>
       )}
       <Box sx={{ p: 2 }}>
-        <Button
-          fullWidth
-          variant="outlined"
-          onClick={handleAuthClick}
-          disabled={isLoading}
-          sx={{
-            borderRadius: 10,
-            py: 1.5,
-            textTransform: 'none',
-          }}
-        >
-          {isLoading ? '読込中…' : isLoggedIn ? 'ログアウト' : 'ログイン'}
-        </Button>
+        {isLoggedIn ? (
+          <Button
+            fullWidth
+            variant="outlined"
+            onClick={handleLogout}
+            disabled={isLoading}
+            sx={{
+              borderRadius: 10,
+              py: 1.5,
+              textTransform: 'none',
+              borderColor: '#3b82f6',
+              color: '#3b82f6',
+              fontWeight: 500,
+              border: '2px solid #3b82f6',
+              transition: 'all 0.2s ease-in-out',
+              '&:hover': {
+                backgroundColor: 'rgba(59, 130, 246, 0.04)',
+                borderColor: '#2563eb',
+              },
+              '&:disabled': {
+                borderColor: 'rgba(59, 130, 246, 0.5)',
+                color: 'rgba(59, 130, 246, 0.5)',
+              },
+            }}
+          >
+            {isLoading ? '読込中…' : 'ログアウト'}
+          </Button>
+        ) : (
+          <LoginLink variant="mobile" />
+        )}
       </Box>
     </Box>
   );

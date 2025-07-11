@@ -2,64 +2,51 @@
 
 import { Box, Stack, Fade } from '@mui/material';
 import { Button } from '@/components/common/Button';
-import { Login as LoginIcon, PersonAdd as PersonAddIcon } from '@mui/icons-material';
+import { PersonAdd as PersonAddIcon } from '@mui/icons-material';
+import { LoginLink } from '@/components/common/LoginLink';
 import Link from 'next/link';
 
 export function AuthActions() {
   return (
     <Fade in timeout={1000} style={{ transitionDelay: '400ms' }}>
-      <Box sx={{ textAlign: 'center' }}>
+      <Box sx={{ textAlign: 'center', display: 'flex', justifyContent: 'center', width: '100%' }}>
         <Stack
           direction={{ xs: 'column', sm: 'row' }}
-          spacing={3}
+          spacing={{ xs: 2, sm: 3 }}
           justifyContent="center"
           alignItems="center"
+          sx={{ width: 'fit-content' }}
         >
+          <LoginLink variant="home" />
           <Button
-            variant="outlined"
-            size="large"
-            component={Link}
-            href="/login"
-            startIcon={<LoginIcon />}
-            sx={{
-              minWidth: 220,
-              borderRadius: 10,
-              px: 4,
-              py: 2,
-              borderColor: '#3b82f6',
-              color: '#3b82f6',
-              fontSize: '16px',
-              fontWeight: 500,
-              textTransform: 'none',
-              border: '2px solid #3b82f6',
-              '&:hover': {
-                borderColor: '#2563eb',
-                backgroundColor: 'rgba(59, 130, 246, 0.04)',
-              },
-            }}
-          >
-            ログイン
-          </Button>
-          <Button
-            variant="outlined"
+            variant="contained"
             size="large"
             component={Link}
             href="/register"
             startIcon={<PersonAddIcon />}
             sx={{
-              minWidth: 220,
+              minWidth: { xs: 200, sm: 220 },
+              width: { xs: '100%', sm: 'auto' },
+              maxWidth: { xs: 300, sm: 'none' },
               borderRadius: 10,
               px: 4,
               py: 2,
-              borderColor: '#ef4444',
-              color: '#ef4444',
+              backgroundColor: '#059669',
+              color: 'white',
               fontSize: '16px',
-              fontWeight: 500,
+              fontWeight: 600,
               textTransform: 'none',
-              border: '2px solid #ef4444',
+              border: 'none',
+              boxShadow: '0 2px 8px rgba(5, 150, 105, 0.3)',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
               '&:hover': {
-                borderColor: '#dc2626',
-                backgroundColor: 'rgba(239, 68, 68, 0.04)',
+                backgroundColor: '#047857',
+                transform: 'translateY(-2px)',
+                boxShadow: '0 8px 20px rgba(5, 150, 105, 0.4)',
+              },
+              '&:active': {
+                transform: 'translateY(-1px)',
+                transition: 'all 0.1s ease-out',
               },
             }}
           >
