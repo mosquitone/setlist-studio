@@ -149,7 +149,6 @@ export function SetlistPreview({
           画像が生成されませんでした
         </Typography>
         <Button
-          variant="contained"
           onClick={() => window.location.reload()}
           sx={{ mt: 1 }}
           size={isMobile ? 'small' : 'medium'}

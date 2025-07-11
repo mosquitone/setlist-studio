@@ -1,15 +1,8 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  Button,
-  Box,
-} from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Box } from '@mui/material';
+import { Button } from '@/components/common/Button';
 import { Song } from '../../types/graphql';
 
 interface SongEditDialogProps {
@@ -106,9 +99,7 @@ export function SongEditDialog({ open, song, onClose, onSave }: SongEditDialogPr
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>キャンセル</Button>
-        <Button onClick={handleSave} variant="contained">
-          保存
-        </Button>
+        <Button onClick={handleSave}>保存</Button>
       </DialogActions>
     </Dialog>
   );

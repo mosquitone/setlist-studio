@@ -5,7 +5,7 @@ import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
+import { Button } from '@/components/common/Button';
 import TextField from '@mui/material/TextField';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
@@ -86,7 +86,7 @@ function ProfileContent() {
             <Typography variant="body2" color="text.secondary">
               ページを再読み込みするか、再度ログインしてください。
             </Typography>
-            <Button variant="contained" sx={{ mt: 2 }} onClick={() => window.location.reload()}>
+            <Button sx={{ mt: 2 }} onClick={() => window.location.reload()}>
               ページを再読み込み
             </Button>
           </Box>
@@ -198,16 +198,12 @@ function ProfileContent() {
               >
                 キャンセル
               </Button>
-              <Button variant="contained" onClick={handleUpdateProfile} disabled={updateLoading}>
+              <Button onClick={handleUpdateProfile} disabled={updateLoading}>
                 {updateLoading ? '更新中...' : '保存'}
               </Button>
             </>
           ) : (
-            <Button
-              variant="contained"
-              onClick={() => setIsEditing(true)}
-              sx={{ borderRadius: 10 }}
-            >
+            <Button onClick={() => setIsEditing(true)} sx={{ borderRadius: 10 }}>
               プロフィールを編集
             </Button>
           )}

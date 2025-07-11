@@ -9,10 +9,10 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Button,
   Typography,
   Box,
 } from '@mui/material';
+import { Button } from '@/components/common/Button';
 import { useQuery, useMutation } from '@apollo/client';
 import { useParams } from 'next/navigation';
 import { GET_SETLIST, TOGGLE_SETLIST_VISIBILITY } from '@/lib/server/graphql/apollo-operations';

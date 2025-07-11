@@ -1,6 +1,7 @@
 'use client';
 
-import { Box, Typography, Button, Stack, useTheme, useMediaQuery } from '@mui/material';
+import { Box, Typography, Stack, useTheme, useMediaQuery } from '@mui/material';
+import { Button } from '@/components/common/Button';
 import { Add as AddIcon } from '@mui/icons-material';
 import Link from 'next/link';
 
@@ -23,7 +24,6 @@ export function SongPageHeader() {
         <Button
           component={Link}
           href="/songs/new"
-          variant="contained"
           startIcon={<AddIcon />}
           size={isMobile ? 'medium' : 'medium'}
           sx={isMobile ? { minHeight: 40 } : {}}

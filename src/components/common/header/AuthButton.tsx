@@ -24,9 +24,12 @@ export function AuthButton({ onClick }: AuthButtonProps) {
         textTransform: 'none',
         border: '2px solid white',
         ml: 1,
+        backgroundColor: 'transparent',
+        boxShadow: 'none',
         '&:hover': {
           borderColor: 'rgba(255, 255, 255, 0.8)',
           backgroundColor: 'rgba(255, 255, 255, 0.1)',
+          boxShadow: 'none',
         },
         '&:disabled': {
           borderColor: 'rgba(255, 255, 255, 0.5)',

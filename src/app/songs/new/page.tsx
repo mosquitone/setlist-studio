@@ -3,7 +3,8 @@
 import React from 'react';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
-import { Container, Typography, TextField, Button, Box, Paper, Alert } from '@mui/material';
+import { Container, Typography, TextField, Box, Paper, Alert } from '@mui/material';
+import { Button } from '@/components/common/Button';
 import { useMutation } from '@apollo/client';
 import { CREATE_SONG } from '@/lib/server/graphql/apollo-operations';
 import { useRouter } from 'next/navigation';
@@ -135,7 +136,7 @@ export default function NewSongPage() {
                 <Button disabled={loading} onClick={() => router.back()}>
                   キャンセル
                 </Button>
-                <Button type="submit" variant="contained" disabled={loading}>
+                <Button type="submit" disabled={loading}>
                   {loading ? '作成中...' : '作成'}
                 </Button>
               </Box>
