@@ -232,6 +232,8 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 │   │   ├── Footer.tsx      # アプリケーションフッターコンポーネント
 │   │   ├── LoadingFallback.tsx # ローディング状態コンポーネント
 │   │   ├── LogoOfficialLink.tsx # 公式サイトリンク付きロゴコンポーネント
+│   │   ├── Button.tsx      # 統一Buttonコンポーネント（dangerバリアント対応）
+│   │   ├── DeleteConfirmModal.tsx # 共通削除確認モーダル
 │   │   └── NoSSR.tsx       # SSR無効化コンポーネント
 │   ├── forms/              # フォーム関連コンポーネント
 │   │   ├── SetlistForm.tsx # バリデーション付きメインセットリストフォーム
@@ -905,3 +907,23 @@ if (isProduction) {
   - 「Setlist Generated !」→「セットリストが生成されました！」
 - **テーマセレクト**: 「Theme: black/white」表示は英語のまま保持（技術的統一性のため）
 - **ユーザビリティ向上**: 日本語ユーザー向けの直感的な操作体験を実現
+
+### 削除機能統一化 (2025-07-11)
+- **共通DeleteConfirmModalコンポーネント**: 楽曲管理とセットリスト削除の統一UI実装
+  - `/src/components/common/DeleteConfirmModal.tsx`: 再利用可能な削除確認モーダル
+  - Material-UIベースの統一されたデザイン
+  - カスタムButtonコンポーネント使用（dangerバリアント対応）
+- **楽曲管理削除機能改善**: 
+  - `useSongs.ts`: `window.confirm`からモーダル確認に変更
+  - `SongTable.tsx`: 削除ハンドラー引数をSongオブジェクトに変更
+  - `songs/page.tsx`: DeleteConfirmModal統合
+- **セットリスト削除機能改善**:
+  - `SetlistDashboard.tsx`: 既存DialogをDeleteConfirmModalに置換
+  - 統一されたローディング状態とエラーハンドリング
+- **アクセシビリティ対応**: 
+  - aria-hiddenエラー解決（disableRestoreFocus設定）
+  - 適切なフォーカス管理
+- **Buttonコンポーネント拡張**: 
+  - `danger`バリアント追加（赤色の削除ボタン）
+  - `loading`プロップ対応
+  - TypeScript型安全性確保

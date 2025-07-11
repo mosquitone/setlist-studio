@@ -11,13 +11,19 @@ export function useSongs() {
   const [songs, setSongs] = useState<Song[]>([]);
   const [selectedSong, setSelectedSong] = useState<Song | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [songToDelete, setSongToDelete] = useState<Song | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const [updateSong] = useMutation(UPDATE_SONG, {
     refetchQueries: [{ query: GET_SONGS }],
   });
 
-  const [deleteSong] = useMutation(DELETE_SONG, {
+  const [deleteSong, { loading: deleteLoading }] = useMutation(DELETE_SONG, {
     refetchQueries: [{ query: GET_SONGS }],
+    onCompleted: () => {
+      setIsDeleteDialogOpen(false);
+      setSongToDelete(null);
+    },
   });
 
   useEffect(() => {
@@ -46,14 +52,24 @@ export function useSongs() {
     }
   };
 
-  const handleDeleteSong = async (id: string) => {
-    if (window.confirm('この楽曲を削除してもよろしいですか？')) {
+  const handleDeleteClick = (song: Song) => {
+    setSongToDelete(song);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (songToDelete) {
       try {
-        await deleteSong({ variables: { id } });
+        await deleteSong({ variables: { id: songToDelete.id } });
       } catch (error) {
-        throw error;
+        console.error('Failed to delete song:', error);
       }
     }
+  };
+
+  const handleDeleteCancel = () => {
+    setIsDeleteDialogOpen(false);
+    setSongToDelete(null);
   };
 
   const closeEditDialog = () => {
@@ -67,9 +83,14 @@ export function useSongs() {
     error,
     selectedSong,
     isEditDialogOpen,
+    songToDelete,
+    isDeleteDialogOpen,
+    deleteLoading,
     handleEditSong,
     handleSaveSong,
-    handleDeleteSong,
+    handleDeleteClick,
+    handleDeleteConfirm,
+    handleDeleteCancel,
     closeEditDialog,
   };
 }
