@@ -14,11 +14,13 @@ DATABASE_URL="postgresql://postgres.your_user:your_password@aws-0-ap-northeast-1
 - [ ] Production, Preview, Developmentに適用
 - [ ] 保存
 
-### ✅ 2. Supabaseダッシュボード確認
+### ✅ 2. Supabaseダッシュボード設定
 - [ ] https://supabase.com/dashboard にアクセス
 - [ ] プロジェクト選択
 - [ ] Settings → Database
-- [ ] Connection poolingの設定確認
+- [ ] **Connection pooling configuration**セクション
+- [ ] **Max client connections**: `100`に設定
+- [ ] **Save**をクリック
 
 ### ✅ 3. デプロイ
 - [ ] 設定変更後、Vercelで自動デプロイ開始
