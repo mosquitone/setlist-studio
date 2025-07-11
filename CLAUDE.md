@@ -819,6 +819,17 @@ const isValid = timingSafeEqual(
   - 重複したパスワード検証ロジックを統合
   - `validateField`関数によるバリデーション統一
 
+### ビルド最適化・minify設定対応 (2025-07-09)
+- **minify設定修正**: Next.js 15とTerserPlugin互換性問題を解決
+  - `next.config.ts`: 不適切なjscプロパティからwebpack設定へ移行
+  - **TerserPlugin統合**: 関数名・クラス名保持付きminify設定
+  - **パフォーマンス向上**: 圧縮効率とデバッグ可能性の両立
+- **依存関係整備**: 
+  - `terser-webpack-plugin`: 最適化用パッケージ追加
+  - `@types/terser-webpack-plugin`: TypeScript型定義追加
+  - **本番ビルド安定化**: エラーなしビルド実現
+- **設定最適化**: 不要な環境変数設定を削除してシンプルな構成に変更
+
 #### セキュリティ改善の詳細
 
 **JWTトークン短期化の影響**:
