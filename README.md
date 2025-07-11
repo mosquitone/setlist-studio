@@ -2,7 +2,7 @@
 
 🎵 エモーショナルなセットリスト作成ツール
 
-**バージョン**: 0.0.1 (2025-07)  
+**バージョン**: 0.1.0 (2025-07)  
 **ステータス**: 開発中
 
 ## 概要
@@ -195,7 +195,7 @@ pnpm generate     # Prismaクライアント生成
 
 詳細なアーキテクチャ情報は [CLAUDE.md](./CLAUDE.md) を参照してください。
 
-**GraphQLアーキテクチャの詳細解説**: [GraphQL-Architecture-Guide.md](./GraphQL-Architecture-Guide.md) でレストラン比喩を使った分かりやすい解説を提供しています。
+**GraphQLアーキテクチャの詳細解説**: [GraphQL-Architecture-Guide.md](./docs/GraphQL-Architecture-Guide.md) でレストラン比喩を使った分かりやすい解説を提供しています。
 
 ### セキュリティ
 
@@ -237,7 +237,7 @@ pnpm generate     # Prismaクライアント生成
 
 ### デプロイ手順
 
-詳細なデプロイ手順は [VERCEL_DEPLOYMENT_GUIDE.md](./VERCEL_DEPLOYMENT_GUIDE.md) を参照してください。
+詳細なデプロイ手順は [VERCEL_DEPLOYMENT_GUIDE.md](./docs/VERCEL_DEPLOYMENT_GUIDE.md) を参照してください。
 
 ### 必要な環境変数
 
