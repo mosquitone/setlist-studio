@@ -1,4 +1,4 @@
-import { Button } from '@/components/common/Button';
+import { Button } from '@/components/common/ui/Button';
 import { Login as LoginIcon, PersonAdd as PersonAddIcon } from '@mui/icons-material';
 import { useAuth } from '@/components/providers/AuthProvider';
 import NextLink from 'next/link';

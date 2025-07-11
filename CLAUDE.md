@@ -220,21 +220,25 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 ├── src/components/         # Reactコンポーネント
 │   ├── auth/              # 認証関連コンポーネント
 │   │   └── ProtectedRoute.tsx # ルート保護コンポーネント
-│   ├── common/             # 共通UIコンポーネント
-│   │   ├── Header.tsx      # メインアプリケーションヘッダーコンポーネント（リファクタ済み）
-│   │   ├── header/         # ヘッダーサブコンポーネント（モジュラーアーキテクチャ）
-│   │   │   ├── HeaderLogo.tsx        # ロゴコンポーネント
-│   │   │   ├── DesktopNavigation.tsx # アイコン付きデスクトップナビゲーション
-│   │   │   ├── MobileNavigation.tsx  # モバイルドロワーナビゲーション
-│   │   │   ├── UserMenu.tsx          # アバターとドロップダウン付きユーザーメニュー
-│   │   │   ├── AuthButton.tsx        # ログイン/ログアウトボタン
-│   │   │   └── navigationItems.ts    # ナビゲーション設定
-│   │   ├── Footer.tsx      # アプリケーションフッターコンポーネント
-│   │   ├── LoadingFallback.tsx # ローディング状態コンポーネント
-│   │   ├── LogoOfficialLink.tsx # 公式サイトリンク付きロゴコンポーネント
-│   │   ├── Button.tsx      # 統一Buttonコンポーネント（dangerバリアント対応）
-│   │   ├── DeleteConfirmModal.tsx # 共通削除確認モーダル
-│   │   └── NoSSR.tsx       # SSR無効化コンポーネント
+│   ├── common/             # 共通UIコンポーネント（機能別サブフォルダ構造）
+│   │   ├── ui/             # 基本UIコンポーネント
+│   │   │   ├── Button.tsx      # 統一Buttonコンポーネント（dangerバリアント対応）
+│   │   │   ├── LoadingFallback.tsx # ローディング状態コンポーネント
+│   │   │   └── NoSSR.tsx       # SSR無効化コンポーネント
+│   │   ├── layout/         # レイアウト関連コンポーネント
+│   │   │   ├── Header.tsx      # メインアプリケーションヘッダーコンポーネント
+│   │   │   ├── Footer.tsx      # アプリケーションフッターコンポーネント
+│   │   │   └── header/         # ヘッダーサブコンポーネント（モジュラーアーキテクチャ）
+│   │   │       ├── HeaderLogo.tsx        # ロゴコンポーネント
+│   │   │       ├── DesktopNavigation.tsx # アイコン付きデスクトップナビゲーション
+│   │   │       ├── MobileNavigation.tsx  # モバイルドロワーナビゲーション
+│   │   │       ├── UserMenu.tsx          # アバターとドロップダウン付きユーザーメニュー
+│   │   │       ├── AuthButton.tsx        # ログイン/ログアウトボタン
+│   │   │       └── navigationItems.ts    # ナビゲーション設定
+│   │   ├── auth/           # 認証関連コンポーネント
+│   │   │   └── LoginLink.tsx       # ログイン/登録リンクコンポーネント
+│   │   ├── DeleteConfirmModal.tsx  # 共通削除確認モーダル
+│   │   └── LogoOfficialLink.tsx    # 公式サイトリンク付きロゴコンポーネント
 │   ├── forms/              # フォーム関連コンポーネント
 │   │   ├── SetlistForm.tsx # バリデーション付きメインセットリストフォーム
 │   │   ├── SetlistFormFields.tsx # フォームフィールドコンポーネント
@@ -927,3 +931,13 @@ if (isProduction) {
   - `danger`バリアント追加（赤色の削除ボタン）
   - `loading`プロップ対応
   - TypeScript型安全性確保
+
+### components/commonリファクタリング (2025-07-11)
+- **機能別サブフォルダ構造**: 共通コンポーネントを論理的にグループ化
+  - `ui/`: 基本UIコンポーネント（Button、LoadingFallback、NoSSR）
+  - `layout/`: レイアウト関連（Header、Footer、headerサブコンポーネント）
+  - `auth/`: 認証関連（LoginLink）
+  - ルート: 単発コンポーネント（DeleteConfirmModal、LogoOfficialLink）
+- **インポートパス更新**: 全ファイルのインポートパスを新構造に対応
+- **保守性向上**: 機能別グループ化により、関連コンポーネントの発見と管理が容易に
+- **拡張性確保**: 各カテゴリに新しいコンポーネントを追加しやすい構造

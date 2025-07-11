@@ -12,7 +12,7 @@ import {
   useTheme,
   useMediaQuery,
 } from '@mui/material';
-import { Button } from '@/components/common/Button';
+import { Button } from '@/components/common/ui/Button';
 import {
   Edit as EditIcon,
   Download as DownloadIcon,

@@ -12,7 +12,7 @@ import {
   IconButton,
   CardActionArea,
 } from '@mui/material';
-import { Button } from '@/components/common/Button';
+import { Button } from '@/components/common/ui/Button';
 import { DeleteConfirmModal } from '@/components/common/DeleteConfirmModal';
 import {
   PlaylistPlay as PlaylistPlayIcon,

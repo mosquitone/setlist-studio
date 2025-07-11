@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Box } from '@mui/material';
-import { Button } from '@/components/common/Button';
+import { Button } from '@/components/common/ui/Button';
 import { Song } from '../../types/graphql';
 
 interface SongEditDialogProps {

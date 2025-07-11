@@ -1,5 +1,5 @@
 import HomeClient from './HomeClient';
-import NoSSR from '@/components/common/NoSSR';
+import NoSSR from '@/components/common/ui/NoSSR';
 import { Container, Box, Typography } from '@mui/material';
 
 // Disable caching for authentication-dependent content

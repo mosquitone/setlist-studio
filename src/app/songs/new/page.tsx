@@ -4,7 +4,7 @@ import React from 'react';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import { Container, Typography, TextField, Box, Paper, Alert } from '@mui/material';
-import { Button } from '@/components/common/Button';
+import { Button } from '@/components/common/ui/Button';
 import { useMutation } from '@apollo/client';
 import { CREATE_SONG } from '@/lib/server/graphql/apollo-operations';
 import { useRouter } from 'next/navigation';

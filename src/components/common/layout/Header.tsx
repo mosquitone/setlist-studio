@@ -10,7 +10,7 @@ import { HeaderLogo } from './header/HeaderLogo';
 import { DesktopNavigation } from './header/DesktopNavigation';
 import { MobileNavigation } from './header/MobileNavigation';
 import { UserMenu } from './header/UserMenu';
-import { LoginLink } from './LoginLink';
+import { LoginLink } from '../auth/LoginLink';
 import { authenticatedNavigationItems, publicNavigationItems } from './header/navigationItems';
 
 /**

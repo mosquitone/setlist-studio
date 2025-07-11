@@ -11,7 +11,7 @@ import {
   IconButton,
   InputAdornment,
 } from '@mui/material';
-import { Button } from '@/components/common/Button';
+import { Button } from '@/components/common/ui/Button';
 import { Login as LoginIcon, Visibility, VisibilityOff } from '@mui/icons-material';
 import { useMutation } from '@apollo/client';
 import { LOGIN } from '@/lib/server/graphql/apollo-operations';

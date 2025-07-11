@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Box, Alert, CircularProgress } from '@mui/material';
-import { Button } from '@/components/common/Button';
+import { Button } from '@/components/common/ui/Button';
 import { Image as ImageIcon } from '@mui/icons-material';
 import html2canvas from 'html2canvas';
 import QRCode from 'qrcode';
