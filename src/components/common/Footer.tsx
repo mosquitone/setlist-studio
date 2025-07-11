@@ -3,7 +3,7 @@ import { Link, Typography } from '@mui/material';
 
 export default function Footer() {
   return (
-    <footer style={{ textAlign: 'center', padding: '1rem', marginTop: '2rem' }}>
+    <footer style={{ textAlign: 'center', padding: '1rem' }}>
       <Typography variant="body2" color="text.secondary">
         © 2025{' '}
         <Link
