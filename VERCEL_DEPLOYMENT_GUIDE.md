@@ -27,9 +27,10 @@
 
 ## 📋 ステップ2: プロジェクトのインポート
 
-1. Vercelダッシュボードで「Add New...」→「Project」をクリック
-2. GitHubリポジトリ一覧から「setlist-studio」を選択
-3. 「Import」をクリックしてプロジェクトをインポート
+1. Vercelダッシュボードで「Add New」ボタン（画面右上）をクリック
+2. ドロップダウンから「Project」を選択
+3. GitHubリポジトリ一覧から「setlist-studio」を選択
+4. 「Import」をクリックしてプロジェクトをインポート
 
 ### 🔧 ビルド設定の確認
 プロジェクトのインポート時に、Vercelは自動的に以下を検出します：
@@ -78,12 +79,13 @@
 - **設定方法**:
   
   **オプション1: Vercel Postgres（推奨）**
-  1. Vercelダッシュボードで「Storage」タブを選択
-  2. 「Browse Storage」→「Create New」をクリック
-  3. 「Postgres」を選択して「Continue」
-  4. データベース名を入力（例: `setlist-db`）
-  5. リージョンを選択（日本の場合は「Tokyo, Japan」）
-  6. 「Create」をクリックすると自動的に環境変数が設定される
+  1. Vercelダッシュボードでプロジェクトを選択
+  2. 「Storage」タブを選択
+  3. 「Browse Storage」→「Create New」をクリック
+  4. 「Postgres」を選択して「Continue」
+  5. データベース名を入力（例: `setlist-db`）
+  6. リージョンを選択（日本の場合は「Tokyo, Japan」）
+  7. 「Create」をクリックすると自動的に環境変数が設定される
   
   **オプション2: 外部データベースサービス**
   - **Supabase**（無料枠あり）:
@@ -147,30 +149,38 @@
 
 ### 🛠️ 環境変数の設定手順
 
-1. Vercelプロジェクトページで「Settings」タブを選択
-2. 左側メニューから「Environment Variables」を選択
-3. 各環境変数について以下の手順で設定:
+1. Vercelダッシュボードからプロジェクトを選択
+2. 「Settings」タブをクリック
+3. 左側メニューから「Environment Variables」を選択
+4. 各環境変数について以下の手順で設定:
    - 「Key」フィールドに変数名を入力（例: `DATABASE_URL`）
    - 「Value」フィールドに値を入力
-   - 「Environment」で全環境（Development, Preview, Production）を選択
+   - 「Environment」で適用環境（Development, Preview, Production）を選択
    - 「Add」をクリックして保存
 
 ## 🛡️ ステップ4: セキュリティ設定
 
 ### 1. カスタムドメインの設定（オプション）
-1. 「Settings」→「Domains」を選択
-2. カスタムドメインを追加（所有している場合）
-3. DNS設定を行い、HTTPSが自動的に有効化されることを確認
+1. プロジェクトの「Settings」タブを選択
+2. 左側メニューから「Domains」を選択
+3. カスタムドメインを追加（所有している場合）
+4. DNS設定を行い、HTTPSが自動的に有効化されることを確認
 
 ### 2. Vercel Cron Jobsの設定
 セキュリティログの定期クリーンアップを設定:
 
-1. 「Settings」→「Functions」→「Cron Jobs」を選択
-2. 「Add Cron Job」をクリック
-3. 以下の設定を入力:
-   - **Function**: `/api/security/cleanup`
-   - **Schedule**: `0 2 * * *` （毎日午前2時に実行）
-   - **Environment**: Production
+1. プロジェクトの「Settings」タブを選択
+2. 左側メニューから「Cron Jobs」を選択
+3. vercel.jsonファイルでCron Jobを設定（手動設定も可能）:
+   ```json
+   {
+     "crons": [{
+       "path": "/api/security/cleanup",
+       "schedule": "0 2 * * *"
+     }]
+   }
+   ```
+4. 設定完了後、ダッシュボードから実行状況を監視可能
 
 ### 3. セキュリティヘッダー
 `vercel.json`に以下のセキュリティヘッダーが設定済みです:
@@ -263,15 +273,17 @@ GitHubとの統合により、以下の自動デプロイが設定されます:
 ## 📊 ステップ7: 監視とメンテナンス
 
 ### ログの確認
-1. Vercelダッシュボードで「Functions」タブを選択
-2. 各関数をクリックして詳細ログを確認
-3. 「Logs」タブでリアルタイムログを監視
-4. エラーや異常なパターンがないか定期的に確認
+1. Vercelダッシュボードでプロジェクトを選択
+2. 「Functions」タブを選択
+3. 各関数をクリックして詳細ログを確認
+4. 「Logs」タブでリアルタイムログを監視
+5. エラーや異常なパターンがないか定期的に確認
 
 ### アラートの設定
-1. 「Settings」→「Notifications」を選択
-2. 「Add Notification」をクリック
-3. 以下の設定を推奨:
+1. プロジェクトの「Settings」タブを選択
+2. 左側メニューから「Notifications」を選択
+3. 「Add Notification」をクリック
+4. 以下の設定を推奨:
    - **Event**: Function Error
    - **Channel**: Email
    - 通知先メールアドレスを設定
