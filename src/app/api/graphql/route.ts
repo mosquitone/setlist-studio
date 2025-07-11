@@ -20,11 +20,24 @@ const prisma =
   globalThis.prisma ||
   new PrismaClient({
     log: process.env.NODE_ENV === 'development' ? ['query', 'error'] : ['error'],
+    datasources: {
+      db: {
+        url: process.env.DATABASE_URL,
+      },
+    },
+    // Connection pooling optimization for Vercel Functions
+    transactionOptions: {
+      maxWait: 2000, // 2秒
+      timeout: 5000, // 5秒
+    },
   });
 
 if (process.env.NODE_ENV !== 'production') {
   globalThis.prisma = prisma;
 }
+
+// Ensure database connection is established early
+prisma.$connect().catch(console.error);
 
 // Use pre-built schema for better performance
 let schema: GraphQLSchema | null = null;
@@ -133,11 +146,18 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  // Parallel processing for performance optimization
+  // Parallel processing for maximum performance optimization
   const bodyPromise = request.clone().text();
   const apiRateLimitPromise = createApiRateLimit(prisma)(request);
 
-  const [body, apiRateLimitResponse] = await Promise.all([bodyPromise, apiRateLimitPromise]);
+  // Start server creation early to reduce cold start time
+  const serverPromise = getServerInstance();
+
+  const [body, apiRateLimitResponse, server] = await Promise.all([
+    bodyPromise,
+    apiRateLimitPromise,
+    serverPromise,
+  ]);
 
   // Check API rate limit first
   if (apiRateLimitResponse) {
@@ -147,21 +167,24 @@ export async function POST(request: NextRequest) {
   // Check if this is an authentication request for enhanced rate limiting
   const isAuthRequest = /(?:login|register)/.test(body);
 
-  // Apply enhanced rate limiting for authentication requests
+  // Parallel processing for auth rate limit and CSRF protection
+  const authPromises = [];
+
   if (isAuthRequest) {
-    const authRateLimitResponse = await createAuthRateLimit(prisma)(request);
-    if (authRateLimitResponse) {
-      return authRateLimitResponse;
+    authPromises.push(createAuthRateLimit(prisma)(request));
+  }
+
+  authPromises.push(csrfProtection(request, prisma));
+
+  const authResults = await Promise.all(authPromises);
+
+  // Check for any auth/CSRF failures
+  for (const result of authResults) {
+    if (result) {
+      return result;
     }
   }
 
-  // Apply CSRF protection for state-changing operations
-  const csrfResponse = await csrfProtection(request, prisma);
-  if (csrfResponse) {
-    return csrfResponse;
-  }
-
-  const server = await getServerInstance();
   const handler = startServerAndCreateNextHandler(server, {
     context: async (req: NextRequest) => createSecureContext(req),
   });
