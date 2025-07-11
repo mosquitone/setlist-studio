@@ -191,7 +191,7 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 │   ├── PRISMA_OPTIMIZATION_GUIDE.md     # Prisma最適化ガイド
 │   ├── SECURITY_TEST_PLAN.md            # セキュリティテストプラン
 │   ├── SUPABASE_OPTIMIZATION_CHECKLIST.md # Supabase最適化チェックリスト
-│   ├── SUPABASE_RLS_SECURITY_FIX_CORRECTED.sql # RLSセキュリティ修正SQL
+│   ├── SUPABASE_RLS_SETUP_FINAL.sql # RLS最終設定SQL（PostgreSQL標準）
 │   └── VERCEL_DEPLOYMENT_GUIDE.md       # Vercelデプロイガイド
 ├── src/app/                # Next.js App Router
 │   ├── api/               # APIルート（Vercel Functions）
@@ -930,19 +930,23 @@ const isValid = timingSafeEqual(
   - 全セキュリティ機能の完全保持
   - パフォーマンス向上とセキュリティのバランスを最適化
 
-### Supabase RLS重大セキュリティ修正 (2025-07-11)
-- **緊急セキュリティ脆弱性発見**: Security Advisorで全テーブルRLS無効を発見
+### Supabase RLS完全実装 (2025-07-11)
+- **セキュリティ脆弱性発見と修正**: Security Advisorで全テーブルRLS無効を発見
   - 影響テーブル: users, songs, setlists, setlist_items, rate_limit_entries, security_events, threat_activities
   - リスク: 全データが公開状態、パスワードハッシュ含む個人情報漏洩の危険性
-  - 法的リスク: 個人情報保護法・GDPR違反の可能性
-- **RLS修正SQLファイル作成**: 段階的実行による安全な修正手順
-  - Service role対応: GraphQL API動作を維持しながらセキュリティ強化
-  - 2段階実行: RLS有効化→Service roleポリシー作成で一時停止最小化
-  - 将来対応: Supabase Auth導入時のユーザーレベルポリシー準備
+- **PostgreSQL標準RLS実装**: auth.role()からcurrent_user方式に変更
+  - 問題: Supabase Auth拡張機能が利用不可（`extension "supabase_auth" is not available`）
+  - 解決: PostgreSQL標準機能のみでRLS実装（`current_user = 'postgres'`）
+  - 利点: 拡張機能に依存しない安定した実装
+- **最終設定SQLファイル**: `SUPABASE_RLS_SETUP_FINAL.sql`
+  - PostgreSQL標準ポリシーによる完全実装
+  - GraphQL API（postgresユーザー）専用アクセス制御
+  - 公開セットリスト用の匿名アクセスポリシー
+  - 動作確認済みの設定のみ含む
 - **セキュリティレベル向上**: 
-  - データベースアクセス制御: 完全実装
-  - Service role保護: GraphQL API専用アクセス確保
-  - 行レベルセキュリティ: 全テーブル適用済み
+  - データベースアクセス制御: PostgreSQL標準機能で完全実装
+  - RLS保護: 全テーブル適用済み
+  - アクセス制御: `current_user = 'postgres'`による制御
   - 脆弱性: 完全修正（Security Advisor警告解消）
 
 ### UI/UXコンポーネント改善 (2025-07-11)
