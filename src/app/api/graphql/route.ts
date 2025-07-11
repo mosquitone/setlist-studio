@@ -11,8 +11,20 @@ import { csrfProtection } from '../../../lib/security/csrf-protection';
 // Import pre-built schema
 import { getPreBuiltSchema } from '../../../lib/server/graphql/generated-schema';
 
-// Initialize Prisma Client
-const prisma = new PrismaClient();
+// Global Prisma Client for connection pooling and performance optimization
+declare global {
+  var prisma: PrismaClient | undefined;
+}
+
+const prisma =
+  globalThis.prisma ||
+  new PrismaClient({
+    log: process.env.NODE_ENV === 'development' ? ['query', 'error'] : ['error'],
+  });
+
+if (process.env.NODE_ENV !== 'production') {
+  globalThis.prisma = prisma;
+}
 
 // Use pre-built schema for better performance
 let schema: GraphQLSchema | null = null;
@@ -121,19 +133,26 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  // Parallel processing for performance optimization
+  const bodyPromise = request.clone().text();
+  const apiRateLimitPromise = createApiRateLimit(prisma)(request);
+
+  const [body, apiRateLimitResponse] = await Promise.all([bodyPromise, apiRateLimitPromise]);
+
+  // Check API rate limit first
+  if (apiRateLimitResponse) {
+    return apiRateLimitResponse;
+  }
+
   // Check if this is an authentication request for enhanced rate limiting
-  const requestClone = request.clone();
-  const body = await requestClone.text();
-  const isAuthRequest = body.includes('login') || body.includes('register');
+  const isAuthRequest = /(?:login|register)/.test(body);
 
-  // Apply appropriate database-based rate limiting
-  const rateLimitFunction = isAuthRequest
-    ? createAuthRateLimit(prisma)
-    : createApiRateLimit(prisma);
-  const rateLimitResponse = await rateLimitFunction(request);
-
-  if (rateLimitResponse) {
-    return rateLimitResponse;
+  // Apply enhanced rate limiting for authentication requests
+  if (isAuthRequest) {
+    const authRateLimitResponse = await createAuthRateLimit(prisma)(request);
+    if (authRateLimitResponse) {
+      return authRateLimitResponse;
+    }
   }
 
   // Apply CSRF protection for state-changing operations
