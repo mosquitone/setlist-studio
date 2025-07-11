@@ -1,26 +1,64 @@
 import { Button as MuiButton, ButtonProps as MuiButtonProps } from '@mui/material';
+import { SxProps, Theme } from '@mui/material/styles';
 import { forwardRef } from 'react';
 
-type ButtonProps = MuiButtonProps;
+type ButtonProps = MuiButtonProps & {
+  authButton?: boolean;
+};
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ variant = 'contained', sx, ...props }, ref) => {
+  ({ variant = 'contained', authButton = false, sx, ...props }, ref) => {
+    // 認証ボタン用の統一スタイル
+    const authButtonStyles: SxProps<Theme> = authButton
+      ? {
+          borderRadius: 10,
+          px: 4,
+          py: 1.5,
+          fontSize: '16px',
+          fontWeight: 500,
+          textTransform: 'none',
+          border: variant === 'outlined' ? '2px solid' : undefined,
+          minWidth: { xs: 140, sm: 160 },
+          position: 'relative',
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          '&:focus-visible': {
+            outline: '2px solid',
+            outlineOffset: '2px',
+            outlineColor: 'rgba(59, 130, 246, 0.7)',
+          },
+          '&:hover': {
+            transform: 'translateY(-2px)',
+            boxShadow:
+              variant === 'outlined'
+                ? '0 4px 12px rgba(0, 0, 0, 0.15)'
+                : '0 8px 25px rgba(0, 0, 0, 0.15)',
+          },
+          '&:active': {
+            transform: 'translateY(-1px)',
+            transition: 'all 0.1s ease-out',
+          },
+        }
+      : {};
+
     return (
       <MuiButton
         ref={ref}
         variant={variant}
-        sx={{
-          borderRadius: 2,
-          textTransform: 'none',
-          fontSize: '1rem',
-          fontWeight: 500,
-          padding: '12px 24px',
-          backgroundColor: variant === 'contained' ? '#2563eb' : undefined,
-          '&:hover': {
-            backgroundColor: variant === 'contained' ? '#1d4ed8' : undefined,
+        sx={[
+          {
+            borderRadius: 2,
+            textTransform: 'none',
+            fontSize: '1rem',
+            fontWeight: 500,
+            padding: '12px 24px',
+            backgroundColor: variant === 'contained' ? '#2563eb' : undefined,
+            '&:hover': {
+              backgroundColor: variant === 'contained' ? '#1d4ed8' : undefined,
+            },
           },
-          ...sx,
-        }}
+          authButtonStyles,
+          ...(Array.isArray(sx) ? sx : [sx]),
+        ]}
         {...props}
       />
     );

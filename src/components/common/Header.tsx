@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Box from '@mui/material/Box';
@@ -11,7 +10,7 @@ import { HeaderLogo } from './header/HeaderLogo';
 import { DesktopNavigation } from './header/DesktopNavigation';
 import { MobileNavigation } from './header/MobileNavigation';
 import { UserMenu } from './header/UserMenu';
-import { AuthButton } from './header/AuthButton';
+import { LoginLink } from './LoginLink';
 import { authenticatedNavigationItems, publicNavigationItems } from './header/navigationItems';
 
 /**
@@ -21,7 +20,6 @@ import { authenticatedNavigationItems, publicNavigationItems } from './header/na
  */
 export default function Header() {
   const { isLoggedIn, isLoading, logout } = useAuth();
-  const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   // ログイン状態に応じて表示するナビゲーション項目を決定（useMemoで最適化）
@@ -33,12 +31,8 @@ export default function Header() {
     [isLoggedIn],
   );
 
-  const handleAuthClick = () => {
-    if (isLoggedIn) {
-      logout();
-    } else {
-      router.push('/login');
-    }
+  const handleLogout = () => {
+    logout();
   };
 
   const handleDrawerToggle = () => {
@@ -88,9 +82,9 @@ export default function Header() {
                 sx={{ borderRadius: 5, bgcolor: 'rgba(255, 255, 255, 0.1)' }}
               />
             ) : isLoggedIn ? (
-              <UserMenu onAuthClick={handleAuthClick} />
+              <UserMenu onAuthClick={handleLogout} />
             ) : (
-              <AuthButton onClick={handleAuthClick} />
+              <LoginLink variant="header" />
             )}
           </Box>
         </Toolbar>
