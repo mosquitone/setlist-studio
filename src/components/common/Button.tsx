@@ -2,12 +2,16 @@ import { Button as MuiButton, ButtonProps as MuiButtonProps } from '@mui/materia
 import { SxProps, Theme } from '@mui/material/styles';
 import { forwardRef } from 'react';
 
-type ButtonProps = MuiButtonProps & {
+type CustomVariant = 'text' | 'outlined' | 'contained' | 'danger';
+
+type ButtonProps = Omit<MuiButtonProps, 'variant'> & {
   authButton?: boolean;
+  variant?: CustomVariant;
+  loading?: boolean;
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ variant = 'contained', authButton = false, sx, ...props }, ref) => {
+  ({ variant = 'contained', authButton = false, loading = false, sx, ...props }, ref) => {
     // 認証ボタン用の統一スタイル
     const authButtonStyles: SxProps<Theme> = authButton
       ? {
@@ -40,10 +44,31 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         }
       : {};
 
+    // dangerバリアントの場合はMUIのバリアントを調整
+    const muiVariant =
+      variant === 'danger' ? 'contained' : (variant as 'text' | 'outlined' | 'contained');
+
+    // dangerバリアントのスタイル
+    const dangerStyles: SxProps<Theme> =
+      variant === 'danger'
+        ? {
+            backgroundColor: '#dc2626',
+            color: 'white',
+            '&:hover': {
+              backgroundColor: '#b91c1c',
+            },
+            '&:disabled': {
+              backgroundColor: '#9ca3af',
+              color: 'white',
+            },
+          }
+        : {};
+
     return (
       <MuiButton
         ref={ref}
-        variant={variant}
+        variant={muiVariant}
+        disabled={loading || props.disabled}
         sx={[
           {
             borderRadius: 2,
@@ -57,10 +82,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             },
           },
           authButtonStyles,
+          dangerStyles,
           ...(Array.isArray(sx) ? sx : [sx]),
         ]}
         {...props}
-      />
+      >
+        {loading ? 'Loading...' : props.children}
+      </MuiButton>
     );
   },
 );

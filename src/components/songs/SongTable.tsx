@@ -26,7 +26,7 @@ interface SongTableProps {
   songs: Song[];
   loading: boolean;
   onEdit: (song: Song) => void;
-  onDelete: (id: string) => void;
+  onDelete: (song: Song) => void;
 }
 
 export function SongTable({ songs, loading, onEdit, onDelete }: SongTableProps) {
@@ -93,7 +93,7 @@ export function SongTable({ songs, loading, onEdit, onDelete }: SongTableProps) 
                     <IconButton
                       onClick={(e) => {
                         e.stopPropagation();
-                        onDelete(song.id);
+                        onDelete(song);
                       }}
                       color="error"
                       size="small"
@@ -158,7 +158,7 @@ export function SongTable({ songs, loading, onEdit, onDelete }: SongTableProps) 
                   onEdit(song);
                 } else if (event.key === 'Delete') {
                   event.preventDefault();
-                  onDelete(song.id);
+                  onDelete(song);
                 }
               }}
               aria-label={`楽曲: ${song.title}。Enterで編集、Deleteで削除`}
@@ -178,7 +178,7 @@ export function SongTable({ songs, loading, onEdit, onDelete }: SongTableProps) 
                   <EditIcon />
                 </IconButton>
                 <IconButton
-                  onClick={() => onDelete(song.id)}
+                  onClick={() => onDelete(song)}
                   color="error"
                   size="small"
                   aria-label={`${song.title}を削除`}

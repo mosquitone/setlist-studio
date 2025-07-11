@@ -10,13 +10,10 @@ import {
   Chip,
   Stack,
   IconButton,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   CardActionArea,
 } from '@mui/material';
 import { Button } from '@/components/common/Button';
+import { DeleteConfirmModal } from '@/components/common/DeleteConfirmModal';
 import {
   PlaylistPlay as PlaylistPlayIcon,
   Add as AddIcon,
@@ -340,23 +337,15 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
         ))}
       </Grid>
 
-      <Dialog open={deleteDialogOpen} onClose={handleDeleteCancel} maxWidth="sm" fullWidth>
-        <DialogTitle>セットリストを削除</DialogTitle>
-        <DialogContent>
-          <Typography>「{setlistToDelete?.title}」を削除しますか？</Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-            この操作は取り消せません。
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDeleteCancel} disabled={deleteLoading}>
-            キャンセル
-          </Button>
-          <Button onClick={handleDeleteConfirm} color="error" disabled={deleteLoading}>
-            削除
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <DeleteConfirmModal
+        open={deleteDialogOpen}
+        onClose={handleDeleteCancel}
+        onConfirm={handleDeleteConfirm}
+        title="セットリストを削除"
+        itemName={setlistToDelete?.title || ''}
+        itemType="セットリスト"
+        loading={deleteLoading}
+      />
     </Box>
   );
 }

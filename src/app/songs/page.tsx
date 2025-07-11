@@ -4,6 +4,7 @@ import { Container, Box, Alert } from '@mui/material';
 import { SongPageHeader } from '@/components/songs/SongPageHeader';
 import { SongTable } from '@/components/songs/SongTable';
 import { SongEditDialog } from '@/components/songs/SongEditDialog';
+import { DeleteConfirmModal } from '@/components/common/DeleteConfirmModal';
 import { useSongs } from '@/hooks/useSongs';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
@@ -14,9 +15,14 @@ export default function SongsPage() {
     error,
     selectedSong,
     isEditDialogOpen,
+    songToDelete,
+    isDeleteDialogOpen,
+    deleteLoading,
     handleEditSong,
     handleSaveSong,
-    handleDeleteSong,
+    handleDeleteClick,
+    handleDeleteConfirm,
+    handleDeleteCancel,
     closeEditDialog,
   } = useSongs();
 
@@ -36,7 +42,7 @@ export default function SongsPage() {
             songs={songs}
             loading={loading}
             onEdit={handleEditSong}
-            onDelete={handleDeleteSong}
+            onDelete={handleDeleteClick}
           />
 
           <SongEditDialog
@@ -44,6 +50,16 @@ export default function SongsPage() {
             song={selectedSong}
             onClose={closeEditDialog}
             onSave={handleSaveSong}
+          />
+
+          <DeleteConfirmModal
+            open={isDeleteDialogOpen}
+            onClose={handleDeleteCancel}
+            onConfirm={handleDeleteConfirm}
+            title="楽曲を削除"
+            itemName={songToDelete?.title || ''}
+            itemType="楽曲"
+            loading={deleteLoading}
           />
         </Box>
       </Container>
