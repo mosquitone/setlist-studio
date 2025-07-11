@@ -1,11 +1,11 @@
 'use client';
 
-import { Box, Link } from '@mui/material';
+import { Box, Link, SxProps, Theme } from '@mui/material';
 
 interface LogoOfficialLinkProps {
   /**
    * ロゴの高さ（レスポンシブ対応）
-   * @default { xs: 50, md: 70 }
+   * @default xs: 50, md: 70
    */
   height?: { xs: number; md: number };
 
@@ -24,7 +24,7 @@ interface LogoOfficialLinkProps {
   /**
    * 追加のスタイル
    */
-  sx?: any;
+  sx?: SxProps<Theme>;
 }
 
 /**
