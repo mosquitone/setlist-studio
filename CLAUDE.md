@@ -233,7 +233,6 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 │   │   │       ├── DesktopNavigation.tsx # アイコン付きデスクトップナビゲーション
 │   │   │       ├── MobileNavigation.tsx  # モバイルドロワーナビゲーション
 │   │   │       ├── UserMenu.tsx          # アバターとドロップダウン付きユーザーメニュー
-│   │   │       ├── AuthButton.tsx        # ログイン/ログアウトボタン
 │   │   │       └── navigationItems.ts    # ナビゲーション設定
 │   │   ├── auth/           # 認証関連コンポーネント
 │   │   │   └── LoginLink.tsx       # ログイン/登録リンクコンポーネント
@@ -938,6 +937,9 @@ if (isProduction) {
   - `layout/`: レイアウト関連（Header、Footer、headerサブコンポーネント）
   - `auth/`: 認証関連（LoginLink）
   - ルート: 単発コンポーネント（DeleteConfirmModal、LogoOfficialLink）
-- **インポートパス更新**: 全ファイルのインポートパスを新構造に対応
+- **大規模インポートパス更新**: 27ファイルのインポートパスを新構造に対応
+  - 11ファイルの移動（rename）
+  - 16ファイルのインポート修正
 - **保守性向上**: 機能別グループ化により、関連コンポーネントの発見と管理が容易に
 - **拡張性確保**: 各カテゴリに新しいコンポーネントを追加しやすい構造
+- **TypeScript互換性**: 全てのインポートパスでコンパイルエラーゼロを達成
