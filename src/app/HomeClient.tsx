@@ -27,7 +27,7 @@ export default function HomeClient() {
       <Container maxWidth="lg">
         <Box
           sx={{
-            minHeight: '100vh',
+            minHeight: '60vh',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -43,7 +43,7 @@ export default function HomeClient() {
 
   return (
     <Container maxWidth="lg">
-      <Box sx={{ minHeight: '100vh', py: 4 }}>
+      <Box sx={{ py: 4 }}>
         <WelcomeSection />
         <FeatureSection />
 

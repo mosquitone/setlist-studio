@@ -12,7 +12,7 @@ export default function HomePage() {
         <Container maxWidth="lg">
           <Box
             sx={{
-              minHeight: '100vh',
+              minHeight: '60vh',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',

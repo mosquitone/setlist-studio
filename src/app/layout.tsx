@@ -32,9 +32,13 @@ export default function RootLayout({
           <MUIProvider>
             <CSRFProvider>
               <AuthProvider>
-                <Header />
-                <Suspense fallback={<LoadingFallback />}>{children}</Suspense>
-                <Footer />
+                <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+                  <Header />
+                  <main style={{ flex: 1 }}>
+                    <Suspense fallback={<LoadingFallback />}>{children}</Suspense>
+                  </main>
+                  <Footer />
+                </div>
               </AuthProvider>
             </CSRFProvider>
           </MUIProvider>

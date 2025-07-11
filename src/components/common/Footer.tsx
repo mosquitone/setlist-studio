@@ -1,9 +1,19 @@
 import React from 'react';
-import { Link, Typography } from '@mui/material';
+import { Box, Link, Typography } from '@mui/material';
 
 export default function Footer() {
   return (
-    <footer style={{ textAlign: 'center', padding: '1rem' }}>
+    <Box
+      component="footer"
+      sx={{
+        textAlign: 'center',
+        padding: '1rem',
+        backgroundColor: 'background.paper',
+        borderTop: '1px solid',
+        borderColor: 'divider',
+        marginTop: 'auto'
+      }}
+    >
       <Typography variant="body2" color="text.secondary">
         © 2025{' '}
         <Link
@@ -24,6 +34,6 @@ export default function Footer() {
           mosquitone
         </Link>
       </Typography>
-    </footer>
+    </Box>
   );
 }
