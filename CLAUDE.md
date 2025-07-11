@@ -177,7 +177,7 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 - **セキュリティヘッダー**: vercel.jsonにより自動適用
 - **注意**: docker-compose.ymlはローカル開発のみ、Vercelでは未使用
 
-詳細なデプロイ手順は [VERCEL_DEPLOYMENT_GUIDE.md](./VERCEL_DEPLOYMENT_GUIDE.md) を参照
+詳細なデプロイ手順は [VERCEL_DEPLOYMENT_GUIDE.md](./docs/VERCEL_DEPLOYMENT_GUIDE.md) を参照
 
 ### プロジェクト構造
 ```
