@@ -20,7 +20,7 @@ export function WelcomeSection() {
           mb: 2,
         }}
       >
-        Setlist Studio
+        Powered by mosquitone
       </Typography>
       <Typography
         variant="h6"
