@@ -45,9 +45,10 @@ let connectionPromise: Promise<void> | null = null;
 
 async function ensureConnection() {
   if (isConnected) return;
-  
+
   if (!connectionPromise) {
-    connectionPromise = prisma.$connect()
+    connectionPromise = prisma
+      .$connect()
       .then(() => {
         isConnected = true;
         console.log('✅ Prisma connected successfully');
@@ -58,7 +59,7 @@ async function ensureConnection() {
         throw error;
       });
   }
-  
+
   return connectionPromise;
 }
 
@@ -155,7 +156,7 @@ async function getServerInstance() {
 async function createSecureContext(req: NextRequest) {
   // データベース接続を確実に確立
   await ensureConnection();
-  
+
   // Cookiesオブジェクトを作成（認証ミドルウェア用）
   const cookies: { [key: string]: string } = {};
   req.cookies.getAll().forEach((cookie) => {

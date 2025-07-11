@@ -31,13 +31,13 @@ export function cacheQuery<T>(key: string, data: T, ttl: number = DEFAULT_CACHE_
 export function getCachedQuery<T>(key: string): T | null {
   const cached = queryCache.get(key);
   if (!cached) return null;
-  
+
   const isExpired = Date.now() - cached.timestamp > cached.ttl;
   if (isExpired) {
     queryCache.delete(key);
     return null;
   }
-  
+
   return cached.data as T;
 }
 
@@ -95,10 +95,7 @@ export async function getOptimizedSetlist(prisma: PrismaClient, id: string, user
   const setlist = await prisma.setlist.findFirst({
     where: {
       id,
-      OR: [
-        { isPublic: true },
-        { userId: userId || '' },
-      ],
+      OR: [{ isPublic: true }, { userId: userId || '' }],
     },
     include: {
       items: {
@@ -150,16 +147,16 @@ export async function getOptimizedSongs(prisma: PrismaClient, userId: string) {
  */
 export async function batchQuery<T>(
   queries: Array<() => Promise<T>>,
-  batchSize: number = 5
+  batchSize: number = 5,
 ): Promise<T[]> {
   const results: T[] = [];
-  
+
   for (let i = 0; i < queries.length; i += batchSize) {
     const batch = queries.slice(i, i + batchSize);
-    const batchResults = await Promise.all(batch.map(query => query()));
+    const batchResults = await Promise.all(batch.map((query) => query()));
     results.push(...batchResults);
   }
-  
+
   return results;
 }
 
@@ -179,10 +176,7 @@ export async function checkConnection(prisma: PrismaClient): Promise<boolean> {
 /**
  * クエリ実行時間測定
  */
-export async function measureQuery<T>(
-  name: string,
-  query: () => Promise<T>
-): Promise<T> {
+export async function measureQuery<T>(name: string, query: () => Promise<T>): Promise<T> {
   const start = performance.now();
   try {
     const result = await query();
@@ -202,14 +196,14 @@ export async function measureQuery<T>(
 setInterval(() => {
   const now = Date.now();
   let cleanedCount = 0;
-  
+
   for (const [key, value] of queryCache.entries()) {
     if (now - value.timestamp > value.ttl) {
       queryCache.delete(key);
       cleanedCount++;
     }
   }
-  
+
   if (cleanedCount > 0) {
     console.log(`🧹 Cleaned ${cleanedCount} expired cache entries`);
   }
