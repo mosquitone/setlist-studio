@@ -231,6 +231,7 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 │   │   │   └── navigationItems.ts    # ナビゲーション設定
 │   │   ├── Footer.tsx      # アプリケーションフッターコンポーネント
 │   │   ├── LoadingFallback.tsx # ローディング状態コンポーネント
+│   │   ├── LogoOfficialLink.tsx # 公式サイトリンク付きロゴコンポーネント
 │   │   └── NoSSR.tsx       # SSR無効化コンポーネント
 │   ├── forms/              # フォーム関連コンポーネント
 │   │   ├── SetlistForm.tsx # バリデーション付きメインセットリストフォーム
@@ -732,6 +733,19 @@ const isValid = timingSafeEqual(
 - ✅ Vercel Functions互換性
 
 ## 更新履歴と記録
+
+### ホーム画面UI/UX大幅改善 & コンポーネント化 (2025-07-11)
+- **LogoOfficialLinkコンポーネント実装**: 公式サイトリンク付きロゴを独立コンポーネント化
+- **画期的なデスクトップ/モバイル対応**: ホバー/タップで異なるインタラクション提供
+  - デスクトップ: ホバー時に🌐アイコンと「公式サイトへ」テキスト表示
+  - モバイル: パルスアニメーション + 「タップして公式サイトへ」常時表示
+- **レスポンシブレイアウト最適化**: 
+  - デスクトップ: 横並びレイアウト（3.5rem見出し + 70px高ロゴ）
+  - モバイル: 縦並びレイアウト（2rem見出し + 50px高ロゴ）
+- **説明文デザイン改善**: デスクトップ/モバイル別の読みやすい表示
+- **アニメーション統合**: pulse、fadeInOut、breatheエフェクトによる没入感向上
+- **Footer公式リンク追加**: Material-UI Link使用、underline="hover"対応
+- **セットリスト画像生成調整**: フッター文字サイズ12px→20px、パディング最適化
 
 ### GraphQLスキーマ事前生成システム & パフォーマンス最適化 (2025-07-09)
 - **事前生成スキーマ**: `scripts/generate-schema.ts`でGraphQLスキーマを事前ビルド、Vercel Functions起動時間大幅短縮
