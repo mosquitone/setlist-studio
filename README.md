@@ -9,6 +9,11 @@
 
 音楽バンド向けの現代的なセットリスト生成アプリケーションです。Next.js + Vercel Functions によるGraphQL API統合アーキテクチャで、ユーザー認証、楽曲管理、セットリスト作成機能を提供します。
 
+### リポジトリ構成
+- **開発リポジトリ**: GitHub（このリポジトリ）- 開発・機能追加・テスト
+- **デプロイリポジトリ**: GitLab（https://gitlab.com/mosquitone8/setlist-studio）- 本番デプロイ用
+- **デプロイメント**: Vercelを通じてGitLabリポジトリから本番環境へ自動デプロイ
+
 ### 🛠️ 技術構成
 
 - **フロントエンド**: Next.js 15.3.4, React 19, TypeScript 5, Material-UI v5
@@ -95,8 +100,12 @@
 
 1. リポジトリをクローン:
 ```bash
+# 開発用（GitHub）
 git clone git@github.com:mosquitone/setlist-studio.git
 cd setlist-studio
+
+# デプロイ用（GitLab）
+git remote add gitlab git@gitlab.com:mosquitone8/setlist-studio.git
 ```
 
 2. 依存関係をインストール:

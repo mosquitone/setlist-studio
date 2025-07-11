@@ -12,24 +12,28 @@
 
 ## 🎯 前提条件
 
-1. **GitHubアカウント** - ソースコードのホスティング
-2. **Vercelアカウント** - デプロイメントプラットフォーム  
-3. **データベースサービス** - PostgreSQL互換のマネージドサービス
-4. **Node.js 20.11.1以上** - ローカル開発環境
-5. **pnpm 10.12.1以上** - パッケージマネージャー
+1. **GitHubアカウント** - 開発用ソースコードのホスティング
+2. **GitLabアカウント** - デプロイ用リポジトリ（https://gitlab.com/mosquitone8/setlist-studio）
+3. **Vercelアカウント** - デプロイメントプラットフォーム  
+4. **データベースサービス** - PostgreSQL互換のマネージドサービス
+5. **Node.js 20.11.1以上** - ローカル開発環境
+6. **pnpm 10.12.1以上** - パッケージマネージャー
 
 ## 📋 ステップ1: Vercelアカウントの作成
 
 1. [https://vercel.com](https://vercel.com) にアクセス
 2. 「Sign Up」をクリック
-3. 「Continue with GitHub」を選択してGitHubアカウントで認証
+3. 「Continue with GitLab」を選択してGitLabアカウントで認証
 4. Vercelの利用規約に同意してアカウント作成を完了
+
+> **注意**: デプロイにはGitLabリポジトリ（https://gitlab.com/mosquitone8/setlist-studio）を使用します
 
 ## 📋 ステップ2: プロジェクトのインポート
 
 1. Vercelダッシュボードで「Add New」ボタン（画面右上）をクリック
 2. ドロップダウンから「Project」を選択
-3. GitHubリポジトリ一覧から「setlist-studio」を選択
+3. GitLabリポジトリ一覧から「setlist-studio」を選択
+   - リポジトリURL: https://gitlab.com/mosquitone8/setlist-studio
 4. 「Import」をクリックしてプロジェクトをインポート
 
 ### 🔧 ビルド設定の確認
@@ -265,10 +269,21 @@
 
 ## 🔄 ステップ6: 継続的デプロイメント
 
-GitHubとの統合により、以下の自動デプロイが設定されます:
+GitLabとの統合により、以下の自動デプロイが設定されます:
 
 1. **本番環境**: mainブランチへのプッシュで自動デプロイ
 2. **プレビュー環境**: その他のブランチへのプッシュでプレビュー環境を作成
+
+### 開発からデプロイまでのワークフロー
+
+1. **開発**: GitHub（このリポジトリ）で機能開発・テスト
+2. **同期**: 完成した機能をGitLabリポジトリに同期
+3. **デプロイ**: GitLabリポジトリからVercelが自動デプロイ
+
+```bash
+# 開発完了後、GitLabリポジトリに同期
+git push gitlab main
+```
 
 ## 📊 ステップ7: 監視とメンテナンス
 
