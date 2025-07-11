@@ -133,7 +133,7 @@ export default function SetlistDetailPage() {
             {/* Success Banner */}
             {showSuccess && (
               <Alert severity="success" sx={{ mb: 3 }}>
-                Setlist Generated !
+                セットリストが生成されました！
               </Alert>
             )}
 
