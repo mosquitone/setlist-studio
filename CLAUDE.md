@@ -175,6 +175,10 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
   - path: `/api/cron/cleanup`
   - スケジュール: `0 2 * * *`（毎日午前2時）
 - **セキュリティヘッダー**: vercel.jsonにより自動適用
+- **Vercel Functions設定**: 
+  - GraphQL API: 最大実行時間60秒、メモリ1024MB
+  - リージョン: hnd1（東京）
+  - パフォーマンス最適化: メモリ増強によるcold start時間短縮
 - **注意**: docker-compose.ymlはローカル開発のみ、Vercelでは未使用
 
 詳細なデプロイ手順は [VERCEL_DEPLOYMENT_GUIDE.md](./docs/VERCEL_DEPLOYMENT_GUIDE.md) を参照
