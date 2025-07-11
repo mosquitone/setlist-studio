@@ -44,13 +44,24 @@ export function WelcomeSection() {
         <Box component="span" sx={{ display: { xs: 'block', md: 'inline' } }}>
           ステージで利用できるアーティスト向けのセットリスト作成アプリです。
         </Box>
-        <Box component="span" sx={{ display: { xs: 'block', md: 'inline' } }}>
+        <Box component="span" sx={{ display: 'block' }}>
           エクセルや手書きの時代はもう終わりです。
         </Box>
-        <br />
-        <Box component="span" sx={{ fontWeight: 500, color: 'text.primary' }}>
-          このアプリの作成者もバンドをやっていますので、自信を持ってお勧めします。
-        </Box>
+      </Typography>
+      
+      <Typography
+        variant="body1"
+        sx={{
+          fontWeight: 500,
+          color: 'text.primary',
+          maxWidth: { xs: '100%', md: '600px' },
+          mx: 'auto',
+          px: { xs: 2, md: 0 },
+          fontSize: { xs: '0.95rem', md: '1rem' },
+          lineHeight: 1.6,
+        }}
+      >
+        このアプリの作成者もバンドをやっているので、自信を持ってお勧めします。
       </Typography>
     </Box>
   );
