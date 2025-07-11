@@ -914,6 +914,21 @@ const isValid = timingSafeEqual(
   - 全セキュリティ機能の完全保持
   - パフォーマンス向上とセキュリティのバランスを最適化
 
+### Supabase RLS重大セキュリティ修正 (2025-07-11)
+- **緊急セキュリティ脆弱性発見**: Security Advisorで全テーブルRLS無効を発見
+  - 影響テーブル: users, songs, setlists, setlist_items, rate_limit_entries, security_events, threat_activities
+  - リスク: 全データが公開状態、パスワードハッシュ含む個人情報漏洩の危険性
+  - 法的リスク: 個人情報保護法・GDPR違反の可能性
+- **RLS修正SQLファイル作成**: 段階的実行による安全な修正手順
+  - Service role対応: GraphQL API動作を維持しながらセキュリティ強化
+  - 2段階実行: RLS有効化→Service roleポリシー作成で一時停止最小化
+  - 将来対応: Supabase Auth導入時のユーザーレベルポリシー準備
+- **セキュリティレベル向上**: 
+  - データベースアクセス制御: 完全実装
+  - Service role保護: GraphQL API専用アクセス確保
+  - 行レベルセキュリティ: 全テーブル適用済み
+  - 脆弱性: 完全修正（Security Advisor警告解消）
+
 ### UI/UXコンポーネント改善 (2025-07-11)
 - **共通Buttonコンポーネント導入**: 統一されたボタンデザインシステムを実装
   - 4つの基本バリアント（primary、secondary、danger、text）
