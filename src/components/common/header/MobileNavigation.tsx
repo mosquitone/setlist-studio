@@ -10,10 +10,11 @@ import Divider from '@mui/material/Divider';
 import Button from '@mui/material/Button';
 import Skeleton from '@mui/material/Skeleton';
 import MenuIcon from '@mui/icons-material/Menu';
+import LogoutIcon from '@mui/icons-material/Logout';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/components/providers/AuthProvider';
-import { LoginLink } from '@/components/common/LoginLink';
+import { AuthLink } from '@/components/common/LoginLink';
 
 interface NavigationItem {
   label: string;
@@ -112,6 +113,7 @@ export function MobileNavigation({
             variant="outlined"
             onClick={handleLogout}
             disabled={isLoading}
+            startIcon={<LogoutIcon />}
             sx={{
               borderRadius: 10,
               py: 1.5,
@@ -134,7 +136,10 @@ export function MobileNavigation({
             {isLoading ? '読込中…' : 'ログアウト'}
           </Button>
         ) : (
-          <LoginLink variant="mobile" />
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+            <AuthLink variant="mobile" type="login" />
+            <AuthLink variant="mobile" type="register" />
+          </Box>
         )}
       </Box>
     </Box>

@@ -7,6 +7,8 @@ import MenuItem from '@mui/material/MenuItem';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
 import Link from '@mui/material/Link';
+import PersonIcon from '@mui/icons-material/Person';
+import LogoutIcon from '@mui/icons-material/Logout';
 import { useAuth } from '@/components/providers/AuthProvider';
 
 interface UserMenuProps {
@@ -66,7 +68,11 @@ export function UserMenu({ onAuthClick }: UserMenuProps) {
           horizontal: 'right',
         }}
       >
-        <MenuItem onClick={handleUserMenuClose}>
+        <MenuItem
+          onClick={handleUserMenuClose}
+          sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+        >
+          <PersonIcon fontSize="small" />
           <Link href="/profile" underline="none" color="inherit">
             プロフィール
           </Link>
@@ -77,7 +83,9 @@ export function UserMenu({ onAuthClick }: UserMenuProps) {
             handleUserMenuClose();
             onAuthClick();
           }}
+          sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
         >
+          <LogoutIcon fontSize="small" />
           ログアウト
         </MenuItem>
       </Menu>
