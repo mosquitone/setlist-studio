@@ -25,10 +25,10 @@ const prisma =
         url: process.env.DATABASE_URL,
       },
     },
-    // Connection pooling optimization for Vercel Functions
+    // Supabase最適化設定
     transactionOptions: {
-      maxWait: 2000, // 2秒
-      timeout: 5000, // 5秒
+      maxWait: 5000, // 5秒（Supabase推奨）
+      timeout: 30000, // 30秒（statement_timeoutと合わせる）
     },
   });
 
