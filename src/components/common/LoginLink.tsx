@@ -56,7 +56,7 @@ const variantConfig = {
   mobile: {
     variant: 'outlined' as const,
     size: 'medium' as const,
-    showIcon: false,
+    showIcon: true,
     sx: (colors: typeof typeConfig.login.colors) => ({
       borderColor: colors.primary,
       color: colors.primary,
