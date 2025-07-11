@@ -1,4 +1,11 @@
 {
+  "functions": {
+    "src/app/api/graphql/route.ts": {
+      "maxDuration": 60,
+      "memory": 1024,
+      "regions": ["nrt1"]
+    }
+  },
   "crons": [
     {
       "path": "/api/security/cleanup",
