@@ -191,7 +191,7 @@ export function createAuthRateLimit(prisma: PrismaClient) {
 
   return createDatabaseRateLimit(prisma, {
     windowMs: isDevelopment ? 5 * 60 * 1000 : 15 * 60 * 1000, // 開発: 5分, 本番: 15分
-    maxRequests: isDevelopment ? 20 : 5, // 開発: 20回, 本番: 5回
+    maxRequests: isDevelopment ? 1000 : 15, // 開発: 制限なし, 本番: 15回
     message: '認証試行回数が上限に達しました。しばらく時間をおいてから再試行してください',
   });
 }
