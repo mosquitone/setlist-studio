@@ -11,6 +11,7 @@ import Button from '@mui/material/Button';
 import Skeleton from '@mui/material/Skeleton';
 import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
+import PersonIcon from '@mui/icons-material/Person';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/components/providers/AuthProvider';
@@ -99,48 +100,76 @@ export function MobileNavigation({
         </List>
       )}
       {!isLoading && items.length > 0 && <Divider />}
-      {isLoggedIn && user && (
-        <Box sx={{ p: 2 }}>
+
+      {/* 認証ステータス関係なく統一したレイアウト */}
+      <Box sx={{ p: 2 }}>
+        {isLoggedIn && user && (
           <Typography variant="body2" sx={{ mb: 1 }}>
             {user.username || user.email}
           </Typography>
-        </Box>
-      )}
-      <Box sx={{ p: 2 }}>
-        {isLoggedIn ? (
-          <Button
-            fullWidth
-            variant="outlined"
-            onClick={handleLogout}
-            disabled={isLoading}
-            startIcon={<LogoutIcon />}
-            sx={{
-              borderRadius: 10,
-              py: 1.5,
-              textTransform: 'none',
-              borderColor: '#3b82f6',
-              color: '#3b82f6',
-              fontWeight: 500,
-              border: '2px solid #3b82f6',
-              transition: 'all 0.2s ease-in-out',
-              '&:hover': {
-                backgroundColor: 'rgba(59, 130, 246, 0.04)',
-                borderColor: '#2563eb',
-              },
-              '&:disabled': {
-                borderColor: 'rgba(59, 130, 246, 0.5)',
-                color: 'rgba(59, 130, 246, 0.5)',
-              },
-            }}
-          >
-            {isLoading ? '読込中…' : 'ログアウト'}
-          </Button>
-        ) : (
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-            <AuthLink variant="mobile" type="login" />
-            <AuthLink variant="mobile" type="register" />
-          </Box>
         )}
+
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+          {isLoggedIn ? (
+            <>
+              <Button
+                fullWidth
+                variant="outlined"
+                component={Link}
+                href="/profile"
+                startIcon={<PersonIcon />}
+                sx={{
+                  borderRadius: 10,
+                  py: 1.5,
+                  textTransform: 'none',
+                  borderColor: '#6b7280',
+                  color: '#6b7280',
+                  fontWeight: 500,
+                  border: '2px solid #6b7280',
+                  transition: 'all 0.2s ease-in-out',
+                  '&:hover': {
+                    backgroundColor: 'rgba(107, 114, 128, 0.04)',
+                    borderColor: '#4b5563',
+                  },
+                }}
+              >
+                プロフィール
+              </Button>
+              <Button
+                fullWidth
+                variant="outlined"
+                onClick={handleLogout}
+                disabled={isLoading}
+                startIcon={<LogoutIcon />}
+                sx={{
+                  borderRadius: 10,
+                  py: 1.5,
+                  textTransform: 'none',
+                  borderColor: '#3b82f6',
+                  color: '#3b82f6',
+                  fontWeight: 500,
+                  border: '2px solid #3b82f6',
+                  transition: 'all 0.2s ease-in-out',
+                  '&:hover': {
+                    backgroundColor: 'rgba(59, 130, 246, 0.04)',
+                    borderColor: '#2563eb',
+                  },
+                  '&:disabled': {
+                    borderColor: 'rgba(59, 130, 246, 0.5)',
+                    color: 'rgba(59, 130, 246, 0.5)',
+                  },
+                }}
+              >
+                {isLoading ? '読込中…' : 'ログアウト'}
+              </Button>
+            </>
+          ) : (
+            <>
+              <AuthLink variant="mobile" type="login" />
+              <AuthLink variant="mobile" type="register" />
+            </>
+          )}
+        </Box>
       </Box>
     </Box>
   );
