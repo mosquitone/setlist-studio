@@ -41,14 +41,16 @@ export function WelcomeSection() {
           fontSize: { xs: '0.95rem', md: '1rem' },
         }}
       >
-        <Box component="span" sx={{ display: { xs: 'block', md: 'inline' } }}>
-          ステージで利用できるアーティスト向けのセットリスト作成アプリです。
+        <Box component="span" sx={{ display: { xs: 'block', md: 'inline' }, fontWeight: 'bold' }}>
+          ステージで利用できるアーティスト向けの
+          <br />
+          セットリスト作成アプリです。
         </Box>
         <Box component="span" sx={{ display: 'block' }}>
           エクセルや手書きの時代はもう終わりです。
         </Box>
       </Typography>
-      
+
       <Typography
         variant="body1"
         sx={{
