@@ -96,9 +96,22 @@ export class SongResolver {
   @Query(() => [Song])
   @UseMiddleware(AuthMiddleware)
   async songs(@Ctx() ctx: Context): Promise<Song[]> {
+    // 最適化されたクエリ（必要フィールドのみ取得）
     return ctx.prisma.song.findMany({
       where: { userId: ctx.userId },
-      orderBy: { title: 'asc' },
+      select: {
+        id: true,
+        title: true,
+        artist: true,
+        duration: true,
+        key: true,
+        tempo: true,
+        notes: true,
+        userId: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      orderBy: { createdAt: 'desc' }, // 最新順に変更
     }) as Promise<Song[]>;
   }
 

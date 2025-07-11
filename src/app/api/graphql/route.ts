@@ -25,19 +25,63 @@ const prisma =
         url: process.env.DATABASE_URL,
       },
     },
-    // Supabase最適化設定
+    // Vercel Functions + Supabase最適化設定
     transactionOptions: {
-      maxWait: 5000, // 5秒（Supabase推奨）
-      timeout: 30000, // 30秒（statement_timeoutと合わせる）
+      maxWait: 3000, // 3秒（Vercel Functions最適化）
+      timeout: 25000, // 25秒（Vercel Function制限内）
+      isolationLevel: 'ReadCommitted', // 読み取り専用トランザクション最適化
     },
+    // エラーフォーマット最適化
+    errorFormat: 'minimal',
   });
 
 if (process.env.NODE_ENV !== 'production') {
   globalThis.prisma = prisma;
 }
 
-// Ensure database connection is established early
-prisma.$connect().catch(console.error);
+// 接続プールとリトライ最適化
+let isConnected = false;
+let connectionPromise: Promise<void> | null = null;
+
+async function ensureConnection() {
+  if (isConnected) return;
+  
+  if (!connectionPromise) {
+    connectionPromise = prisma.$connect()
+      .then(() => {
+        isConnected = true;
+        console.log('✅ Prisma connected successfully');
+      })
+      .catch((error) => {
+        console.error('❌ Prisma connection failed:', error);
+        connectionPromise = null;
+        throw error;
+      });
+  }
+  
+  return connectionPromise;
+}
+
+// 優雅な切断処理
+async function gracefulDisconnect() {
+  if (isConnected) {
+    await prisma.$disconnect();
+    isConnected = false;
+    console.log('🔌 Prisma disconnected');
+  }
+}
+
+// Vercel Functions終了時の処理
+if (typeof process !== 'undefined') {
+  process.on('beforeExit', gracefulDisconnect);
+  process.on('SIGINT', gracefulDisconnect);
+  process.on('SIGTERM', gracefulDisconnect);
+}
+
+// 接続確立（エラーは無視してリクエスト時に再試行）
+ensureConnection().catch(() => {
+  console.log('⚠️  Initial connection failed, will retry on request');
+});
 
 // Use pre-built schema for better performance
 let schema: GraphQLSchema | null = null;
@@ -107,8 +151,11 @@ async function getServerInstance() {
   return createServer();
 }
 
-// Context helper for secure token extraction
-function createSecureContext(req: NextRequest) {
+// Context helper for secure token extraction with connection assurance
+async function createSecureContext(req: NextRequest) {
+  // データベース接続を確実に確立
+  await ensureConnection();
+  
   // Cookiesオブジェクトを作成（認証ミドルウェア用）
   const cookies: { [key: string]: string } = {};
   req.cookies.getAll().forEach((cookie) => {
