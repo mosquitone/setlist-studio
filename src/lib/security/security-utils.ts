@@ -5,6 +5,10 @@ import DOMPurify from 'dompurify';
 import { createHash } from 'crypto';
 import { StringArray } from '@/types/common';
 
+// =============================================================================
+// 定数定義セクション
+// =============================================================================
+
 // 信頼できるプロキシのリスト（環境に応じて設定）
 const TRUSTED_PROXIES = new Set([
   '127.0.0.1',
@@ -29,6 +33,38 @@ const TRUSTED_PROXIES = new Set([
   '197.234.240.0/22',
   '198.41.128.0/17',
 ]);
+
+// 共通セキュリティパターン定数 - DRY原則に従って分離
+export const SECURITY_PATTERNS = {
+  // 不審なUser-Agentパターン
+  SUSPICIOUS_USER_AGENTS: [
+    /bot/i,
+    /crawler/i,
+    /spider/i,
+    /scraper/i,
+    /curl/i,
+    /wget/i,
+    /python/i,
+    /java/i,
+    /automated/i,
+    /test/i,
+  ],
+
+  // プライベートIPアドレス範囲
+  PRIVATE_IP_PREFIXES: ['10.', '192.168.', '172.'],
+
+  // プロキシヘッダー名
+  PROXY_HEADERS: ['x-forwarded-for', 'x-real-ip', 'cf-connecting-ip', 'x-client-ip'],
+
+  // リスクレベル設定
+  RISK_THRESHOLDS: {
+    MAX_PROXY_HEADERS: 2,
+  },
+} as const;
+
+// =============================================================================
+// 低レベルユーティリティ関数セクション
+// =============================================================================
 
 // CIDR範囲チェック
 function isInCIDR(ip: string, cidr: string): boolean {
@@ -73,6 +109,27 @@ function isTrustedProxy(ip: string): boolean {
 
   return false;
 }
+
+// =============================================================================
+// 中レベルユーティリティ関数セクション
+// =============================================================================
+
+// セキュリティパターンチェック関数
+export function isUserAgentSuspicious(userAgent: string): boolean {
+  return SECURITY_PATTERNS.SUSPICIOUS_USER_AGENTS.some((pattern) => pattern.test(userAgent));
+}
+
+export function isPrivateIP(ip: string): boolean {
+  return SECURITY_PATTERNS.PRIVATE_IP_PREFIXES.some((prefix) => ip.startsWith(prefix));
+}
+
+export function countProxyHeaders(request: NextRequest): number {
+  return SECURITY_PATTERNS.PROXY_HEADERS.filter((header) => request.headers.get(header)).length;
+}
+
+// =============================================================================
+// 高レベルユーティリティ関数セクション
+// =============================================================================
 
 /**
  * 信頼できるクライアントIPアドレスの取得
@@ -172,13 +229,7 @@ export function getIPInfo(request: NextRequest): {
   const isProxy = isTrustedProxy(ip);
 
   const headers: Record<string, string> = {};
-  const relevantHeaders = [
-    'x-forwarded-for',
-    'x-real-ip',
-    'cf-connecting-ip',
-    'x-client-ip',
-    'user-agent',
-  ];
+  const relevantHeaders = [...SECURITY_PATTERNS.PROXY_HEADERS, 'user-agent'];
 
   relevantHeaders.forEach((header) => {
     const value = request.headers.get(header);
@@ -203,24 +254,11 @@ export function assessRequestSecurity(request: NextRequest): {
   const ip = getSecureClientIP(request);
   const userAgent = request.headers.get('user-agent') || '';
 
-  // 不審なUser-Agentパターン
-  const suspiciousUAPatterns = [
-    /bot/i,
-    /crawler/i,
-    /spider/i,
-    /scraper/i,
-    /curl/i,
-    /wget/i,
-    /python/i,
-    /java/i,
-    /automated/i,
-    /test/i,
-  ];
-
+  // User-Agentチェック
   if (!userAgent) {
     reasons.push('Missing User-Agent header');
     riskLevel = 'medium';
-  } else if (suspiciousUAPatterns.some((pattern) => pattern.test(userAgent))) {
+  } else if (isUserAgentSuspicious(userAgent)) {
     reasons.push('Suspicious User-Agent pattern detected');
     riskLevel = 'high';
   }
@@ -232,20 +270,14 @@ export function assessRequestSecurity(request: NextRequest): {
   }
 
   // プライベートIPからのアクセス（開発環境以外では不審）
-  if (
-    process.env.NODE_ENV === 'production' &&
-    (ip.startsWith('10.') || ip.startsWith('192.168.') || ip.startsWith('172.'))
-  ) {
+  if (process.env.NODE_ENV === 'production' && isPrivateIP(ip)) {
     reasons.push('Access from private IP in production');
     riskLevel = 'medium';
   }
 
   // 複数のプロキシヘッダーが存在（IP偽装の可能性）
-  const proxyHeaders = ['x-forwarded-for', 'x-real-ip', 'cf-connecting-ip', 'x-client-ip'].filter(
-    (header) => request.headers.get(header),
-  );
-
-  if (proxyHeaders.length > 2) {
+  const proxyHeaderCount = countProxyHeaders(request);
+  if (proxyHeaderCount > SECURITY_PATTERNS.RISK_THRESHOLDS.MAX_PROXY_HEADERS) {
     reasons.push('Multiple proxy headers detected');
     riskLevel = 'medium';
   }
@@ -253,7 +285,14 @@ export function assessRequestSecurity(request: NextRequest): {
   return { riskLevel, reasons };
 }
 
-// DOMPurifyを使用したHTMLサニタイゼーション（security.tsから移行）
+// =============================================================================
+// サニタイゼーション関数セクション
+// =============================================================================
+
+/**
+ * DOMPurifyを使用したテキストサニタイゼーション
+ * XSS攻撃防止のためHTMLタグを完全に除去
+ */
 export const sanitizeText = (text: string): string => {
   if (typeof window === 'undefined') {
     return text;
@@ -266,6 +305,10 @@ export const sanitizeText = (text: string): string => {
   });
 };
 
+/**
+ * DOMPurifyを使用したHTMLサニタイゼーション
+ * 安全なHTMLタグのみを許可
+ */
 export const sanitizeHtml = (html: string): string => {
   if (typeof window === 'undefined') {
     return html;
@@ -277,6 +320,10 @@ export const sanitizeHtml = (html: string): string => {
   });
 };
 
+/**
+ * URLの有効性とセキュリティチェック
+ * HTTPSまたはHTTPプロトコル、もしくはdata:image/プロトコルのみを許可
+ */
 export const isValidUrl = (url: string): boolean => {
   try {
     const parsedUrl = new URL(url);
