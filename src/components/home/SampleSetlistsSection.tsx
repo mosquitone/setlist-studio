@@ -2,7 +2,6 @@
 
 import { Box, Typography, Grid, Card, CardContent } from '@mui/material';
 import Image from 'next/image';
-import { BrandText } from '@/components/common/ui/BrandText';
 
 export function SampleSetlistsSection() {
   return (
@@ -10,12 +9,20 @@ export function SampleSetlistsSection() {
       <Typography variant="h4" component="h2" textAlign="center" gutterBottom sx={{ mb: 4 }}>
         セットリストサンプル
       </Typography>
-      <Typography variant="body1" textAlign="center" color="text.secondary" sx={{ mb: 6 }}>
-        <BrandText variant="body1" sx={{ fontSize: '1rem', padding: '2px 6px' }}>
-          Setlist Studio
-        </BrandText>
-        で作成できるセットリストの例をご覧ください
-      </Typography>
+      <Box textAlign="center" sx={{ mb: 6 }}>
+        <Typography variant="body1" color="text.secondary" component="div">
+          <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1 }}>
+            <Image
+              src="/setlist-studio-logo.png"
+              alt="Setlist Studio"
+              width={130}
+              height={35}
+              style={{ objectFit: 'contain' }}
+            />
+            で作成できるセットリストの例をご覧ください
+          </Box>
+        </Typography>
+      </Box>
 
       <Grid container spacing={4} justifyContent="center">
         {/* Black Theme Sample */}
@@ -52,6 +59,7 @@ export function SampleSetlistsSection() {
                   src="/setlist-mosquitone-black.png"
                   alt="セットリストサンプル - ブラックテーマ"
                   fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
                   style={{ objectFit: 'contain' }}
                 />
               </Box>
@@ -93,6 +101,7 @@ export function SampleSetlistsSection() {
                   src="/setlist-mosquitone-white.png"
                   alt="セットリストサンプル - ホワイトテーマ"
                   fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
                   style={{ objectFit: 'contain' }}
                 />
               </Box>

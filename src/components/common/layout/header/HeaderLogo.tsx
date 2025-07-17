@@ -1,20 +1,35 @@
 import Link from 'next/link';
-import { BrandText } from '@/components/common/ui/BrandText';
+import Image from 'next/image';
+import { Box } from '@mui/material';
 
 export function HeaderLogo() {
   return (
     <Link href="/" passHref style={{ textDecoration: 'none' }}>
-      <BrandText
+      <Box
         sx={{
           cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
           '&:hover': {
-            color: 'primary.dark',
             transform: 'scale(1.02)',
           },
+          transition: 'transform 0.2s ease-in-out',
         }}
       >
-        Setlist Studio
-      </BrandText>
+        <Image
+          src="/setlist-studio-logo.png"
+          alt="Setlist Studio"
+          width={200}
+          height={64}
+          style={{
+            objectFit: 'contain',
+            filter: 'invert(1)',
+            borderRadius: '4px',
+            padding: '2px 4px',
+          }}
+          priority
+        />
+      </Box>
     </Link>
   );
 }

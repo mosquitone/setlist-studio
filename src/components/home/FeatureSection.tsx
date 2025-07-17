@@ -25,8 +25,15 @@ export function FeatureSection() {
         >
           <CardActionArea component={Link} href={isLoggedIn ? '/songs' : '/login'}>
             <CardContent sx={{ p: { xs: 2, md: 4 } }}>
-              <LibraryMusicIcon sx={{ fontSize: { xs: 36, md: 48 }, color: 'primary.main', mb: 2 }} />
-              <Typography variant="h5" component="h3" gutterBottom sx={{ fontSize: { xs: '1.25rem', md: '1.5rem' } }}>
+              <LibraryMusicIcon
+                sx={{ fontSize: { xs: 36, md: 48 }, color: 'primary.main', mb: 2 }}
+              />
+              <Typography
+                variant="h5"
+                component="h3"
+                gutterBottom
+                sx={{ fontSize: { xs: '1.25rem', md: '1.5rem' } }}
+              >
                 楽曲管理
               </Typography>
               <Typography color="text.secondary" sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}>
@@ -44,8 +51,15 @@ export function FeatureSection() {
         >
           <CardActionArea component={Link} href={isLoggedIn ? '/setlists/new' : '/login'}>
             <CardContent sx={{ p: { xs: 2, md: 4 } }}>
-              <PlaylistPlayIcon sx={{ fontSize: { xs: 36, md: 48 }, color: 'secondary.main', mb: 2 }} />
-              <Typography variant="h5" component="h3" gutterBottom sx={{ fontSize: { xs: '1.25rem', md: '1.5rem' } }}>
+              <PlaylistPlayIcon
+                sx={{ fontSize: { xs: 36, md: 48 }, color: 'secondary.main', mb: 2 }}
+              />
+              <Typography
+                variant="h5"
+                component="h3"
+                gutterBottom
+                sx={{ fontSize: { xs: '1.25rem', md: '1.5rem' } }}
+              >
                 セットリスト作成
               </Typography>
               <Typography color="text.secondary" sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}>

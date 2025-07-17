@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import {
   Container,
   Typography,
@@ -45,9 +46,18 @@ export default function GuidePage() {
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Box sx={{ mb: 4 }}>
-        <Typography variant="h3" component="h1" gutterBottom align="center">
-          Setlist Studio 利用ガイド
-        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mb: 2 }}>
+          <Image
+            src="/setlist-studio-logo.png"
+            alt="Setlist Studio"
+            width={240}
+            height={70}
+            style={{ objectFit: 'contain' }}
+          />
+          <Typography variant="h3" component="h1" sx={{ ml: 1 }}>
+            利用ガイド
+          </Typography>
+        </Box>
         <Typography variant="h6" color="text.secondary" align="center" sx={{ mb: 4 }}>
           機能一覧と利用方法の完全ガイド
         </Typography>

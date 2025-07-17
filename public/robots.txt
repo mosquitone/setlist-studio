@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+
+# Allow crawling of static assets
+Allow: /favicon.png
+Allow: /logo.png
+Allow: /*.png
+Allow: /*.svg
+Allow: /*.jpg
+Allow: /*.jpeg
+
+# Disallow crawling of API routes
+Disallow: /api/
+
+# Disallow crawling of private user content
+Disallow: /setlists/*/edit
+Disallow: /profile
+
+Sitemap: https://setlist-studio.vercel.app/sitemap.xml
