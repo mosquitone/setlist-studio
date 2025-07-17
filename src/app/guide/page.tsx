@@ -512,6 +512,9 @@ export default function GuidePage() {
                     <ListItemText primary="• 楽曲追加とドラッグ&ドロップ並び替え" />
                   </ListItem>
                   <ListItem sx={{ pl: 0 }}>
+                    <ListItemText primary="• 楽曲追加は最大20曲まで" />
+                  </ListItem>
+                  <ListItem sx={{ pl: 0 }}>
                     <ListItemText primary="• テーマ選択（Black/White）" />
                   </ListItem>
                   <ListItem sx={{ pl: 0 }}>
