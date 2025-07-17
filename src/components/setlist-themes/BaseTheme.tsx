@@ -27,25 +27,118 @@ interface BaseThemeProps extends SetlistThemeProps {
  * @param colors - テーマカラー設定オブジェクト
  */
 
+// 楽曲アイテムの共通コンポーネント
+const SongItem: React.FC<{
+  item: any;
+  displayIndex: number;
+  fontSize: string;
+  colors: ThemeColors;
+}> = ({ item, displayIndex, fontSize, colors }) => (
+  <Box key={item.id} sx={{ display: 'flex', gap: '0.5em' }}>
+    <Box sx={{ flexShrink: 0, width: '4em', textAlign: 'right' }}>
+      <Typography
+        sx={{
+          fontSize: fontSize,
+          color: colors.text,
+          fontWeight: 400,
+          lineHeight: 1.2,
+        }}
+      >
+        {displayIndex}.
+      </Typography>
+    </Box>
+    <Box sx={{ flex: 1 }}>
+      <Typography
+        sx={{
+          fontSize: fontSize,
+          color: colors.text,
+          fontWeight: 400,
+          lineHeight: 1.2,
+          mb: item.note ? 0.5 : 0,
+        }}
+      >
+        {item.title}
+      </Typography>
+      {item.note && (
+        <Typography
+          sx={{
+            fontSize: '16px',
+            color: colors.secondaryText,
+            fontWeight: 300,
+            mt: 0.1,
+          }}
+        >
+          {item.note}
+        </Typography>
+      )}
+    </Box>
+  </Box>
+);
+
 export const BaseTheme: React.FC<BaseThemeProps> = ({ data, className, colors }) => {
   const { bandName, eventName, eventDate, openTime, startTime, items, qrCodeURL } = data;
+
+  // 20曲制限を適用
+  const limitedItems = items.slice(0, 20);
 
   // A4 dimensions: 210mm x 297mm (roughly 794px x 1123px at 96 DPI)
   const A4_WIDTH = 794;
   const A4_HEIGHT = 1123;
 
-  // Dynamic font size based on number of songs for A4 compatibility (memoized)
-  const fontSize = useMemo(() => {
-    const count = items.length;
-    if (count <= 6) return '40px';
-    if (count <= 8) return '34px';
-    if (count <= 10) return '30px';
-    if (count <= 12) return '26px';
-    if (count <= 15) return '24px';
-    if (count <= 18) return '22px';
-    if (count <= 25) return '20px';
-    return '18px';
-  }, [items.length]);
+  // Auto-calculated font size and spacing based on available space (memoized)
+  const { fontSize, gap } = useMemo(() => {
+    const count = Math.min(items.length, 20); // 20曲制限
+    if (count === 0) return { fontSize: '32px', gap: 2.5 };
+
+    // A4サイズから固定要素を差し引いた利用可能高さを厳密に計算
+    const headerHeight = 200; // ヘッダーセクション厳密高さ
+    const footerHeight = 90; // フッター厳密高さ（border + padding + text + margin）
+    const padding = 60; // 上下パディング
+    const headerMargin = 48; // ヘッダー下マージン (mb: 6 = 48px)
+    const safetyMargin = 15; // 安全マージン（最小限に）
+    const availableHeight =
+      A4_HEIGHT - headerHeight - footerHeight - padding - headerMargin - safetyMargin;
+
+    // 2列レイアウトでの1列あたりの楽曲数を計算
+    const effectiveCount = count <= 10 ? count : 10; // 2列の場合は左列の10曲を基準に計算
+
+    // オプション（note）がある楽曲の数をカウント（制限内のみ）
+    const itemsForCalculation = limitedItems;
+
+    // 11曲以上の場合は左列（1-10曲）の楽曲のみを考慮
+    const leftColumnItems = count > 10 ? itemsForCalculation.slice(0, 10) : itemsForCalculation;
+    const songsWithNotes = leftColumnItems.filter((item) => item.note).length;
+    const songsWithoutNotes = effectiveCount - songsWithNotes;
+
+    // 1曲あたりの平均必要高さを計算（noteありは1.7倍の高さ）
+    const noteHeightMultiplier = 1.7;
+    const totalSongUnits = songsWithoutNotes + songsWithNotes * noteHeightMultiplier;
+
+    // 楽曲間のgap総高さを考慮
+    const totalGapHeight = (effectiveCount - 1) * 16; // 基本gap = 16px
+    const availableForSongs = availableHeight - totalGapHeight;
+
+    // 1曲あたりの基本高さを計算
+    const baseSongHeight = availableForSongs / totalSongUnits;
+
+    // フォントサイズを楽曲数に応じて調整
+    let calculatedFontSize;
+    if (count <= 10) {
+      // 10曲以下は大きめのフォントサイズ
+      calculatedFontSize = Math.max(20, Math.min(50, baseSongHeight * 0.85));
+    } else {
+      // 11曲以上は2列レイアウトなので、折り返さないよう小さめに
+      calculatedFontSize = Math.max(16, Math.min(32, baseSongHeight * 0.75));
+    }
+
+    // gapを楽曲数に応じて調整（ライブ会場用に最適化）
+    const calculatedGap = Math.max(1.0, Math.min(2.8, 3.8 - effectiveCount * 0.18));
+
+    return {
+      fontSize: `${Math.round(calculatedFontSize)}px`,
+      gap: calculatedGap,
+    };
+  }, [limitedItems, items.length]);
 
   return (
     <div
@@ -147,44 +240,77 @@ export const BaseTheme: React.FC<BaseThemeProps> = ({ data, className, colors })
         </Box>
       )}
 
-      {/* Songs List */}
+      {/* Songs List - 2列レイアウト */}
       <Box
         sx={{
           flex: 1,
           overflow: 'hidden',
           pl: 2,
           display: 'flex',
-          flexDirection: 'column',
-          gap: 3.5,
+          flexDirection: limitedItems.length <= 10 ? 'column' : 'row',
+          gap: limitedItems.length <= 10 ? gap : 4,
+          minHeight: 0, // flexアイテムの最小高さを0に設定
         }}
       >
-        {items.map((item) => (
-          <Box key={item.id} sx={{}}>
-            <Typography
+        {limitedItems.length <= 10 ? (
+          // 10曲以下は1列レイアウト
+          limitedItems.map((item, index) => (
+            <SongItem
+              key={item.id}
+              item={item}
+              displayIndex={index + 1}
+              fontSize={fontSize}
+              colors={colors}
+            />
+          ))
+        ) : (
+          // 11曲以上は2列レイアウト
+          <>
+            {/* 左列 (1-10曲) */}
+            <Box
               sx={{
-                fontSize: fontSize,
-                color: colors.text,
-                fontWeight: 400,
-                lineHeight: 1.2,
-                mb: item.note ? 0.5 : 0,
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: gap,
+                overflow: 'hidden',
+                minHeight: 0,
               }}
             >
-              {item.title}
-            </Typography>
-            {item.note && (
-              <Typography
-                sx={{
-                  fontSize: '16px',
-                  color: colors.secondaryText,
-                  fontWeight: 300,
-                  pl: 0,
-                }}
-              >
-                {item.note}
-              </Typography>
-            )}
-          </Box>
-        ))}
+              {limitedItems.slice(0, 10).map((item, index) => (
+                <SongItem
+                  key={item.id}
+                  item={item}
+                  displayIndex={index + 1}
+                  fontSize={fontSize}
+                  colors={colors}
+                />
+              ))}
+            </Box>
+
+            {/* 右列 (11-20曲) */}
+            <Box
+              sx={{
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: gap,
+                overflow: 'hidden',
+                minHeight: 0,
+              }}
+            >
+              {limitedItems.slice(10, 20).map((item, index) => (
+                <SongItem
+                  key={item.id}
+                  item={item}
+                  displayIndex={index + 11}
+                  fontSize={fontSize}
+                  colors={colors}
+                />
+              ))}
+            </Box>
+          </>
+        )}
       </Box>
 
       {/* Footer */}
@@ -194,6 +320,7 @@ export const BaseTheme: React.FC<BaseThemeProps> = ({ data, className, colors })
           pt: 2,
           textAlign: 'center',
           borderTop: `1px solid ${colors.borderColor}`,
+          flexShrink: 0, // フッターのサイズを固定
         }}
       >
         <Typography sx={{ fontSize: '20px', color: colors.footerText, fontWeight: 500 }}>
