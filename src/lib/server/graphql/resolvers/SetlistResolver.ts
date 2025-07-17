@@ -419,17 +419,13 @@ export class SetlistResolver {
     return true;
   }
 
-  // Field resolver for items relation
+  // Field resolver for items relation - N+1問題を避けるため、既にロードされたデータを返す
   @FieldResolver(() => [SetlistItem])
-  async items(@Root() setlist: Setlist, @Ctx() ctx: Context): Promise<SetlistItem[]> {
-    const setlistData = await ctx.prisma.setlist.findUnique({
-      where: { id: setlist.id },
-      include: {
-        items: {
-          orderBy: { order: 'asc' },
-        },
-      },
-    });
-    return (setlistData?.items || []) as SetlistItem[];
+  async items(@Root() setlist: Setlist): Promise<SetlistItem[]> {
+    // setlistオブジェクトに既にitemsがロードされている場合はそれを返す
+    const setlistWithItems = setlist as Setlist & { items?: SetlistItem[] };
+
+    // itemsが存在する場合はそれを返し、存在しない場合は空配列を返す
+    return setlistWithItems.items || [];
   }
 }
