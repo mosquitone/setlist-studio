@@ -195,7 +195,30 @@ pnpm generate     # Prismaクライアント生成
 
 詳細なアーキテクチャ情報は [CLAUDE.md](./CLAUDE.md) を参照してください。
 
-**GraphQLアーキテクチャの詳細解説**: [GraphQL-Architecture-Guide.md](./docs/GraphQL-Architecture-Guide.md) でレストラン比喩を使った分かりやすい解説を提供しています。
+**GraphQLアーキテクチャの詳細解説**: [GraphQL-Architecture-Guide.md](./docs/api/graphql/GraphQL-Architecture-Guide.md) でレストラン比喩を使った分かりやすい解説を提供しています。
+
+### ドキュメント構造
+
+```
+docs/
+├── api/                    # API関連ドキュメント
+│   ├── API_ROUTES.md      # REST APIエンドポイント詳細
+│   └── graphql/           # GraphQL専門ドキュメント
+│       ├── GraphQL-Architecture-Guide.md    # アーキテクチャガイド
+│       ├── GraphQL-Beginner-Guide.md        # 初心者向けガイド
+│       └── GraphQL-Libraries-Guide.md       # ライブラリ詳細
+├── deployment/            # デプロイ・運用関連
+│   ├── VERCEL_DEPLOYMENT_GUIDE.md          # Vercelデプロイガイド
+│   ├── SUPABASE_OPTIMIZATION_CHECKLIST.md  # Supabase最適化
+│   └── SUPABASE_RLS_SETUP_FINAL.sql        # RLS設定
+├── development/           # 開発関連
+│   └── PRISMA_OPTIMIZATION_GUIDE.md        # Prisma最適化
+├── security/              # セキュリティ関連
+│   ├── SECURITY.md                         # セキュリティアーキテクチャ
+│   └── SECURITY_TEST_PLAN.md               # セキュリティテストプラン
+└── project/               # プロジェクト管理
+    └── HISTORY.md                          # 更新履歴
+```
 
 ### セキュリティ
 
@@ -231,13 +254,13 @@ pnpm generate     # Prismaクライアント生成
 - **監査ログ**: 全セキュリティイベントの永続化
 - **Docker強化**: セキュリティ設定済みコンテナ
 
-詳細なセキュリティ仕様は [CLAUDE.md](./CLAUDE.md#security-architecture-2025-07-01) を参照してください。
+詳細なセキュリティ仕様は [SECURITY.md](./docs/security/SECURITY.md) を参照してください。
 
 ## 本番デプロイ（Vercel）
 
 ### デプロイ手順
 
-詳細なデプロイ手順は [VERCEL_DEPLOYMENT_GUIDE.md](./docs/VERCEL_DEPLOYMENT_GUIDE.md) を参照してください。
+詳細なデプロイ手順は [VERCEL_DEPLOYMENT_GUIDE.md](./docs/deployment/VERCEL_DEPLOYMENT_GUIDE.md) を参照してください。
 
 ### 必要な環境変数
 
