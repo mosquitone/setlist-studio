@@ -12,14 +12,7 @@ export function SampleSetlistsSection() {
       <Box textAlign="center" sx={{ mb: 2 }}>
         <Typography variant="body1" color="text.secondary" component="div">
           <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1 }}>
-            <Image
-              src="/setlist-studio-logo.png"
-              alt="Setlist Studio"
-              width={130}
-              height={35}
-              style={{ objectFit: 'contain' }}
-            />
-            で作成できるセットリストの例をご覧ください
+            setlist studioで作成できるセットリストの例をご覧ください
           </Box>
         </Typography>
       </Box>
