@@ -1,4 +1,4 @@
-import { Button as MuiButton, ButtonProps as MuiButtonProps } from '@mui/material';
+import { Button as MuiButton, ButtonProps as MuiButtonProps, CircularProgress } from '@mui/material';
 import { SxProps, Theme } from '@mui/material/styles';
 import { forwardRef } from 'react';
 
@@ -87,7 +87,16 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ]}
         {...props}
       >
-        {loading ? 'Loading...' : props.children}
+        {loading ? (
+          <CircularProgress
+            size={20}
+            sx={{
+              color: 'inherit',
+            }}
+          />
+        ) : (
+          props.children
+        )}
       </MuiButton>
     );
   },

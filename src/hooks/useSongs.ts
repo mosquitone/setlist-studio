@@ -17,7 +17,7 @@ export function useSongs() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedSongs, setSelectedSongs] = useState<string[]>([]);
 
-  const [updateSong] = useMutation(UPDATE_SONG, {
+  const [updateSong, { loading: updateLoading }] = useMutation(UPDATE_SONG, {
     refetchQueries: [{ query: GET_SONGS }],
   });
 
@@ -110,6 +110,7 @@ export function useSongs() {
     songToDelete,
     isDeleteDialogOpen,
     deleteLoading,
+    updateLoading,
     selectedSongs,
     handleEditSong,
     handleSaveSong,

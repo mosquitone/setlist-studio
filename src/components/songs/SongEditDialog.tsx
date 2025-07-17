@@ -10,9 +10,16 @@ interface SongEditDialogProps {
   song: Song | null;
   onClose: () => void;
   onSave: (songData: Omit<Song, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
+  loading?: boolean;
 }
 
-export function SongEditDialog({ open, song, onClose, onSave }: SongEditDialogProps) {
+export function SongEditDialog({
+  open,
+  song,
+  onClose,
+  onSave,
+  loading = false,
+}: SongEditDialogProps) {
   const [formValues, setFormValues] = useState<Omit<Song, 'id' | 'createdAt' | 'updatedAt'>>({
     title: '',
     artist: '',
@@ -55,7 +62,7 @@ export function SongEditDialog({ open, song, onClose, onSave }: SongEditDialogPr
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={loading ? undefined : onClose} maxWidth="sm" fullWidth>
       <DialogTitle>楽曲を編集</DialogTitle>
       <DialogContent>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
@@ -98,10 +105,12 @@ export function SongEditDialog({ open, song, onClose, onSave }: SongEditDialogPr
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button variant="outlined" onClick={onClose}>
+        <Button variant="outlined" onClick={onClose} disabled={loading}>
           キャンセル
         </Button>
-        <Button onClick={handleSave}>保存</Button>
+        <Button onClick={handleSave} loading={loading}>
+          保存
+        </Button>
       </DialogActions>
     </Dialog>
   );
