@@ -1,67 +1,112 @@
 import { gql } from '@apollo/client';
 
+// GraphQL Fragments - フィールド重複解消のための共通定義
+// エクスポートして他のファイルからも再利用可能にする
+
+export const SONG_FIELDS = gql`
+  fragment SongFields on Song {
+    id
+    title
+    artist
+    duration
+    key
+    tempo
+    notes
+    createdAt
+    updatedAt
+  }
+`;
+
+export const USER_FIELDS = gql`
+  fragment UserFields on User {
+    id
+    email
+    username
+    createdAt
+    updatedAt
+  }
+`;
+
+export const SETLIST_ITEM_FIELDS = gql`
+  fragment SetlistItemFields on SetlistItem {
+    id
+    title
+    note
+    order
+  }
+`;
+
+export const SETLIST_ITEM_FIELDS_WITH_SETLIST_ID = gql`
+  fragment SetlistItemFieldsWithSetlistId on SetlistItem {
+    id
+    title
+    note
+    order
+    setlistId
+  }
+`;
+
+// 条件付きフラグメント生成関数 - より柔軟な再利用を可能にする
+export const createSetlistFields = (includeUserId: boolean = false) => gql`
+  fragment SetlistFields${includeUserId ? 'WithUserId' : ''} on Setlist {
+    id
+    title
+    bandName
+    eventName
+    eventDate
+    openTime
+    startTime
+    theme
+    isPublic
+    ${includeUserId ? 'userId' : ''}
+    createdAt
+    updatedAt
+    items {
+      ...SetlistItemFields
+    }
+  }
+  ${SETLIST_ITEM_FIELDS}
+`;
+
+// 後方互換性のための定数
+export const SETLIST_FIELDS = createSetlistFields(false);
+export const SETLIST_FIELDS_WITH_USER_ID = createSetlistFields(true);
+
+// Song operations
 export const GET_SONGS = gql`
   query GetSongs {
     songs {
-      id
-      title
-      artist
-      duration
-      key
-      tempo
-      notes
-      createdAt
-      updatedAt
+      ...SongFields
     }
   }
+  ${SONG_FIELDS}
 `;
 
 export const GET_SONG = gql`
   query GetSong($id: ID!) {
     song(id: $id) {
-      id
-      title
-      artist
-      duration
-      key
-      tempo
-      notes
-      createdAt
-      updatedAt
+      ...SongFields
     }
   }
+  ${SONG_FIELDS}
 `;
 
 export const CREATE_SONG = gql`
   mutation CreateSong($input: CreateSongInput!) {
     createSong(input: $input) {
-      id
-      title
-      artist
-      duration
-      key
-      tempo
-      notes
-      createdAt
-      updatedAt
+      ...SongFields
     }
   }
+  ${SONG_FIELDS}
 `;
 
 export const UPDATE_SONG = gql`
   mutation UpdateSong($id: ID!, $input: UpdateSongInput!) {
     updateSong(id: $id, input: $input) {
-      id
-      title
-      artist
-      duration
-      key
-      tempo
-      notes
-      createdAt
-      updatedAt
+      ...SongFields
     }
   }
+  ${SONG_FIELDS}
 `;
 
 export const DELETE_SONG = gql`
@@ -81,14 +126,11 @@ export const REGISTER = gql`
     register(input: $input) {
       token
       user {
-        id
-        email
-        username
-        createdAt
-        updatedAt
+        ...UserFields
       }
     }
   }
+  ${USER_FIELDS}
 `;
 
 export const LOGIN = gql`
@@ -96,38 +138,20 @@ export const LOGIN = gql`
     login(input: $input) {
       token
       user {
-        id
-        email
-        username
-        createdAt
-        updatedAt
+        ...UserFields
       }
     }
   }
+  ${USER_FIELDS}
 `;
 
 export const GET_SETLISTS = gql`
   query GetSetlists {
     setlists {
-      id
-      title
-      bandName
-      eventName
-      eventDate
-      openTime
-      startTime
-      theme
-      isPublic
-      createdAt
-      updatedAt
-      items {
-        id
-        title
-        note
-        order
-      }
+      ...SetlistFields
     }
   }
+  ${SETLIST_FIELDS}
 `;
 
 export const GET_BAND_NAMES = gql`
@@ -139,74 +163,28 @@ export const GET_BAND_NAMES = gql`
 export const GET_SETLIST = gql`
   query GetSetlist($id: ID!) {
     setlist(id: $id) {
-      id
-      title
-      bandName
-      eventName
-      eventDate
-      openTime
-      startTime
-      theme
-      isPublic
-      userId
-      createdAt
-      updatedAt
-      items {
-        id
-        title
-        note
-        order
-      }
+      ...SetlistFieldsWithUserId
     }
   }
+  ${SETLIST_FIELDS_WITH_USER_ID}
 `;
 
 export const CREATE_SETLIST = gql`
   mutation CreateSetlist($input: CreateSetlistInput!) {
     createSetlist(input: $input) {
-      id
-      title
-      bandName
-      eventName
-      eventDate
-      openTime
-      startTime
-      theme
-      isPublic
-      createdAt
-      updatedAt
-      items {
-        id
-        title
-        note
-        order
-      }
+      ...SetlistFields
     }
   }
+  ${SETLIST_FIELDS}
 `;
 
 export const UPDATE_SETLIST = gql`
   mutation UpdateSetlist($id: ID!, $input: UpdateSetlistInput!) {
     updateSetlist(id: $id, input: $input) {
-      id
-      title
-      bandName
-      eventName
-      eventDate
-      openTime
-      startTime
-      theme
-      isPublic
-      createdAt
-      updatedAt
-      items {
-        id
-        title
-        note
-        order
-      }
+      ...SetlistFields
     }
   }
+  ${SETLIST_FIELDS}
 `;
 
 export const DELETE_SETLIST = gql`
@@ -224,25 +202,19 @@ export const TOGGLE_SETLIST_VISIBILITY = gql`
 export const CREATE_SETLIST_ITEM = gql`
   mutation CreateSetlistItem($input: CreateSetlistItemInput!) {
     createSetlistItem(input: $input) {
-      id
-      title
-      note
-      order
-      setlistId
+      ...SetlistItemFieldsWithSetlistId
     }
   }
+  ${SETLIST_ITEM_FIELDS_WITH_SETLIST_ID}
 `;
 
 export const UPDATE_SETLIST_ITEM = gql`
   mutation UpdateSetlistItem($id: ID!, $input: UpdateSetlistItemInput!) {
     updateSetlistItem(id: $id, input: $input) {
-      id
-      title
-      note
-      order
-      setlistId
+      ...SetlistItemFieldsWithSetlistId
     }
   }
+  ${SETLIST_ITEM_FIELDS_WITH_SETLIST_ID}
 `;
 
 export const DELETE_SETLIST_ITEM = gql`
@@ -254,13 +226,10 @@ export const DELETE_SETLIST_ITEM = gql`
 export const REORDER_SETLIST_ITEMS = gql`
   mutation ReorderSetlistItems($setlistId: ID!, $itemIds: [ID!]!) {
     reorderSetlistItems(setlistId: $setlistId, itemIds: $itemIds) {
-      id
-      title
-      note
-      order
-      setlistId
+      ...SetlistItemFieldsWithSetlistId
     }
   }
+  ${SETLIST_ITEM_FIELDS_WITH_SETLIST_ID}
 `;
 
 export const GET_ME_QUERY = gql`

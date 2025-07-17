@@ -1,6 +1,38 @@
 // 統一された入力検証ルール
 // バックエンド（class-validator）とフロントエンド（Yup）で共通使用
 
+// 共通文字パターン定数 - DRY原則に従って重複を排除
+const CHARACTER_SETS = {
+  // 日本語文字セット
+  HIRAGANA: '\u3040-\u309F',
+  KATAKANA: '\u30A0-\u30FF',
+  KANJI: '\u4E00-\u9FAF',
+
+  // 共通記号セット
+  BASIC_SYMBOLS: '\-()（）.。、,!！?？',
+  EXTENDED_SYMBOLS: '\-()（）.。、,!！?？&',
+  QUOTE_SYMBOLS: '\-()（）.。、,!！?？\'"\"&',
+
+  // 改行文字
+  NEWLINES: '\n\r',
+} as const;
+
+// 統合された再利用可能なパターン構築関数
+// DRY原則に従い、1つの関数で必須/任意の両方のパターンを生成
+const createPattern = (additionalChars: string = '', required: boolean = true): RegExp => {
+  const japaneseChars = `${CHARACTER_SETS.HIRAGANA}${CHARACTER_SETS.KATAKANA}${CHARACTER_SETS.KANJI}`;
+  const pattern = `[\\w\\s${japaneseChars}${additionalChars}]`;
+  const quantifier = required ? '+' : '*';
+  return new RegExp(`^${pattern}${quantifier}$`);
+};
+
+// 後方互換性のための便利関数
+const createOptionalPattern = (additionalChars: string = ''): RegExp =>
+  createPattern(additionalChars, false);
+
+// エクスポートして他のファイルからも利用可能にする
+export { createPattern, createOptionalPattern };
+
 export const ValidationRules = {
   // パスワード関連
   password: {
@@ -21,7 +53,7 @@ export const ValidationRules = {
   username: {
     minLength: 1,
     maxLength: 50,
-    pattern: /^[a-zA-Z0-9_\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]+$/,
+    pattern: createPattern('_', true),
     message: 'ユーザー名は英数字、ひらがな、カタカナ、漢字、アンダースコアのみ使用可能です',
   },
 
@@ -29,20 +61,20 @@ export const ValidationRules = {
   setlistTitle: {
     minLength: 1,
     maxLength: 100,
-    pattern: /^[\w\s\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF\-()（）.。、,!！?？]+$/,
+    pattern: createPattern(CHARACTER_SETS.BASIC_SYMBOLS, true),
     message: 'セットリスト名は100文字以内で、使用可能な文字のみ入力してください',
   },
 
   bandName: {
     minLength: 1,
     maxLength: 100,
-    pattern: /^[\w\s\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF\-()（）.。、,!！?？&]+$/,
+    pattern: createPattern(CHARACTER_SETS.EXTENDED_SYMBOLS, true),
     message: 'バンド名は100文字以内で、使用可能な文字のみ入力してください',
   },
 
   eventName: {
     maxLength: 200,
-    pattern: /^[\w\s\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF\-()（）.。、,!！?？&]*$/,
+    pattern: createPattern(CHARACTER_SETS.EXTENDED_SYMBOLS, false),
     message: 'イベント名は200文字以内で、使用可能な文字のみ入力してください',
   },
 
@@ -50,13 +82,13 @@ export const ValidationRules = {
   songTitle: {
     minLength: 1,
     maxLength: 200,
-    pattern: /^[\w\s\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF\-()（）.。、,!！?？'"\"&]+$/,
+    pattern: createPattern(CHARACTER_SETS.QUOTE_SYMBOLS, true),
     message: '楽曲名は200文字以内で、使用可能な文字のみ入力してください',
   },
 
   artist: {
     maxLength: 100,
-    pattern: /^[\w\s\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF\-()（）.。、,!！?？&]*$/,
+    pattern: createPattern(CHARACTER_SETS.EXTENDED_SYMBOLS, false),
     message: 'アーティスト名は100文字以内で、使用可能な文字のみ入力してください',
   },
 
@@ -79,7 +111,7 @@ export const ValidationRules = {
 
   notes: {
     maxLength: 500,
-    pattern: /^[\w\s\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF\-()（）.。、,!！?？'"\"&\n\r]*$/,
+    pattern: createPattern(CHARACTER_SETS.QUOTE_SYMBOLS + CHARACTER_SETS.NEWLINES, false),
     message: 'ノートは500文字以内で、使用可能な文字のみ入力してください',
   },
 
