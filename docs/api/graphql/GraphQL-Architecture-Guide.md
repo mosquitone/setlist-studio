@@ -4,8 +4,11 @@
 
 ## 📚 関連ドキュメント
 
-- **[GraphQLライブラリガイド](./GraphQL-Libraries-Guide.md)** - 使用ライブラリの詳細解説
 - **[GraphQL初心者ガイド](./GraphQL-Beginner-Guide.md)** - GraphQL入門とレストラン比喩
+- **[GraphQLライブラリガイド](./GraphQL-Libraries-Guide.md)** - 使用ライブラリの詳細解説
+- **[PrismaとGraphQLの統合ガイド](../../database/Prisma-GraphQL-Integration-Guide.md)** - 具体的な実装方法とベストプラクティス
+
+**💡 このガイドの位置づけ**: GraphQLアーキテクチャの全体像を把握し、具体的な実装は統合ガイドで学習してください。
 
 ## 🏢 全体の仕組み（レストラン例）
 
@@ -127,12 +130,12 @@ export class SetlistResolver {
   @Mutation(() => Setlist)
   async createSetlist(@Arg("input") input: CreateSetlistInput): Promise<Setlist> {
     // 新しいセットリストを作成
-    return prisma.setlist.create({
-      data: { ...input }
-    })
+    return prisma.setlist.create({ data: { ...input } })
   }
 }
 ```
+
+**詳細なResolverパターンについては、[PrismaとGraphQLの統合ガイド](../../database/Prisma-GraphQL-Integration-Guide.md)を参照してください。**
 
 **役割**: 
 - 専門分野の料理（データ操作）を担当
@@ -321,53 +324,27 @@ export async function POST(request: NextRequest) {
 
 ### Phase 2: データベース設計
 1. **Prismaスキーマ設計** (`prisma/schema.prisma`)
-   ```prisma
-   model User {
-     id       String @id @default(cuid())
-     email    String @unique
-     setlists Setlist[]
-   }
-   ```
-
 2. **マイグレーション実行**
    ```bash
    pnpm db:push
    pnpm generate
    ```
 
+**詳細な設計方法については、[PrismaとGraphQLの統合ガイド](../../database/Prisma-GraphQL-Integration-Guide.md)を参照してください。**
+
 ### Phase 3: GraphQLスキーマ設計
 1. **Type定義** (`src/lib/server/graphql/types/`)
-   ```typescript
-   @ObjectType()
-   export class User {
-     @Field()
-     id: string;
-     
-     @Field()
-     email: string;
-   }
-   ```
-
 2. **Input型定義**
-   ```typescript
-   @InputType()
-   export class CreateUserInput {
-     @Field()
-     email: string;
-   }
-   ```
+3. **スキーマとデータベースの対応関係**
+
+**具体的な実装例とベストプラクティスについては、[PrismaとGraphQLの統合ガイド](../../database/Prisma-GraphQL-Integration-Guide.md)を参照してください。**
 
 ### Phase 4: Resolver実装
 1. **CRUD操作の実装** (`src/lib/server/graphql/resolvers/`)
-   ```typescript
-   @Resolver(User)
-   export class UserResolver {
-     @Query(() => [User])
-     async users(): Promise<User[]> {
-       return prisma.user.findMany();
-     }
-   }
-   ```
+2. **リレーション処理の最適化**
+3. **エラーハンドリング**
+
+**詳細な実装パターンとパフォーマンス最適化については、[PrismaとGraphQLの統合ガイド](../../database/Prisma-GraphQL-Integration-Guide.md)を参照してください。**
 
 ### Phase 5: クライアント統合
 1. **GraphQL Operations定義** (`src/lib/server/graphql/apollo-operations.ts`)
