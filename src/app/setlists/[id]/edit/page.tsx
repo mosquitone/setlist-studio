@@ -8,6 +8,7 @@ import { GET_SETLIST, UPDATE_SETLIST } from '@/lib/server/graphql/apollo-operati
 import SetlistForm from '@/components/forms/SetlistForm';
 import { SetlistFormValues } from '@/types/components';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { formatDateForInput } from '@/lib/shared/dateUtils';
 
 export default function EditSetlistPage() {
   const params = useParams();
@@ -49,7 +50,7 @@ export default function EditSetlistPage() {
     title: setlist.title || '',
     bandName: setlist.bandName || '',
     eventName: setlist.eventName || '',
-    eventDate: setlist.eventDate || '',
+    eventDate: formatDateForInput(setlist.eventDate),
     openTime: setlist.openTime || '',
     startTime: setlist.startTime || '',
     theme: setlist.theme || 'black',

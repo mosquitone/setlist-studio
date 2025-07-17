@@ -39,3 +39,12 @@ export const formatEventDateJST = (dateString: string | null | undefined): strin
     day: 'numeric',
   });
 };
+
+export const formatDateForInput = (dateString: string | null | undefined): string => {
+  if (!dateString) return '';
+
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return '';
+
+  return date.toISOString().split('T')[0];
+};
