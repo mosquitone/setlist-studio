@@ -195,8 +195,8 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 /                           # Next.jsアプリケーションルート
 ├── docs/                   # 技術ドキュメント（構造化済み）
 │   ├── api/                # API・GraphQL関連ドキュメント
+│   ├── database/           # データベース・Prisma関連ドキュメント
 │   ├── deployment/         # デプロイ・運用関連ドキュメント
-│   ├── development/        # 開発関連ドキュメント
 │   ├── security/           # セキュリティ関連ドキュメント
 │   └── project/            # プロジェクト管理ドキュメント
 ├── src/app/                # Next.js App Router
@@ -231,8 +231,8 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 
 **docs/**: 技術ドキュメント（構造化済み）
 - `api/`: API Routes・GraphQL関連ドキュメント
+- `database/`: Prisma関連ドキュメント（初心者ガイド・最適化・GraphQL統合）
 - `deployment/`: Vercelデプロイ・Supabase設定
-- `development/`: Prisma最適化ガイド
 - `security/`: セキュリティアーキテクチャ・テストプラン
 - `project/`: 更新履歴・プロジェクト管理
 
