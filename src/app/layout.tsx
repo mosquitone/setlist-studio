@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     default: 'Setlist Studio - バンド向けセットリスト管理ツール',
   },
   description:
-    'あなたの楽曲を管理して、素敵なセットリストを作成しましょう。Setlist Studioでプロフェッショナルなパフォーマンスを実現。',
+    'ステージで利用できるアーティスト向けのセットリスト作成アプリです。エクセルや手書きの時代はもう終わりです。楽曲管理から高品質なセットリスト生成まで。',
   keywords: [
     'セットリスト',
     'バンド',
@@ -40,14 +40,14 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Setlist Studio - バンド向けセットリスト管理ツール',
     description:
-      'あなたの楽曲を管理して、素敵なセットリストを作成しましょう。Setlist Studioでプロフェッショナルなパフォーマンスを実現。',
+      'ステージで利用できるアーティスト向けのセットリスト作成アプリです。エクセルや手書きの時代はもう終わりです。楽曲管理から高品質なセットリスト生成まで。',
     url: 'https://setlist-studio.vercel.app',
     siteName: 'Setlist Studio',
     locale: 'ja_JP',
     type: 'website',
     images: [
       {
-        url: '/logo.png',
+        url: '/setlist-studio-logo.png',
         width: 1200,
         height: 630,
         alt: 'Setlist Studio',
@@ -58,8 +58,8 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Setlist Studio - バンド向けセットリスト管理ツール',
     description:
-      'あなたの楽曲を管理して、素敵なセットリストを作成しましょう。Setlist Studioでプロフェッショナルなパフォーマンスを実現。',
-    images: ['/logo.png'],
+      'ステージで利用できるアーティスト向けのセットリスト作成アプリです。エクセルや手書きの時代はもう終わりです。楽曲管理から高品質なセットリスト生成まで。',
+    images: ['/setlist-studio-logo.png'],
   },
   robots: {
     index: true,
@@ -68,10 +68,6 @@ export const metadata: Metadata = {
       index: true,
       follow: true,
     },
-  },
-  icons: {
-    icon: [{ url: '/favicon.png', type: 'image/png' }],
-    apple: [{ url: '/favicon.png', sizes: '180x180', type: 'image/png' }],
   },
 };
 
@@ -82,10 +78,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja">
-      <head>
-        <link rel="icon" href="/favicon.png" type="image/png" />
-        <link rel="apple-touch-icon" href="/favicon.png" />
-      </head>
       <body className={inter.className}>
         <ApolloProviderWrapper>
           <MUIProvider>
