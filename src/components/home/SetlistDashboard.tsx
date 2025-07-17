@@ -69,7 +69,7 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
   };
   if (setlistsLoading) {
     return (
-      <Box sx={{ mb: 8 }}>
+      <Box>
         <Typography variant="h4" component="h2" gutterBottom sx={{ mb: 4 }}>
           あなたのセットリスト
         </Typography>
@@ -84,7 +84,7 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
 
   if (!setlistsData?.setlists?.length) {
     return (
-      <Box sx={{ mb: 8 }}>
+      <Box>
         <Typography variant="h4" component="h2" gutterBottom sx={{ mb: 4 }}>
           あなたのセットリスト
         </Typography>
@@ -111,7 +111,7 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
   }
 
   return (
-    <Box sx={{ mb: 8 }}>
+    <Box>
       <Typography variant="h4" component="h2" gutterBottom sx={{ mb: 4 }}>
         あなたのセットリスト
       </Typography>

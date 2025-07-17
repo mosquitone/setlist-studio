@@ -5,11 +5,11 @@ import Image from 'next/image';
 
 export function SampleSetlistsSection() {
   return (
-    <Box sx={{ mb: 8 }}>
-      <Typography variant="h4" component="h2" textAlign="center" gutterBottom sx={{ mb: 4 }}>
+    <Box>
+      <Typography variant="h4" component="h2" textAlign="center" gutterBottom sx={{ mb: 2 }}>
         セットリストサンプル
       </Typography>
-      <Box textAlign="center" sx={{ mb: 6 }}>
+      <Box textAlign="center" sx={{ mb: 2 }}>
         <Typography variant="body1" color="text.secondary" component="div">
           <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1 }}>
             <Image
@@ -38,7 +38,7 @@ export function SampleSetlistsSection() {
               },
             }}
           >
-            <CardContent sx={{ p: 2 }}>
+            <CardContent sx={{ p: 1 }}>
               <Typography variant="h6" component="h3" textAlign="center" sx={{ mb: 2 }}>
                 Black Theme
               </Typography>
@@ -80,7 +80,7 @@ export function SampleSetlistsSection() {
               },
             }}
           >
-            <CardContent sx={{ p: 2 }}>
+            <CardContent sx={{ p: 1 }}>
               <Typography variant="h6" component="h3" textAlign="center" sx={{ mb: 2 }}>
                 White Theme
               </Typography>

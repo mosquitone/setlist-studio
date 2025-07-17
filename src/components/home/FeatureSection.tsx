@@ -11,7 +11,7 @@ export function FeatureSection() {
   const { isLoggedIn } = useAuth();
 
   return (
-    <Box sx={{ mb: 8 }}>
+    <Box>
       <Typography variant="h4" component="h2" textAlign="center" gutterBottom sx={{ mb: 4 }}>
         主な機能
       </Typography>

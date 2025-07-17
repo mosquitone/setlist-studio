@@ -44,7 +44,14 @@ export default function HomeClient() {
 
   return (
     <Container maxWidth="lg">
-      <Box sx={{ py: 4 }}>
+      <Box
+        sx={{
+          py: 4,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 6,
+        }}
+      >
         <WelcomeSection />
         <FeatureSection />
         <SampleSetlistsSection />
