@@ -160,6 +160,9 @@ export default function SetlistForm({
                 <Typography variant="h6" gutterBottom>
                   楽曲リスト
                 </Typography>
+                <Alert severity="info" sx={{ mb: 2 }}>
+                  楽曲の追加は最大20曲までです。
+                </Alert>
 
                 <FieldArray name="items">
                   {({ push, remove, move }) => {
