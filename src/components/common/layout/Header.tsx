@@ -10,7 +10,7 @@ import { HeaderLogo } from './header/HeaderLogo';
 import { DesktopNavigation } from './header/DesktopNavigation';
 import { MobileNavigation } from './header/MobileNavigation';
 import { UserMenu } from './header/UserMenu';
-import { LoginLink } from '../auth/LoginLink';
+import { AuthLink } from '../auth/LoginLink';
 import { authenticatedNavigationItems, publicNavigationItems } from './header/navigationItems';
 
 /**
@@ -84,7 +84,10 @@ export default function Header() {
             ) : isLoggedIn ? (
               <UserMenu onAuthClick={handleLogout} />
             ) : (
-              <LoginLink variant="header" />
+              <Box sx={{ display: 'flex', gap: 2 }}>
+                <AuthLink variant="header" type="login" />
+                <AuthLink variant="header" type="register" />
+              </Box>
             )}
           </Box>
         </Toolbar>
