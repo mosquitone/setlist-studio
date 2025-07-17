@@ -8,6 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run",
     "generate": "dotenv -e .env.local -- prisma generate",
     "generate:schema": "dotenv -e .env.local -- tsx scripts/generate-schema.ts",
     "db:push": "dotenv -e .env.local -- prisma db push",
@@ -58,6 +61,7 @@
     "@types/terser-webpack-plugin": "^5.2.0",
     "@typescript-eslint/eslint-plugin": "^8.35.0",
     "@typescript-eslint/parser": "^8.35.0",
+    "@vitest/ui": "^3.2.4",
     "dotenv-cli": "^8.0.0",
     "eslint": "^9",
     "eslint-config-next": "15.3.4",
@@ -70,7 +74,8 @@
     "prisma": "^6.11.0",
     "terser-webpack-plugin": "^5.3.14",
     "tsx": "^4.20.3",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^3.2.4"
   },
   "engines": {
     "node": "20.11.1"
