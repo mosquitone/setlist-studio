@@ -5,7 +5,7 @@ import { LogoOfficialLink } from '@/components/common/LogoOfficialLink';
 
 export function WelcomeSection() {
   return (
-    <Box sx={{ textAlign: 'center', mb: 6 }}>
+    <Box sx={{ textAlign: 'center' }}>
       <Stack
         direction={{ xs: 'column', md: 'row' }}
         spacing={{ xs: 1, md: 2 }}
