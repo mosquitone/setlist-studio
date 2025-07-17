@@ -1,4 +1,8 @@
-import { Button as MuiButton, ButtonProps as MuiButtonProps, CircularProgress } from '@mui/material';
+import {
+  Button as MuiButton,
+  ButtonProps as MuiButtonProps,
+  CircularProgress,
+} from '@mui/material';
 import { SxProps, Theme } from '@mui/material/styles';
 import { forwardRef } from 'react';
 

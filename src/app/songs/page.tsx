@@ -17,8 +17,10 @@ export default function SongsPage() {
     isEditDialogOpen,
     songToDelete,
     isDeleteDialogOpen,
+    isMultipleDeleteDialogOpen,
     deleteLoading,
     updateLoading,
+    deleteMultipleLoading,
     selectedSongs,
     handleEditSong,
     handleSaveSong,
@@ -29,13 +31,20 @@ export default function SongsPage() {
     handleToggleSelection,
     handleSelectAll,
     handleCreateSetlist,
+    handleDeleteSelectedClick,
+    handleDeleteSelectedConfirm,
+    handleDeleteSelectedCancel,
   } = useSongs();
 
   return (
     <ProtectedRoute>
       <Container maxWidth="lg">
         <Box sx={{ py: 4 }}>
-          <SongPageHeader selectedSongs={selectedSongs} onCreateSetlist={handleCreateSetlist} />
+          <SongPageHeader
+            selectedSongs={selectedSongs}
+            onCreateSetlist={handleCreateSetlist}
+            onDeleteSelected={handleDeleteSelectedClick}
+          />
 
           {error && (
             <Alert severity="error" sx={{ mb: 3 }}>
@@ -69,6 +78,17 @@ export default function SongsPage() {
             itemName={songToDelete?.title || ''}
             itemType="楽曲"
             loading={deleteLoading}
+          />
+
+          <DeleteConfirmModal
+            open={isMultipleDeleteDialogOpen}
+            onClose={handleDeleteSelectedCancel}
+            onConfirm={handleDeleteSelectedConfirm}
+            title="複数の楽曲を削除"
+            itemName={`${selectedSongs.length}曲`}
+            itemType="楽曲"
+            description="選択した楽曲をすべて削除します。"
+            loading={deleteMultipleLoading}
           />
         </Box>
       </Container>

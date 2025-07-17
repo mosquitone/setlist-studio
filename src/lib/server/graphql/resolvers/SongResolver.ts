@@ -175,4 +175,35 @@ export class SongResolver {
 
     return true;
   }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(AuthMiddleware)
+  async deleteMultipleSongs(
+    @Arg('ids', () => [ID]) ids: string[],
+    @Ctx() ctx: Context,
+  ): Promise<boolean> {
+    // ユーザーが所有する楽曲のみを削除対象とする
+    const songsToDelete = await ctx.prisma.song.findMany({
+      where: {
+        id: { in: ids },
+        userId: ctx.userId,
+      },
+      select: { id: true },
+    });
+
+    if (songsToDelete.length === 0) {
+      throw new Error('No songs found to delete');
+    }
+
+    const songIdsToDelete = songsToDelete.map((song) => song.id);
+
+    await ctx.prisma.song.deleteMany({
+      where: {
+        id: { in: songIdsToDelete },
+        userId: ctx.userId,
+      },
+    });
+
+    return true;
+  }
 }

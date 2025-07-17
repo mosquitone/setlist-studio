@@ -22,7 +22,6 @@ interface SetlistFormProps {
   loading: boolean;
   error?: Error | null;
   submitButtonText: string;
-  loadingButtonText: string;
   enableDragAndDrop?: boolean;
 }
 
@@ -36,7 +35,6 @@ interface SetlistFormProps {
  * @param loading - 送信中のローディング状態
  * @param error - エラーオブジェクト
  * @param submitButtonText - 送信ボタンのテキスト
- * @param loadingButtonText - ローディング中のボタンテキスト
  * @param enableDragAndDrop - ドラッグ&ドロップ機能の有効/無効
  */
 
@@ -118,7 +116,6 @@ export default function SetlistForm({
   loading,
   error,
   submitButtonText,
-  loadingButtonText,
   enableDragAndDrop = true,
 }: SetlistFormProps) {
   const { data: songsData } = useQuery(GET_SONGS);
