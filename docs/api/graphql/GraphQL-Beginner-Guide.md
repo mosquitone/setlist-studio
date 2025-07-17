@@ -437,22 +437,35 @@ query GetItems {
 // 問題のあるResolver
 @Resolver(Setlist)
 export class SetlistResolver {
-  @FieldResolver(() => [Song])
-  async songs(@Root() setlist: Setlist) {
+  @FieldResolver(() => [SetlistItem])
+  async items(@Root() setlist: Setlist, @Ctx() ctx: Context) {
     // 各セットリストごとに個別にクエリ実行（N+1問題）
-    return prisma.song.findMany({
-      where: { setlistId: setlist.id }
+    const setlistData = await ctx.prisma.setlist.findUnique({
+      where: { id: setlist.id },
+      include: { items: { orderBy: { order: 'asc' } } }
     })
+    return setlistData?.items || []
   }
 }
 
-// 解決策：DataLoader使用
+// 解決策：事前ロード + 既存データ利用
 @Resolver(Setlist)
 export class SetlistResolver {
-  @FieldResolver(() => [Song])
-  async songs(@Root() setlist: Setlist, @Ctx() { loaders }) {
-    // バッチ処理で効率的に取得
-    return loaders.songsBySetlistId.load(setlist.id)
+  // 1. Queryで事前にitemsを取得
+  @Query(() => [Setlist])
+  async setlists(@Ctx() ctx: Context) {
+    return ctx.prisma.setlist.findMany({
+      include: { 
+        items: { orderBy: { order: 'asc' } } // 事前ロード
+      }
+    })
+  }
+
+  // 2. FieldResolverでは既存データを返すのみ
+  @FieldResolver(() => [SetlistItem])
+  async items(@Root() setlist: Setlist) {
+    const setlistWithItems = setlist as Setlist & { items?: SetlistItem[] }
+    return setlistWithItems.items || [] // 追加クエリなし
   }
 }
 ```
