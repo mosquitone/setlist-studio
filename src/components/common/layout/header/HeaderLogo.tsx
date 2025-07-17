@@ -1,15 +1,20 @@
-import Box from '@mui/material/Box';
 import Link from 'next/link';
+import { BrandText } from '@/components/common/ui/BrandText';
 
 export function HeaderLogo() {
   return (
-    <Link href="/" passHref>
-      <Box
-        component="img"
-        src="/MQT_LOGO_BLACK.png"
-        alt="Logo"
-        sx={{ height: 40, cursor: 'pointer' }}
-      />
+    <Link href="/" passHref style={{ textDecoration: 'none' }}>
+      <BrandText
+        sx={{
+          cursor: 'pointer',
+          '&:hover': {
+            color: 'primary.dark',
+            transform: 'scale(1.02)',
+          },
+        }}
+      >
+        Setlist Studio
+      </BrandText>
     </Link>
   );
 }
