@@ -77,7 +77,7 @@ export default function GuidePage() {
           </Typography>
           <Typography variant="body1" paragraph>
             Setlist Studioは、バンドや音楽グループのためのセットリスト生成・管理ツールです。
-            楽曲情報を管理し、プロフェッショナルなセットリスト画像を簡単に作成できます。
+            楽曲情報を管理し、高品質なセットリスト画像を簡単に作成できます。
           </Typography>
           <Typography variant="body1" paragraph>
             セットリストは「パブリック（公開）」と「プライベート（非公開）」で管理でき、
