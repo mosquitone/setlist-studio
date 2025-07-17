@@ -188,6 +188,8 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 /                           # Next.jsアプリケーションルート
 ├── docs/                   # 技術ドキュメント
 │   ├── GraphQL-Architecture-Guide.md    # GraphQLアーキテクチャガイド
+│   ├── GraphQL-Libraries-Guide.md       # GraphQLライブラリ詳細ガイド
+│   ├── GraphQL-Beginner-Guide.md        # GraphQL初心者向けガイド
 │   ├── PRISMA_OPTIMIZATION_GUIDE.md     # Prisma最適化ガイド
 │   ├── SECURITY_TEST_PLAN.md            # セキュリティテストプラン
 │   ├── SUPABASE_OPTIMIZATION_CHECKLIST.md # Supabase最適化チェックリスト
@@ -854,13 +856,13 @@ const isValid = timingSafeEqual(
 ### リポジトリ管理
 - **Claude.mdとReadme.mdを必要に応じて更新**: 継続的プロジェクトメンテナンスの一環としてドキュメントファイル更新タスクを追加
 
-### GraphQLアーキテクチャドキュメント (2025-07-01)
-- **GraphQL-Architecture-Guide.md作成**: レストラン比喩による包括的GraphQLアーキテクチャガイドを作成
-- **Resolver詳細解説**: GraphQLリゾルバーを「専門シェフ」として詳細説明を追加
-- **レストラン比喩拡張**: ReactからDatabaseまでの完全データフローを含むレストラン比喩を拡張
-- **初心者向けセクション**: REST API vs GraphQLを比較した初心者向け説明を追加
-- **実践的コード例**: 全アーキテクチャレイヤーの実際のSetlist Studioコード例を含める
-- **プロジェクト構造図**: ファイル関係と責任の視覚的表現
+### GraphQLドキュメント体系化 (2025-07-17)
+- **GraphQL-Architecture-Guide.md**: レストラン比喩による包括的GraphQLアーキテクチャガイドを作成
+- **GraphQL-Libraries-Guide.md**: 使用ライブラリの詳細解説と一覧表、Mermaid図を含む包括的ライブラリガイド
+- **GraphQL-Beginner-Guide.md**: GraphQL初心者向けの基本概念とレストラン比喩での学習ガイド
+- **ドキュメント分割**: 973行の巨大なマークダウンを3つの管理しやすいファイルに分割
+- **相互参照システム**: 各ファイル間の適切なクロスリファレンスを実装
+- **段階的学習**: 初心者→アーキテクチャ→ライブラリ詳細の学習パスを提供
 
 ### ライブラリ構造再編成 (2025-07-01)
 - **階層構造**: src/libディレクトリを機能カテゴリ（client、server、security、shared）に再編成
