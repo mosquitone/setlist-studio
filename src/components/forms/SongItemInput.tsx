@@ -24,7 +24,7 @@ interface SongItemInputProps {
   index: number;
   formik: FormikProps<SetlistFormValues>;
   onRemove: (index: number) => void;
-  songs: Array<{ id: string; title: string }>;
+  songs: Array<{ id: string; title: string; notes?: string | null }>;
   enableDragAndDrop: boolean;
   isDragDisabled?: boolean;
   onMoveUp?: (index: number) => void;
@@ -53,6 +53,30 @@ export function SongItemInput({
     } else if (event.key === 'ArrowDown' && event.ctrlKey && onMoveDown) {
       event.preventDefault();
       onMoveDown(index);
+    }
+  };
+
+  const handleSongSelect = (
+    selectedSong: { id: string; title: string; notes?: string | null } | null,
+  ) => {
+    if (selectedSong) {
+      // 楽曲タイトルを設定
+      handleChange({
+        target: {
+          name: `items.${index}.title`,
+          value: selectedSong.title,
+        },
+      });
+
+      // ノートを設定（既存のノートが空の場合のみ）
+      if (!item.note && selectedSong.notes) {
+        handleChange({
+          target: {
+            name: `items.${index}.note`,
+            value: selectedSong.notes,
+          },
+        });
+      }
     }
   };
 
@@ -101,14 +125,17 @@ export function SongItemInput({
               getOptionLabel={(option) => (typeof option === 'string' ? option : option.title)}
               value={null}
               inputValue={item.title}
-              onChange={(event, newValue) => {
-                const value = typeof newValue === 'string' ? newValue : newValue?.title || '';
-                handleChange({
-                  target: {
-                    name: `items.${index}.title`,
-                    value: value,
-                  },
-                });
+              onChange={(_, newValue) => {
+                if (typeof newValue === 'string') {
+                  handleChange({
+                    target: {
+                      name: `items.${index}.title`,
+                      value: newValue,
+                    },
+                  });
+                } else if (newValue) {
+                  handleSongSelect(newValue);
+                }
               }}
               onInputChange={(event, newInputValue) => {
                 handleChange({
@@ -225,14 +252,17 @@ export function SongItemInput({
                   getOptionLabel={(option) => (typeof option === 'string' ? option : option.title)}
                   value={null}
                   inputValue={item.title}
-                  onChange={(event, newValue) => {
-                    const value = typeof newValue === 'string' ? newValue : newValue?.title || '';
-                    handleChange({
-                      target: {
-                        name: `items.${index}.title`,
-                        value: value,
-                      },
-                    });
+                  onChange={(_, newValue) => {
+                    if (typeof newValue === 'string') {
+                      handleChange({
+                        target: {
+                          name: `items.${index}.title`,
+                          value: newValue,
+                        },
+                      });
+                    } else if (newValue) {
+                      handleSongSelect(newValue);
+                    }
                   }}
                   onInputChange={(event, newInputValue) => {
                     handleChange({

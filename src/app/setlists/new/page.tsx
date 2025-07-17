@@ -13,6 +13,7 @@ export default function NewSetlistPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const duplicateId = searchParams.get('duplicate');
+  const selectedSongsParam = searchParams.get('selectedSongs');
   const [initialValues, setInitialValues] = useState<SetlistFormValues>({
     title: '',
     bandName: '',
@@ -83,8 +84,20 @@ export default function NewSetlistPage() {
                 }))
             : [{ title: '', note: '' }],
       });
+    } else if (selectedSongsParam) {
+      try {
+        const selectedSongs: unknown = JSON.parse(selectedSongsParam);
+        if (Array.isArray(selectedSongs) && selectedSongs.length > 0) {
+          setInitialValues((prev) => ({
+            ...prev,
+            items: selectedSongs.slice(0, 20), // 20曲制限
+          }));
+        }
+      } catch (error: unknown) {
+        console.error('Failed to parse selected songs:', error);
+      }
     }
-  }, [duplicateData]);
+  }, [duplicateData, selectedSongsParam]);
 
   const createError = error
     ? new Error(`セットリストの作成に失敗しました: ${error.message}`)
@@ -94,7 +107,13 @@ export default function NewSetlistPage() {
   return (
     <ProtectedRoute>
       <SetlistForm
-        title={duplicateId ? 'セットリストを複製' : '新しいセットリストを作成'}
+        title={
+          duplicateId
+            ? 'セットリストを複製'
+            : selectedSongsParam
+              ? '選択した楽曲でセットリストを作成'
+              : '新しいセットリストを作成'
+        }
         initialValues={initialValues}
         onSubmit={handleSubmit}
         loading={isLoading}

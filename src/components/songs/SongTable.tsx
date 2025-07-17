@@ -18,6 +18,7 @@ import {
   CardContent,
   Stack,
   Chip,
+  Checkbox,
 } from '@mui/material';
 import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 import { Song } from '../../types/graphql';
@@ -27,11 +28,25 @@ interface SongTableProps {
   loading: boolean;
   onEdit: (song: Song) => void;
   onDelete: (song: Song) => void;
+  selectedSongs: string[];
+  onToggleSelection: (songId: string) => void;
+  onSelectAll: (selected: boolean) => void;
 }
 
-export function SongTable({ songs, loading, onEdit, onDelete }: SongTableProps) {
+export function SongTable({
+  songs,
+  loading,
+  onEdit,
+  onDelete,
+  selectedSongs,
+  onToggleSelection,
+  onSelectAll,
+}: SongTableProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
+  const isAllSelected = songs.length > 0 && selectedSongs.length === songs.length;
+  const isSomeSelected = selectedSongs.length > 0 && selectedSongs.length < songs.length;
 
   if (loading) {
     return (
@@ -70,17 +85,28 @@ export function SongTable({ songs, loading, onEdit, onDelete }: SongTableProps) 
             <CardContent>
               <Stack spacing={1}>
                 <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
-                  <Box sx={{ flex: 1, minWidth: 0 }}>
-                    <Typography variant="h6" component="h3" noWrap>
-                      {song.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" noWrap>
-                      {song.artist}
-                    </Typography>
-                  </Box>
+                  <Stack direction="row" alignItems="flex-start" spacing={1}>
+                    <Checkbox
+                      checked={selectedSongs.includes(song.id)}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        e.stopPropagation();
+                        onToggleSelection(song.id);
+                      }}
+                      size="small"
+                      aria-label={`${song.title}を選択`}
+                    />
+                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                      <Typography variant="h6" component="h3" noWrap>
+                        {song.title}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary" noWrap>
+                        {song.artist}
+                      </Typography>
+                    </Box>
+                  </Stack>
                   <Stack direction="row" spacing={1}>
                     <IconButton
-                      onClick={(e) => {
+                      onClick={(e: React.MouseEvent) => {
                         e.stopPropagation();
                         onEdit(song);
                       }}
@@ -91,7 +117,7 @@ export function SongTable({ songs, loading, onEdit, onDelete }: SongTableProps) 
                       <EditIcon />
                     </IconButton>
                     <IconButton
-                      onClick={(e) => {
+                      onClick={(e: React.MouseEvent) => {
                         e.stopPropagation();
                         onDelete(song);
                       }}
@@ -130,6 +156,14 @@ export function SongTable({ songs, loading, onEdit, onDelete }: SongTableProps) 
       <Table>
         <TableHead>
           <TableRow>
+            <TableCell padding="checkbox">
+              <Checkbox
+                checked={isAllSelected}
+                indeterminate={isSomeSelected}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => onSelectAll(e.target.checked)}
+                aria-label="全て選択/解除"
+              />
+            </TableCell>
             <TableCell>タイトル</TableCell>
             <TableCell>アーティスト</TableCell>
             <TableCell>キー</TableCell>
@@ -152,7 +186,7 @@ export function SongTable({ songs, loading, onEdit, onDelete }: SongTableProps) 
                   outlineOffset: '-2px',
                 },
               }}
-              onKeyDown={(event) => {
+              onKeyDown={(event: React.KeyboardEvent) => {
                 if (event.key === 'Enter' || event.key === ' ') {
                   event.preventDefault();
                   onEdit(song);
@@ -163,6 +197,13 @@ export function SongTable({ songs, loading, onEdit, onDelete }: SongTableProps) 
               }}
               aria-label={`楽曲: ${song.title}。Enterで編集、Deleteで削除`}
             >
+              <TableCell padding="checkbox">
+                <Checkbox
+                  checked={selectedSongs.includes(song.id)}
+                  onChange={() => onToggleSelection(song.id)}
+                  aria-label={`${song.title}を選択`}
+                />
+              </TableCell>
               <TableCell>{song.title}</TableCell>
               <TableCell>{song.artist}</TableCell>
               <TableCell>{song.key || '-'}</TableCell>

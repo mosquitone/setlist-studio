@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
 import { GET_SONGS, DELETE_SONG, UPDATE_SONG } from '@/lib/server/graphql/apollo-operations';
 import { Song, GetSongsResponse } from '@/types/graphql';
+import { useRouter } from 'next/navigation';
 
 export function useSongs() {
+  const router = useRouter();
   const { data, loading, error } = useQuery<GetSongsResponse>(GET_SONGS, {
     fetchPolicy: 'network-only',
   });
@@ -13,6 +15,7 @@ export function useSongs() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [songToDelete, setSongToDelete] = useState<Song | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [selectedSongs, setSelectedSongs] = useState<string[]>([]);
 
   const [updateSong] = useMutation(UPDATE_SONG, {
     refetchQueries: [{ query: GET_SONGS }],
@@ -77,6 +80,27 @@ export function useSongs() {
     setSelectedSong(null);
   };
 
+  const handleToggleSelection = (songId: string) => {
+    setSelectedSongs((prev) =>
+      prev.includes(songId) ? prev.filter((id) => id !== songId) : [...prev, songId],
+    );
+  };
+
+  const handleSelectAll = (selected: boolean) => {
+    setSelectedSongs(selected ? songs.map((song) => song.id) : []);
+  };
+
+  const handleCreateSetlist = () => {
+    const selectedSongTitles: Array<{ title: string; note: string }> = songs
+      .filter((song) => selectedSongs.includes(song.id))
+      .map((song) => ({ title: song.title, note: song.notes || '' }));
+
+    const queryParams = new URLSearchParams();
+    queryParams.set('selectedSongs', JSON.stringify(selectedSongTitles));
+
+    router.push(`/setlists/new?${queryParams.toString()}`);
+  };
+
   return {
     songs,
     loading,
@@ -86,11 +110,15 @@ export function useSongs() {
     songToDelete,
     isDeleteDialogOpen,
     deleteLoading,
+    selectedSongs,
     handleEditSong,
     handleSaveSong,
     handleDeleteClick,
     handleDeleteConfirm,
     handleDeleteCancel,
     closeEditDialog,
+    handleToggleSelection,
+    handleSelectAll,
+    handleCreateSetlist,
   };
 }

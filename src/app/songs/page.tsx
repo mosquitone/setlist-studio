@@ -18,19 +18,23 @@ export default function SongsPage() {
     songToDelete,
     isDeleteDialogOpen,
     deleteLoading,
+    selectedSongs,
     handleEditSong,
     handleSaveSong,
     handleDeleteClick,
     handleDeleteConfirm,
     handleDeleteCancel,
     closeEditDialog,
+    handleToggleSelection,
+    handleSelectAll,
+    handleCreateSetlist,
   } = useSongs();
 
   return (
     <ProtectedRoute>
       <Container maxWidth="lg">
         <Box sx={{ py: 4 }}>
-          <SongPageHeader />
+          <SongPageHeader selectedSongs={selectedSongs} onCreateSetlist={handleCreateSetlist} />
 
           {error && (
             <Alert severity="error" sx={{ mb: 3 }}>
@@ -43,6 +47,9 @@ export default function SongsPage() {
             loading={loading}
             onEdit={handleEditSong}
             onDelete={handleDeleteClick}
+            selectedSongs={selectedSongs}
+            onToggleSelection={handleToggleSelection}
+            onSelectAll={handleSelectAll}
           />
 
           <SongEditDialog
