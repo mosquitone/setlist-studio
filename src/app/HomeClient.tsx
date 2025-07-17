@@ -7,6 +7,7 @@ import { GetSetlistsResponse } from '../types/graphql';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { WelcomeSection } from '../components/home/WelcomeSection';
 import { FeatureSection } from '../components/home/FeatureSection';
+import { SampleSetlistsSection } from '../components/home/SampleSetlistsSection';
 import { SetlistDashboard } from '../components/home/SetlistDashboard';
 import { AuthActions } from '../components/home/AuthActions';
 export default function HomeClient() {
@@ -46,6 +47,7 @@ export default function HomeClient() {
       <Box sx={{ py: 4 }}>
         <WelcomeSection />
         <FeatureSection />
+        <SampleSetlistsSection />
 
         {isLoggedIn && (
           <SetlistDashboard setlistsData={setlistsData} setlistsLoading={setlistsLoading} />
