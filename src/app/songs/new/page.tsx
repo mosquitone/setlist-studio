@@ -133,7 +133,7 @@ export default function NewSongPage() {
               )}
 
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
-                <Button disabled={loading} onClick={() => router.back()}>
+                <Button variant="outlined" disabled={loading} onClick={() => router.back()}>
                   キャンセル
                 </Button>
                 <Button type="submit" disabled={loading}>

@@ -98,7 +98,9 @@ export function SongEditDialog({ open, song, onClose, onSave }: SongEditDialogPr
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>キャンセル</Button>
+        <Button variant="outlined" onClick={onClose}>
+          キャンセル
+        </Button>
         <Button onClick={handleSave}>保存</Button>
       </DialogActions>
     </Dialog>
