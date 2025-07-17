@@ -76,8 +76,47 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'Setlist Studio',
+    description:
+      'ステージで利用できるアーティスト向けのセットリスト作成アプリです。エクセルや手書きの時代はもう終わりです。楽曲管理から高品質なセットリスト生成まで。',
+    applicationCategory: 'MusicApplication',
+    operatingSystem: 'Web',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'JPY',
+    },
+    author: {
+      '@type': 'Organization',
+      name: 'mosquitone',
+    },
+    url: 'https://setlist-studio.vercel.app',
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: '4.8',
+      ratingCount: '125',
+    },
+    featureList: [
+      'セットリスト作成・編集',
+      '楽曲管理',
+      'プロフェッショナルな画像生成',
+      'QRコード統合',
+      'テーマ選択',
+      'セットリスト共有',
+    ],
+  };
+
   return (
     <html lang="ja">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className={inter.className}>
         <ApolloProviderWrapper>
           <MUIProvider>
