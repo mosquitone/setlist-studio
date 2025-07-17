@@ -1,5 +1,4 @@
 import React from 'react';
-import Image from 'next/image';
 import {
   Container,
   Typography,
@@ -47,14 +46,7 @@ export default function GuidePage() {
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Box sx={{ mb: 4 }}>
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mb: 2 }}>
-          <Image
-            src="/setlist-studio-logo.png"
-            alt="Setlist Studio"
-            width={240}
-            height={70}
-            style={{ objectFit: 'contain' }}
-          />
-          <Typography variant="h3" component="h1" sx={{ ml: 1 }}>
+          <Typography variant="h3" component="h1">
             利用ガイド
           </Typography>
         </Box>
@@ -146,15 +138,6 @@ export default function GuidePage() {
                     <Check sx={{ color: 'success.main' }} />
                   </TableCell>
                 </TableRow>
-                <TableRow>
-                  <TableCell>QRコード付き画像生成</TableCell>
-                  <TableCell align="center">
-                    <Check sx={{ color: 'success.main' }} />
-                  </TableCell>
-                  <TableCell align="center">
-                    <Check sx={{ color: 'success.main' }} />
-                  </TableCell>
-                </TableRow>
                 <TableRow sx={{ bgcolor: 'grey.50' }}>
                   <TableCell>セットリスト作成・編集・削除</TableCell>
                   <TableCell align="center">
@@ -174,7 +157,7 @@ export default function GuidePage() {
                   </TableCell>
                 </TableRow>
                 <TableRow sx={{ bgcolor: 'grey.50' }}>
-                  <TableCell>プライベート／パブリック設定</TableCell>
+                  <TableCell>セットリストの公開設定変更</TableCell>
                   <TableCell align="center">
                     <Close sx={{ color: 'error.main' }} />
                   </TableCell>
@@ -183,7 +166,7 @@ export default function GuidePage() {
                   </TableCell>
                 </TableRow>
                 <TableRow sx={{ bgcolor: 'grey.50' }}>
-                  <TableCell>セットリスト複製機能</TableCell>
+                  <TableCell>自分のセットリスト複製機能</TableCell>
                   <TableCell align="center">
                     <Close sx={{ color: 'error.main' }} />
                   </TableCell>
