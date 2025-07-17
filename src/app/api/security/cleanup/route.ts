@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
   const cronSecret = process.env.CRON_SECRET;
 
   if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ error: '認証に失敗しました' }, { status: 401 });
   }
 
   try {
@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: 'Cleanup failed',
+        error: 'クリーンアップに失敗しました',
         timestamp: new Date().toISOString(),
       },
       { status: 500 },
@@ -65,13 +65,13 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   // 開発環境でのみ許可
   if (process.env.NODE_ENV !== 'development') {
-    return NextResponse.json({ error: 'Not available in production' }, { status: 403 });
+    return NextResponse.json({ error: '本番環境では利用できません' }, { status: 403 });
   }
 
   try {
     const result = await GET(request);
     return result;
   } catch {
-    return NextResponse.json({ error: 'Manual cleanup failed' }, { status: 500 });
+    return NextResponse.json({ error: '手動クリーンアップに失敗しました' }, { status: 500 });
   }
 }
