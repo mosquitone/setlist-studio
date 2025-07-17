@@ -171,7 +171,7 @@ export async function csrfProtection(
 
     return NextResponse.json(
       {
-        error: 'CSRF token validation failed',
+        error: 'CSRFトークンの検証に失敗しました',
         code: 'CSRF_TOKEN_INVALID',
       },
       { status: 403 },

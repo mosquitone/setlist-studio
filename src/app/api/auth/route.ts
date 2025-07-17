@@ -65,13 +65,13 @@ export async function POST(request: NextRequest) {
     const { token } = await request.json();
 
     if (!token) {
-      return NextResponse.json({ error: 'Token is required' }, { status: 400 });
+      return NextResponse.json({ error: 'トークンが必要です' }, { status: 400 });
     }
 
     // トークンの有効性を検証
     const decoded = verifyToken(token);
     if (!decoded) {
-      return NextResponse.json({ error: 'Invalid token' }, { status: 400 });
+      return NextResponse.json({ error: '無効なトークンです' }, { status: 400 });
     }
 
     const response = NextResponse.json({
@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
 
     return response;
   } catch {
-    return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
+    return NextResponse.json({ error: '無効なリクエストです' }, { status: 400 });
   }
 }
 

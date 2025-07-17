@@ -80,7 +80,7 @@ export class AuthResolver {
 
     const jwtSecret = process.env.JWT_SECRET;
     if (!jwtSecret) {
-      throw new Error('JWT_SECRET environment variable is not configured');
+      throw new Error('サーバーエラーが発生しました。しばらく時間をおいてから再度お試しください。');
     }
     const token = jwt.sign(
       {
@@ -175,7 +175,7 @@ export class AuthResolver {
 
     const jwtSecret = process.env.JWT_SECRET;
     if (!jwtSecret) {
-      throw new Error('JWT_SECRET environment variable is not configured');
+      throw new Error('サーバーエラーが発生しました。しばらく時間をおいてから再度お試しください。');
     }
     const token = jwt.sign(
       {
