@@ -44,13 +44,11 @@ export class CreateSetlistItemForSetlistInput {
   order: number;
 }
 
+// 基底クラス - セットリストの共通フィールド定義
 @InputType()
-export class CreateSetlistInput {
+abstract class BaseSetlistInput {
   @Field(() => String, { nullable: true })
   title?: string;
-
-  @Field(() => String)
-  bandName: string;
 
   @Field(() => String, { nullable: true })
   eventName?: string;
@@ -63,45 +61,33 @@ export class CreateSetlistInput {
 
   @Field(() => String, { nullable: true })
   startTime?: string;
-
-  @Field(() => String)
-  theme: string;
-
-  @Field(() => Boolean, { defaultValue: false })
-  isPublic: boolean;
 
   @Field(() => [CreateSetlistItemForSetlistInput], { nullable: true })
   items?: CreateSetlistItemForSetlistInput[];
 }
 
 @InputType()
-export class UpdateSetlistInput {
+export class CreateSetlistInput extends BaseSetlistInput {
+  @Field(() => String)
+  bandName: string; // 作成時は必須
+
+  @Field(() => String)
+  theme: string; // 作成時は必須
+
+  @Field(() => Boolean, { defaultValue: false })
+  isPublic: boolean; // 作成時はデフォルト値付き
+}
+
+@InputType()
+export class UpdateSetlistInput extends BaseSetlistInput {
   @Field(() => String, { nullable: true })
-  title?: string;
+  bandName?: string; // 更新時は任意
 
   @Field(() => String, { nullable: true })
-  bandName?: string;
-
-  @Field(() => String, { nullable: true })
-  eventName?: string;
-
-  @Field(() => Date, { nullable: true })
-  eventDate?: Date;
-
-  @Field(() => String, { nullable: true })
-  openTime?: string;
-
-  @Field(() => String, { nullable: true })
-  startTime?: string;
-
-  @Field(() => String, { nullable: true })
-  theme?: string;
+  theme?: string; // 更新時は任意
 
   @Field(() => Boolean, { nullable: true })
-  isPublic?: boolean;
-
-  @Field(() => [CreateSetlistItemForSetlistInput], { nullable: true })
-  items?: CreateSetlistItemForSetlistInput[];
+  isPublic?: boolean; // 更新時は任意
 }
 
 @Resolver(() => Setlist)

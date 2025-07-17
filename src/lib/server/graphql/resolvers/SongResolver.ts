@@ -20,12 +20,9 @@ interface Context {
   userId?: string;
 }
 
+// 基底クラス - 楽曲の共通フィールド定義
 @InputType()
-export class CreateSongInput {
-  @Field(() => String)
-  @IsString()
-  title: string;
-
+abstract class BaseSongInput {
   @Field(() => String, { nullable: true })
   @IsOptional()
   @IsString()
@@ -56,39 +53,18 @@ export class CreateSongInput {
 }
 
 @InputType()
-export class UpdateSongInput {
+export class CreateSongInput extends BaseSongInput {
+  @Field(() => String)
+  @IsString()
+  title: string; // 作成時は必須
+}
+
+@InputType()
+export class UpdateSongInput extends BaseSongInput {
   @Field(() => String, { nullable: true })
   @IsOptional()
   @IsString()
-  title?: string;
-
-  @Field(() => String, { nullable: true })
-  @IsOptional()
-  @IsString()
-  artist?: string;
-
-  @Field(() => Int, { nullable: true })
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  duration?: number;
-
-  @Field(() => String, { nullable: true })
-  @IsOptional()
-  @IsString()
-  key?: string;
-
-  @Field(() => Int, { nullable: true })
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  @Max(300)
-  tempo?: number;
-
-  @Field(() => String, { nullable: true })
-  @IsOptional()
-  @IsString()
-  notes?: string;
+  title?: string; // 更新時は任意
 }
 
 @Resolver(() => Song)
