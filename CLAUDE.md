@@ -283,7 +283,11 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 │   ├── useCSRF.ts            # CSRF保護フック
 │   ├── useImageGeneration.ts # 画像生成フック
 │   ├── useSetlistActions.ts  # セットリストアクションフック
-│   └── useSongs.ts           # 楽曲管理フック
+│   ├── useSongs.ts           # 楽曲管理統合フック（コンポジションパターン）
+│   ├── useSongsData.ts       # 楽曲データ取得・管理フック
+│   ├── useSongEdit.ts        # 楽曲編集機能フック
+│   ├── useSongDelete.ts      # 楽曲削除機能フック（単体・一括削除）
+│   └── useSongSelection.ts   # 楽曲選択・セットリスト作成フック
 ├── src/lib/               # 機能別に整理された共有ユーティリティ
 │   ├── client/            # クライアントサイドユーティリティ
 │   │   ├── apollo-client.ts      # GraphQLクライアント設定
@@ -754,6 +758,23 @@ const isValid = timingSafeEqual(
 - ✅ Vercel Functions互換性
 
 ## 更新履歴と記録
+
+### useSongsフック責務分割リファクタリング (2025-07-17)
+- **Issue #25対応**: 楽曲管理機能の大幅なアーキテクチャ改善
+  - **コンポジションパターン実装**: 単一責任原則に基づく機能分割
+    - `useSongsData.ts`: 楽曲データ取得・管理（GraphQLクエリ、ローディング、エラー処理）
+    - `useSongEdit.ts`: 楽曲編集機能（編集ダイアログ、GraphQLミューテーション）
+    - `useSongDelete.ts`: 楽曲削除機能（単体・一括削除、確認ダイアログ）
+    - `useSongSelection.ts`: 楽曲選択・セットリスト作成（チェックボックス、全選択）
+  - **統合フック**: `useSongs.ts`は4つの専門フックをコンポジションで統合
+  - **完全な後方互換性**: 既存のコンポーネントAPIは変更なし
+- **TSDocコメント追加**: 全新規フックに包括的なドキュメント追加
+  - 機能説明、パラメータ・戻り値型情報、実装例を日本語で記述
+  - TypeScriptドキュメントのベストプラクティス準拠
+- **コード品質向上**: 
+  - 保守性向上（機能別の責務分離）
+  - テスト容易性向上（単一機能フック）
+  - 再利用性向上（専門フックの独立利用可能）
 
 ### ナビゲーションロゴのテキストベース統一 (2025-07-17)
 - **Issue #11対応**: 画像ロゴからSetlist Studioテキストロゴに変更

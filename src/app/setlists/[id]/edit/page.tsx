@@ -102,7 +102,6 @@ export default function EditSetlistPage() {
         loading={updateLoading}
         error={updateErrorMessage}
         submitButtonText="変更を保存"
-        loadingButtonText="保存中..."
         enableDragAndDrop={true}
       />
     </ProtectedRoute>

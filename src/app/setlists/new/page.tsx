@@ -119,7 +119,6 @@ export default function NewSetlistPage() {
         loading={isLoading}
         error={createError}
         submitButtonText="セットリストを作成"
-        loadingButtonText="作成中..."
         enableDragAndDrop={true}
       />
     </ProtectedRoute>

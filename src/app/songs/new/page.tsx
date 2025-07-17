@@ -136,8 +136,8 @@ export default function NewSongPage() {
                 <Button variant="outlined" disabled={loading} onClick={() => router.back()}>
                   キャンセル
                 </Button>
-                <Button type="submit" disabled={loading}>
-                  {loading ? '作成中...' : '作成'}
+                <Button type="submit" loading={loading}>
+                  作成
                 </Button>
               </Box>
             </Form>

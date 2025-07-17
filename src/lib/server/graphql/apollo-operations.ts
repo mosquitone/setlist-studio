@@ -70,6 +70,12 @@ export const DELETE_SONG = gql`
   }
 `;
 
+export const DELETE_MULTIPLE_SONGS = gql`
+  mutation DeleteMultipleSongs($ids: [ID!]!) {
+    deleteMultipleSongs(ids: $ids)
+  }
+`;
+
 export const REGISTER = gql`
   mutation Register($input: RegisterInput!) {
     register(input: $input) {
