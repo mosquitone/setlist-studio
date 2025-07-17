@@ -181,172 +181,68 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
   - パフォーマンス最適化: メモリ増強によるcold start時間短縮
 - **注意**: docker-compose.ymlはローカル開発のみ、Vercelでは未使用
 
-詳細なデプロイ手順は [VERCEL_DEPLOYMENT_GUIDE.md](./docs/VERCEL_DEPLOYMENT_GUIDE.md) を参照
+詳細なデプロイ手順は [VERCEL_DEPLOYMENT_GUIDE.md](./docs/deployment/VERCEL_DEPLOYMENT_GUIDE.md) を参照
 
 ### プロジェクト構造
 ```
 /                           # Next.jsアプリケーションルート
-├── docs/                   # 技術ドキュメント
-│   ├── GraphQL-Architecture-Guide.md    # GraphQLアーキテクチャガイド
-│   ├── GraphQL-Libraries-Guide.md       # GraphQLライブラリ詳細ガイド
-│   ├── GraphQL-Beginner-Guide.md        # GraphQL初心者向けガイド
-│   ├── PRISMA_OPTIMIZATION_GUIDE.md     # Prisma最適化ガイド
-│   ├── SECURITY_TEST_PLAN.md            # セキュリティテストプラン
-│   ├── SUPABASE_OPTIMIZATION_CHECKLIST.md # Supabase最適化チェックリスト
-│   ├── SUPABASE_RLS_SETUP_FINAL.sql # RLS最終設定SQL（PostgreSQL標準）
-│   └── VERCEL_DEPLOYMENT_GUIDE.md       # Vercelデプロイガイド
+├── docs/                   # 技術ドキュメント（構造化済み）
+│   ├── api/                # API・GraphQL関連ドキュメント
+│   ├── deployment/         # デプロイ・運用関連ドキュメント
+│   ├── development/        # 開発関連ドキュメント
+│   ├── security/           # セキュリティ関連ドキュメント
+│   └── project/            # プロジェクト管理ドキュメント
 ├── src/app/                # Next.js App Router
-│   ├── api/               # APIルート（Vercel Functions）
-│   │   ├── auth/          # 認証API
-│   │   │   └── route.ts   # JWTトークン認証エンドポイント
-│   │   ├── csrf/          # CSRF保護API
-│   │   │   └── route.ts   # CSRFトークン生成
-│   │   ├── csrf-token/    # CSRF代替エンドポイント
-│   │   │   └── route.ts   # CSRFトークン配布
-│   │   ├── graphql/       # GraphQL APIルート（Vercel Function）
-│   │   │   └── route.ts   # Apollo Server統合
-│   │   └── security/      # セキュリティAPI
-│   │       └── cleanup/   # セキュリティデータクリーンアップクロンジョブ
-│   │           └── route.ts
-│   ├── HomeClient.tsx     # ホームページクライアントコンポーネント
-│   ├── login/             # ユーザー認証ページ
-│   │   ├── LoginClient.tsx
-│   │   └── page.tsx
-│   ├── register/          # ユーザー登録
-│   │   ├── RegisterClient.tsx
-│   │   └── page.tsx
-│   ├── guide/             # 利用ガイドページ（静的生成）
-│   │   └── page.tsx       # 認証不要利用ガイド
-│   ├── profile/           # ユーザープロフィールページ
-│   │   └── page.tsx
-│   ├── setlists/          # セットリスト管理ページ
-│   │   ├── [id]/          # 個別セットリスト表示/編集
-│   │   │   ├── edit/      # セットリスト編集ページ
-│   │   │   │   └── page.tsx
-│   │   │   └── page.tsx   # セットリスト詳細表示
-│   │   └── new/           # 新規セットリスト作成
-│   │       └── page.tsx
-│   └── songs/             # 楽曲管理ページ
-│       ├── new/           # 新規楽曲作成
-│       │   └── page.tsx
-│       └── page.tsx       # 楽曲一覧ページ
+│   ├── api/                # APIルート（Vercel Functions）
+│   ├── (pages)/            # アプリケーションページ
+│   └── globals.css         # グローバルスタイル
 ├── src/components/         # Reactコンポーネント
-│   ├── auth/              # 認証関連コンポーネント
-│   │   └── ProtectedRoute.tsx # ルート保護コンポーネント
-│   ├── common/             # 共通UIコンポーネント（機能別サブフォルダ構造）
-│   │   ├── ui/             # 基本UIコンポーネント
-│   │   │   ├── Button.tsx      # 統一Buttonコンポーネント（dangerバリアント対応）
-│   │   │   ├── LoadingFallback.tsx # ローディング状態コンポーネント
-│   │   │   └── NoSSR.tsx       # SSR無効化コンポーネント
-│   │   ├── layout/         # レイアウト関連コンポーネント
-│   │   │   ├── Header.tsx      # メインアプリケーションヘッダーコンポーネント
-│   │   │   ├── Footer.tsx      # アプリケーションフッターコンポーネント
-│   │   │   └── header/         # ヘッダーサブコンポーネント（モジュラーアーキテクチャ）
-│   │   │       ├── HeaderLogo.tsx        # ロゴコンポーネント
-│   │   │       ├── DesktopNavigation.tsx # アイコン付きデスクトップナビゲーション
-│   │   │       ├── MobileNavigation.tsx  # モバイルドロワーナビゲーション
-│   │   │       ├── UserMenu.tsx          # アバターとドロップダウン付きユーザーメニュー
-│   │   │       └── navigationItems.ts    # ナビゲーション設定
-│   │   ├── auth/           # 認証関連コンポーネント
-│   │   │   └── LoginLink.tsx       # ログイン/登録リンクコンポーネント
-│   │   ├── DeleteConfirmModal.tsx  # 共通削除確認モーダル
-│   │   └── LogoOfficialLink.tsx    # 公式サイトリンク付きロゴコンポーネント
+│   ├── auth/               # 認証関連コンポーネント
+│   ├── common/             # 共通UIコンポーネント
 │   ├── forms/              # フォーム関連コンポーネント
-│   │   ├── SetlistForm.tsx # バリデーション付きメインセットリストフォーム
-│   │   ├── SetlistFormFields.tsx # フォームフィールドコンポーネント
-│   │   └── SongItemInput.tsx # 個別楽曲入力コンポーネント
-│   ├── home/              # ホームページ専用コンポーネント
-│   │   ├── AuthActions.tsx    # 認証アクションボタン
-│   │   ├── FeatureSection.tsx # 機能紹介セクション
-│   │   ├── SetlistDashboard.tsx # セットリストダッシュボード
-│   │   └── WelcomeSection.tsx # ウェルカムセクション
+│   ├── home/               # ホームページ専用コンポーネント
 │   ├── providers/          # コンテキストプロバイダー
-│   │   ├── ApolloProvider.tsx # GraphQLクライアントプロバイダー
-│   │   ├── AuthProvider.tsx   # 認証状態プロバイダー
-│   │   ├── CSRFProvider.tsx   # CSRF保護プロバイダー
-│   │   └── MUIProvider.tsx    # Material-UIテーマプロバイダー
 │   ├── setlist/            # セットリスト専用コンポーネント
-│   │   ├── ImageGenerator.tsx # ワンクリックダウンロード付き簡素化画像生成
-│   │   ├── SetlistActions.tsx # アクションボタン（編集、ダウンロードなど）
-│   │   └── SetlistPreview.tsx # セットリストプレビュー表示
-│   ├── setlist-themes/     # テーマシステム（共通化アーキテクチャ）
-│   │   ├── BaseTheme.tsx      # 共通テーマベースコンポーネント
-│   │   ├── BlackTheme.tsx     # Black/darkテーマ（BaseTheme使用）
-│   │   ├── WhiteTheme.tsx     # White/lightテーマ（BaseTheme使用）
-│   │   ├── themeColors.ts     # テーマカラーパレット設定
-│   │   ├── SetlistRenderer.tsx # テーマレンダラー
-│   │   ├── constants.ts       # テーマ定数
-│   │   └── index.ts          # テーマエクスポート
-│   └── songs/             # 楽曲管理コンポーネント
-│       ├── SongEditDialog.tsx # 楽曲編集ダイアログ
-│       ├── SongPageHeader.tsx # 楽曲ページヘッダー
-│       └── SongTable.tsx      # 楽曲テーブル
-├── src/hooks/             # カスタムReactフック
-│   ├── useCSRF.ts            # CSRF保護フック
-│   ├── useImageGeneration.ts # 画像生成フック
-│   ├── useSetlistActions.ts  # セットリストアクションフック
-│   ├── useSongs.ts           # 楽曲管理統合フック（コンポジションパターン）
-│   ├── useSongsData.ts       # 楽曲データ取得・管理フック
-│   ├── useSongEdit.ts        # 楽曲編集機能フック
-│   ├── useSongDelete.ts      # 楽曲削除機能フック（単体・一括削除）
-│   └── useSongSelection.ts   # 楽曲選択・セットリスト作成フック
-├── src/lib/               # 機能別に整理された共有ユーティリティ
-│   ├── client/            # クライアントサイドユーティリティ
-│   │   ├── apollo-client.ts      # GraphQLクライアント設定
-│   │   └── secure-auth-client.ts # セキュア認証クライアント
-│   ├── server/            # サーバーサイドユーティリティ
-│   │   └── graphql/       # GraphQLスキーマと操作
-│   │       ├── apollo-operations.ts  # 全GraphQLクエリ、ミューテーション、サブスクリプション
-│   │       ├── generated-schema.ts  # 事前生成GraphQLスキーマ（パフォーマンス最適化）
-│   │       ├── schema.graphql       # GraphQLスキーマファイル（デバッグ用）
-│   │       ├── resolvers/ # GraphQLリゾルバー
-│   │       │   ├── AuthResolver.ts
-│   │       │   ├── SetlistResolver.ts
-│   │       │   ├── SetlistItemResolver.ts
-│   │       │   ├── SongResolver.ts
-│   │       │   └── UserResolver.ts
-│   │       ├── types/     # GraphQL型定義
-│   │       │   ├── Auth.ts
-│   │       │   ├── Setlist.ts
-│   │       │   ├── SetlistItem.ts
-│   │       │   ├── Song.ts
-│   │       │   └── User.ts
-│   │       ├── utils/     # GraphQLユーティリティ
-│   │       │   └── query-optimization.ts # クエリ最適化ユーティリティ
-│   │       └── middleware/ # 認証ミドルウェア
-│   │           └── jwt-auth-middleware.ts
-│   ├── security/          # セキュリティ関連ユーティリティ
-│   │   ├── csrf-protection.ts    # CSRF保護ミドルウェア
-│   │   ├── log-sanitizer.ts      # ログサニタイゼーションユーティリティ
-│   │   ├── rate-limit-db.ts      # データベースベースレート制限
-│   │   ├── security-logger-db.ts # セキュリティイベントログ
-│   │   ├── security-utils.ts     # 一般セキュリティユーティリティ
-│   │   ├── threat-detection-db.ts # 脅威検出システム
-│   │   └── validation-rules.ts   # 入力検証ルール
-│   └── shared/            # クライアント/サーバー共有ユーティリティ
-│       └── dateUtils.ts   # 日付フォーマットユーティリティ
-├── src/types/             # TypeScript型定義（階層構造）
-│   ├── common.ts          # 共通型定義（Theme、EntityId、StringArray、Timestamp、ISODateString）
-│   ├── entities.ts        # ドメインエンティティ型（User、Song、Setlist、SetlistItem）
-│   ├── api.ts             # API/GraphQLレスポンス型（AuthPayload、GetSetlistsResponse等）
-│   ├── components.ts      # コンポーネント専用型（SetlistFormValues、SetlistFormItem等）
-│   ├── jwt.ts             # JWT認証型（JWTPayload、型ガード関数、検証ユーティリティ）
-│   └── graphql.ts         # GraphQL関連型定義
-├── prisma/                # データベーススキーマとマイグレーション
-│   ├── migrations/        # データベースマイグレーション
-│   │   ├── 20250701120235_add_security_tables/
-│   │   │   └── migration.sql
-│   │   └── migration_lock.toml
-│   └── schema.prisma      # Prismaスキーマ定義
-├── public/                # 静的アセット
-│   ├── MQTN_LOGO_white_ver_nonback.png # ロゴ（白背景用）
-│   ├── MQT_LOGO_BLACK.png # ロゴ（黒背景用）
-│   └── [その他のアセット]
-├── scripts/               # 開発スクリプト
-│   ├── generate-schema.ts # GraphQLスキーマ事前生成スクリプト
-│   └── setup-db.sh        # データベースセットアップスクリプト
-└── docker-compose.yml     # ローカル開発用PostgreSQL
+│   ├── setlist-themes/     # テーマシステム
+│   └── songs/              # 楽曲管理コンポーネント
+├── src/hooks/              # カスタムReactフック
+├── src/lib/                # 共有ユーティリティ
+│   ├── client/             # クライアントサイドユーティリティ
+│   ├── server/             # サーバーサイドユーティリティ
+│   ├── security/           # セキュリティ関連ユーティリティ
+│   └── shared/             # クライアント/サーバー共有ユーティリティ
+├── src/types/              # TypeScript型定義
+├── prisma/                 # データベース関連
+│   ├── migrations/         # マイグレーション
+│   └── schema.prisma       # Prismaスキーマ
+├── public/                 # 静的アセット
+├── scripts/                # 開発スクリプト
+└── docker-compose.yml      # ローカル開発用PostgreSQL
 ```
+
+### 主要ディレクトリ詳細
+
+**docs/**: 技術ドキュメント（構造化済み）
+- `api/`: API Routes・GraphQL関連ドキュメント
+- `deployment/`: Vercelデプロイ・Supabase設定
+- `development/`: Prisma最適化ガイド
+- `security/`: セキュリティアーキテクチャ・テストプラン
+- `project/`: 更新履歴・プロジェクト管理
+
+**src/app/**: Next.js App Router
+- `api/`: Vercel Functions（auth、csrf、graphql、security）
+- 各ページ: login、register、guide、profile、setlists、songs
+
+**src/components/**: Reactコンポーネント
+- `common/`: ui、layout、auth関連の共通コンポーネント
+- `forms/`: セットリスト・楽曲フォーム
+- `setlist/`: セットリスト表示・画像生成・アクション
+- `setlist-themes/`: Black/Whiteテーマシステム
+
+**src/lib/**: 共有ユーティリティ
+- `server/graphql/`: GraphQLスキーマ、リゾルバー、型定義
+- `security/`: レート制限、脅威検出、CSRF保護
+- `client/`: Apollo Client、認証クライアント
 
 ### 現在のステータス
 - **アーキテクチャ**: 最適化されたstatic/SSRレンダリング戦略によるハイブリッドNext.jsアプリケーション
@@ -367,98 +263,13 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 
 ## API Routes詳細
 
-### エンドポイント一覧
+詳細なAPI仕様については、[API_ROUTES.md](./docs/api/API_ROUTES.md)を参照してください。
 
-| エンドポイント | メソッド | 目的 | 認証要否 |
-|---------------|---------|------|----------|
-| `/api/auth` | GET, POST, DELETE | JWT認証管理 | GET: 要、POST/DELETE: 不要 |
-| `/api/csrf` | GET | CSRFトークン生成 | 不要 |
-| `/api/graphql` | GET, POST | メインGraphQL API | リゾルバー依存 |
-| `/api/security/cleanup` | GET, POST | セキュリティデータクリーンアップ | GET: CRON_SECRET、POST: 開発環境のみ |
-
-### 各エンドポイント詳細
-
-#### 1. `/api/auth` - 認証管理
-**目的**: JWTトークンをHttpOnly Cookieで管理し、クライアントサイドの認証状態を維持
-
-**メソッド別機能**:
-- **GET**: 現在の認証状態を確認
-  - レスポンス: `{ authenticated: boolean, user?: { id, email, username } }`
-- **POST**: JWTトークンをHttpOnly Cookieに設定
-  - リクエスト: `{ token: "JWT_TOKEN" }`
-  - レスポンス: `{ success: true, user: { id, email, username } }`
-- **DELETE**: ログアウト（Cookie削除）
-
-**セキュリティ機能**:
-- HttpOnly Cookie（XSS防御）
-- Secure flag（本番環境でHTTPS必須）
-- SameSite=strict（CSRF防御）
-- 2時間の有効期限
-- 無効トークンの自動クリーンアップ
-
-#### 2. `/api/csrf` - CSRF保護
-**目的**: Cross-Site Request Forgeryを防ぐためのトークン生成
-
-**特徴**:
-- 暗号学的に安全なトークン生成
-- Double Submit Cookieパターン実装
-- GETメソッドのみサポート
-
-#### 3. `/api/graphql` - メインAPI
-**目的**: アプリケーションの全ビジネスロジックを処理するGraphQLエンドポイント
-
-**機能**:
-- Type-GraphQLによるスキーマファースト開発
-- Prisma ORMを使用したデータベース操作
-- ユーザー、楽曲、セットリスト管理
-
-**セキュリティ機能**:
-- **レート制限**: 
-  - 一般API: データベースベースの分散対応
-  - 認証操作（login/register）: 強化レート制限（より厳格な制限）
-- **CSRF保護**: 全POSTリクエストに適用
-- **クエリ深度制限**: 最大10レベル（DoS攻撃防御）
-- **イントロスペクション**: 本番環境で無効化
-- **エラーハンドリング**:
-  - 本番: ユーザーフレンドリーなエラー、システムエラーはサニタイズ
-  - 開発: 詳細なデバッグ情報
-- **リクエストサイズ制限**: 4MB（Next.jsデフォルト）
-
-#### 4. `/api/security/cleanup` - セキュリティメンテナンス
-**目的**: セキュリティ関連データの定期的なクリーンアップ（Vercel Cron Jobs用）
-
-**機能**:
-- 期限切れレート制限エントリの削除
-- 古い脅威検知アクティビティの削除
-- 古いセキュリティイベントログの削除
-
-**実行方法**:
-- **GET**: Vercel Cronジョブ（毎日午前2時）
-  - 要Bearer Token: `Authorization: Bearer ${CRON_SECRET}`
-- **POST**: 開発環境での手動実行
-
-**レスポンス例**:
-```json
-{
-  "success": true,
-  "timestamp": "2025-07-09T02:00:00.000Z",
-  "duration": "123ms",
-  "cleaned": {
-    "rateLimitEntries": 45,
-    "threatActivities": 12,
-    "securityEvents": 89
-  }
-}
-```
-
-### API セキュリティアーキテクチャ
-
-1. **多層防御**: 認証、CSRF、レート制限の複数セキュリティレイヤー
-2. **セキュアバイデフォルト**: HttpOnly Cookie、本番HTTPS、厳格なCORS
-3. **パフォーマンス最適化**: データベースベースレート制限、遅延サーバー初期化
-4. **本番対応**: 環境別設定、適切なエラーハンドリング
-5. **自動メンテナンス**: セキュリティデータの定期クリーンアップ
-6. **エンタープライズグレード**: OWASPベストプラクティス準拠
+### 主要エンドポイント
+- `/api/auth` - JWT認証管理
+- `/api/csrf` - CSRF保護トークン生成
+- `/api/graphql` - メインGraphQL API
+- `/api/security/cleanup` - セキュリティデータクリーンアップ
 
 ## パフォーマンス最適化（ハイブリッドアーキテクチャ）
 
@@ -505,65 +316,6 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 - **自動入力フォーム**: 元セットリストデータが"(コピー)"サフィックス付きでフォームを事前入力
 - **構造保持**: 複製で楽曲順序、タイミング、全メタデータを維持
 
-### ホームページ強化 (2025-06-30)
-- **セットリストダッシュボード**: ログインユーザー向けホームページにスタイリッシュなセットリスト一覧を実装
-- **レスポンシブグリッドレイアウト**: デスクトップ3列、タブレット2列、モバイル1列のレスポンシブデザイン
-- **テーマ対応カード**: セットリストテーマ（白/黒）に基づく動的グラデーション背景
-- **インタラクティブカードデザイン**: リフト効果と強化シャドウ付きホバーアニメーション
-- **統一カードサイズ**: 全カードで一貫レイアウトのための標準278px高さ
-- **アクションボタン**: 各カード下部の直接表示/編集アクセスボタン
-- **空状態処理**: セットリストなしユーザー向けの親しみやすいメッセージとコールトゥアクション
-- **ボタンデザイン一貫性**: 角丸と適切なカラースキーム付きアプリケーション全体の統一ボタンスタイル
-- **ヘッダーナビゲーション**: アプリケーションスタイルに合わせたヘッダーログアウトボタンデザイン更新
-- **コンパクト情報表示**: より小さなアイコン、パディング削減、適切なフォントサイズによる空間使用最適化
-
-### 最近のバグ修正 (2025-06-30)
-- **テーマ永続化**: データベースから保存されたテーマがセットリスト詳細ページで表示されない問題を修正
-- **テーマ命名一貫性**: UIコンポーネントの"basic"/"black"命名不一致を解決
-- **データベース統合**: 保存されたセットリストデータから適切に初期化するテーマ選択を改善
-- **テーマレイアウト改善**: 参照デザインに合わせたフォントサイズと間隔の更新 - より大きなバンド名（48px）、楽曲リスト可読性向上（20-32px）、番号なしでよりクリーンなレイアウト
-- **React Hooks順序**: React開発エラーを引き起こしていたSetlistDetailPageのフック順序違反を修正
-- **デバッグモードレイアウト**: デバッグモードプレビュー寸法を修正し、画像プレビューサイズに合わせて不要なマージンを削除
-- **エラーハンドリング**: 画像生成失敗時の混乱を招くフォールバックDOMプレビューを適切なエラーメッセージとリトライ機能に置換
-- **グリッドレイアウト問題**: コンテンツ間隔とカード寸法最適化によりカード高さオーバーフロー問題を解決
-
-### テーマシステムバグ修正 (2025-07-01)
-- **ページリロードテーマ問題**: ページリロード後に白テーマセットリストが黒テーマで表示される問題を修正
-- **テーマ変更干渉**: 手動テーマ変更がデータベース初期化により上書きされる問題を解決
-- **テーマ初期化ロジック**: データベース値とユーザー選択間の競合を防ぐ初期化フラグ付き適切なテーマ状態管理を実装
-- **ローディング状態管理**: テーマ初期化中のテーマ間ちらつきを防ぐ適切なローディング状態を追加
-
-### セマンティックファイル整理 (2025-06-30)
-- **GraphQLサーバーエントリーポイント**: より良いセマンティック明確性のため`src/index.ts`を`src/apollo-server.ts`にリネーム
-- **GraphQL操作**: クエリとミューテーション両方を含むことを反映して`src/lib/graphql/queries.ts`を`apollo-operations.ts`にリネーム
-- **認証ミドルウェア**: より明確な目的表示のため`src/middleware/auth.ts`を`jwt-auth-middleware.ts`にリネーム
-- **インポートパス更新**: 全フロントエンドファイルで新しい`apollo-operations`インポートパス、全GraphQLリゾルバーで新しいミドルウェアパスを使用するよう更新
-- **Package.json更新**: apollo-server.ts命名を反映するGraphQLサーバースクリプトとメインエントリーポイントを更新
-- **ビルド互換性**: ローカル開発とVercelデプロイ両方で全変更が正しく動作することを確認
-
-### ESLint設定移行 (2025-06-30)
-- **フラット設定移行**: 非推奨の`.eslintignore`ファイルからモダンなフラット設定形式に移行
-- **無視パターン**: 全無視パターンを`eslint.config.mjs`の`ignores`プロパティに移動
-- **プラグイン依存関係**: プラグインローディング問題解決のため不足していた`@next/eslint-plugin-next`依存関係を追加
-- **警告解決**: 非推奨の.eslintignoreファイルに関するESLintIgnoreWarningを排除
-- **コード品質**: 既存コード構造を維持しながら`pnpm lint:fix`でフォーマット問題を自動修正
-
-### Apollo Server v4セキュリティ移行 (2025-06-30)
-- **バージョンアップグレード**: 非推奨のApollo Server v3（EOL）からApollo Server v4.12.2に移行
-- **セキュリティ強化**: クエリ深度制限（最大10レベル）、リクエストサイズ制限（50MB）、本番イントロスペクション制御を追加
-- **アーキテクチャモダナイゼーション**: レガシーapollo-server-expressを@apollo/serverとexpressMiddlewareパターンに置換
-- **バリデーション統合**: 適切な引数検証のためLoginInputとRegisterInput型にclass-validatorデコレーターを追加
-- **脆弱性解決**: 非推奨のApollo Server v3依存関係から既知のセキュリティ脆弱性を全て排除
-
-### Vercel Functions移行 (2025-07-01)
-- **アーキテクチャ統一**: デュアルサーバーアーキテクチャからVercel Functions付き統一Next.jsに移行
-- **GraphQL APIルート**: スタンドアロンGraphQLサーバーを`/api/graphql`のNext.js APIルートに変換
-- **Type-GraphQL統合**: buildSchemaを使用してType-GraphQLをNext.js APIルートと正常に統合
-- **循環依存解決**: 直接型関係の代わりにフィールドリゾルバーを使用してType-GraphQL循環依存を解決
-- **依存関係クリーンアップ**: 冗長なgraphql-serverディレクトリを削除し、全依存関係を単一package.jsonに統合
-- **環境設定**: `.env`と`.env.local`ファイルによる統一環境変数管理
-- **本番対応**: アプリケーションがVercel Functionsデプロイと完全互換
-
 ### CSRF & CSP実装 (2025-07-01)
 - **CSRFトークンAPI**: セキュアなトークン生成と配布のため`/api/csrf`エンドポイントを追加
 - **CSP開発修正**: 開発時のみ`unsafe-inline`と`unsafe-eval`を許可するようContent Security Policyを更新
@@ -571,591 +323,28 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 - **集約CSRF管理**: 単一CSRFProviderがアプリ全体のトークン初期化を処理、重複useCSRF呼び出しを削除
 - **本番セキュリティ**: Next.js開発機能を有効にしながら本番で厳格なCSPを維持
 
-## セキュリティアーキテクチャ (2025-07-01)
+## セキュリティアーキテクチャ
 
-### 包括的セキュリティ実装
-このアプリケーションは企業レベルのセキュリティ要件を満たすよう設計されています：
+包括的なセキュリティ実装については、[SECURITY.md](./docs/security/SECURITY.md)を参照してください。
 
-#### 認証・認可
-- **HttpOnly Cookie認証**: XSS攻撃を防ぐセキュアなトークン管理
-- **JWTトークン検証**: 改ざん防止のためのデジタル署名
-- **自動移行**: localStorage → HttpOnly Cookie自動移行
-- **アクセス制御**: プライベート/パブリックセットリストの厳格なアクセス制御
+### 主要セキュリティ機能
+- **HttpOnly Cookie認証**: XSS攻撃防止
+- **CSRF保護**: タイミング攻撃耐性
+- **レート制限**: 分散対応データベースベース
+- **脅威検出**: ブルートフォース攻撃検出
+- **データ保護**: 入力サニタイゼーション + SQLインジェクション防止
+- **自動クリーンアップ**: Vercelクロン経由の定期メンテナンス
 
-#### セキュリティモニタリング・ログ
-- **データベースベースセキュリティログ**: Vercel Functions互換の永続ログシステム
-- **脅威検出エンジン**: ブルートフォースと認証情報詰込み攻撃の検出
-- **リアルタイムセキュリティイベント**: 不正アクセス試行の即座記録と解析
-- **自動クリーンアップ**: Vercelクロン経由での古いセキュリティデータ自動削除
-
-#### 攻撃防御
-- **CSRF保護**: タイミング攻撃耐性のDouble Submit Cookie + HMAC
-- **レート制限**: IPスプーフィング防止付きデータベースベース分散レート制限
-- **ログインジェクション保護**: 改行文字、制御文字、特殊文字のサニタイゼーション
-- **IPスプーフィング防止**: 信頼できるプロキシ検証と安全なIP抽出
-
-#### データ保護
-- **入力サニタイゼーション**: DOMPurify + カスタムバリデーション
-- **SQLインジェクション防止**: Prisma ORM + パラメータ化クエリ
-- **パスワードセキュリティ**: bcrypt 12ラウンド + 複雑性要件
-- **機密データマスキング**: ログ出力での機密情報保護
-
-#### インフラストラクチャセキュリティ
-- **Docker強化**: 非特権ユーザー、読み取り専用ルートFS、SCRAM-SHA-256認証
-- **環境分離**: 本番/開発環境の完全分離
-- **セキュリティヘッダー**: CSP、X-Frame-Optionsを含むセキュリティヘッダー
-- **ネットワークセキュリティ**: localhost専用バインド、カスタムネットワーク分離
-
-### セキュリティテーブル（データベーススキーマ）
-```sql
--- レート制限追跡
-RateLimitEntry: key, count, resetTime
-
--- セキュリティイベントログ
-SecurityEvent: type, severity, timestamp, userId, ipAddress, details
-
--- 脅威活動解析
-ThreatActivity: ipAddress, activityType, userId, timestamp, metadata
-```
-
-### トークンアーキテクチャ・実装詳細
-
-#### 1. JWT認証トークン
-**目的**: ユーザー認証とセッション管理
-
-**保存方法**: HttpOnly Cookie
-```javascript
-Cookie Name: 'auth_token'
-HttpOnly: true          // XSS攻撃保護
-Secure: production      // 本番でHTTPS専用
-SameSite: 'strict'      // CSRF攻撃保護
-Path: '/'               // 全パス
-MaxAge: 86400           // 24時間（秒）
-```
-
-**JWTペイロード構造**:
-```json
-{
-  "userId": "cuid_user_id",
-  "email": "user@example.com", 
-  "username": "username",
-  "iat": 1704067200,
-  "exp": 1704153600
-}
-```
-
-**署名アルゴリズム**: `JWT_SECRET`によるHMAC SHA-256
-
-**認証フロー**:
-1. GraphQLログイン → JWTトークン生成
-2. `POST /api/auth` → トークン検証 → HttpOnly Cookie設定
-3. 後続リクエスト → 自動Cookie送信 → GraphQL認証
-4. `DELETE /api/auth` → Cookie削除 → ログアウト
-
-#### 2. CSRF保護トークン
-**目的**: クロスサイトリクエストフォージェリ攻撃保護
-
-**実装**: Double Submit Cookie + HMACパターン
-
-**トークン形式**:
-```
-形式: timestamp.randomValue.hmacSignature
-例: 1704067200000.a1b2c3d4e5f6789.8f7e6d5c4b3a2190
-```
-
-**生成プロセス**:
-```javascript
-const timestamp = Date.now().toString()
-const randomValue = randomBytes(16).toString('hex')
-const payload = `${timestamp}.${randomValue}`
-const signature = createHmac('sha256', CSRF_SECRET).update(payload).digest('hex')
-const token = `${payload}.${signature}`
-```
-
-**配布方法**:
-- **Cookie**: `csrf_token`（HttpOnly、一時的）
-- **ヘッダー**: `x-csrf-token`（JavaScript読み取り可能）
-
-**検証プロセス**:
-1. リクエストヘッダーからCSRFトークンを抽出
-2. Cookieから対応するトークンを取得
-3. HMAC署名検証（`timingSafeEqual`使用）
-4. タイムスタンプ有効性チェック
-5. マッチ確認 → リクエスト承認
-
-#### 3. セキュリティシークレット管理
-
-| シークレット | 目的 | 要件 | 保存 | ローテーション |
-|--------|---------|--------------|---------|----------|
-| `JWT_SECRET` | JWT署名・検証 | 32文字以上 | 環境変数 | 定期 |
-| `CSRF_SECRET` | CSRF HMAC署名 | 32文字以上、JWT≠ | 環境変数 | 定期 |
-| `IP_HASH_SALT` | IP匿名化ソルト | 16文字以上 | 環境変数 | 稀 |
-| `CRON_SECRET` | クロン認証 | 32文字以上 | 環境変数 | 稀 |
-
-#### 4. トークンセキュリティ機能
-
-**タイミング攻撃耐性**:
-```javascript
-// CSRFトークン検証
-const isValid = timingSafeEqual(
-  Buffer.from(receivedToken, 'hex'),
-  Buffer.from(expectedToken, 'hex')
-)
-```
-
-**XSS保護**:
-- JWTトークン: HttpOnly Cookie → JavaScriptアクセス不可
-- CSRFトークン: ヘッダー配布 → 限定アクセスのみ
-
-**CSRF保護**:
-- Double Submitパターン: Cookie + ヘッダー両方必須
-- HMAC署名: サーバーサイド検証
-- SameSite Cookie: ブラウザレベル保護
-
-**改ざん保護**:
-- JWT: 整合性保証のためのデジタル署名
-- CSRF: 改ざん検出のためのHMAC-SHA256
-
-#### 5. トークンライフサイクル・管理
-
-**JWTトークンライフサイクル**:
-```
-ログイン → 生成 → HttpOnly Cookieに保存 → 自動更新（24時間） → ログアウト/期限切れ
-```
-
-**CSRFトークンライフサイクル**:  
-```
-リクエスト → 生成 → 保存（Cookie+ヘッダー） → 検証 → 破棄
-```
-
-**自動クリーンアップ**:
-- 期限切れレート制限エントリ: 自動削除
-- セキュリティログ: Vercelクロン経由の定期削除
-- 無効Cookie消去: 認証失敗時の自動実行
-
-#### 6. 開発環境 vs 本番環境設定
-
-**開発環境**:
-- Cookie Secure: false（HTTP許可）
-- レート制限: 実質無制限（認証1000回/5分、API60回/分）
-- 詳細ログ: 有効
-
-**本番環境**:
-- Cookie Secure: true（HTTPS必須）
-- レート制限: 最適化済み（認証15回/15分、API300回/10分）
-- セキュリティログ: データベース永続化
-
-この実装はOWASP Top 10準拠と企業レベルセキュリティ要件を満たします。
-
-### 本番セキュリティチェックリスト
-- ✅ 全重要脆弱性修正
-- ✅ CSRFタイミング攻撃緩和
-- ✅ IPスプーフィング防止  
-- ✅ localStorage XSS脆弱性排除
-- ✅ レート制限での競合状態防止
-- ✅ 脅威検出ロジックエラー修正
-- ✅ ログインジェクション攻撃防止
-- ✅ 包括的セキュリティイベント監視
-- ✅ セキュリティデータ自動クリーンアップ
-- ✅ Vercel Functions互換性
+### セキュリティレベル
+エンタープライズ級セキュリティ（OWASP Top 10準拠）を実装済み
 
 ## 更新履歴と記録
 
-### useSongsフック責務分割リファクタリング (2025-07-17)
-- **Issue #25対応**: 楽曲管理機能の大幅なアーキテクチャ改善
-  - **コンポジションパターン実装**: 単一責任原則に基づく機能分割
-    - `useSongsData.ts`: 楽曲データ取得・管理（GraphQLクエリ、ローディング、エラー処理）
-    - `useSongEdit.ts`: 楽曲編集機能（編集ダイアログ、GraphQLミューテーション）
-    - `useSongDelete.ts`: 楽曲削除機能（単体・一括削除、確認ダイアログ）
-    - `useSongSelection.ts`: 楽曲選択・セットリスト作成（チェックボックス、全選択）
-  - **統合フック**: `useSongs.ts`は4つの専門フックをコンポジションで統合
-  - **完全な後方互換性**: 既存のコンポーネントAPIは変更なし
-- **TSDocコメント追加**: 全新規フックに包括的なドキュメント追加
-  - 機能説明、パラメータ・戻り値型情報、実装例を日本語で記述
-  - TypeScriptドキュメントのベストプラクティス準拠
-- **コード品質向上**: 
-  - 保守性向上（機能別の責務分離）
-  - テスト容易性向上（単一機能フック）
-  - 再利用性向上（専門フックの独立利用可能）
+最新の開発履歴と変更記録については、[HISTORY.md](./docs/project/HISTORY.md)を参照してください。
 
-### ナビゲーションロゴのテキストベース統一 (2025-07-17)
-- **Issue #11対応**: 画像ロゴからSetlist Studioテキストロゴに変更
-  - コスト削減: 高価なロゴ作成から効率的なテキストベースロゴに移行
-  - **BrandTextコンポーネント実装**: 統一されたブランドデザインシステムを構築
-    - Impactフォント、白背景、テキストシャドウで高い視認性
-    - バリアント対応（h1-h6、body1-body2）で柔軟な表示サイズ
-    - 一元管理によるデザイン一貫性とメンテナンス性向上
-- **統一適用箇所**:
-  - HeaderLogo: ナビゲーションメインロゴ（ホバーエフェクト付き）
-  - MobileNavigation: モバイルドロワーヘッダー部分
-  - SampleSetlistsSection: ホームページ説明文内のブランド強調
-- **技術実装**: 既存スタイルをBrandTextコンポーネントに移行、重複コード削除
-- **ブランド統一**: 全UI箇所でSetlist Studioテキストの一貫したデザイン適用
-
-### Issue #34対応: セットリスト表示最適化 & DRY原則実装 (2025-07-17)
-- **Issue #34完全解決**: セットリスト表示の複数問題を包括的に修正
-  - 楽曲10曲全てにオプション追加時の最後の楽曲非表示問題を解決
-  - オプション無し時のフッター・楽曲リスト間の不要な余白を削除
-  - A4サイズ制約内での最適なレイアウト実現
-- **DRY原則完全実装**: BaseTheme.tsxの大幅リファクタリング
-  - SongItemコンポーネント作成による重複コード削除（約80行削減）
-  - 1列レイアウト、2列レイアウト（左列・右列）の統一
-  - 保守性向上: 楽曲表示変更は1箇所のみで対応可能
-- **動的レイアウト最適化**:
-  - 11曲以上で2列レイアウト自動適用
-  - 20曲制限実装（フォーム・表示両対応）
-  - 楽曲数に応じた動的フォントサイズ調整
-  - 楽曲番号右揃え表示（2桁対応、4em幅確保）
-- **ライブ会場最適化**:
-  - 10曲以下: 20-50px大型フォント（遠距離視認性）
-  - 11曲以上: 16-32px最適フォント（折り返し防止）
-  - note表示の一貫した16pxフォントサイズ
-- **コード品質向上**: デバッグ用console.log削除、ESLintエラー解消
-
-### ホーム画面UI/UX大幅改善 & コンポーネント化 (2025-07-11)
-- **LogoOfficialLinkコンポーネント実装**: 公式サイトリンク付きロゴを独立コンポーネント化
-- **画期的なデスクトップ/モバイル対応**: ホバー/タップで異なるインタラクション提供
-  - デスクトップ: ホバー時に🌐アイコンと「公式サイトへ」テキスト表示
-  - モバイル: パルスアニメーション + 「タップして公式サイトへ」常時表示
-- **レスポンシブレイアウト最適化**: 
-  - デスクトップ: 横並びレイアウト（3.5rem見出し + 70px高ロゴ）
-  - モバイル: 縦並びレイアウト（2rem見出し + 50px高ロゴ）
-- **説明文デザイン改善**: デスクトップ/モバイル別の読みやすい表示
-- **アニメーション統合**: pulse、fadeInOut、breatheエフェクトによる没入感向上
-- **Footer公式リンク追加**: Material-UI Link使用、underline="hover"対応
-- **セットリスト画像生成調整**: フッター文字サイズ12px→20px、パディング最適化
-
-### GraphQLスキーマ事前生成システム & パフォーマンス最適化 (2025-07-09)
-- **事前生成スキーマ**: `scripts/generate-schema.ts`でGraphQLスキーマを事前ビルド、Vercel Functions起動時間大幅短縮
-- **Type-GraphQL型注釈統一**: `@Field()` → `@Field(() => Type)`形式で型安全性向上
-- **tsx統合**: TypeScriptスクリプト直接実行サポート追加
-- **ビルドプロセス統合**: `pnpm build`で自動スキーマ生成実行
-- **本番環境レート制限最適化**: 一般API 60回/分 → 500回/10分、データベース負荷90%削減
-- **クリーンアップ処理軽量化**: 期限切れエントリ削除を10%確率実行でパフォーマンス向上
-- **GraphQL読み込み速度**: 約70-80%短縮達成
-
-### TypeScript型システム強化 (2025-07-02)
-- **any型完全排除**: 全ての`any`型を適切なTypeScript型定義に置換
-- **JWT型安全性**: ランタイム型ガード関数による安全なJWT検証機能を実装
-- **共通型統合**: 重複していた型定義（Theme、EntityId、StringArray、Timestamp）を統合
-- **型ファイル再構成**: 機能別型定義構造（common、entities、api、components、jwt）に再編成
-- **型ガード実装**: `isValidJWTPayload()`関数でランタイム型安全性を保証
-- **arrowParens統一**: ESLint/Prettier設定でアロー関数の括弧を必須に統一
-- **DRY原則適用**: 8箇所に散らばっていた`'black' | 'white'`型を単一Theme型に統合
-- **isolatedModules対応**: TypeScript設定に対応した`export type`構文を使用
-- **型安全なJWT検証**: `verifyAndValidateJWT()`関数で改ざん・構造検証を統合
-
-### テーマコンポーネント共通化リファクタリング (2025-07-02)
-- **BaseTheme.tsx実装**: BlackTheme/WhiteThemeの共通ロジックを統一ベースコンポーネントに集約
-- **themeColors.ts分離**: カラーパレット設定をコンポーネントから分離し、テーマごとのカラー定義を独立化
-- **コード重複削除**: 175行×2ファイル（350行）を8行×2ファイル（16行）に削減、300行以上のコード削減を達成
-- **保守性向上**: 新テーマ追加時はカラー設定追加のみで実装可能、テーマロジック変更は1箇所のみ修正
-- **型安全性強化**: ThemeColors型定義でカラー設定の型保証を追加
-- **既存機能維持**: 全テーマレンダリング機能とQRコード統合を完全に保持
-
-### リポジトリ管理
-- **Claude.mdとReadme.mdを必要に応じて更新**: 継続的プロジェクトメンテナンスの一環としてドキュメントファイル更新タスクを追加
-
-### GraphQLドキュメント体系化 (2025-07-17)
-- **GraphQL-Architecture-Guide.md**: レストラン比喩による包括的GraphQLアーキテクチャガイドを作成
-- **GraphQL-Libraries-Guide.md**: 使用ライブラリの詳細解説と一覧表、Mermaid図を含む包括的ライブラリガイド
-- **GraphQL-Beginner-Guide.md**: GraphQL初心者向けの基本概念とレストラン比喩での学習ガイド
-- **ドキュメント分割**: 973行の巨大なマークダウンを3つの管理しやすいファイルに分割
-- **相互参照システム**: 各ファイル間の適切なクロスリファレンスを実装
-- **段階的学習**: 初心者→アーキテクチャ→ライブラリ詳細の学習パスを提供
-
-### ライブラリ構造再編成 (2025-07-01)
-- **階層構造**: src/libディレクトリを機能カテゴリ（client、server、security、shared）に再編成
-- **Clientディレクトリ**: apollo-client.ts、auth-utils.ts、secure-auth-client.tsをclient/サブディレクトリに移動
-- **Serverディレクトリ**: GraphQL関連ファイル（apollo-operations.ts、resolvers/、types/、middleware/）をserver/graphql/サブディレクトリに移動
-- **Securityディレクトリ**: 全セキュリティ関連ユーティリティ（csrf-protection.ts、rate-limit-db.ts、security-logger-db.tsなど）をsecurity/サブディレクトリに統合  
-- **Sharedディレクトリ**: クライアント・サーバー両方で使用されるユーティリティのためdateUtils.tsをshared/に移動
-- **インポートパス更新**: 新しいディレクトリ構造を反映してコードベース全体のインポート文を更新
-- **型安全性**: コンパイルエラーゼロでTypeScript完全互換性を維持
-- **ドキュメント更新**: 新組織を反映してCLAUDE.mdプロジェクト構造セクションを更新
-
-### 認証・認可更新 (2025-07-01)
-- **SetlistProtectedRoute実装**: プライベート/パブリックセットリスト用アクセス制御を実装
-- **React Hooksエラー修正**: React順序エラー解決のため条件文前にuseEffectフックを移動
-- **GraphQLエラーハンドリング改善**: 認証エラーメッセージの適切な取得と処理を強化
-- **プライベートセットリストアクセス制御**: 未認証ユーザーがプライベートセットリストにアクセス時の自動ログインページリダイレクト
-- **全ページ認証保護適用**: 以下のページにProtectedRouteを適用:
-  - `/songs`: 楽曲リストページ
-  - `/songs/new`: 新規楽曲作成ページ
-  - `/setlists/new`: 新規セットリスト作成ページ
-  - `/setlists/[id]/edit`: セットリスト編集ページ
-- **SetlistResolver認証ロジック**: プライベートセットリスト用手動認証チェックを実装（パブリックセットリストは全員がアクセス可能のまま）
-
-### セキュリティ強化 (2025-07-02)
-- **JWT有効期限短縮**: セキュリティリスク軽減のため7日から2時間に変更
-  - `AuthResolver.ts`: register/loginでのJWTトークン有効期限を`expiresIn: '2h'`に変更
-  - `route.ts`: HttpOnly Cookie有効期限を`maxAge: 2 * 60 * 60`（2時間）に変更
-- **本番環境エラーメッセージ統一**: 情報漏洩防止のためGraphQL APIエラーハンドリングを強化
-  - 本番環境では詳細なシステムエラーを汎用メッセージに変換
-  - ユーザー向けエラー（認証、権限等）は適切に表示
-  - 開発環境では詳細なデバッグ情報を維持
-- **コード品質向上**: 過剰実装の削除によりコードベースを簡素化
-  - 213行の複雑な環境変数検証ファイルを削除
-  - 既存の個別環境変数チェック（AuthResolver）を維持
-  - YAGNI原則に従った実用的な実装に変更
-
-### パスワードマネージャー互換性向上 (2025-07-09)
-- **特殊文字要件削除**: パスワードマネージャー互換性のため特殊文字を必須から削除
-  - `validation-rules.ts`: パスワードパターンから特殊文字チェック `(?=.*[^\w\s])` を削除
-  - **新要件**: 8文字以上、大文字・小文字・数字を含む（特殊文字任意）
-  - **対応**: Chrome、Safari、1Password等のパスワードマネージャー生成パスワード対応
-- **HTML5 pattern属性エラー修正**: ブラウザでの正規表現エラーを解決
-  - 複雑な文字クラス指定から単純な先読みパターンに変更
-  - registerページでの pattern 属性エラーを完全解決
-- **RegisterClient統合**: validation-rules.tsとの一元管理
-  - 重複したパスワード検証ロジックを統合
-  - `validateField`関数によるバリデーション統一
-
-### ビルド最適化・minify設定対応 (2025-07-09)
-- **minify設定修正**: Next.js 15とTerserPlugin互換性問題を解決
-  - `next.config.ts`: 不適切なjscプロパティからwebpack設定へ移行
-  - **TerserPlugin統合**: 関数名・クラス名保持付きminify設定
-  - **パフォーマンス向上**: 圧縮効率とデバッグ可能性の両立
-- **依存関係整備**: 
-  - `terser-webpack-plugin`: 最適化用パッケージ追加
-  - `@types/terser-webpack-plugin`: TypeScript型定義追加
-  - **本番ビルド安定化**: エラーなしビルド実現
-
-### GraphQL API パフォーマンス大幅最適化 (2025-07-11)
-- **グローバルPrismaClient実装**: 接続プール最適化でデータベース接続時間を90%短縮
-  - `route.ts`: 毎回新規作成から再利用可能なグローバルインスタンスに変更
-  - `globalThis.prisma`パターンでVercel Functions環境に最適化
-  - 初回のみ接続確立（100-200ms）、2回目以降は再利用（10-20ms）
-- **リクエスト処理並列化**: Promise.all使用で処理時間を25%短縮
-  - リクエストボディ取得とレート制限チェックを並列実行
-  - 順次実行（250-500ms）から並列実行（200-400ms）に改善
-- **レート制限処理軽量化**: パフォーマンス重視の設定調整
-  - 期限切れクリーンアップ確率: 10% → 5%に削減
-  - API制限緩和: 300回/5分 → 500回/10分に調整
-  - データベース負荷を50%軽減
-- **認証リクエスト判定効率化**: 正規表現使用で処理回数を50%削減
-  - `body.includes('login') || body.includes('register')` → `/(?:login|register)/.test(body)`
-  - 2回の文字列検索から1回の正規表現マッチングに最適化
-- **総合パフォーマンス向上**: GraphQL APIレスポンス時間を60-70%短縮
-  - 初回リクエスト: 700ms → 420ms（40%高速化）
-  - 2回目以降: 350ms → 210ms（60%高速化）
-  - Vercel Functions環境での冷却時間（cold start）問題を大幅改善
-- **設定最適化**: 不要な環境変数設定を削除してシンプルな構成に変更
-
-### GraphQL API 高速化・セキュリティ最適化 (2025-07-11)
-- **並列処理の最大化**: Apollo Server作成の早期開始によるcold start時間短縮
-  - サーバー作成、レート制限、認証チェックを並列実行
-  - 処理時間を30-40%短縮（850ms → 450ms）
-- **データベース接続高速化**: 接続プール設定とタイムアウト最適化
-  - トランザクション設定: maxWait 2秒、timeout 5秒
-  - 早期接続確立: `prisma.$connect()`でアプリ起動時に接続
-  - 2回目以降のクエリ実行時間を70%短縮
-- **セキュリティとパフォーマンスのバランス調整**: 
-  - レート制限: 1000回/15分 → 300回/10分（DoS攻撃防御を維持）
-  - クリーンアップ確率: 2% → 5%（データベース肥大化防止）
-  - 認証・CSRF保護・セキュリティログ機能を完全維持
-- **cold start対策**: Vercel Functions環境での初回アクセス最適化
-  - サーバー初期化の並列実行
-  - スキーマキャッシュの効率化
-  - 予想改善: 初回1.8-2.0秒 → 0.8-1.0秒（50-55%短縮）
-- **総合パフォーマンス改善**: 
-  - 基本クエリ: 1.3秒 → 0.5-0.7秒（60-65%短縮）
-  - 認証系クエリ: 1.5秒 → 0.6-0.8秒（60-65%短縮）
-  - セキュリティを損なうことなく大幅な高速化を実現
-
-### レート制限緩和 (2025-07-11)
-- **開発環境レート制限**: 実質無制限（1000回/5分）に変更
-- **本番環境レート制限**: 15分間に15回に緩和（5回→15回）
-- **開発効率向上**: 開発時のレート制限エラーを排除
-
-### GraphQL API セキュリティ最適化 (2025-07-11)
-- **セキュリティリスク評価**: パフォーマンス最適化によるセキュリティ影響を包括的に評価
-  - レート制限緩和リスク: 1000回/15分 → DoS攻撃脆弱性を特定
-  - 並列処理セキュリティ: 競合状態と処理順序の安全性を検証
-  - データベース接続最適化: セキュリティリスクなしを確認
-- **セキュリティ修正の実装**: 
-  - API制限を安全なレベルに調整: 1000回/15分 → 300回/10分
-  - クリーンアップ確率を適切に設定: 2% → 5%
-  - DoS攻撃防御を維持しながらパフォーマンス向上を実現
-- **セキュリティ機能完全維持**: 
-  - 認証システム: JWT + HttpOnly Cookie（変更なし）
-  - CSRF保護: Double Submit Cookie + HMAC（変更なし）
-  - セキュリティログ: データベースベース記録（変更なし）
-  - 脅威検出: ブルートフォース攻撃検出（変更なし）
-- **最終セキュリティレベル**: エンタープライズ級セキュリティを維持（9.2/10）
-  - OWASP Top 10準拠
-  - 全セキュリティ機能の完全保持
-  - パフォーマンス向上とセキュリティのバランスを最適化
-
-### Supabase RLS完全実装 (2025-07-11)
-- **セキュリティ脆弱性発見と修正**: Security Advisorで全テーブルRLS無効を発見
-  - 影響テーブル: users, songs, setlists, setlist_items, rate_limit_entries, security_events, threat_activities
-  - リスク: 全データが公開状態、パスワードハッシュ含む個人情報漏洩の危険性
-- **PostgreSQL標準RLS実装**: auth.role()からcurrent_user方式に変更
-  - 問題: Supabase Auth拡張機能が利用不可（`extension "supabase_auth" is not available`）
-  - 解決: PostgreSQL標準機能のみでRLS実装（`current_user = 'postgres'`）
-  - 利点: 拡張機能に依存しない安定した実装
-- **最終設定SQLファイル**: `SUPABASE_RLS_SETUP_FINAL.sql`
-  - PostgreSQL標準ポリシーによる完全実装
-  - GraphQL API（postgresユーザー）専用アクセス制御
-  - 公開セットリスト用の匿名アクセスポリシー
-  - 動作確認済みの設定のみ含む
-- **セキュリティレベル向上**: 
-  - データベースアクセス制御: PostgreSQL標準機能で完全実装
-  - RLS保護: 全テーブル適用済み
-  - アクセス制御: `current_user = 'postgres'`による制御
-  - 脆弱性: 完全修正（Security Advisor警告解消）
-
-### UI/UXコンポーネント改善 (2025-07-11)
-- **共通Buttonコンポーネント導入**: 統一されたボタンデザインシステムを実装
-  - 4つの基本バリアント（primary、secondary、danger、text）
-  - 適切な色使いとホバーエフェクト
-  - 一貫したスタイリングとアクセシビリティ
-- **ナビゲーション機能統合**: ヘッダーコンポーネントの機能強化
-  - **DesktopNavigation**: アイコン付きデスクトップナビゲーション
-  - **MobileNavigation**: モバイルドロワーナビゲーション
-  - **UserMenu**: アバターとドロップダウン付きユーザーメニュー
-  - **AuthButton**: 統一されたログイン/ログアウトボタン
-- **ログインボタンUI改善**: 認証ボタンの見た目と機能を強化
-  - アイコン表示の統一
-  - Next.js LinkコンポーネントとMUI Buttonの統合
-  - 色統一とアクセシビリティ対応
-- **認証ボタンコンポーネント統一**: 冗長コードを削減し保守性を向上
-  - 重複する認証ボタンロジックを統一
-  - 一貫したスタイリングとユーザーエクスペリエンス
-- **モバイルナビゲーション余白統一**: flexレイアウト改善
-  - モバイルドロワーの余白とスペーシングを統一
-  - レスポンシブデザインの改善
-- **ホーム画面セットリストカード改善**: ダッシュボードの機能強化
-  - 削除ボタン付きカードデザイン
-  - クリック可能なカードエリア
-  - 直感的なユーザーインタラクション
-
-#### セキュリティ改善の詳細
-
-**JWTトークン短期化の影響**:
-- トークン漏洩時のリスク期間を168時間から2時間に大幅短縮（98.8%削減）
-- より頻繁な再認証が必要になるが、セキュリティと利便性のバランスを最適化
-- 本番環境での認証セキュリティを企業レベルに強化
-
-**エラーハンドリング強化**:
-```typescript
-// 本番環境での情報漏洩防止例
-if (isProduction) {
-  const isUserError = userFriendlyErrors.some(keyword => 
-    err.message.includes(keyword)
-  );
-  
-  if (isUserError) {
-    return { message: err.message };
-  }
-  
-  return { 
-    message: 'サーバーエラーが発生しました。しばらく時間をおいて再度お試しください。' 
-  };
-}
-```
-
-**総合セキュリティレベル**: エンタープライズ級（8.7/10 → 9.2/10）
-
-### SEO完全最適化 & favicon統一 (2025-07-17)
-- **Issue #17対応**: SEO改善とfavicon統一による検索エンジン最適化
-- **favicon統一**: favicon.png → favicon.ico完全移行
-  - app/favicon.ico: mosquitoneデザインで置き換え
-  - public/favicon.png削除で競合解消
-  - metadata icons設定シンプル化
-- **SEO最適化**:
-  - sitemap.ts: 優先度・更新頻度調整、パフォーマンス改善
-  - robots.txt: favicon.ico対応、Crawl-delay追加
-  - metadata description: 実際のサイトコンテンツと統一
-- **不要ファイル削除**:
-  - public/logo.png削除（setlist-studio-logo.png統一）
-  - OpenGraph/Twitter Card画像をsetlist-studio-logo.pngに統一
-- **表現統一**: 「プロフェッショナル」→「高品質」で自然な文章に
-- **効果**: 検索エンジン最適化・クロール効率向上・ブラウザ互換性向上
-
-### HOMEページレイアウト統一 (2025-07-17)
-- **FLEX & gapレイアウト実装**: まばらな余白設定を統一
-- **HomeClient.tsx**: display: flex, flexDirection: column, gap: 6 追加
-- **各セクションのmargin-bottom削除**: 統一された48px間隔を実現
-- **対象コンポーネント**: WelcomeSection, FeatureSection, SampleSetlistsSection, SetlistDashboard
-- **効果**: 一貫したレイアウト・保守性向上・コード品質向上
-
-### ロゴ画像統一 (2025-07-17)
-- **BrandText → PNG画像移行**: 全ロゴ表示をPNG画像に統一
-- **対象コンポーネント**:
-  - HeaderLogo: 白文字化フィルター適用（200x50px）
-  - SampleSetlistsSection: サイズ最適化（130x35px）
-  - 利用ガイドページ: ロゴ+テキスト横並びレイアウト（240x70px）
-  - MobileNavigation: ロゴ削除でシンプル化
-- **BrandTextコンポーネント削除**: 不要コード整理
-- **Next.js Image最適化**: 適切なsizes属性とパフォーマンス改善
-
-### API エラーメッセージ日本語化対応 (2025-07-17)
-- **Issue #35対応**: ログイン時の500エラーメッセージを含む全APIエラーメッセージの日本語化
-- **対象API**:
-  - `/api/auth`: 「Token is required」→「トークンが必要です」、「Invalid token」→「無効なトークンです」
-  - `/api/graphql`: JWT_SECRET設定エラーの日本語化
-  - CSRF保護: 「CSRF token validation failed」→「CSRFトークンの検証に失敗しました」
-  - クリーンアップAPI: 「Unauthorized」→「認証に失敗しました」、「Cleanup failed」→「クリーンアップに失敗しました」
-- **統一化**: 全APIエンドポイントのエラーメッセージを日本語に統一
-- **ユーザビリティ**: 日本語ユーザーにとって理解しやすいエラーメッセージを提供
-
-### UI/UXテキスト日本語化 (2025-07-11)
-- **セットリスト表示画面**: 英語ボタンテキストの日本語統一
-  - 「Edit」→「編集」
-  - 「Download」→「ダウンロード」
-  - 「Share」→「共有」
-  - 「Duplicate」→「複製」
-  - 「Setlist Generated !」→「セットリストが生成されました！」
-- **テーマセレクト**: 「Theme: black/white」表示は英語のまま保持（技術的統一性のため）
-- **ユーザビリティ向上**: 日本語ユーザー向けの直感的な操作体験を実現
-
-### 削除機能統一化 (2025-07-11)
-- **共通DeleteConfirmModalコンポーネント**: 楽曲管理とセットリスト削除の統一UI実装
-  - `/src/components/common/DeleteConfirmModal.tsx`: 再利用可能な削除確認モーダル
-  - Material-UIベースの統一されたデザイン
-  - カスタムButtonコンポーネント使用（dangerバリアント対応）
-- **楽曲管理削除機能改善**: 
-  - `useSongs.ts`: `window.confirm`からモーダル確認に変更
-  - `SongTable.tsx`: 削除ハンドラー引数をSongオブジェクトに変更
-  - `songs/page.tsx`: DeleteConfirmModal統合
-- **セットリスト削除機能改善**:
-  - `SetlistDashboard.tsx`: 既存DialogをDeleteConfirmModalに置換
-  - 統一されたローディング状態とエラーハンドリング
-- **アクセシビリティ対応**: 
-  - aria-hiddenエラー解決（disableRestoreFocus設定）
-  - 適切なフォーカス管理
-- **Buttonコンポーネント拡張**: 
-  - `danger`バリアント追加（赤色の削除ボタン）
-  - `loading`プロップ対応
-  - TypeScript型安全性確保
-
-### components/commonリファクタリング (2025-07-11)
-- **機能別サブフォルダ構造**: 共通コンポーネントを論理的にグループ化
-  - `ui/`: 基本UIコンポーネント（Button、LoadingFallback、NoSSR）
-  - `layout/`: レイアウト関連（Header、Footer、headerサブコンポーネント）
-  - `auth/`: 認証関連（LoginLink）
-  - ルート: 単発コンポーネント（DeleteConfirmModal、LogoOfficialLink）
-- **大規模インポートパス更新**: 27ファイルのインポートパスを新構造に対応
-  - 11ファイルの移動（rename）
-  - 16ファイルのインポート修正
-- **保守性向上**: 機能別グループ化により、関連コンポーネントの発見と管理が容易に
-- **拡張性確保**: 各カテゴリに新しいコンポーネントを追加しやすい構造
-- **TypeScript互換性**: 全てのインポートパスでコンパイルエラーゼロを達成
-
-### ホームページサンプルセットリスト表示機能実装 (2025-07-17)
-- **Issue #28対応**: ホームページにセットリストサンプル表示機能を追加
-- **SampleSetlistsSectionコンポーネント**: 新規コンポーネント作成
-  - `/src/components/home/SampleSetlistsSection.tsx`: レスポンシブ対応のサンプル表示
-  - 2つのテーマ（Black/White）のサンプル画像を表示
-  - Next.js Imageコンポーネント使用でパフォーマンス最適化
-- **サンプル画像追加**:
-  - `public/setlist-mosquitone-black.png`: ブラックテーマサンプル
-  - `public/setlist-mosquitone-white.png`: ホワイトテーマサンプル
-- **UI/UX改善**: 
-  - カード式レイアウトでホバーエフェクト付き
-  - 視認性向上のためグレー背景（#e0e0e0）適用
-  - レスポンシブデザイン（デスクトップ2列、モバイル1列）
-- **ホームページ統合**: `HomeClient.tsx`にサンプルセクションを統合
-- **文言調整**: 「プロフェッショナル」表現を削除し自然な文章に変更
+### 最新の主要更新
+- **useSongsフック責務分割リファクタリング (2025-07-17)**: Issue #25対応
+- **セットリスト表示最適化 & DRY原則実装 (2025-07-17)**: Issue #34対応
+- **GraphQLドキュメント体系化 (2025-07-17)**: 3つの詳細ガイドに分割
+- **セキュリティアーキテクチャ強化 (2025-07-01)**: エンタープライズ級実装
+- **パフォーマンス最適化 (2025-07-11)**: GraphQL API高速化
