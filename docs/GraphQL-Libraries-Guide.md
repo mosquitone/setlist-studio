@@ -29,9 +29,9 @@ GraphQLエコシステムは複雑で、各ライブラリが特定の問題を�
 
 ```mermaid
 graph TD
-    A[React Component] --> B[@apollo/client]
-    B --> C[/api/graphql]
-    C --> D[@apollo/server]
+    A[React Component] --> B["@apollo/client"]
+    B --> C["/api/graphql"]
+    C --> D["@apollo/server"]
     D --> E[type-graphql]
     E --> F[Resolvers]
     F --> G[class-validator]
@@ -40,7 +40,7 @@ graph TD
     I[graphql-depth-limit] --> D
     J[reflect-metadata] --> E
     K[class-transformer] --> F
-    L[@as-integrations/next] --> C
+    L["@as-integrations/next"] --> C
     M[graphql] --> N[All GraphQL libraries]
 ```
 
