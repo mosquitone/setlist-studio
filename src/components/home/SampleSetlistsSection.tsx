@@ -2,6 +2,7 @@
 
 import { Box, Typography, Grid, Card, CardContent } from '@mui/material';
 import Image from 'next/image';
+import { BrandText } from '@/components/common/ui/BrandText';
 
 export function SampleSetlistsSection() {
   return (
@@ -10,7 +11,10 @@ export function SampleSetlistsSection() {
         セットリストサンプル
       </Typography>
       <Typography variant="body1" textAlign="center" color="text.secondary" sx={{ mb: 6 }}>
-        Setlist Studioで作成できるセットリストの例をご覧ください
+        <BrandText variant="body1" sx={{ fontSize: '1rem', padding: '2px 6px' }}>
+          Setlist Studio
+        </BrandText>
+        で作成できるセットリストの例をご覧ください
       </Typography>
 
       <Grid container spacing={4} justifyContent="center">

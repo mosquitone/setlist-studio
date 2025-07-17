@@ -16,6 +16,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { AuthLink } from '@/components/common/auth/LoginLink';
+import { BrandText } from '@/components/common/ui/BrandText';
 
 interface NavigationItem {
   label: string;
@@ -45,9 +46,9 @@ export function MobileNavigation({
 
   const drawer = (
     <Box onClick={onToggle} sx={{ textAlign: 'center' }}>
-      <Typography variant="h6" sx={{ my: 2 }}>
-        Setlist Studio
-      </Typography>
+      <Box sx={{ my: 2, display: 'flex', justifyContent: 'center' }}>
+        <BrandText variant="h6">Setlist Studio</BrandText>
+      </Box>
       <Divider />
       {isLoading ? (
         <List>
