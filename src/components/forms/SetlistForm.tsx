@@ -108,7 +108,8 @@ const validationSchema = Yup.object({
           }),
       }),
     )
-    .min(1, '少なくとも1曲は必要です'),
+    .min(1, '少なくとも1曲は必要です')
+    .max(20, '楽曲は20曲以下にしてください'),
 });
 
 export default function SetlistForm({
@@ -239,8 +240,9 @@ export default function SetlistForm({
                           onClick={() => push({ title: '', note: '' })}
                           fullWidth
                           sx={{ mt: 2 }}
+                          disabled={values.items.length >= 20}
                         >
-                          楽曲を追加
+                          {values.items.length >= 20 ? '楽曲は20曲まで' : '楽曲を追加'}
                         </Button>
                       </>
                     );
