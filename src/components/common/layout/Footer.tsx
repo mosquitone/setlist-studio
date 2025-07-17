@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Link, Typography } from '@mui/material';
+import NextLink from 'next/link';
 
 export default function Footer() {
   return (
@@ -14,6 +15,19 @@ export default function Footer() {
         marginTop: 'auto',
       }}
     >
+      {/* 内部リンク - SEO向上のため */}
+      <Box sx={{ mb: 2 }}>
+        <NextLink href="/guide" style={{ textDecoration: 'none', margin: '0 8px' }}>
+          利用ガイド
+        </NextLink>
+        <NextLink href="/login" style={{ textDecoration: 'none', margin: '0 8px' }}>
+          ログイン
+        </NextLink>
+        <NextLink href="/register" style={{ textDecoration: 'none', margin: '0 8px' }}>
+          新規登録
+        </NextLink>
+      </Box>
+
       <Typography variant="body2" color="text.secondary">
         © 2025{' '}
         <Link

@@ -41,6 +41,20 @@ import {
 // 静的生成を強制
 export const dynamic = 'force-static';
 
+// メタデータ追加
+export const metadata = {
+  title: '利用ガイド - 機能一覧と使い方',
+  description:
+    'Setlist Studioの全機能と使い方を詳しく説明します。未登録ユーザーと登録ユーザーの機能比較、セットリスト作成方法、楽曲管理など完全ガイド。',
+  keywords: ['セットリスト', '使い方', '機能', 'ガイド', 'バンド', '楽曲管理', 'mosquitone'],
+  openGraph: {
+    title: '利用ガイド - Setlist Studio',
+    description:
+      'Setlist Studioの全機能と使い方を詳しく説明します。未登録ユーザーと登録ユーザーの機能比較、セットリスト作成方法、楽曲管理など完全ガイド。',
+    type: 'article',
+  },
+};
+
 export default function GuidePage() {
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
