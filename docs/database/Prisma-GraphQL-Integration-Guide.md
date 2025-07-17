@@ -5,8 +5,10 @@
 ## 📚 関連ドキュメント
 
 - **[GraphQL初心者ガイド](../api/graphql/GraphQL-Beginner-Guide.md)** - GraphQLの基本概念
-- **[GraphQLアーキテクチャガイド](../api/graphql/GraphQL-Architecture-Guide.md)** - アーキテクチャの全体像
+- **[GraphQLアーキテクチャガイド](../api/graphql/GraphQL-Architecture-Guide.md)** - アーキテクチャの全体像と処理フロー
 - **[Prisma最適化ガイド](./PRISMA_OPTIMIZATION_GUIDE.md)** - パフォーマンス最適化
+
+**💡 このガイドの位置づけ**: アーキテクチャガイドで学んだ全体像を基に、PrismaとGraphQLの具体的な統合方法を詳しく解説します。
 
 ## 🔗 PrismaとGraphQLの関係性
 
