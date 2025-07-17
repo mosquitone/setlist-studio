@@ -11,6 +11,13 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 - **デプロイリポジトリ**: GitLab（https://gitlab.com/mosquitone8/setlist-studio）
 - **デプロイメント**: Vercelを通じてGitLabリポジトリから本番環境へデプロイ
 
+### Git操作
+- **GitHub CLI**: `gh` コマンドが利用可能（v2.74.1）- プルリクエスト、Issue管理
+- **GitLab CLI**: `glab` コマンドが利用可能（v1.63.0）- プロジェクト管理、MRなど
+- **リモートリポジトリ**: 
+  - `origin`: GitHub（開発用）
+  - `gitlab`: GitLab（デプロイ用）
+
 ## 開発コマンド
 
 ### 基本開発コマンド
