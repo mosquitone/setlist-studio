@@ -124,6 +124,12 @@ export const GET_SETLISTS = gql`
   }
 `;
 
+export const GET_BAND_NAMES = gql`
+  query GetBandNames {
+    bandNames
+  }
+`;
+
 export const GET_SETLIST = gql`
   query GetSetlist($id: ID!) {
     setlist(id: $id) {

@@ -18,6 +18,7 @@ export default function SongsPage() {
     songToDelete,
     isDeleteDialogOpen,
     deleteLoading,
+    updateLoading,
     selectedSongs,
     handleEditSong,
     handleSaveSong,
@@ -57,6 +58,7 @@ export default function SongsPage() {
             song={selectedSong}
             onClose={closeEditDialog}
             onSave={handleSaveSong}
+            loading={updateLoading}
           />
 
           <DeleteConfirmModal

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Box, Container, Typography, Paper, Alert } from '@mui/material';
 import { Button } from '@/components/common/ui/Button';
 import { Add as AddIcon } from '@mui/icons-material';
@@ -42,7 +42,6 @@ interface SetlistFormProps {
 
 const validationSchema = Yup.object({
   title: Yup.string()
-    .required('セットリスト名は必須です')
     .max(100, 'セットリスト名は100文字以下にしてください')
     .test('sanitize', 'セットリスト名に無効な文字が含まれています', function (value) {
       if (!value) return true;
@@ -122,7 +121,6 @@ export default function SetlistForm({
   loadingButtonText,
   enableDragAndDrop = true,
 }: SetlistFormProps) {
-  const [expandedOptions, setExpandedOptions] = useState(false);
   const { data: songsData } = useQuery(GET_SONGS);
   const songs = useMemo(() => songsData?.songs || [], [songsData]);
 
@@ -149,11 +147,7 @@ export default function SetlistForm({
           return (
             <Form>
               <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
-                <SetlistFormFields
-                  formik={formik}
-                  expandedOptions={expandedOptions}
-                  onToggleOptions={() => setExpandedOptions(!expandedOptions)}
-                />
+                <SetlistFormFields formik={formik} />
               </Paper>
 
               <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
@@ -268,8 +262,8 @@ export default function SetlistForm({
                 >
                   キャンセル
                 </Button>
-                <Button type="submit" disabled={loading} size="large">
-                  {loading ? loadingButtonText : submitButtonText}
+                <Button type="submit" loading={loading} size="large">
+                  {submitButtonText}
                 </Button>
               </Box>
             </Form>

@@ -46,8 +46,8 @@ export class CreateSetlistItemForSetlistInput {
 
 @InputType()
 export class CreateSetlistInput {
-  @Field(() => String)
-  title: string;
+  @Field(() => String, { nullable: true })
+  title?: string;
 
   @Field(() => String)
   bandName: string;
@@ -134,6 +134,27 @@ export class SetlistResolver {
   }
 
   /**
+   * ユーザーが使用したバンド名の一覧を取得（Autocomplete用）
+   * @param ctx - GraphQLコンテキスト（認証済みユーザー情報含む）
+   * @returns ユニークなバンド名の配列
+   */
+  @Query(() => [String])
+  @UseMiddleware(AuthMiddleware)
+  async bandNames(@Ctx() ctx: Context): Promise<string[]> {
+    const results = await ctx.prisma.setlist.findMany({
+      where: {
+        userId: ctx.userId,
+        bandName: { not: null },
+      },
+      select: { bandName: true },
+      distinct: ['bandName'],
+      orderBy: { bandName: 'asc' },
+    });
+
+    return results.map((result) => result.bandName).filter(Boolean) as string[];
+  }
+
+  /**
    * 特定のセットリストを取得（公開設定と認証に基づくアクセス制御付き）
    * @param id - セットリストID
    * @param ctx - GraphQLコンテキスト
@@ -211,9 +232,21 @@ export class SetlistResolver {
   ): Promise<Setlist> {
     const { items, ...setlistData } = input;
 
+    // セットリスト名が空の場合、自動でナンバリング
+    let title = setlistData.title;
+    if (!title || title.trim() === '') {
+      title = await this.generateSetlistTitle(ctx);
+    }
+
+    // セットリストの楽曲から未登録楽曲を自動登録
+    if (items && items.length > 0) {
+      await this.ensureSongsExist(items, input.bandName, ctx);
+    }
+
     const setlist = await ctx.prisma.setlist.create({
       data: {
         ...setlistData,
+        title,
         userId: ctx.userId!,
         items: items
           ? {
@@ -233,6 +266,82 @@ export class SetlistResolver {
     });
 
     return setlist as Setlist;
+  }
+
+  /**
+   * セットリスト名を自動生成（"セットリスト 1", "セットリスト 2" など）
+   * @param ctx - GraphQLコンテキスト
+   * @returns 生成されたセットリスト名
+   */
+  private async generateSetlistTitle(ctx: Context): Promise<string> {
+    // 現在のユーザーのセットリスト数を取得
+    const setlistCount = await ctx.prisma.setlist.count({
+      where: { userId: ctx.userId },
+    });
+
+    // 次の番号を計算
+    const nextNumber = setlistCount + 1;
+
+    // 名前の衝突を避けるため、既存のセットリストタイトルをチェック
+    let title = `セットリスト ${nextNumber}`;
+    let counter = nextNumber;
+
+    while (true) {
+      const existingSetlist = await ctx.prisma.setlist.findFirst({
+        where: {
+          userId: ctx.userId,
+          title: title,
+        },
+      });
+
+      if (!existingSetlist) {
+        break;
+      }
+
+      counter++;
+      title = `セットリスト ${counter}`;
+    }
+
+    return title;
+  }
+
+  /**
+   * 楽曲リストから未登録楽曲を楽曲管理テーブルに自動登録
+   * @param items - セットリストの楽曲リスト
+   * @param bandName - バンド名（artistとして使用）
+   * @param ctx - GraphQLコンテキスト
+   */
+  private async ensureSongsExist(
+    items: CreateSetlistItemForSetlistInput[],
+    bandName: string,
+    ctx: Context,
+  ): Promise<void> {
+    // 現在のユーザーの楽曲一覧を取得
+    const existingSongs = await ctx.prisma.song.findMany({
+      where: {
+        userId: ctx.userId,
+        title: { in: items.map((item) => item.title) },
+      },
+      select: { title: true },
+    });
+
+    const existingSongTitles = new Set(existingSongs.map((song) => song.title));
+
+    // 未登録楽曲を抽出
+    const newSongs = items.filter((item) => !existingSongTitles.has(item.title));
+
+    // 未登録楽曲を一括登録
+    if (newSongs.length > 0) {
+      await ctx.prisma.song.createMany({
+        data: newSongs.map((item) => ({
+          title: item.title,
+          artist: bandName,
+          notes: item.note || null,
+          userId: ctx.userId!,
+        })),
+        skipDuplicates: true, // 重複を防ぐ
+      });
+    }
   }
 
   @Mutation(() => Boolean)
@@ -273,6 +382,12 @@ export class SetlistResolver {
     }
 
     const { items, ...setlistData } = input;
+
+    // セットリストの楽曲から未登録楽曲を自動登録
+    if (items && items.length > 0) {
+      const bandName = input.bandName || setlist.bandName || 'Unknown';
+      await this.ensureSongsExist(items, bandName, ctx);
+    }
 
     // Update setlist and handle items
     const updatedSetlist = await ctx.prisma.setlist.update({
