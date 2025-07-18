@@ -28,6 +28,16 @@ export default function Footer() {
         </NextLink>
       </Box>
 
+      {/* 法的情報リンク */}
+      <Box sx={{ mb: 2 }}>
+        <NextLink href="/terms" style={{ textDecoration: 'none', margin: '0 8px', fontSize: '0.875rem' }}>
+          利用規約
+        </NextLink>
+        <NextLink href="/privacy" style={{ textDecoration: 'none', margin: '0 8px', fontSize: '0.875rem' }}>
+          プライバシーポリシー
+        </NextLink>
+      </Box>
+
       <Typography variant="body2" color="text.secondary">
         © 2025{' '}
         <Link

@@ -195,36 +195,158 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 /                           # Next.jsアプリケーションルート
 ├── docs/                   # 技術ドキュメント（構造化済み）
 │   ├── api/                # API・GraphQL関連ドキュメント
+│   │   ├── API_ROUTES.md
+│   │   ├── GRAPHQL_BEGINNERS_GUIDE.md
+│   │   ├── GRAPHQL_CIRCULAR_DEPS_RESOLUTION.md
+│   │   └── GRAPHQL_SCHEMA_TYPES.md
 │   ├── database/           # データベース・Prisma関連ドキュメント
+│   │   ├── PRISMA_BEGINNERS_GUIDE.md
+│   │   ├── PRISMA_OPTIMIZATION_GUIDE.md
+│   │   └── PRISMA_GRAPHQL_INTEGRATION.md
 │   ├── deployment/         # デプロイ・運用関連ドキュメント
+│   │   ├── VERCEL_DEPLOYMENT_GUIDE.md
+│   │   └── SUPABASE_SETUP_GUIDE.md
 │   ├── security/           # セキュリティ関連ドキュメント
+│   │   ├── SECURITY.md
+│   │   └── SECURITY_TEST_PLAN.md
 │   └── project/            # プロジェクト管理ドキュメント
-├── src/app/                # Next.js App Router
-│   ├── api/                # APIルート（Vercel Functions）
-│   ├── (pages)/            # アプリケーションページ
-│   └── globals.css         # グローバルスタイル
-├── src/components/         # Reactコンポーネント
-│   ├── auth/               # 認証関連コンポーネント
-│   ├── common/             # 共通UIコンポーネント
-│   ├── forms/              # フォーム関連コンポーネント
-│   ├── home/               # ホームページ専用コンポーネント
-│   ├── providers/          # コンテキストプロバイダー
-│   ├── setlist/            # セットリスト専用コンポーネント
-│   ├── setlist-themes/     # テーマシステム
-│   └── songs/              # 楽曲管理コンポーネント
-├── src/hooks/              # カスタムReactフック
-├── src/lib/                # 共有ユーティリティ
-│   ├── client/             # クライアントサイドユーティリティ
-│   ├── server/             # サーバーサイドユーティリティ
-│   ├── security/           # セキュリティ関連ユーティリティ
-│   └── shared/             # クライアント/サーバー共有ユーティリティ
-├── src/types/              # TypeScript型定義
+│       └── HISTORY.md
+├── src/
+│   ├── app/                # Next.js App Router
+│   │   ├── api/            # APIルート（Vercel Functions）
+│   │   │   ├── auth/       # 認証エンドポイント
+│   │   │   │   └── route.ts
+│   │   │   ├── csrf/       # CSRF保護
+│   │   │   │   └── route.ts
+│   │   │   ├── graphql/    # GraphQL API
+│   │   │   │   └── route.ts
+│   │   │   └── security/   # セキュリティ関連
+│   │   │       └── cleanup/
+│   │   │           └── route.ts
+│   │   ├── (pages)/        # グループルート（利用規約・プライバシーポリシー）
+│   │   │   ├── privacy/    # プライバシーポリシー
+│   │   │   │   └── page.tsx
+│   │   │   └── terms/      # 利用規約
+│   │   │       └── page.tsx
+│   │   ├── guide/          # ガイドページ
+│   │   │   └── page.tsx
+│   │   ├── login/          # ログインページ
+│   │   │   ├── page.tsx
+│   │   │   └── LoginClient.tsx
+│   │   ├── profile/        # プロフィールページ
+│   │   │   └── page.tsx
+│   │   ├── register/       # 登録ページ
+│   │   │   ├── page.tsx
+│   │   │   └── RegisterClient.tsx
+│   │   ├── setlists/       # セットリスト管理
+│   │   │   ├── [id]/
+│   │   │   │   ├── page.tsx
+│   │   │   │   └── edit/
+│   │   │   │       └── page.tsx
+│   │   │   └── new/
+│   │   │       └── page.tsx
+│   │   ├── songs/          # 楽曲管理
+│   │   │   ├── page.tsx
+│   │   │   └── new/
+│   │   │       └── page.tsx
+│   │   ├── globals.css     # グローバルスタイル
+│   │   ├── layout.tsx      # ルートレイアウト
+│   │   ├── page.tsx        # ホームページ
+│   │   ├── HomeClient.tsx  # ホームページクライアントコンポーネント
+│   │   └── sitemap.ts      # サイトマップ生成
+│   ├── components/         # Reactコンポーネント
+│   │   ├── auth/           # 認証関連コンポーネント
+│   │   │   └── LogoutButton.tsx
+│   │   ├── common/         # 共通UIコンポーネント
+│   │   │   ├── layout/
+│   │   │   │   ├── Footer.tsx
+│   │   │   │   └── Header.tsx
+│   │   │   └── ui/
+│   │   │       ├── ErrorMessage.tsx
+│   │   │       ├── LoadingSpinner.tsx
+│   │   │       └── SuccessMessage.tsx
+│   │   ├── forms/          # フォーム関連コンポーネント
+│   │   │   ├── SetlistForm.tsx
+│   │   │   └── SongForm.tsx
+│   │   ├── home/           # ホームページ専用コンポーネント
+│   │   │   ├── Feature.tsx
+│   │   │   ├── Features.tsx
+│   │   │   └── HeroSection.tsx
+│   │   ├── providers/      # コンテキストプロバイダー
+│   │   │   ├── Providers.tsx
+│   │   │   ├── MuiProvider.tsx
+│   │   │   ├── ApolloProvider.tsx
+│   │   │   └── CSRFProvider.tsx
+│   │   ├── setlist/        # セットリスト専用コンポーネント
+│   │   │   ├── SetlistActions.tsx
+│   │   │   ├── SetlistDetail.tsx
+│   │   │   ├── SetlistDetails.tsx
+│   │   │   ├── SetlistListItem.tsx
+│   │   │   ├── SetlistList.tsx
+│   │   │   ├── SongListItem.tsx
+│   │   │   ├── ImageGenerator.tsx
+│   │   │   └── ShareButtons.tsx
+│   │   ├── setlist-themes/ # テーマシステム
+│   │   │   ├── BasicBlackTheme.tsx
+│   │   │   ├── BasicWhiteTheme.tsx
+│   │   │   └── themes.ts
+│   │   └── songs/          # 楽曲管理コンポーネント
+│   │       ├── SongList.tsx
+│   │       └── SongListItem.tsx
+│   ├── hooks/              # カスタムReactフック
+│   │   ├── useAuth.ts
+│   │   ├── useCSRF.ts
+│   │   ├── useSetlists.ts
+│   │   └── useSongs.ts
+│   ├── lib/                # 共有ユーティリティ
+│   │   ├── client/         # クライアントサイドユーティリティ
+│   │   │   ├── apolloClient.ts
+│   │   │   ├── authClient.ts
+│   │   │   └── queries.ts
+│   │   ├── server/         # サーバーサイドユーティリティ
+│   │   │   ├── auth/
+│   │   │   │   ├── auth.ts
+│   │   │   │   └── middleware.ts
+│   │   │   ├── graphql/
+│   │   │   │   ├── context.ts
+│   │   │   │   ├── generated-schema.ts
+│   │   │   │   ├── resolvers/
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   ├── AuthResolver.ts
+│   │   │   │   │   ├── SetlistResolver.ts
+│   │   │   │   │   ├── SongResolver.ts
+│   │   │   │   │   └── UserResolver.ts
+│   │   │   │   ├── schema.graphql
+│   │   │   │   └── schema.ts
+│   │   │   └── prisma.ts
+│   │   ├── security/       # セキュリティ関連ユーティリティ
+│   │   │   ├── csrf.ts
+│   │   │   ├── headers.ts
+│   │   │   ├── rateLimit.ts
+│   │   │   └── threatDetection.ts
+│   │   └── shared/         # クライアント/サーバー共有ユーティリティ
+│   │       └── types.ts
+│   └── types/              # TypeScript型定義
+│       ├── graphql.ts
+│       └── index.ts
 ├── prisma/                 # データベース関連
 │   ├── migrations/         # マイグレーション
 │   └── schema.prisma       # Prismaスキーマ
 ├── public/                 # 静的アセット
+│   └── favicon.ico
 ├── scripts/                # 開発スクリプト
-└── docker-compose.yml      # ローカル開発用PostgreSQL
+│   └── generate-schema.ts
+├── .env.example            # 環境変数サンプル
+├── .gitignore
+├── CLAUDE.md               # このファイル
+├── docker-compose.yml      # ローカル開発用PostgreSQL
+├── eslint.config.mjs       # ESLint設定
+├── next.config.ts          # Next.js設定
+├── package.json            # プロジェクト設定
+├── pnpm-lock.yaml          # 依存関係ロックファイル
+├── README.md               # プロジェクトREADME
+├── tsconfig.json           # TypeScript設定
+└── vercel.json             # Vercelデプロイ設定
 ```
 
 ### 主要ディレクトリ詳細
