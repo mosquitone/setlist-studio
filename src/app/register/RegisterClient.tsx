@@ -20,8 +20,10 @@ import { REGISTER } from '@/lib/server/graphql/apollo-operations';
 import { validateField, ValidationRules } from '@/lib/security/validation-rules';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useI18n } from '@/hooks/useI18n';
 
 export default function RegisterClient() {
+  const { t } = useI18n();
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -35,7 +37,9 @@ export default function RegisterClient() {
   const [register, { loading }] = useMutation(REGISTER, {
     onCompleted: () => {
       // 新規登録成功後はログイン画面へ遷移
-      router.push('/login?message=新規登録が完了しました。ログインしてください。');
+      router.push(
+        `/login?message=${t.notifications.accountCreated || 'Account created successfully. Please login.'}`,
+      );
     },
     onError: (error) => {
       setError(error.message);
@@ -44,7 +48,7 @@ export default function RegisterClient() {
 
   const validatePassword = (password: string): string | null => {
     const result = validateField(password, 'password');
-    return result.isValid ? null : result.message || 'パスワードが無効です';
+    return result.isValid ? null : result.message || t.validation.passwordTooShort;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -59,12 +63,12 @@ export default function RegisterClient() {
     }
 
     if (password !== confirmPassword) {
-      setError('パスワードが一致しません');
+      setError(t.validation.passwordsDoNotMatch);
       return;
     }
 
     if (!agreeToTerms) {
-      setError('利用規約およびプライバシーポリシーに同意してください');
+      setError(t.validation.agreeToTerms || 'Please agree to the terms and conditions');
       return;
     }
 
@@ -82,10 +86,10 @@ export default function RegisterClient() {
           <Box sx={{ textAlign: 'center', mb: 4 }}>
             <PersonAddIcon sx={{ fontSize: 64, color: 'primary.main', mb: 2 }} />
             <Typography variant="h4" component="h1" gutterBottom>
-              新規登録
+              {t.ui.register}
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              アカウントを作成して、セットリストを管理しましょう
+              {t.ui.createAccountToStart}
             </Typography>
           </Box>
 
@@ -98,7 +102,7 @@ export default function RegisterClient() {
           <Box component="form" onSubmit={handleSubmit}>
             <TextField
               fullWidth
-              label="ユーザー名"
+              label={t.ui.username}
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               margin="normal"
@@ -107,7 +111,7 @@ export default function RegisterClient() {
             />
             <TextField
               fullWidth
-              label="メールアドレス"
+              label={t.ui.email}
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -117,7 +121,7 @@ export default function RegisterClient() {
             />
             <TextField
               fullWidth
-              label="パスワード"
+              label={t.ui.password}
               type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -143,7 +147,7 @@ export default function RegisterClient() {
             />
             <TextField
               fullWidth
-              label="パスワード確認"
+              label={t.ui.confirmPassword}
               type={showConfirmPassword ? 'text' : 'password'}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
@@ -175,13 +179,13 @@ export default function RegisterClient() {
               label={
                 <Typography variant="body2">
                   <Link href="/terms" style={{ color: 'inherit', textDecoration: 'underline' }}>
-                    利用規約
+                    {t.ui.terms}
                   </Link>
-                  および
+                  {t.ui.and || 'and'}
                   <Link href="/privacy" style={{ color: 'inherit', textDecoration: 'underline' }}>
-                    プライバシーポリシー
+                    {t.ui.privacy}
                   </Link>
-                  に同意します
+                  {t.ui.agree || 'に同意します'}
                 </Typography>
               }
               sx={{ mt: 2, mb: 1 }}
@@ -194,15 +198,15 @@ export default function RegisterClient() {
               disabled={loading || !agreeToTerms}
               sx={{ mt: 2, mb: 2, py: 1.5 }}
             >
-              {loading ? '登録中...' : '新規登録'}
+              {loading ? t.ui.loading : t.ui.register}
             </Button>
           </Box>
 
           <Box textAlign="center">
             <Typography variant="body2">
-              すでにアカウントをお持ちですか？{' '}
+              {t.ui.alreadyHaveAccount}{' '}
               <Link href="/login" style={{ color: 'inherit' }}>
-                <strong>ログイン</strong>
+                <strong>{t.ui.login}</strong>
               </Link>
             </Typography>
           </Box>

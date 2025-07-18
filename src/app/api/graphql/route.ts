@@ -8,6 +8,7 @@ import depthLimit from 'graphql-depth-limit';
 import { createApiRateLimit, createAuthRateLimit } from '../../../lib/security/rate-limit-db';
 import { csrfProtection } from '../../../lib/security/csrf-protection';
 import jwt from 'jsonwebtoken';
+import { withI18n } from '../../../lib/i18n/context';
 
 // Import pre-built schema
 import { getPreBuiltSchema } from '../../../lib/server/graphql/generated-schema';
@@ -215,7 +216,7 @@ async function createSecureContext(req: NextRequest) {
     }
   }
 
-  return {
+  const context = {
     req: {
       cookies,
       headers,
@@ -224,6 +225,9 @@ async function createSecureContext(req: NextRequest) {
     prisma,
     user,
   };
+
+  // i18n機能を追加
+  return withI18n(context);
 }
 
 export async function GET(request: NextRequest) {

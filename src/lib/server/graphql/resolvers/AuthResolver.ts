@@ -28,6 +28,7 @@ import { DatabaseThreatDetection } from '../../../security/threat-detection-db';
 import { emailService } from '../../email/emailService';
 import { createEmailRateLimit } from '../../../security/email-rate-limit';
 import { AuthMiddleware } from '../middleware/jwt-auth-middleware';
+import { I18nContext } from '../../../i18n/context';
 
 interface Context {
   prisma: PrismaClient;
@@ -45,6 +46,7 @@ interface Context {
       'x-real-ip'?: string;
     };
   };
+  i18n?: I18nContext;
 }
 
 // IP address extraction helper
@@ -87,7 +89,10 @@ export class AuthResolver {
           reason: 'user_already_exists',
         },
       });
-      throw new Error('登録に失敗しました。入力内容を確認してください');
+      throw new Error(
+        ctx.i18n?.messages.auth.userAlreadyExists ||
+          '登録に失敗しました。入力内容を確認してください',
+      );
     }
 
     const hashedPassword = await bcrypt.hash(input.password, 12);
@@ -108,7 +113,10 @@ export class AuthResolver {
 
     const jwtSecret = process.env.JWT_SECRET;
     if (!jwtSecret) {
-      throw new Error('サーバーエラーが発生しました。しばらく時間をおいてから再度お試しください。');
+      throw new Error(
+        ctx.i18n?.messages.auth.serverError ||
+          'サーバーエラーが発生しました。しばらく時間をおいてから再度お試しください。',
+      );
     }
     const token = jwt.sign(
       {
@@ -127,6 +135,7 @@ export class AuthResolver {
       user.email,
       user.username,
       verificationToken,
+      ctx.i18n?.lang,
     );
 
     // 登録成功をログに記録（データベースベース）
@@ -183,7 +192,10 @@ export class AuthResolver {
         ctx.req?.headers?.['user-agent'] || 'unknown',
       );
 
-      throw new Error('メールアドレスまたはパスワードが正しくありません');
+      throw new Error(
+        ctx.i18n?.messages.auth.invalidCredentials ||
+          'メールアドレスまたはパスワードが正しくありません',
+      );
     }
 
     const isValidPassword = await bcrypt.compare(input.password, user.password);
@@ -206,12 +218,18 @@ export class AuthResolver {
         ctx.req?.headers?.['user-agent'] || 'unknown',
       );
 
-      throw new Error('メールアドレスまたはパスワードが正しくありません');
+      throw new Error(
+        ctx.i18n?.messages.auth.invalidCredentials ||
+          'メールアドレスまたはパスワードが正しくありません',
+      );
     }
 
     const jwtSecret = process.env.JWT_SECRET;
     if (!jwtSecret) {
-      throw new Error('サーバーエラーが発生しました。しばらく時間をおいてから再度お試しください。');
+      throw new Error(
+        ctx.i18n?.messages.auth.serverError ||
+          'サーバーエラーが発生しました。しばらく時間をおいてから再度お試しください。',
+      );
     }
     const token = jwt.sign(
       {
@@ -263,7 +281,11 @@ export class AuthResolver {
     );
 
     if (!rateLimitResult.success) {
-      throw new Error(rateLimitResult.message || 'リクエスト回数が上限に達しました。');
+      throw new Error(
+        rateLimitResult.message ||
+          ctx.i18n?.messages.auth.rateLimitExceeded ||
+          'リクエスト回数が上限に達しました。',
+      );
     }
 
     const user = await ctx.prisma.user.findUnique({
@@ -285,7 +307,9 @@ export class AuthResolver {
 
       return {
         success: true,
-        message: 'パスワードリセットの手順をメールで送信しました。',
+        message:
+          ctx.i18n?.messages.auth.passwordResetRequested ||
+          'パスワードリセットの手順をメールで送信しました。',
       };
     }
 
@@ -302,7 +326,12 @@ export class AuthResolver {
     });
 
     // メール送信
-    const emailSent = await emailService.sendPasswordResetEmail(user.email, user.username, token);
+    const emailSent = await emailService.sendPasswordResetEmail(
+      user.email,
+      user.username,
+      token,
+      ctx.i18n?.lang,
+    );
 
     await logSecurityEventDB(ctx.prisma, {
       type: SecurityEventType.PASSWORD_RESET_REQUEST,
@@ -351,7 +380,9 @@ export class AuthResolver {
         },
       });
 
-      throw new Error('リセットトークンが無効または期限切れです。');
+      throw new Error(
+        ctx.i18n?.messages.auth.invalidResetToken || 'リセットトークンが無効または期限切れです。',
+      );
     }
 
     // パスワードをハッシュ化
@@ -368,7 +399,7 @@ export class AuthResolver {
     });
 
     // 成功通知メール送信
-    await emailService.sendPasswordResetSuccessEmail(user.email, user.username);
+    await emailService.sendPasswordResetSuccessEmail(user.email, user.username, ctx.i18n?.lang);
 
     await logSecurityEventDB(ctx.prisma, {
       type: SecurityEventType.PASSWORD_RESET_SUCCESS,
@@ -383,7 +414,8 @@ export class AuthResolver {
 
     return {
       success: true,
-      message: 'パスワードが正常にリセットされました。',
+      message:
+        ctx.i18n?.messages.auth.passwordResetSuccess || 'パスワードが正常にリセットされました。',
     };
   }
 
@@ -416,7 +448,10 @@ export class AuthResolver {
         },
       });
 
-      throw new Error('認証トークンが無効または期限切れです。');
+      throw new Error(
+        ctx.i18n?.messages.auth.invalidVerificationToken ||
+          '認証トークンが無効または期限切れです。',
+      );
     }
 
     // メール認証を完了
@@ -442,7 +477,7 @@ export class AuthResolver {
 
     return {
       success: true,
-      message: 'メールアドレスが正常に認証されました。',
+      message: ctx.i18n?.messages.auth.emailVerified || 'メールアドレスが正常に認証されました。',
     };
   }
 
@@ -457,7 +492,7 @@ export class AuthResolver {
     // TODO: 認証ユーザーからユーザーIDを取得する必要がある
     // 現在はAuthミドルウェアが実装されていないため、一時的にスキップ
     console.log('Email change request:', input, ctx);
-    throw new Error('認証ユーザーのみ利用できます。');
+    throw new Error(ctx.i18n?.messages.auth.authRequired || '認証ユーザーのみ利用できます。');
   }
 
   /**
@@ -489,7 +524,9 @@ export class AuthResolver {
         },
       });
 
-      throw new Error('変更トークンが無効または期限切れです。');
+      throw new Error(
+        ctx.i18n?.messages.auth.invalidChangeToken || '変更トークンが無効または期限切れです。',
+      );
     }
 
     // メールアドレスを変更
@@ -518,7 +555,8 @@ export class AuthResolver {
 
     return {
       success: true,
-      message: 'メールアドレスが正常に変更されました。',
+      message:
+        ctx.i18n?.messages.auth.emailChangedSuccess || 'メールアドレスが正常に変更されました。',
     };
   }
 
@@ -542,7 +580,11 @@ export class AuthResolver {
     );
 
     if (!rateLimitResult.success) {
-      throw new Error(rateLimitResult.message || 'リクエスト回数が上限に達しました。');
+      throw new Error(
+        rateLimitResult.message ||
+          ctx.i18n?.messages.auth.rateLimitExceeded ||
+          'リクエスト回数が上限に達しました。',
+      );
     }
 
     const user = await ctx.prisma.user.findUnique({
@@ -553,14 +595,15 @@ export class AuthResolver {
       // セキュリティ上同じメッセージを返す
       return {
         success: true,
-        message: '認証メールを送信しました。',
+        message: ctx.i18n?.messages.auth.emailSent || '認証メールを送信しました。',
       };
     }
 
     if (user.emailVerified) {
       return {
         success: true,
-        message: 'メールアドレスは既に認証済みです。',
+        message:
+          ctx.i18n?.messages.auth.emailAlreadyVerified || 'メールアドレスは既に認証済みです。',
       };
     }
 
@@ -577,7 +620,7 @@ export class AuthResolver {
     });
 
     // メール送信
-    await emailService.sendEmailVerification(user.email, user.username, token);
+    await emailService.sendEmailVerification(user.email, user.username, token, ctx.i18n?.lang);
 
     await logSecurityEventDB(ctx.prisma, {
       type: SecurityEventType.EMAIL_VERIFICATION_RESEND,
@@ -620,7 +663,7 @@ export class AuthResolver {
     });
 
     if (!user) {
-      throw new Error('ユーザーが見つかりません');
+      throw new Error(ctx.i18n?.messages.auth.userNotFound || 'ユーザーが見つかりません');
     }
 
     // 現在のパスワードを確認
@@ -638,7 +681,9 @@ export class AuthResolver {
         },
       });
 
-      throw new Error('現在のパスワードが正しくありません');
+      throw new Error(
+        ctx.i18n?.messages.auth.currentPasswordIncorrect || '現在のパスワードが正しくありません',
+      );
     }
 
     // 新しいパスワードをハッシュ化
@@ -653,7 +698,7 @@ export class AuthResolver {
     });
 
     // 成功通知メール送信
-    await emailService.sendPasswordResetSuccessEmail(user.email, user.username);
+    await emailService.sendPasswordResetSuccessEmail(user.email, user.username, ctx.i18n?.lang);
 
     // 成功ログを記録
     await logSecurityEventDB(ctx.prisma, {
@@ -669,7 +714,8 @@ export class AuthResolver {
 
     return {
       success: true,
-      message: 'パスワードが正常に変更されました。',
+      message:
+        ctx.i18n?.messages.auth.passwordChangeSuccess || 'パスワードが正常に変更されました。',
     };
   }
 }
