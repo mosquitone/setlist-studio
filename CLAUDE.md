@@ -472,6 +472,7 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 最新の開発履歴と変更記録については、[HISTORY.md](./docs/project/HISTORY.md)を参照してください。
 
 ### 最新の主要更新
+- **利用規約・プライバシーポリシー実装整合性修正 (2025-07-18)**: 虚偽記載の削除、Cookie使用の正確化、実装済みセキュリティ機能の明記
 - **GraphQL N+1問題解決 (2025-07-17)**: SetlistResolver FieldResolver最適化、事前ロード戦略による性能向上
 - **useSongsフック責務分割リファクタリング (2025-07-17)**: Issue #25対応
 - **セットリスト表示最適化 & DRY原則実装 (2025-07-17)**: Issue #34対応

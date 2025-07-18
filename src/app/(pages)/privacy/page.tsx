@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Container, Typography, Box, Paper } from '@mui/material';
+import { Container, Typography, Box, Paper, List, ListItem, ListItemText } from '@mui/material';
 
 const PrivacyPage: React.FC = () => {
   return (
@@ -28,7 +28,7 @@ const PrivacyPage: React.FC = () => {
             第2条（個人情報の収集方法）
           </Typography>
           <Typography variant="body2" paragraph>
-            当方は、ユーザーが利用登録をする際に氏名、メールアドレスなどの個人情報をお尋ねすることがあります。また、ユーザーと提携先などとの間でなされたユーザーの個人情報を含む取引記録や決済に関する情報を、当方の提携先（情報提供元、広告主、広告配信先などを含みます。以下、「提携先」といいます。）などから収集することがあります。
+            当方は、ユーザーが利用登録をする際にメールアドレス、ユーザー名、パスワードなどの個人情報をお尋ねすることがあります。また、ユーザーがサービスを利用される際に、楽曲情報、セットリスト情報などのコンテンツデータを収集することがあります。
           </Typography>
 
           <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
@@ -47,14 +47,11 @@ const PrivacyPage: React.FC = () => {
             <br />
             4. メンテナンス、重要なお知らせなど必要に応じたご連絡のため
             <br />
-            5.
-            利用規約に違反したユーザーや、不正・不当な目的でサービスを利用しようとするユーザーの特定をし、ご利用をお断りするため
+            5. 利用規約に違反したユーザーや、不正・不当な目的でサービスを利用しようとするユーザーの特定をし、ご利用をお断りするため
             <br />
             6. ユーザーにご自身の登録情報の閲覧や変更、削除、ご利用状況の閲覧を行っていただくため
             <br />
-            7. 有料サービスにおいて、ユーザーに利用料金を請求するため
-            <br />
-            8. 上記の利用目的に付随する目的
+            7. 上記の利用目的に付随する目的
           </Typography>
 
           <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
@@ -155,7 +152,8 @@ const PrivacyPage: React.FC = () => {
             1. 当方のサービスは、一部Cookieを利用しています。
           </Typography>
           <Typography variant="body2" paragraph>
-            2. Cookieにより個人を特定できる情報は収集しておりません。
+            2. 当方は、認証機能の提供のため、JWTトークンを含む認証情報をHttpOnly
+            Cookieに保存しています。このCookieには、ユーザーを特定するための情報が含まれており、ユーザーの認証状態を維持するために使用されます。
           </Typography>
           <Typography variant="body2" paragraph>
             3.
@@ -166,11 +164,59 @@ const PrivacyPage: React.FC = () => {
             第10条（セキュリティ）
           </Typography>
           <Typography variant="body2" paragraph>
-            当方は、個人情報の紛失、破壊、改ざん及び漏洩などのリスクに対して、個人情報の安全管理が図られるよう、個人情報保護方針を定め、適切な管理を行います。
+            当方は、個人情報の紛失、破壊、改ざん及び漏洩などのリスクに対して、以下のセキュリティ対策を実施しています：
+            <br />
+            ・HttpOnly Cookie認証によるXSS攻撃防止
+            <br />
+            ・CSRF保護による不正リクエスト防止
+            <br />
+            ・レート制限による不正アクセス防止
+            <br />
+            ・脅威検出システムによる異常アクセス監視
+            <br />
+            ・パスワードのハッシュ化による安全な保存
+            <br />
+            ・データベースへの不正アクセス防止
+            <br />
+            ・定期的なセキュリティデータクリーンアップ
           </Typography>
 
           <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
-            第11条（プライバシーポリシーの変更）
+            第11条（データ保存・削除ポリシー）
+          </Typography>
+          <Typography variant="body2" paragraph>
+            1. 当方は、ユーザーがサービスを利用される限り、個人情報を保存します。
+          </Typography>
+          <Typography variant="body2" paragraph>
+            2. 当方は、セキュリティ保護のため、以下のデータを定期的に自動削除します：
+          </Typography>
+          <List dense sx={{ pl: 2 }}>
+            <ListItem>
+              <ListItemText
+                primary="・レート制限ログ（一定期間経過後）"
+                primaryTypographyProps={{ variant: 'body2' }}
+              />
+            </ListItem>
+            <ListItem>
+              <ListItemText
+                primary="・脅威検出ログ（一定期間経過後）"
+                primaryTypographyProps={{ variant: 'body2' }}
+              />
+            </ListItem>
+            <ListItem>
+              <ListItemText
+                primary="・セッショントークン（期限切れ後）"
+                primaryTypographyProps={{ variant: 'body2' }}
+              />
+            </ListItem>
+          </List>
+          <Typography variant="body2" paragraph>
+            3.
+            ユーザーは、アカウントを削除することで、関連する個人情報を簡単に削除することができます。
+          </Typography>
+
+          <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
+            第12条（プライバシーポリシーの変更）
           </Typography>
           <Typography variant="body2" paragraph>
             1.
@@ -182,7 +228,7 @@ const PrivacyPage: React.FC = () => {
           </Typography>
 
           <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
-            第12条（お問い合わせ窓口）
+            第13条（お問い合わせ窓口）
           </Typography>
           <Typography variant="body2" paragraph>
             本ポリシーに関するお問い合わせは、本サービス内のお問い合わせフォームよりお願いいたします。

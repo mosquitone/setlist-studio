@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Container, Typography, Box, Paper } from '@mui/material';
+import { Container, Typography, Box, Paper, List, ListItem, ListItemText } from '@mui/material';
 
 const TermsPage: React.FC = () => {
   return (
@@ -35,13 +35,26 @@ const TermsPage: React.FC = () => {
             2.
             当方は、利用登録の申請者に以下の事由があると判断した場合、利用登録の申請を承認しないことがあり、その理由については一切の開示義務を負わないものとします。
           </Typography>
-          <Typography variant="body2" paragraph sx={{ pl: 2 }}>
-            （1）利用登録の申請に際して虚偽の事項を届け出た場合
-            <br />
-            （2）本規約に違反したことがある者からの申請である場合
-            <br />
-            （3）その他、当方が利用登録を相当でないと判断した場合
-          </Typography>
+          <List dense sx={{ pl: 2 }}>
+            <ListItem>
+              <ListItemText
+                primary="（1）利用登録の申請に際して虚偽の事項を届け出た場合"
+                primaryTypographyProps={{ variant: 'body2' }}
+              />
+            </ListItem>
+            <ListItem>
+              <ListItemText
+                primary="（2）本規約に違反したことがある者からの申請である場合"
+                primaryTypographyProps={{ variant: 'body2' }}
+              />
+            </ListItem>
+            <ListItem>
+              <ListItemText
+                primary="（3）その他、当方が利用登録を相当でないと判断した場合"
+                primaryTypographyProps={{ variant: 'body2' }}
+              />
+            </ListItem>
+          </List>
 
           <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
             第3条（ユーザーIDおよびパスワードの管理）
@@ -61,25 +74,62 @@ const TermsPage: React.FC = () => {
           <Typography variant="body2" paragraph>
             ユーザーは、本サービスの利用にあたり、以下の行為をしてはなりません。
           </Typography>
-          <Typography variant="body2" paragraph sx={{ pl: 2 }}>
-            （1）法令または公序良俗に違反する行為
-            <br />
-            （2）犯罪行為に関連する行為
-            <br />
-            （3）当方、本サービスの他のユーザー、またはその他第三者のサーバーまたはネットワークの機能を破壊したり、妨害したりする行為
-            <br />
-            （4）当方のサービスの運営を妨害するおそれのある行為
-            <br />
-            （5）他のユーザーに関する個人情報等を収集または蓄積する行為
-            <br />
-            （6）不正アクセスをし、またはこれを試みる行為
-            <br />
-            （7）他のユーザーに成りすます行為
-            <br />
-            （8）当方のサービスに関連して、反社会的勢力に対して直接または間接に利益を供与する行為
-            <br />
-            （9）その他、当方が不適切と判断する行為
-          </Typography>
+          <List dense sx={{ pl: 2 }}>
+            <ListItem>
+              <ListItemText
+                primary="（1）法令または公序良俗に違反する行為"
+                primaryTypographyProps={{ variant: 'body2' }}
+              />
+            </ListItem>
+            <ListItem>
+              <ListItemText
+                primary="（2）犯罪行為に関連する行為"
+                primaryTypographyProps={{ variant: 'body2' }}
+              />
+            </ListItem>
+            <ListItem>
+              <ListItemText
+                primary="（3）当方、本サービスの他のユーザー、またはその他第三者のサーバーまたはネットワークの機能を破壊したり、妨害したりする行為"
+                primaryTypographyProps={{ variant: 'body2' }}
+              />
+            </ListItem>
+            <ListItem>
+              <ListItemText
+                primary="（4）当方のサービスの運営を妨害するおそれのある行為"
+                primaryTypographyProps={{ variant: 'body2' }}
+              />
+            </ListItem>
+            <ListItem>
+              <ListItemText
+                primary="（5）他のユーザーに関する個人情報等を収集または蓄積する行為"
+                primaryTypographyProps={{ variant: 'body2' }}
+              />
+            </ListItem>
+            <ListItem>
+              <ListItemText
+                primary="（6）不正アクセスをし、またはこれを試みる行為"
+                primaryTypographyProps={{ variant: 'body2' }}
+              />
+            </ListItem>
+            <ListItem>
+              <ListItemText
+                primary="（7）他のユーザーに成りすます行為"
+                primaryTypographyProps={{ variant: 'body2' }}
+              />
+            </ListItem>
+            <ListItem>
+              <ListItemText
+                primary="（8）当方のサービスに関連して、反社会的勢力に対して直接または間接に利益を供与する行為"
+                primaryTypographyProps={{ variant: 'body2' }}
+              />
+            </ListItem>
+            <ListItem>
+              <ListItemText
+                primary="（9）その他、当方が不適切と判断する行為"
+                primaryTypographyProps={{ variant: 'body2' }}
+              />
+            </ListItem>
+          </List>
 
           <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
             第5条（本サービスの提供の停止等）
@@ -88,15 +138,32 @@ const TermsPage: React.FC = () => {
             1.
             当方は、以下のいずれかの事由があると判断した場合、ユーザーに事前に通知することなく本サービスの全部または一部の提供を停止または中断することができるものとします。
           </Typography>
-          <Typography variant="body2" paragraph sx={{ pl: 2 }}>
-            （1）本サービスにかかるコンピュータシステムの保守点検または更新を行う場合
-            <br />
-            （2）地震、落雷、火災、停電または天災などの不可抗力により、本サービスの提供が困難となった場合
-            <br />
-            （3）コンピュータまたは通信回線等が事故により停止した場合
-            <br />
-            （4）その他、当方が本サービスの提供が困難と判断した場合
-          </Typography>
+          <List dense sx={{ pl: 2 }}>
+            <ListItem>
+              <ListItemText
+                primary="（1）本サービスにかかるコンピュータシステムの保守点検または更新を行う場合"
+                primaryTypographyProps={{ variant: 'body2' }}
+              />
+            </ListItem>
+            <ListItem>
+              <ListItemText
+                primary="（2）地震、落雷、火災、停電または天災などの不可抗力により、本サービスの提供が困難となった場合"
+                primaryTypographyProps={{ variant: 'body2' }}
+              />
+            </ListItem>
+            <ListItem>
+              <ListItemText
+                primary="（3）コンピュータまたは通信回線等が事故により停止した場合"
+                primaryTypographyProps={{ variant: 'body2' }}
+              />
+            </ListItem>
+            <ListItem>
+              <ListItemText
+                primary="（4）その他、当方が本サービスの提供が困難と判断した場合"
+                primaryTypographyProps={{ variant: 'body2' }}
+              />
+            </ListItem>
+          </List>
 
           <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
             第6条（著作権）
@@ -136,11 +203,20 @@ const TermsPage: React.FC = () => {
             1.
             当方は以下の場合には、ユーザーの個別の同意を要せず、本規約を変更することができるものとします。
           </Typography>
-          <Typography variant="body2" paragraph sx={{ pl: 2 }}>
-            （1）本規約の変更がユーザーの一般の利益に適合するとき。
-            <br />
-            （2）本規約の変更が本サービス利用契約の目的に反せず、かつ、変更の必要性、変更後の内容の相当性その他の変更に係る事情に照らして合理的なものであるとき。
-          </Typography>
+          <List dense sx={{ pl: 2 }}>
+            <ListItem>
+              <ListItemText
+                primary="（1）本規約の変更がユーザーの一般の利益に適合するとき。"
+                primaryTypographyProps={{ variant: 'body2' }}
+              />
+            </ListItem>
+            <ListItem>
+              <ListItemText
+                primary="（2）本規約の変更が本サービス利用契約の目的に反せず、かつ、変更の必要性、変更後の内容の相当性その他の変更に係る事情に照らして合理的なものであるとき。"
+                primaryTypographyProps={{ variant: 'body2' }}
+              />
+            </ListItem>
+          </List>
 
           <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
             第10条（個人情報の取扱い）
