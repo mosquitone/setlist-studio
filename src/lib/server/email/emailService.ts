@@ -1,7 +1,8 @@
 import { Resend } from 'resend';
 import crypto from 'crypto';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// ビルド時エラーを避けるため、環境変数が存在しない場合はダミー値を使用
+const resend = new Resend(process.env.RESEND_API_KEY || 'dummy-key-for-build');
 
 export interface EmailConfig {
   from: string;
@@ -79,7 +80,7 @@ export class EmailService {
   public async sendEmailVerification(
     email: string,
     username: string,
-    token: string
+    token: string,
   ): Promise<boolean> {
     const verificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/auth/verify-email?token=${token}`;
 
@@ -117,7 +118,7 @@ export class EmailService {
   public async sendPasswordResetEmail(
     email: string,
     username: string,
-    token: string
+    token: string,
   ): Promise<boolean> {
     const resetUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/auth/reset-password?token=${token}`;
 
@@ -155,7 +156,7 @@ export class EmailService {
   public async sendEmailChangeConfirmation(
     newEmail: string,
     username: string,
-    token: string
+    token: string,
   ): Promise<boolean> {
     const confirmUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/auth/confirm-email-change?token=${token}`;
 
@@ -190,10 +191,7 @@ export class EmailService {
   /**
    * パスワードリセット完了通知メールを送信
    */
-  public async sendPasswordResetSuccessEmail(
-    email: string,
-    username: string
-  ): Promise<boolean> {
+  public async sendPasswordResetSuccessEmail(email: string, username: string): Promise<boolean> {
     const html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #1976d2;">Setlist Studio - パスワード変更完了</h2>
