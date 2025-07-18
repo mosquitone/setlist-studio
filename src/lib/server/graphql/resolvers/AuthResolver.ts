@@ -2,7 +2,19 @@ import { Resolver, Mutation, Arg, Ctx } from 'type-graphql';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { AuthPayload, RegisterInput, LoginInput } from '../types/Auth';
+import { 
+  AuthPayload, 
+  RegisterInput, 
+  LoginInput,
+  PasswordResetRequestInput,
+  PasswordResetInput,
+  PasswordResetResponse,
+  EmailVerificationInput,
+  EmailVerificationResponse,
+  EmailChangeInput,
+  EmailChangeResponse,
+  EmailChangeConfirmInput
+} from '../types/Auth';
 import {
   logAuthSuccessDB,
   logAuthFailureDB,
@@ -11,7 +23,8 @@ import {
   logSecurityEventDB,
 } from '../../../security/security-logger-db';
 import { DatabaseThreatDetection } from '../../../security/threat-detection-db';
-// import { createPasswordResetRequest, executePasswordReset } from '../../password-reset' // 削除済み
+import { emailService } from '../../email/emailService';
+import crypto from 'crypto';
 
 interface Context {
   prisma: PrismaClient;
@@ -207,32 +220,329 @@ export class AuthResolver {
     };
   }
 
-  // パスワードリセット機能（将来実装予定）
-  /*
+  /**
+   * パスワードリセットメール送信をリクエスト
+   */
   @Mutation(() => PasswordResetResponse)
   async requestPasswordReset(
     @Arg('input') input: PasswordResetRequestInput,
     @Ctx() ctx: Context
   ): Promise<PasswordResetResponse> {
-    // TODO: パスワードリセット機能の実装
-    return {
-      success: false,
-      message: 'パスワードリセット機能は現在実装中です',
-      requestId: '',
+    const user = await ctx.prisma.user.findUnique({
+      where: { email: input.email },
+    });
+
+    // ユーザーが存在しない場合でもセキュリティ上同じメッセージを返す
+    if (!user) {
+      await logSecurityEventDB(ctx.prisma, {
+        type: SecurityEventType.PASSWORD_RESET_REQUEST,
+        severity: SecurityEventSeverity.LOW,
+        ipAddress: getClientIP(ctx),
+        userAgent: ctx.req?.headers['user-agent'],
+        details: {
+          email: input.email,
+          reason: 'user_not_found',
+        },
+      });
+      
+      return {
+        success: true,
+        message: 'パスワードリセットの手順をメールで送信しました。',
+      };
     }
+
+    // トークン生成
+    const { token, expires } = emailService.generatePasswordResetToken();
+
+    // ユーザー情報を更新
+    await ctx.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        passwordResetToken: token,
+        passwordResetExpires: expires,
+      },
+    });
+
+    // メール送信
+    const emailSent = await emailService.sendPasswordResetEmail(
+      user.email,
+      user.username,
+      token
+    );
+
+    await logSecurityEventDB(ctx.prisma, {
+      type: SecurityEventType.PASSWORD_RESET_REQUEST,
+      severity: SecurityEventSeverity.LOW,
+      userId: user.id,
+      ipAddress: getClientIP(ctx),
+      userAgent: ctx.req?.headers['user-agent'],
+      details: {
+        email: user.email,
+        emailSent,
+      },
+    });
+
+    return {
+      success: true,
+      message: 'パスワードリセットの手順をメールで送信しました。',
+    };
   }
 
+  /**
+   * パスワードリセットを実行
+   */
   @Mutation(() => PasswordResetResponse)
   async resetPassword(
     @Arg('input') input: PasswordResetInput,
     @Ctx() ctx: Context
   ): Promise<PasswordResetResponse> {
-    // TODO: パスワードリセット機能の実装
-    return {
-      success: false,
-      message: 'パスワードリセット機能は現在実装中です',
-      requestId: '',
+    const user = await ctx.prisma.user.findFirst({
+      where: {
+        passwordResetToken: input.token,
+        passwordResetExpires: {
+          gt: new Date(),
+        },
+      },
+    });
+
+    if (!user) {
+      await logSecurityEventDB(ctx.prisma, {
+        type: SecurityEventType.PASSWORD_RESET_FAILURE,
+        severity: SecurityEventSeverity.MEDIUM,
+        ipAddress: getClientIP(ctx),
+        userAgent: ctx.req?.headers['user-agent'],
+        details: {
+          token: input.token,
+          reason: 'invalid_or_expired_token',
+        },
+      });
+      
+      throw new Error('リセットトークンが無効または期限切れです。');
     }
+
+    // パスワードをハッシュ化
+    const hashedPassword = await bcrypt.hash(input.newPassword, 12);
+
+    // ユーザー情報を更新
+    await ctx.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        password: hashedPassword,
+        passwordResetToken: null,
+        passwordResetExpires: null,
+      },
+    });
+
+    // 成功通知メール送信
+    await emailService.sendPasswordResetSuccessEmail(user.email, user.username);
+
+    await logSecurityEventDB(ctx.prisma, {
+      type: SecurityEventType.PASSWORD_RESET_SUCCESS,
+      severity: SecurityEventSeverity.LOW,
+      userId: user.id,
+      ipAddress: getClientIP(ctx),
+      userAgent: ctx.req?.headers['user-agent'],
+      details: {
+        email: user.email,
+      },
+    });
+
+    return {
+      success: true,
+      message: 'パスワードが正常にリセットされました。',
+    };
   }
-  */
+
+  /**
+   * メール認証を実行
+   */
+  @Mutation(() => EmailVerificationResponse)
+  async verifyEmail(
+    @Arg('input') input: EmailVerificationInput,
+    @Ctx() ctx: Context
+  ): Promise<EmailVerificationResponse> {
+    const user = await ctx.prisma.user.findFirst({
+      where: {
+        emailVerificationToken: input.token,
+        emailVerificationExpires: {
+          gt: new Date(),
+        },
+      },
+    });
+
+    if (!user) {
+      await logSecurityEventDB(ctx.prisma, {
+        type: SecurityEventType.EMAIL_VERIFICATION_FAILURE,
+        severity: SecurityEventSeverity.MEDIUM,
+        ipAddress: getClientIP(ctx),
+        userAgent: ctx.req?.headers['user-agent'],
+        details: {
+          token: input.token,
+          reason: 'invalid_or_expired_token',
+        },
+      });
+      
+      throw new Error('認証トークンが無効または期限切れです。');
+    }
+
+    // メール認証を完了
+    await ctx.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        emailVerified: true,
+        emailVerificationToken: null,
+        emailVerificationExpires: null,
+      },
+    });
+
+    await logSecurityEventDB(ctx.prisma, {
+      type: SecurityEventType.EMAIL_VERIFICATION_SUCCESS,
+      severity: SecurityEventSeverity.LOW,
+      userId: user.id,
+      ipAddress: getClientIP(ctx),
+      userAgent: ctx.req?.headers['user-agent'],
+      details: {
+        email: user.email,
+      },
+    });
+
+    return {
+      success: true,
+      message: 'メールアドレスが正常に認証されました。',
+    };
+  }
+
+  /**
+   * メールアドレス変更をリクエスト
+   */
+  @Mutation(() => EmailChangeResponse)
+  async requestEmailChange(
+    @Arg('input') input: EmailChangeInput,
+    @Ctx() ctx: Context
+  ): Promise<EmailChangeResponse> {
+    // TODO: 認証ユーザーからユーザーIDを取得する必要がある
+    // 現在はAuthミドルウェアが実装されていないため、一時的にスキップ
+    throw new Error('認証ユーザーのみ利用できます。');
+  }
+
+  /**
+   * メールアドレス変更を確定
+   */
+  @Mutation(() => EmailChangeResponse)
+  async confirmEmailChange(
+    @Arg('input') input: EmailChangeConfirmInput,
+    @Ctx() ctx: Context
+  ): Promise<EmailChangeResponse> {
+    const user = await ctx.prisma.user.findFirst({
+      where: {
+        emailChangeToken: input.token,
+        emailChangeExpires: {
+          gt: new Date(),
+        },
+      },
+    });
+
+    if (!user || !user.pendingEmail) {
+      await logSecurityEventDB(ctx.prisma, {
+        type: SecurityEventType.EMAIL_CHANGE_FAILURE,
+        severity: SecurityEventSeverity.MEDIUM,
+        ipAddress: getClientIP(ctx),
+        userAgent: ctx.req?.headers['user-agent'],
+        details: {
+          token: input.token,
+          reason: 'invalid_or_expired_token',
+        },
+      });
+      
+      throw new Error('変更トークンが無効または期限切れです。');
+    }
+
+    // メールアドレスを変更
+    await ctx.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        email: user.pendingEmail,
+        pendingEmail: null,
+        emailChangeToken: null,
+        emailChangeExpires: null,
+        emailVerified: true,
+      },
+    });
+
+    await logSecurityEventDB(ctx.prisma, {
+      type: SecurityEventType.EMAIL_CHANGE_SUCCESS,
+      severity: SecurityEventSeverity.LOW,
+      userId: user.id,
+      ipAddress: getClientIP(ctx),
+      userAgent: ctx.req?.headers['user-agent'],
+      details: {
+        oldEmail: user.email,
+        newEmail: user.pendingEmail,
+      },
+    });
+
+    return {
+      success: true,
+      message: 'メールアドレスが正常に変更されました。',
+    };
+  }
+
+  /**
+   * メール認証メールを再送信
+   */
+  @Mutation(() => EmailVerificationResponse)
+  async resendVerificationEmail(
+    @Arg('email') email: string,
+    @Ctx() ctx: Context
+  ): Promise<EmailVerificationResponse> {
+    const user = await ctx.prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      // セキュリティ上同じメッセージを返す
+      return {
+        success: true,
+        message: '認証メールを送信しました。',
+      };
+    }
+
+    if (user.emailVerified) {
+      return {
+        success: true,
+        message: 'メールアドレスは既に認証済みです。',
+      };
+    }
+
+    // 新しいトークン生成
+    const { token, expires } = emailService.generateSecureToken();
+
+    // ユーザー情報を更新
+    await ctx.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        emailVerificationToken: token,
+        emailVerificationExpires: expires,
+      },
+    });
+
+    // メール送信
+    await emailService.sendEmailVerification(user.email, user.username, token);
+
+    await logSecurityEventDB(ctx.prisma, {
+      type: SecurityEventType.EMAIL_VERIFICATION_RESEND,
+      severity: SecurityEventSeverity.LOW,
+      userId: user.id,
+      ipAddress: getClientIP(ctx),
+      userAgent: ctx.req?.headers['user-agent'],
+      details: {
+        email: user.email,
+      },
+    });
+
+    return {
+      success: true,
+      message: '認証メールを送信しました。',
+    };
+  }
 }
