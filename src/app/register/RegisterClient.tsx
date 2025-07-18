@@ -10,6 +10,8 @@ import {
   Alert,
   IconButton,
   InputAdornment,
+  FormControlLabel,
+  Checkbox,
 } from '@mui/material';
 import { Button } from '@/components/common/ui/Button';
 import { PersonAdd as PersonAddIcon, Visibility, VisibilityOff } from '@mui/icons-material';
@@ -26,6 +28,7 @@ export default function RegisterClient() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
 
@@ -57,6 +60,11 @@ export default function RegisterClient() {
 
     if (password !== confirmPassword) {
       setError('パスワードが一致しません');
+      return;
+    }
+
+    if (!agreeToTerms) {
+      setError('利用規約およびプライバシーポリシーに同意してください');
       return;
     }
 
@@ -155,12 +163,36 @@ export default function RegisterClient() {
                 ),
               }}
             />
+
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={agreeToTerms}
+                  onChange={(e) => setAgreeToTerms(e.target.checked)}
+                  color="primary"
+                />
+              }
+              label={
+                <Typography variant="body2">
+                  <Link href="/terms" style={{ color: 'inherit', textDecoration: 'underline' }}>
+                    利用規約
+                  </Link>
+                  および
+                  <Link href="/privacy" style={{ color: 'inherit', textDecoration: 'underline' }}>
+                    プライバシーポリシー
+                  </Link>
+                  に同意します
+                </Typography>
+              }
+              sx={{ mt: 2, mb: 1 }}
+            />
+
             <Button
               type="submit"
               fullWidth
               size="large"
-              disabled={loading}
-              sx={{ mt: 3, mb: 2, py: 1.5 }}
+              disabled={loading || !agreeToTerms}
+              sx={{ mt: 2, mb: 2, py: 1.5 }}
             >
               {loading ? '登録中...' : '新規登録'}
             </Button>
