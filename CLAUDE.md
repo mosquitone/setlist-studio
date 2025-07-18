@@ -50,6 +50,10 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
   - `IP_HASH_SALT`: IPアドレスハッシュ化用ソルト (16文字以上)
   - `CRON_SECRET`: Vercelクロンジョブ認証用シークレット (32文字以上)
   - `POSTGRES_PASSWORD`: Docker用PostgreSQLパスワード (ローカル開発のみ)
+  - `RESEND_API_KEY`: Resendメール送信APIキー
+  - `RESEND_FROM_EMAIL`: メール送信元アドレス
+  - `EMAIL_VERIFICATION_SECRET`: メール認証用シークレット (32文字以上)
+  - `PASSWORD_RESET_SECRET`: パスワードリセット用シークレット (32文字以上)
 
 ### 環境変数詳細
 
@@ -61,6 +65,10 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 | `IP_HASH_SALT` | IP匿名化 | 16文字以上の任意文字列 | 強力なランダム文字列 | `openssl rand -base64 16` |
 | `CRON_SECRET` | クロンジョブ認証 | 32文字以上の任意文字列 | 強力なランダム文字列 | `openssl rand -base64 32` |
 | `POSTGRES_PASSWORD` | Docker PostgreSQL | `postgres` | 未使用 (マネージドDB) | N/A |
+| `RESEND_API_KEY` | Resendメール送信 | `re_xxxxxx` | Resendダッシュボードから取得 | Resendアカウント作成 |
+| `RESEND_FROM_EMAIL` | メール送信元 | `onboarding@resend.dev` | `noreply@yourdomain.com` | 独自ドメイン設定 |
+| `EMAIL_VERIFICATION_SECRET` | メール認証署名 | 32文字以上の任意文字列 | 強力なランダム文字列 | `openssl rand -base64 32` |
+| `PASSWORD_RESET_SECRET` | パスワードリセット署名 | 32文字以上の任意文字列 | 強力なランダム文字列 | `openssl rand -base64 32` |
 | `NODE_ENV` | 環境モード | `development` | Vercelで自動設定 | N/A |
 
 ## アーキテクチャ概要

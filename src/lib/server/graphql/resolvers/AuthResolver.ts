@@ -83,11 +83,17 @@ export class AuthResolver {
 
     const hashedPassword = await bcrypt.hash(input.password, 12);
 
+    // メール認証トークンを生成
+    const { token: verificationToken, expires: verificationExpires } =
+      emailService.generateSecureToken();
+
     const user = await ctx.prisma.user.create({
       data: {
         email: input.email,
         username: input.username,
         password: hashedPassword,
+        emailVerificationToken: verificationToken,
+        emailVerificationExpires: verificationExpires,
       },
     });
 
@@ -107,6 +113,13 @@ export class AuthResolver {
       },
     );
 
+    // メール認証メールを送信
+    const emailSent = await emailService.sendEmailVerification(
+      user.email,
+      user.username,
+      verificationToken,
+    );
+
     // 登録成功をログに記録（データベースベース）
     await logSecurityEventDB(ctx.prisma, {
       type: SecurityEventType.REGISTER_SUCCESS,
@@ -117,6 +130,7 @@ export class AuthResolver {
       details: {
         email: user.email,
         username: user.username,
+        emailSent,
       },
     });
 
