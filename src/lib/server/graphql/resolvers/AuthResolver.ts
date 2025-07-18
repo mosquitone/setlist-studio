@@ -1,4 +1,4 @@
-import { Resolver, Mutation, Arg, Ctx } from 'type-graphql';
+import { Resolver, Mutation, Arg, Ctx, UseMiddleware } from 'type-graphql';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -14,6 +14,8 @@ import {
   EmailChangeInput,
   EmailChangeResponse,
   EmailChangeConfirmInput,
+  ChangePasswordInput,
+  ChangePasswordResponse,
 } from '../types/Auth';
 import {
   logAuthSuccessDB,
@@ -25,9 +27,16 @@ import {
 import { DatabaseThreatDetection } from '../../../security/threat-detection-db';
 import { emailService } from '../../email/emailService';
 import { createEmailRateLimit } from '../../../security/email-rate-limit';
+import { AuthMiddleware } from '../middleware/jwt-auth-middleware';
 
 interface Context {
   prisma: PrismaClient;
+  userId?: string;
+  user?: {
+    userId: string;
+    email: string;
+    username: string;
+  };
   req?: {
     headers: {
       authorization?: string;
@@ -584,6 +593,83 @@ export class AuthResolver {
     return {
       success: true,
       message: '認証メールを送信しました。',
+    };
+  }
+
+  /**
+   * パスワード変更（認証済みユーザー用）
+   */
+  @Mutation(() => ChangePasswordResponse)
+  @UseMiddleware(AuthMiddleware)
+  async changePassword(
+    @Arg('input', () => ChangePasswordInput) input: ChangePasswordInput,
+    @Ctx() ctx: Context,
+  ): Promise<ChangePasswordResponse> {
+    // デバッグログ
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🔐 changePassword called');
+      console.log('  ctx.userId:', ctx.userId);
+      console.log('  ctx.user:', ctx.user);
+    }
+
+    // AuthMiddlewareにより認証済み
+    const userId = ctx.userId!;
+
+    const user = await ctx.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new Error('ユーザーが見つかりません');
+    }
+
+    // 現在のパスワードを確認
+    const isValidPassword = await bcrypt.compare(input.currentPassword, user.password);
+    if (!isValidPassword) {
+      await logSecurityEventDB(ctx.prisma, {
+        type: SecurityEventType.PASSWORD_CHANGE_FAILURE,
+        severity: SecurityEventSeverity.MEDIUM,
+        userId: user.id,
+        ipAddress: getClientIP(ctx),
+        userAgent: ctx.req?.headers['user-agent'],
+        details: {
+          email: user.email,
+          reason: 'invalid_current_password',
+        },
+      });
+
+      throw new Error('現在のパスワードが正しくありません');
+    }
+
+    // 新しいパスワードをハッシュ化
+    const hashedNewPassword = await bcrypt.hash(input.newPassword, 12);
+
+    // パスワードを更新
+    await ctx.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        password: hashedNewPassword,
+      },
+    });
+
+    // 成功通知メール送信
+    await emailService.sendPasswordResetSuccessEmail(user.email, user.username);
+
+    // 成功ログを記録
+    await logSecurityEventDB(ctx.prisma, {
+      type: SecurityEventType.PASSWORD_CHANGE_SUCCESS,
+      severity: SecurityEventSeverity.LOW,
+      userId: user.id,
+      ipAddress: getClientIP(ctx),
+      userAgent: ctx.req?.headers['user-agent'],
+      details: {
+        email: user.email,
+      },
+    });
+
+    return {
+      success: true,
+      message: 'パスワードが正常に変更されました。',
     };
   }
 }

@@ -123,3 +123,29 @@ export class EmailChangeResponse {
   @Field(() => String)
   message!: string;
 }
+
+@InputType()
+export class ChangePasswordInput {
+  @Field(() => String)
+  @IsString()
+  @MinLength(1, { message: '現在のパスワードは必須です' })
+  currentPassword!: string;
+
+  @Field(() => String)
+  @IsString()
+  @MinLength(8, { message: 'パスワードは8文字以上である必要があります' })
+  @MaxLength(128, { message: 'パスワードは128文字以内で入力してください' })
+  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/, {
+    message: 'パスワードは8文字以上で、大文字・小文字・数字を含む必要があります',
+  })
+  newPassword!: string;
+}
+
+@ObjectType()
+export class ChangePasswordResponse {
+  @Field(() => Boolean)
+  success!: boolean;
+
+  @Field(() => String)
+  message!: string;
+}
