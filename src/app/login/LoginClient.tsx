@@ -122,6 +122,11 @@ export default function LoginClient() {
           </Box>
 
           <Box textAlign="center">
+            <Typography variant="body2" sx={{ mb: 2 }}>
+              <Link href="/auth/forgot-password" style={{ color: 'inherit' }}>
+                パスワードをお忘れですか？
+              </Link>
+            </Typography>
             <Typography variant="body2">
               アカウントをお持ちでないですか？{' '}
               <Link href="/register" style={{ color: 'inherit' }}>
