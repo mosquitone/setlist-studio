@@ -16,6 +16,28 @@ Disallow: /api/
 Disallow: /setlists/*/edit
 Disallow: /profile
 
+# AI bot control for 2025
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: CCBot
+Disallow: /api/
+
+User-agent: anthropic-ai
+Disallow: /api/
+
+User-agent: Claude-Web
+Disallow: /api/
+
+User-agent: Bard
+Disallow: /api/
+
+User-agent: PaLM
+Disallow: /api/
+
 # Prioritize important pages
 Crawl-delay: 1
 
