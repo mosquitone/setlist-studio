@@ -6,6 +6,7 @@ import {
   SecurityEventType,
   SecurityEventSeverity,
 } from '../../../security/security-logger-db';
+import { I18nContext } from '../../../i18n/context';
 
 interface Context {
   req: {
@@ -18,6 +19,7 @@ interface Context {
   };
   prisma: PrismaClient;
   userId?: string;
+  i18n?: I18nContext;
 }
 
 // IP address extraction helper
@@ -44,7 +46,7 @@ export const AuthMiddleware: MiddlewareFn<Context> = async ({ context }, next) =
       },
     });
 
-    throw new Error('ログインが必要です');
+    throw new Error(context.i18n?.messages.auth.loginRequired || 'ログインが必要です');
   }
 
   // HttpOnly Cookieから認証トークンを取得
@@ -63,13 +65,13 @@ export const AuthMiddleware: MiddlewareFn<Context> = async ({ context }, next) =
       },
     });
 
-    throw new Error('ログインが必要です');
+    throw new Error(context.i18n?.messages.auth.loginRequired || 'ログインが必要です');
   }
 
   try {
     const jwtSecret = process.env.JWT_SECRET;
     if (!jwtSecret) {
-      throw new Error('サーバーエラーが発生しました');
+      throw new Error(context.i18n?.messages.errors.serverError || 'サーバーエラーが発生しました');
     }
     const payload = verifyAndValidateJWT(token, jwtSecret);
     context.userId = payload.userId;
@@ -89,7 +91,10 @@ export const AuthMiddleware: MiddlewareFn<Context> = async ({ context }, next) =
       },
     });
 
-    throw new Error('認証の有効期限が切れています。再度ログインしてください');
+    throw new Error(
+      context.i18n?.messages.auth.authenticationExpired ||
+        '認証の有効期限が切れています。再度ログインしてください',
+    );
   }
 
   return next();

@@ -26,6 +26,7 @@ import { apolloClient } from '@/lib/client/apollo-client';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { useI18n } from '@/hooks/useI18n';
 
 const CHANGE_PASSWORD_MUTATION = gql`
   mutation ChangePassword($input: ChangePasswordInput!) {
@@ -38,6 +39,7 @@ const CHANGE_PASSWORD_MUTATION = gql`
 
 function ProfileContent() {
   const { user } = useAuth();
+  const { t } = useI18n();
   const [isEditing, setIsEditing] = useState(false);
   const [username, setUsername] = useState('');
   const [error, setError] = useState('');
@@ -66,13 +68,13 @@ function ProfileContent() {
           },
         });
 
-        setSuccess('プロフィールを更新しました');
+        setSuccess(t.notifications.profileUpdated);
         setIsEditing(false);
       } catch (error) {
         if (process.env.NODE_ENV === 'development') {
           console.error('Failed to update cache:', error);
         }
-        setError('キャッシュの更新に失敗しました');
+        setError(t.errors.somethingWentWrong);
       }
     },
     onError: (error) => {
@@ -109,7 +111,7 @@ function ProfileContent() {
   const handleUpdateProfile = async () => {
     setError('');
     if (!username.trim()) {
-      setError('ユーザー名を入力してください');
+      setError(t.validation.required);
       return;
     }
 
@@ -126,22 +128,22 @@ function ProfileContent() {
 
     // バリデーション
     if (!currentPassword || !newPassword || !confirmPassword) {
-      setPasswordError('すべてのフィールドを入力してください');
+      setPasswordError(t.validation.required);
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setPasswordError('新しいパスワードが一致しません');
+      setPasswordError(t.validation.passwordsDoNotMatch);
       return;
     }
 
     if (newPassword.length < 8) {
-      setPasswordError('パスワードは8文字以上である必要があります');
+      setPasswordError(t.validation.passwordTooShort);
       return;
     }
 
     if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(newPassword)) {
-      setPasswordError('パスワードは8文字以上で、大文字・小文字・数字を含む必要があります');
+      setPasswordError(t.validation.passwordTooShort);
       return;
     }
 
@@ -171,13 +173,13 @@ function ProfileContent() {
         <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
           <Box sx={{ textAlign: 'center' }}>
             <Typography variant="h6" color="error" gutterBottom>
-              プロフィール情報を取得できませんでした
+              {t.errors.somethingWentWrong}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              ページを再読み込みするか、再度ログインしてください。
+              {t.errors.somethingWentWrong}
             </Typography>
             <Button sx={{ mt: 2 }} onClick={() => window.location.reload()}>
-              ページを再読み込み
+              {t.ui.back}
             </Button>
           </Box>
         </Paper>
@@ -204,10 +206,10 @@ function ProfileContent() {
           </Avatar>
           <Box sx={{ flexGrow: 1 }}>
             <Typography variant="h4" gutterBottom>
-              プロフィール
+              {t.ui.profile}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              アカウント情報の確認と編集
+              {t.pages.profile.description}
             </Typography>
           </Box>
         </Box>
@@ -238,7 +240,7 @@ function ProfileContent() {
             {isEditing ? (
               <TextField
                 fullWidth
-                label="ユーザー名"
+                label={t.ui.username}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 size="small"
@@ -246,9 +248,9 @@ function ProfileContent() {
             ) : (
               <Box>
                 <Typography variant="body2" color="text.secondary">
-                  ユーザー名
+                  {t.ui.username}
                 </Typography>
-                <Typography variant="body1">{currentUser?.username || '未設定'}</Typography>
+                <Typography variant="body1">{currentUser?.username || t.ui.noData}</Typography>
               </Box>
             )}
           </Box>
@@ -257,7 +259,7 @@ function ProfileContent() {
             <EmailIcon sx={{ mr: 2, color: 'text.secondary' }} />
             <Box>
               <Typography variant="body2" color="text.secondary">
-                メールアドレス
+                {t.ui.email}
               </Typography>
               <Typography variant="body1">{currentUser?.email}</Typography>
             </Box>
@@ -267,12 +269,12 @@ function ProfileContent() {
             <CalendarTodayIcon sx={{ mr: 2, color: 'text.secondary' }} />
             <Box>
               <Typography variant="body2" color="text.secondary">
-                アカウント作成日
+                {t.ui.createdAt}
               </Typography>
               <Typography variant="body1">
                 {currentUser?.createdAt
                   ? format(new Date(currentUser.createdAt), 'yyyy年MM月dd日', { locale: ja })
-                  : '不明'}
+                  : t.ui.noData}
               </Typography>
             </Box>
           </Box>
@@ -284,7 +286,7 @@ function ProfileContent() {
         <Box sx={{ mb: 3 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             <LockIcon sx={{ mr: 2, color: 'text.secondary' }} />
-            <Typography variant="h6">パスワード変更</Typography>
+            <Typography variant="h6">{t.ui.changePassword}</Typography>
           </Box>
 
           {passwordError && (
@@ -297,7 +299,7 @@ function ProfileContent() {
             <Box sx={{ mb: 2 }}>
               <TextField
                 fullWidth
-                label="現在のパスワード"
+                label={t.ui.currentPassword}
                 type={showCurrentPassword ? 'text' : 'password'}
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
@@ -318,13 +320,13 @@ function ProfileContent() {
               />
               <TextField
                 fullWidth
-                label="新しいパスワード"
+                label={t.ui.newPassword}
                 type={showNewPassword ? 'text' : 'password'}
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 size="small"
                 sx={{ mb: 2 }}
-                helperText="8文字以上で、大文字・小文字・数字を含む必要があります"
+                helperText={t.validation.passwordTooShort}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -337,7 +339,7 @@ function ProfileContent() {
               />
               <TextField
                 fullWidth
-                label="新しいパスワード（確認）"
+                label={t.ui.confirmPassword}
                 type={showConfirmPassword ? 'text' : 'password'}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
@@ -362,10 +364,10 @@ function ProfileContent() {
                   onClick={resetPasswordForm}
                   disabled={changePasswordLoading}
                 >
-                  キャンセル
+                  {t.ui.cancel}
                 </Button>
                 <Button onClick={handleChangePassword} disabled={changePasswordLoading}>
-                  {changePasswordLoading ? '変更中...' : 'パスワードを変更'}
+                  {changePasswordLoading ? t.ui.loading : t.ui.changePassword}
                 </Button>
               </Box>
             </Box>
@@ -376,7 +378,7 @@ function ProfileContent() {
                 onClick={() => setIsChangingPassword(true)}
                 startIcon={<LockIcon />}
               >
-                パスワードを変更
+                {t.ui.changePassword}
               </Button>
             </Box>
           )}
@@ -396,22 +398,22 @@ function ProfileContent() {
                 }}
                 disabled={updateLoading}
               >
-                キャンセル
+                {t.ui.cancel}
               </Button>
               <Button onClick={handleUpdateProfile} disabled={updateLoading}>
-                {updateLoading ? '更新中...' : '保存'}
+                {updateLoading ? t.ui.loading : t.ui.save}
               </Button>
             </>
           ) : (
             <Button onClick={() => setIsEditing(true)} sx={{ borderRadius: 10 }}>
-              プロフィールを編集
+              {t.ui.edit}
             </Button>
           )}
         </Box>
 
         <Box sx={{ mt: 4, pt: 3, borderTop: 1, borderColor: 'divider' }}>
           <Typography variant="body2" color="text.secondary" align="center">
-            アカウントID: {currentUser?.id}
+            {t.ui.accountId}: {currentUser?.id}
           </Typography>
         </Box>
       </Paper>

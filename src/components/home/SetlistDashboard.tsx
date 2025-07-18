@@ -29,6 +29,7 @@ import Link from 'next/link';
 import { useMutation } from '@apollo/client';
 import { DELETE_SETLIST, GET_SETLISTS } from '@/lib/server/graphql/apollo-operations';
 import { Setlist } from '../../types/graphql';
+import { useI18n } from '@/hooks/useI18n';
 
 interface SetlistDashboardProps {
   setlistsData: { setlists: Setlist[] } | undefined;
@@ -36,6 +37,7 @@ interface SetlistDashboardProps {
 }
 
 export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashboardProps) {
+  const { t, lang } = useI18n();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [setlistToDelete, setSetlistToDelete] = useState<Setlist | null>(null);
 
@@ -71,11 +73,11 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
     return (
       <Box>
         <Typography variant="h4" component="h2" gutterBottom sx={{ mb: 4 }}>
-          あなたのセットリスト
+          {t.pages.home.dashboard.title}
         </Typography>
         <Box sx={{ textAlign: 'center', py: 8 }}>
           <Typography variant="h6" color="text.secondary">
-            セットリストを読み込み中...
+            {t.pages.home.dashboard.loading}
           </Typography>
         </Box>
       </Box>
@@ -86,15 +88,15 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
     return (
       <Box>
         <Typography variant="h4" component="h2" gutterBottom sx={{ mb: 4 }}>
-          あなたのセットリスト
+          {t.pages.home.dashboard.title}
         </Typography>
         <Card sx={{ p: 6, textAlign: 'center', bgcolor: 'grey.50' }}>
           <PlaylistPlayIcon sx={{ fontSize: 64, color: 'grey.400', mb: 3 }} />
           <Typography variant="h5" gutterBottom color="text.secondary">
-            まだセットリストがありません
+            {t.pages.home.dashboard.empty.title}
           </Typography>
           <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-            最初のセットリストを作成して、素敵な演奏リストを管理しましょう
+            {t.pages.home.dashboard.empty.description}
           </Typography>
           <Button
             component={Link}
@@ -103,7 +105,7 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
             size="large"
             sx={{ borderRadius: 3 }}
           >
-            セットリストを作成
+            {t.pages.home.dashboard.empty.createButton}
           </Button>
         </Card>
       </Box>
@@ -113,7 +115,7 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
   return (
     <Box>
       <Typography variant="h4" component="h2" gutterBottom sx={{ mb: 4 }}>
-        あなたのセットリスト
+        {t.pages.home.dashboard.title}
       </Typography>
       <Grid container spacing={2}>
         {setlistsData.setlists.map((setlist: Setlist) => (
@@ -178,7 +180,11 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
                     <Stack direction="row" spacing={0.5}>
                       <Chip
                         icon={setlist.isPublic ? <PublicIcon /> : <LockIcon />}
-                        label={setlist.isPublic ? '公開' : '非公開'}
+                        label={
+                          setlist.isPublic
+                            ? t.pages.home.dashboard.public
+                            : t.pages.home.dashboard.private
+                        }
                         size="small"
                         sx={{
                           bgcolor: setlist.isPublic
@@ -192,7 +198,11 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
                         }}
                       />
                       <Chip
-                        label={setlist.theme === 'white' ? 'ホワイト' : 'ブラック'}
+                        label={
+                          setlist.theme === 'white'
+                            ? t.pages.home.dashboard.white
+                            : t.pages.home.dashboard.black
+                        }
                         size="small"
                         sx={{
                           bgcolor:
@@ -264,7 +274,9 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1 }}>
                       <ScheduleIcon sx={{ fontSize: 14 }} />
                       <Typography variant="caption" sx={{ fontSize: '0.75rem', opacity: 0.8 }}>
-                        {new Date(setlist.eventDate).toLocaleDateString('ja-JP')}
+                        {new Date(setlist.eventDate).toLocaleDateString(
+                          lang === 'ja' ? 'ja-JP' : 'en-US',
+                        )}
                       </Typography>
                     </Box>
                   )}
@@ -277,7 +289,7 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
                       mb: 1,
                     }}
                   >
-                    {setlist.items.length}曲
+                    {setlist.items.length} {t.pages.home.dashboard.songsCount}
                   </Typography>
                 </Box>
               </CardActionArea>
@@ -315,7 +327,7 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
                   }}
                   onClick={(e) => e.stopPropagation()}
                 >
-                  編集
+                  {t.pages.home.dashboard.edit}
                 </Button>
                 <IconButton
                   onClick={(e) => handleDeleteClick(setlist, e)}
@@ -341,9 +353,9 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
         open={deleteDialogOpen}
         onClose={handleDeleteCancel}
         onConfirm={handleDeleteConfirm}
-        title="セットリストを削除"
+        title={t.pages.home.dashboard.delete.title}
         itemName={setlistToDelete?.title || ''}
-        itemType="セットリスト"
+        itemType={t.pages.home.dashboard.delete.itemType}
         loading={deleteLoading}
       />
     </Box>

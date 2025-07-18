@@ -2,6 +2,7 @@
 
 import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, Box } from '@mui/material';
 import { Button } from '@/components/common/ui/Button';
+import { useI18n } from '@/hooks/useI18n';
 
 interface DeleteConfirmModalProps {
   open: boolean;
@@ -23,6 +24,7 @@ export function DeleteConfirmModal({
   description,
   loading = false,
 }: DeleteConfirmModalProps) {
+  const { t } = useI18n();
   return (
     <Dialog
       open={open}
@@ -35,18 +37,20 @@ export function DeleteConfirmModal({
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         <Box>
-          <Typography>「{itemName}」を削除しますか？</Typography>
+          <Typography>
+            「{itemName}」{t.common.deleteConfirmation}
+          </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-            {description || 'この操作は取り消せません。'}
+            {description || t.common.deleteWarning}
           </Typography>
         </Box>
       </DialogContent>
       <DialogActions sx={{ p: 2, gap: 1 }}>
         <Button onClick={onClose} disabled={loading} variant="text">
-          キャンセル
+          {t.common.cancel}
         </Button>
         <Button onClick={onConfirm} variant="danger" disabled={loading} loading={loading}>
-          削除
+          {t.common.delete}
         </Button>
       </DialogActions>
     </Dialog>

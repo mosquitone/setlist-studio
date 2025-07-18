@@ -2,17 +2,20 @@
 
 import { Box, Typography, Grid, Card, CardContent } from '@mui/material';
 import Image from 'next/image';
+import { useI18n } from '@/hooks/useI18n';
 
 export function SampleSetlistsSection() {
+  const { t } = useI18n();
+
   return (
     <Box>
       <Typography variant="h4" component="h2" textAlign="center" gutterBottom sx={{ mb: 2 }}>
-        セットリストサンプル
+        {t.pages.home.sampleSetlists.title}
       </Typography>
       <Box textAlign="center" sx={{ mb: 2 }}>
         <Typography variant="body1" color="text.secondary" component="div">
           <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1 }}>
-            Setlist Studioで作成できるセットリストの例をご覧ください
+            {t.pages.home.sampleSetlists.description}
           </Box>
         </Typography>
       </Box>
@@ -33,7 +36,7 @@ export function SampleSetlistsSection() {
           >
             <CardContent sx={{ p: 1 }}>
               <Typography variant="h6" component="h3" textAlign="center" sx={{ mb: 2 }}>
-                Black Theme
+                {t.pages.home.sampleSetlists.blackTheme}
               </Typography>
               <Box
                 sx={{
@@ -50,7 +53,7 @@ export function SampleSetlistsSection() {
               >
                 <Image
                   src="/setlist-mosquitone-black.png"
-                  alt="セットリストサンプル - ブラックテーマ"
+                  alt={t.pages.home.sampleSetlists.blackThemeAlt}
                   fill
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
                   style={{ objectFit: 'contain' }}
@@ -75,7 +78,7 @@ export function SampleSetlistsSection() {
           >
             <CardContent sx={{ p: 1 }}>
               <Typography variant="h6" component="h3" textAlign="center" sx={{ mb: 2 }}>
-                White Theme
+                {t.pages.home.sampleSetlists.whiteTheme}
               </Typography>
               <Box
                 sx={{
@@ -92,7 +95,7 @@ export function SampleSetlistsSection() {
               >
                 <Image
                   src="/setlist-mosquitone-white.png"
-                  alt="セットリストサンプル - ホワイトテーマ"
+                  alt={t.pages.home.sampleSetlists.whiteThemeAlt}
                   fill
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
                   style={{ objectFit: 'contain' }}
@@ -105,7 +108,7 @@ export function SampleSetlistsSection() {
 
       <Box sx={{ textAlign: 'center', mt: 4 }}>
         <Typography variant="body2" color="text.secondary">
-          このようなセットリストを簡単に作成・ダウンロードできます
+          {t.pages.home.sampleSetlists.footer}
         </Typography>
       </Box>
     </Box>

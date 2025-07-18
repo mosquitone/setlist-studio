@@ -25,10 +25,12 @@ import { useSetlistActions } from '@/hooks/useSetlistActions';
 import { useImageGeneration } from '@/hooks/useImageGeneration';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { SetlistProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { useI18n } from '@/hooks/useI18n';
 
 export default function SetlistDetailPage() {
   const params = useParams();
   const setlistId = params.id as string;
+  const { t } = useI18n();
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedTheme, setSelectedTheme] = useState<Theme | null>(null);
@@ -133,7 +135,7 @@ export default function SetlistDetailPage() {
             {/* Success Banner */}
             {showSuccess && (
               <Alert severity="success" sx={{ mb: 3 }}>
-                セットリストが生成されました！
+                {t.setlistDetail.successMessage}
               </Alert>
             )}
 
@@ -176,16 +178,21 @@ export default function SetlistDetailPage() {
             )}
 
             <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
-              <DialogTitle>セットリストを削除</DialogTitle>
+              <DialogTitle>{t.setlistDetail.deleteDialog.title}</DialogTitle>
               <DialogContent>
                 <Typography>
-                  「{data?.setlist?.title}」を削除してもよろしいですか？ この操作は取り消せません。
+                  「{data?.setlist?.title}」{t.setlistDetail.deleteDialog.message}{' '}
+                  {t.setlistDetail.deleteDialog.warning}
                 </Typography>
               </DialogContent>
               <DialogActions>
-                <Button onClick={() => setDeleteDialogOpen(false)}>キャンセル</Button>
+                <Button onClick={() => setDeleteDialogOpen(false)}>
+                  {t.setlistDetail.deleteDialog.cancel}
+                </Button>
                 <Button onClick={handleDelete} color="error" disabled={deleteLoading}>
-                  {deleteLoading ? '削除中...' : '削除'}
+                  {deleteLoading
+                    ? t.setlistDetail.deleteDialog.deleting
+                    : t.setlistDetail.deleteDialog.delete}
                 </Button>
               </DialogActions>
             </Dialog>
