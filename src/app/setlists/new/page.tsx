@@ -8,12 +8,14 @@ import SetlistForm from '@/components/forms/SetlistForm';
 import { SetlistFormValues } from '@/types/components';
 import { GetSetlistResponse, SetlistItem } from '@/types/graphql';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { useI18n } from '@/hooks/useI18n';
 
 export default function NewSetlistPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const duplicateId = searchParams.get('duplicate');
   const selectedSongsParam = searchParams.get('selectedSongs');
+  const { t } = useI18n();
   const [initialValues, setInitialValues] = useState<SetlistFormValues>({
     title: '',
     bandName: '',
@@ -67,7 +69,7 @@ export default function NewSetlistPage() {
     if (duplicateData?.setlist) {
       const setlist = duplicateData.setlist;
       setInitialValues({
-        title: `${setlist.title} (コピー)`,
+        title: `${setlist.title} (${t.setlistForm.copy})`,
         bandName: setlist.bandName || '',
         eventName: setlist.eventName || '',
         eventDate: setlist.eventDate || '',
@@ -97,11 +99,9 @@ export default function NewSetlistPage() {
         console.error('Failed to parse selected songs:', error);
       }
     }
-  }, [duplicateData, selectedSongsParam]);
+  }, [duplicateData, selectedSongsParam, t.setlistForm.copy]);
 
-  const createError = error
-    ? new Error(`セットリストの作成に失敗しました: ${error.message}`)
-    : null;
+  const createError = error ? new Error(`${t.errors.serverError}: ${error.message}`) : null;
   const isLoading = loading || duplicateLoading;
 
   return (
@@ -109,16 +109,16 @@ export default function NewSetlistPage() {
       <SetlistForm
         title={
           duplicateId
-            ? 'セットリストを複製'
+            ? t.setlistForm.titles.duplicate
             : selectedSongsParam
-              ? '選択した楽曲でセットリストを作成'
-              : '新しいセットリストを作成'
+              ? t.setlistForm.titles.fromSongs
+              : t.setlistForm.titles.create
         }
         initialValues={initialValues}
         onSubmit={handleSubmit}
         loading={isLoading}
         error={createError}
-        submitButtonText="セットリストを作成"
+        submitButtonText={t.setlistForm.buttons.create}
         enableDragAndDrop={true}
       />
     </ProtectedRoute>

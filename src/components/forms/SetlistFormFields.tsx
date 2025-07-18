@@ -14,18 +14,20 @@ import { FormikProps } from 'formik';
 import { SetlistFormValues } from '@/types/components';
 import { useQuery } from '@apollo/client';
 import { GET_BAND_NAMES } from '@/lib/server/graphql/apollo-operations';
+import { useI18n } from '@/hooks/useI18n';
 
 interface SetlistFormFieldsProps {
   formik: FormikProps<SetlistFormValues>;
 }
 
-const themes = [
-  { value: 'black', label: 'Black' },
-  { value: 'white', label: 'White' },
-];
-
 export function SetlistFormFields({ formik }: SetlistFormFieldsProps) {
   const { values, errors, touched, handleChange, handleBlur } = formik;
+  const { t } = useI18n();
+
+  const themes = [
+    { value: 'black', label: 'Black' },
+    { value: 'white', label: 'White' },
+  ];
 
   // バンド名のオートコンプリート用データ取得
   const { data: bandNamesData } = useQuery(GET_BAND_NAMES, {
@@ -40,13 +42,13 @@ export function SetlistFormFields({ formik }: SetlistFormFieldsProps) {
         <TextField
           fullWidth
           name="title"
-          label="セットリスト名（任意）"
+          label={`${t.setlistForm.fields.title}（${t.setlistForm.fields.titlePlaceholder}）`}
           value={values.title}
           onChange={handleChange}
           onBlur={handleBlur}
           error={touched.title && Boolean(errors.title)}
           helperText={
-            touched.title && errors.title ? errors.title : '空欄の場合は自動でナンバリングされます'
+            touched.title && errors.title ? errors.title : t.setlistForm.fields.titleHelperText
           }
         />
       </Grid>
@@ -77,7 +79,7 @@ export function SetlistFormFields({ formik }: SetlistFormFieldsProps) {
           renderInput={(params) => (
             <TextField
               {...params}
-              label="バンド名"
+              label={t.setlistForm.fields.bandName}
               error={touched.bandName && Boolean(errors.bandName)}
               helperText={touched.bandName && errors.bandName}
               required
@@ -89,12 +91,12 @@ export function SetlistFormFields({ formik }: SetlistFormFieldsProps) {
 
       <Grid item xs={12} sm={6}>
         <FormControl fullWidth>
-          <InputLabel>テーマ</InputLabel>
+          <InputLabel>{t.setlistForm.fields.theme}</InputLabel>
           <Select
             name="theme"
             value={values.theme}
             onChange={handleChange}
-            label="テーマ"
+            label={t.setlistForm.fields.theme}
             sx={{
               '& .MuiOutlinedInput-notchedOutline': {
                 borderRadius: '12px',
@@ -114,7 +116,7 @@ export function SetlistFormFields({ formik }: SetlistFormFieldsProps) {
         <TextField
           fullWidth
           name="eventName"
-          label="イベント名"
+          label={t.setlistForm.fields.eventName}
           value={values.eventName}
           onChange={handleChange}
           onBlur={handleBlur}
@@ -124,7 +126,7 @@ export function SetlistFormFields({ formik }: SetlistFormFieldsProps) {
         <TextField
           fullWidth
           name="eventDate"
-          label="開催日"
+          label={t.setlistForm.fields.eventDate}
           type="date"
           value={values.eventDate}
           onChange={handleChange}
@@ -136,7 +138,7 @@ export function SetlistFormFields({ formik }: SetlistFormFieldsProps) {
         <TextField
           fullWidth
           name="openTime"
-          label="開場時間"
+          label={t.setlistForm.fields.openTime}
           type="time"
           value={values.openTime}
           onChange={handleChange}
@@ -148,7 +150,7 @@ export function SetlistFormFields({ formik }: SetlistFormFieldsProps) {
         <TextField
           fullWidth
           name="startTime"
-          label="開演時間"
+          label={t.setlistForm.fields.startTime}
           type="time"
           value={values.startTime}
           onChange={handleChange}
