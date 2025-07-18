@@ -24,6 +24,7 @@ import {
 } from '../../../security/security-logger-db';
 import { DatabaseThreatDetection } from '../../../security/threat-detection-db';
 import { emailService } from '../../email/emailService';
+import { createEmailRateLimit } from '../../../security/email-rate-limit';
 import crypto from 'crypto';
 
 interface Context {
@@ -228,6 +229,21 @@ export class AuthResolver {
     @Arg('input') input: PasswordResetRequestInput,
     @Ctx() ctx: Context
   ): Promise<PasswordResetResponse> {
+    const emailRateLimit = createEmailRateLimit(ctx.prisma);
+    const ipAddress = getClientIP(ctx);
+    const userAgent = ctx.req?.headers['user-agent'];
+
+    // レート制限チェック
+    const rateLimitResult = await emailRateLimit.checkPasswordResetLimit(
+      input.email,
+      ipAddress,
+      userAgent
+    );
+
+    if (!rateLimitResult.success) {
+      throw new Error(rateLimitResult.message || 'リクエスト回数が上限に達しました。');
+    }
+
     const user = await ctx.prisma.user.findUnique({
       where: { email: input.email },
     });
@@ -495,6 +511,21 @@ export class AuthResolver {
     @Arg('email') email: string,
     @Ctx() ctx: Context
   ): Promise<EmailVerificationResponse> {
+    const emailRateLimit = createEmailRateLimit(ctx.prisma);
+    const ipAddress = getClientIP(ctx);
+    const userAgent = ctx.req?.headers['user-agent'];
+
+    // レート制限チェック
+    const rateLimitResult = await emailRateLimit.checkVerificationEmailLimit(
+      email,
+      ipAddress,
+      userAgent
+    );
+
+    if (!rateLimitResult.success) {
+      throw new Error(rateLimitResult.message || 'リクエスト回数が上限に達しました。');
+    }
+
     const user = await ctx.prisma.user.findUnique({
       where: { email },
     });
