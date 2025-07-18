@@ -15,6 +15,20 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   
+  // メール認証関連
+  emailVerified          Boolean   @default(false)
+  emailVerificationToken String?
+  emailVerificationExpires DateTime?
+  
+  // パスワードリセット関連
+  passwordResetToken     String?
+  passwordResetExpires   DateTime?
+  
+  // メールアドレス変更関連
+  pendingEmail           String?
+  emailChangeToken       String?
+  emailChangeExpires     DateTime?
+  
   songs     Song[]
   setlists  Setlist[]
   
