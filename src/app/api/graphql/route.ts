@@ -7,6 +7,7 @@ import { GraphQLSchema } from 'graphql';
 import depthLimit from 'graphql-depth-limit';
 import { createApiRateLimit, createAuthRateLimit } from '../../../lib/security/rate-limit-db';
 import { csrfProtection } from '../../../lib/security/csrf-protection';
+import jwt from 'jsonwebtoken';
 
 // Import pre-built schema
 import { getPreBuiltSchema } from '../../../lib/server/graphql/generated-schema';
@@ -152,6 +153,15 @@ async function getServerInstance() {
   return createServer();
 }
 
+// JWT Token interface
+interface JWTPayload {
+  userId: string;
+  email: string;
+  username: string;
+  iat: number;
+  exp: number;
+}
+
 // Context helper for secure token extraction with connection assurance
 async function createSecureContext(req: NextRequest) {
   // データベース接続を確実に確立
@@ -169,12 +179,50 @@ async function createSecureContext(req: NextRequest) {
     headers[key] = value;
   });
 
+  // JWTトークンを取得して認証情報を設定
+  let user: { userId: string; email: string; username: string } | undefined;
+
+  const token = cookies['auth_token'];
+
+  // デバッグログ
+  if (process.env.NODE_ENV === 'development') {
+    console.log('🔍 Auth Debug:');
+    console.log('  Available cookies:', Object.keys(cookies));
+    console.log('  auth_token exists:', !!token);
+    console.log('  auth_token length:', token?.length || 0);
+  }
+
+  if (token) {
+    try {
+      const jwtSecret = process.env.JWT_SECRET;
+      if (jwtSecret) {
+        const decoded = jwt.verify(token, jwtSecret) as JWTPayload;
+        user = {
+          userId: decoded.userId,
+          email: decoded.email,
+          username: decoded.username,
+        };
+
+        if (process.env.NODE_ENV === 'development') {
+          console.log('  ✅ JWT validation successful:', user.email);
+        }
+      }
+    } catch (error) {
+      // Token validation failed - user remains undefined
+      if (process.env.NODE_ENV === 'development') {
+        console.log('  ❌ JWT validation failed:', error);
+      }
+    }
+  }
+
   return {
     req: {
       cookies,
       headers,
+      authorization: token ? `Bearer ${token}` : undefined,
     },
     prisma,
+    user,
   };
 }
 

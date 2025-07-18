@@ -13,13 +13,28 @@ import Alert from '@mui/material/Alert';
 import PersonIcon from '@mui/icons-material/Person';
 import EmailIcon from '@mui/icons-material/Email';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import LockIcon from '@mui/icons-material/Lock';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useMutation } from '@apollo/client';
 import { UPDATE_USER_MUTATION, GET_ME_QUERY } from '@/lib/server/graphql/apollo-operations';
+import { gql } from '@apollo/client';
 import { apolloClient } from '@/lib/client/apollo-client';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+
+const CHANGE_PASSWORD_MUTATION = gql`
+  mutation ChangePassword($input: ChangePasswordInput!) {
+    changePassword(input: $input) {
+      success
+      message
+    }
+  }
+`;
 
 function ProfileContent() {
   const { user } = useAuth();
@@ -27,6 +42,17 @@ function ProfileContent() {
   const [username, setUsername] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  // パスワード変更用の状態
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState('');
+  const [passwordSuccess, setPasswordSuccess] = useState('');
 
   const [updateUser, { loading: updateLoading }] = useMutation(UPDATE_USER_MUTATION, {
     onCompleted: (data) => {
@@ -54,6 +80,26 @@ function ProfileContent() {
     },
   });
 
+  const [changePassword, { loading: changePasswordLoading }] = useMutation(
+    CHANGE_PASSWORD_MUTATION,
+    {
+      onCompleted: (data) => {
+        if (data.changePassword.success) {
+          setPasswordSuccess(data.changePassword.message);
+          setPasswordError('');
+          setIsChangingPassword(false);
+          setCurrentPassword('');
+          setNewPassword('');
+          setConfirmPassword('');
+        }
+      },
+      onError: (error) => {
+        setPasswordError(error.message);
+        setPasswordSuccess('');
+      },
+    },
+  );
+
   useEffect(() => {
     if (user) {
       setUsername(user.username || '');
@@ -72,6 +118,50 @@ function ProfileContent() {
         username: username.trim(),
       },
     });
+  };
+
+  const handleChangePassword = async () => {
+    setPasswordError('');
+    setPasswordSuccess('');
+
+    // バリデーション
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      setPasswordError('すべてのフィールドを入力してください');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError('新しいパスワードが一致しません');
+      return;
+    }
+
+    if (newPassword.length < 8) {
+      setPasswordError('パスワードは8文字以上である必要があります');
+      return;
+    }
+
+    if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(newPassword)) {
+      setPasswordError('パスワードは8文字以上で、大文字・小文字・数字を含む必要があります');
+      return;
+    }
+
+    await changePassword({
+      variables: {
+        input: {
+          currentPassword,
+          newPassword,
+        },
+      },
+    });
+  };
+
+  const resetPasswordForm = () => {
+    setIsChangingPassword(false);
+    setCurrentPassword('');
+    setNewPassword('');
+    setConfirmPassword('');
+    setPasswordError('');
+    setPasswordSuccess('');
   };
 
   // ユーザー情報が取得できない場合の表示
@@ -136,6 +226,12 @@ function ProfileContent() {
           </Alert>
         )}
 
+        {passwordSuccess && (
+          <Alert severity="success" sx={{ mb: 2 }}>
+            {passwordSuccess}
+          </Alert>
+        )}
+
         <Box sx={{ mb: 3 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             <PersonIcon sx={{ mr: 2, color: 'text.secondary' }} />
@@ -180,6 +276,110 @@ function ProfileContent() {
               </Typography>
             </Box>
           </Box>
+        </Box>
+
+        <Divider sx={{ mb: 3 }} />
+
+        {/* パスワード変更セクション */}
+        <Box sx={{ mb: 3 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+            <LockIcon sx={{ mr: 2, color: 'text.secondary' }} />
+            <Typography variant="h6">パスワード変更</Typography>
+          </Box>
+
+          {passwordError && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {passwordError}
+            </Alert>
+          )}
+
+          {isChangingPassword ? (
+            <Box sx={{ mb: 2 }}>
+              <TextField
+                fullWidth
+                label="現在のパスワード"
+                type={showCurrentPassword ? 'text' : 'password'}
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                size="small"
+                sx={{ mb: 2 }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                        edge="end"
+                      >
+                        {showCurrentPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              <TextField
+                fullWidth
+                label="新しいパスワード"
+                type={showNewPassword ? 'text' : 'password'}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                size="small"
+                sx={{ mb: 2 }}
+                helperText="8文字以上で、大文字・小文字・数字を含む必要があります"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={() => setShowNewPassword(!showNewPassword)} edge="end">
+                        {showNewPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              <TextField
+                fullWidth
+                label="新しいパスワード（確認）"
+                type={showConfirmPassword ? 'text' : 'password'}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                size="small"
+                sx={{ mb: 2 }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        edge="end"
+                      >
+                        {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
+                <Button
+                  variant="outlined"
+                  onClick={resetPasswordForm}
+                  disabled={changePasswordLoading}
+                >
+                  キャンセル
+                </Button>
+                <Button onClick={handleChangePassword} disabled={changePasswordLoading}>
+                  {changePasswordLoading ? '変更中...' : 'パスワードを変更'}
+                </Button>
+              </Box>
+            </Box>
+          ) : (
+            <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-start' }}>
+              <Button
+                variant="outlined"
+                onClick={() => setIsChangingPassword(true)}
+                startIcon={<LockIcon />}
+              >
+                パスワードを変更
+              </Button>
+            </Box>
+          )}
         </Box>
 
         <Divider sx={{ mb: 3 }} />
