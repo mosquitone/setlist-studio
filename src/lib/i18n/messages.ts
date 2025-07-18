@@ -27,6 +27,8 @@ export interface Messages {
     authRequired: string;
     userNotFound: string;
     rateLimitExceeded: string;
+    checkingLoginStatus: string;
+    redirectingToLogin: string;
   };
 
   // エラーメッセージ
@@ -466,24 +468,51 @@ export interface Messages {
 
   // セットリストフォーム
   setlistForm: {
+    titles: {
+      create: string;
+      duplicate: string;
+      fromSongs: string;
+    };
+    fields: {
+      title: string;
+      titlePlaceholder: string;
+      titleHelperText: string;
+      bandName: string;
+      bandNameRequired: string;
+      eventName: string;
+      eventDate: string;
+      openTime: string;
+      startTime: string;
+      theme: string;
+    };
+    songsList: {
+      title: string;
+      maxSongsWarning: string;
+      songTitle: string;
+      songNote: string;
+      addSong: string;
+    };
+    buttons: {
+      create: string;
+      cancel: string;
+    };
     validation: {
       titleMaxLength: string;
       titleInvalidChars: string;
       bandNameRequired: string;
       bandNameMaxLength: string;
       bandNameInvalidChars: string;
-      themeRequired: string;
+      eventNameMaxLength: string;
+      eventNameInvalidChars: string;
       songTitleRequired: string;
+      songTitleMaxLength: string;
+      songTitleInvalidChars: string;
+      songNoteMaxLength: string;
+      songNoteInvalidChars: string;
+      minSongsRequired: string;
+      maxSongsExceeded: string;
     };
-    sections: {
-      songList: string;
-      maxSongsInfo: string;
-      addSongButton: string;
-      maxSongsReached: string;
-    };
-    buttons: {
-      cancel: string;
-    };
+    copy: string;
   };
 
   // ナビゲーションメニュー
@@ -602,6 +631,8 @@ const jaMessages: Messages = {
     authRequired: '認証ユーザーのみ利用できます。',
     userNotFound: 'ユーザーが見つかりません',
     rateLimitExceeded: 'リクエスト回数が上限に達しました。',
+    checkingLoginStatus: 'ログイン状態を確認中...',
+    redirectingToLogin: 'ログイン画面に移動中...',
   },
   errors: {
     serverError: 'サーバーエラーが発生しました',
@@ -1024,24 +1055,51 @@ const jaMessages: Messages = {
     },
   },
   setlistForm: {
+    titles: {
+      create: '新しいセットリストを作成',
+      duplicate: 'セットリストを複製',
+      fromSongs: '選択した楽曲でセットリストを作成',
+    },
+    fields: {
+      title: 'セットリスト名',
+      titlePlaceholder: '任意',
+      titleHelperText: '空欄の場合は自動でナンバリングされます',
+      bandName: 'バンド名',
+      bandNameRequired: '必須',
+      eventName: 'イベント名',
+      eventDate: '開催日',
+      openTime: '開場時間',
+      startTime: '開演時間',
+      theme: 'テーマ',
+    },
+    songsList: {
+      title: '楽曲リスト',
+      maxSongsWarning: '楽曲の追加は最大20曲までです。',
+      songTitle: '楽曲名',
+      songNote: 'メモ',
+      addSong: '楽曲を追加',
+    },
+    buttons: {
+      create: 'セットリストを作成',
+      cancel: 'キャンセル',
+    },
     validation: {
       titleMaxLength: 'セットリスト名は100文字以下にしてください',
       titleInvalidChars: 'セットリスト名に無効な文字が含まれています',
       bandNameRequired: 'バンド名は必須です',
       bandNameMaxLength: 'バンド名は100文字以下にしてください',
       bandNameInvalidChars: 'バンド名に無効な文字が含まれています',
-      themeRequired: 'テーマは必須です',
+      eventNameMaxLength: 'イベント名は200文字以下にしてください',
+      eventNameInvalidChars: 'イベント名に無効な文字が含まれています',
       songTitleRequired: '楽曲名は必須です',
+      songTitleMaxLength: '楽曲名は200文字以下にしてください',
+      songTitleInvalidChars: '楽曲名に無効な文字が含まれています',
+      songNoteMaxLength: 'メモは500文字以下にしてください',
+      songNoteInvalidChars: 'メモに無効な文字が含まれています',
+      minSongsRequired: '少なくとも1曲は必要です',
+      maxSongsExceeded: '楽曲は20曲以下にしてください',
     },
-    sections: {
-      songList: '楽曲リスト',
-      maxSongsInfo: '楽曲の追加は最大20曲までです。',
-      addSongButton: '楽曲を追加',
-      maxSongsReached: '楽曲は20曲まで',
-    },
-    buttons: {
-      cancel: 'キャンセル',
-    },
+    copy: 'コピー',
   },
   navigation: {
     profile: 'プロフィール',
@@ -1180,6 +1238,8 @@ const enMessages: Messages = {
     authRequired: 'Authentication required.',
     userNotFound: 'User not found',
     rateLimitExceeded: 'Request limit exceeded.',
+    checkingLoginStatus: 'Checking login status...',
+    redirectingToLogin: 'Redirecting to login...',
   },
   errors: {
     serverError: 'Server error occurred',
@@ -1602,24 +1662,51 @@ const enMessages: Messages = {
     },
   },
   setlistForm: {
+    titles: {
+      create: 'Create New Setlist',
+      duplicate: 'Duplicate Setlist',
+      fromSongs: 'Create Setlist from Selected Songs',
+    },
+    fields: {
+      title: 'Setlist Name',
+      titlePlaceholder: 'Optional',
+      titleHelperText: 'If left blank, will be automatically numbered',
+      bandName: 'Band Name',
+      bandNameRequired: 'Required',
+      eventName: 'Event Name',
+      eventDate: 'Event Date',
+      openTime: 'Open Time',
+      startTime: 'Start Time',
+      theme: 'Theme',
+    },
+    songsList: {
+      title: 'Song List',
+      maxSongsWarning: 'You can add up to 20 songs.',
+      songTitle: 'Song Title',
+      songNote: 'Note',
+      addSong: 'Add Song',
+    },
+    buttons: {
+      create: 'Create Setlist',
+      cancel: 'Cancel',
+    },
     validation: {
       titleMaxLength: 'Setlist name must be 100 characters or less',
       titleInvalidChars: 'Setlist name contains invalid characters',
       bandNameRequired: 'Band name is required',
       bandNameMaxLength: 'Band name must be 100 characters or less',
       bandNameInvalidChars: 'Band name contains invalid characters',
-      themeRequired: 'Theme is required',
+      eventNameMaxLength: 'Event name must be 200 characters or less',
+      eventNameInvalidChars: 'Event name contains invalid characters',
       songTitleRequired: 'Song title is required',
+      songTitleMaxLength: 'Song title must be 200 characters or less',
+      songTitleInvalidChars: 'Song title contains invalid characters',
+      songNoteMaxLength: 'Note must be 500 characters or less',
+      songNoteInvalidChars: 'Note contains invalid characters',
+      minSongsRequired: 'At least 1 song is required',
+      maxSongsExceeded: 'Maximum 20 songs allowed',
     },
-    sections: {
-      songList: 'Song List',
-      maxSongsInfo: 'You can add up to 20 songs.',
-      addSongButton: 'Add Song',
-      maxSongsReached: 'Max 20 songs',
-    },
-    buttons: {
-      cancel: 'Cancel',
-    },
+    copy: 'Copy',
   },
   navigation: {
     profile: 'Profile',

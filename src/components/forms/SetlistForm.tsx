@@ -12,6 +12,7 @@ import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea
 import { SetlistFormFields } from './SetlistFormFields';
 import { SongItemInput } from './SongItemInput';
 import { validateAndSanitizeInput } from '@/lib/security/security-utils';
+import { useI18n } from '@/hooks/useI18n';
 
 import { SetlistFormValues } from '@/types/components';
 
@@ -38,76 +39,78 @@ interface SetlistFormProps {
  * @param enableDragAndDrop - ドラッグ&ドロップ機能の有効/無効
  */
 
-const validationSchema = Yup.object({
-  title: Yup.string()
-    .max(100, 'セットリスト名は100文字以下にしてください')
-    .test('sanitize', 'セットリスト名に無効な文字が含まれています', function (value) {
-      if (!value) return true;
-      try {
-        validateAndSanitizeInput(value, 100);
-        return true;
-      } catch {
-        return false;
-      }
-    }),
-  bandName: Yup.string()
-    .required('バンド名は必須です')
-    .max(100, 'バンド名は100文字以下にしてください')
-    .test('sanitize', 'バンド名に無効な文字が含まれています', function (value) {
-      if (!value) return true;
-      try {
-        validateAndSanitizeInput(value, 100);
-        return true;
-      } catch {
-        return false;
-      }
-    }),
-  eventName: Yup.string()
-    .max(200, 'イベント名は200文字以下にしてください')
-    .test('sanitize', 'イベント名に無効な文字が含まれています', function (value) {
-      if (!value) return true;
-      try {
-        validateAndSanitizeInput(value, 200);
-        return true;
-      } catch {
-        return false;
-      }
-    }),
-  eventDate: Yup.string(),
-  openTime: Yup.string(),
-  startTime: Yup.string(),
-  theme: Yup.string().required('テーマは必須です'),
-  items: Yup.array()
-    .of(
-      Yup.object({
-        title: Yup.string()
-          .required('楽曲名は必須です')
-          .max(200, '楽曲名は200文字以下にしてください')
-          .test('sanitize', '楽曲名に無効な文字が含まれています', function (value) {
-            if (!value) return true;
-            try {
-              validateAndSanitizeInput(value, 200);
-              return true;
-            } catch {
-              return false;
-            }
-          }),
-        note: Yup.string()
-          .max(500, 'ノートは500文字以下にしてください')
-          .test('sanitize', 'ノートに無効な文字が含まれています', function (value) {
-            if (!value) return true;
-            try {
-              validateAndSanitizeInput(value, 500);
-              return true;
-            } catch {
-              return false;
-            }
-          }),
+// バリデーションスキーマを関数として定義し、i18nメッセージを動的に取得
+const createValidationSchema = (t: any) =>
+  Yup.object({
+    title: Yup.string()
+      .max(100, t.setlistForm.validation.titleMaxLength)
+      .test('sanitize', t.setlistForm.validation.titleInvalidChars, function (value) {
+        if (!value) return true;
+        try {
+          validateAndSanitizeInput(value, 100);
+          return true;
+        } catch {
+          return false;
+        }
       }),
-    )
-    .min(1, '少なくとも1曲は必要です')
-    .max(20, '楽曲は20曲以下にしてください'),
-});
+    bandName: Yup.string()
+      .required(t.setlistForm.validation.bandNameRequired)
+      .max(100, t.setlistForm.validation.bandNameMaxLength)
+      .test('sanitize', t.setlistForm.validation.bandNameInvalidChars, function (value) {
+        if (!value) return true;
+        try {
+          validateAndSanitizeInput(value, 100);
+          return true;
+        } catch {
+          return false;
+        }
+      }),
+    eventName: Yup.string()
+      .max(200, t.setlistForm.validation.eventNameMaxLength)
+      .test('sanitize', t.setlistForm.validation.eventNameInvalidChars, function (value) {
+        if (!value) return true;
+        try {
+          validateAndSanitizeInput(value, 200);
+          return true;
+        } catch {
+          return false;
+        }
+      }),
+    eventDate: Yup.string(),
+    openTime: Yup.string(),
+    startTime: Yup.string(),
+    theme: Yup.string().required(t.ui.required),
+    items: Yup.array()
+      .of(
+        Yup.object({
+          title: Yup.string()
+            .required(t.setlistForm.validation.songTitleRequired || t.ui.required)
+            .max(200, t.setlistForm.validation.songTitleMaxLength)
+            .test('sanitize', t.setlistForm.validation.songTitleInvalidChars, function (value) {
+              if (!value) return true;
+              try {
+                validateAndSanitizeInput(value, 200);
+                return true;
+              } catch {
+                return false;
+              }
+            }),
+          note: Yup.string()
+            .max(500, t.setlistForm.validation.songNoteMaxLength)
+            .test('sanitize', t.setlistForm.validation.songNoteInvalidChars, function (value) {
+              if (!value) return true;
+              try {
+                validateAndSanitizeInput(value, 500);
+                return true;
+              } catch {
+                return false;
+              }
+            }),
+        }),
+      )
+      .min(1, t.setlistForm.validation.minSongsRequired)
+      .max(20, t.setlistForm.validation.maxSongsExceeded),
+  });
 
 export default function SetlistForm({
   title,
@@ -119,6 +122,7 @@ export default function SetlistForm({
   enableDragAndDrop = true,
 }: SetlistFormProps) {
   const { data: songsData } = useQuery(GET_SONGS);
+  const { t } = useI18n();
   const songs = useMemo(() => songsData?.songs || [], [songsData]);
 
   return (
@@ -134,7 +138,7 @@ export default function SetlistForm({
 
       <Formik
         initialValues={initialValues}
-        validationSchema={validationSchema}
+        validationSchema={createValidationSchema(t)}
         onSubmit={onSubmit}
         enableReinitialize
       >
@@ -149,10 +153,10 @@ export default function SetlistForm({
 
               <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
                 <Typography variant="h6" gutterBottom>
-                  楽曲リスト
+                  {t.setlistForm.songsList.title}
                 </Typography>
                 <Alert severity="info" sx={{ mb: 2 }}>
-                  楽曲の追加は最大20曲までです。
+                  {t.setlistForm.songsList.maxSongsWarning}
                 </Alert>
 
                 <FieldArray name="items">
@@ -236,7 +240,9 @@ export default function SetlistForm({
                           sx={{ mt: 2 }}
                           disabled={values.items.length >= 20}
                         >
-                          {values.items.length >= 20 ? '楽曲は20曲まで' : '楽曲を追加'}
+                          {values.items.length >= 20
+                            ? t.setlistForm.songsList.maxSongsWarning
+                            : t.setlistForm.songsList.addSong}
                         </Button>
                       </>
                     );
@@ -257,7 +263,7 @@ export default function SetlistForm({
                   disabled={loading}
                   onClick={() => window.history.back()}
                 >
-                  キャンセル
+                  {t.setlistForm.buttons.cancel}
                 </Button>
                 <Button type="submit" loading={loading} size="large">
                   {submitButtonText}
