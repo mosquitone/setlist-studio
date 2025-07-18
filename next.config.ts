@@ -42,6 +42,15 @@ const nextConfig: NextConfig = {
       {
         source: '/(.*)',
         headers: [
+          // プレビューデプロイメントのnoindex設定
+          ...(process.env.VERCEL_ENV !== 'production'
+            ? [
+                {
+                  key: 'X-Robots-Tag',
+                  value: 'noindex, nofollow',
+                },
+              ]
+            : []),
           {
             key: 'Content-Security-Policy',
             value: [
