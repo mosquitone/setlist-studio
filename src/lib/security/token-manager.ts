@@ -171,7 +171,7 @@ export class TokenManager {
    */
   public async cleanupExpiredTokens(): Promise<TokenCleanupResult> {
     const now = new Date();
-    
+
     try {
       const [emailVerificationResult, passwordResetResult, emailChangeResult] = await Promise.all([
         // メール認証トークンのクリーンアップ
@@ -189,7 +189,7 @@ export class TokenManager {
             emailVerificationExpires: null,
           },
         }),
-        
+
         // パスワードリセットトークンのクリーンアップ
         this.prisma.user.updateMany({
           where: {
@@ -205,7 +205,7 @@ export class TokenManager {
             passwordResetExpires: null,
           },
         }),
-        
+
         // メールアドレス変更トークンのクリーンアップ
         this.prisma.user.updateMany({
           where: {

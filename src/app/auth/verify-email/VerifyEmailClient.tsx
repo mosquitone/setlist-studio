@@ -1,14 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import {
-  Container,
-  Paper,
-  Typography,
-  Box,
-  Alert,
-  CircularProgress,
-} from '@mui/material';
+import { Container, Paper, Typography, Box, Alert, CircularProgress } from '@mui/material';
 import { Button } from '@/components/common/ui/Button';
 import { VerifiedUser as VerifiedUserIcon, ErrorOutline as ErrorIcon } from '@mui/icons-material';
 import { useMutation } from '@apollo/client';
@@ -64,22 +57,25 @@ export default function VerifyEmailClient() {
     },
   });
 
-  const [resendVerificationEmail, { loading: resendLoading }] = useMutation(RESEND_VERIFICATION_EMAIL, {
-    onCompleted: (data) => {
-      if (data.resendVerificationEmail.success) {
-        setMessage(data.resendVerificationEmail.message);
-        setCanResend(false);
-      }
+  const [resendVerificationEmail, { loading: resendLoading }] = useMutation(
+    RESEND_VERIFICATION_EMAIL,
+    {
+      onCompleted: (data) => {
+        if (data.resendVerificationEmail.success) {
+          setMessage(data.resendVerificationEmail.message);
+          setCanResend(false);
+        }
+      },
+      onError: (error) => {
+        setMessage(error.message);
+      },
     },
-    onError: (error) => {
-      setMessage(error.message);
-    },
-  });
+  );
 
   useEffect(() => {
     const token = searchParams.get('token');
     const emailParam = searchParams.get('email');
-    
+
     if (emailParam) {
       setEmail(emailParam);
     }

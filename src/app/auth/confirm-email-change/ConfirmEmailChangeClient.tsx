@@ -1,14 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import {
-  Container,
-  Paper,
-  Typography,
-  Box,
-  Alert,
-  CircularProgress,
-} from '@mui/material';
+import { Container, Paper, Typography, Box, Alert, CircularProgress } from '@mui/material';
 import { Email as EmailIcon, ErrorOutline as ErrorIcon } from '@mui/icons-material';
 import { useMutation } from '@apollo/client';
 import { gql } from '@apollo/client';

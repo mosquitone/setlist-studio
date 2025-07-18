@@ -2,9 +2,9 @@ import { Resolver, Mutation, Arg, Ctx } from 'type-graphql';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { 
-  AuthPayload, 
-  RegisterInput, 
+import {
+  AuthPayload,
+  RegisterInput,
   LoginInput,
   PasswordResetRequestInput,
   PasswordResetInput,
@@ -13,7 +13,7 @@ import {
   EmailVerificationResponse,
   EmailChangeInput,
   EmailChangeResponse,
-  EmailChangeConfirmInput
+  EmailChangeConfirmInput,
 } from '../types/Auth';
 import {
   logAuthSuccessDB,
@@ -25,7 +25,6 @@ import {
 import { DatabaseThreatDetection } from '../../../security/threat-detection-db';
 import { emailService } from '../../email/emailService';
 import { createEmailRateLimit } from '../../../security/email-rate-limit';
-import crypto from 'crypto';
 
 interface Context {
   prisma: PrismaClient;
@@ -226,8 +225,8 @@ export class AuthResolver {
    */
   @Mutation(() => PasswordResetResponse)
   async requestPasswordReset(
-    @Arg('input') input: PasswordResetRequestInput,
-    @Ctx() ctx: Context
+    @Arg('input', () => PasswordResetRequestInput) input: PasswordResetRequestInput,
+    @Ctx() ctx: Context,
   ): Promise<PasswordResetResponse> {
     const emailRateLimit = createEmailRateLimit(ctx.prisma);
     const ipAddress = getClientIP(ctx);
@@ -237,7 +236,7 @@ export class AuthResolver {
     const rateLimitResult = await emailRateLimit.checkPasswordResetLimit(
       input.email,
       ipAddress,
-      userAgent
+      userAgent,
     );
 
     if (!rateLimitResult.success) {
@@ -260,7 +259,7 @@ export class AuthResolver {
           reason: 'user_not_found',
         },
       });
-      
+
       return {
         success: true,
         message: 'パスワードリセットの手順をメールで送信しました。',
@@ -280,11 +279,7 @@ export class AuthResolver {
     });
 
     // メール送信
-    const emailSent = await emailService.sendPasswordResetEmail(
-      user.email,
-      user.username,
-      token
-    );
+    const emailSent = await emailService.sendPasswordResetEmail(user.email, user.username, token);
 
     await logSecurityEventDB(ctx.prisma, {
       type: SecurityEventType.PASSWORD_RESET_REQUEST,
@@ -309,8 +304,8 @@ export class AuthResolver {
    */
   @Mutation(() => PasswordResetResponse)
   async resetPassword(
-    @Arg('input') input: PasswordResetInput,
-    @Ctx() ctx: Context
+    @Arg('input', () => PasswordResetInput) input: PasswordResetInput,
+    @Ctx() ctx: Context,
   ): Promise<PasswordResetResponse> {
     const user = await ctx.prisma.user.findFirst({
       where: {
@@ -332,7 +327,7 @@ export class AuthResolver {
           reason: 'invalid_or_expired_token',
         },
       });
-      
+
       throw new Error('リセットトークンが無効または期限切れです。');
     }
 
@@ -374,8 +369,8 @@ export class AuthResolver {
    */
   @Mutation(() => EmailVerificationResponse)
   async verifyEmail(
-    @Arg('input') input: EmailVerificationInput,
-    @Ctx() ctx: Context
+    @Arg('input', () => EmailVerificationInput) input: EmailVerificationInput,
+    @Ctx() ctx: Context,
   ): Promise<EmailVerificationResponse> {
     const user = await ctx.prisma.user.findFirst({
       where: {
@@ -397,7 +392,7 @@ export class AuthResolver {
           reason: 'invalid_or_expired_token',
         },
       });
-      
+
       throw new Error('認証トークンが無効または期限切れです。');
     }
 
@@ -433,11 +428,12 @@ export class AuthResolver {
    */
   @Mutation(() => EmailChangeResponse)
   async requestEmailChange(
-    @Arg('input') input: EmailChangeInput,
-    @Ctx() ctx: Context
+    @Arg('input', () => EmailChangeInput) input: EmailChangeInput,
+    @Ctx() ctx: Context,
   ): Promise<EmailChangeResponse> {
     // TODO: 認証ユーザーからユーザーIDを取得する必要がある
     // 現在はAuthミドルウェアが実装されていないため、一時的にスキップ
+    console.log('Email change request:', input, ctx);
     throw new Error('認証ユーザーのみ利用できます。');
   }
 
@@ -446,8 +442,8 @@ export class AuthResolver {
    */
   @Mutation(() => EmailChangeResponse)
   async confirmEmailChange(
-    @Arg('input') input: EmailChangeConfirmInput,
-    @Ctx() ctx: Context
+    @Arg('input', () => EmailChangeConfirmInput) input: EmailChangeConfirmInput,
+    @Ctx() ctx: Context,
   ): Promise<EmailChangeResponse> {
     const user = await ctx.prisma.user.findFirst({
       where: {
@@ -469,7 +465,7 @@ export class AuthResolver {
           reason: 'invalid_or_expired_token',
         },
       });
-      
+
       throw new Error('変更トークンが無効または期限切れです。');
     }
 
@@ -508,8 +504,8 @@ export class AuthResolver {
    */
   @Mutation(() => EmailVerificationResponse)
   async resendVerificationEmail(
-    @Arg('email') email: string,
-    @Ctx() ctx: Context
+    @Arg('email', () => String) email: string,
+    @Ctx() ctx: Context,
   ): Promise<EmailVerificationResponse> {
     const emailRateLimit = createEmailRateLimit(ctx.prisma);
     const ipAddress = getClientIP(ctx);
@@ -519,7 +515,7 @@ export class AuthResolver {
     const rateLimitResult = await emailRateLimit.checkVerificationEmailLimit(
       email,
       ipAddress,
-      userAgent
+      userAgent,
     );
 
     if (!rateLimitResult.success) {

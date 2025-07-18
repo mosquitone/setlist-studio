@@ -1,14 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  Container,
-  Paper,
-  TextField,
-  Typography,
-  Box,
-  Alert,
-} from '@mui/material';
+import { Container, Paper, TextField, Typography, Box, Alert } from '@mui/material';
 import { Button } from '@/components/common/ui/Button';
 import { LockReset as LockResetIcon } from '@mui/icons-material';
 import { useMutation } from '@apollo/client';
