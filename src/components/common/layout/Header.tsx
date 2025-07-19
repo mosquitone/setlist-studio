@@ -84,13 +84,24 @@ export default function Header() {
             value={lang}
             onChange={(e) => changeLanguage(e.target.value as 'ja' | 'en')}
             size="small"
+            renderValue={(value) => {
+              const selectedOption = languageOptions.find((option) => option.value === value);
+              return (
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0, sm: 1 } }}>
+                  <span>{selectedOption?.flag}</span>
+                  <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+                    {selectedOption?.label}
+                  </Box>
+                </Box>
+              );
+            }}
             sx={{
               mr: 2,
-              minWidth: 100,
+              minWidth: { xs: 60, sm: 100 },
               '& .MuiSelect-select': {
                 display: 'flex',
                 alignItems: 'center',
-                gap: 1,
+                gap: { xs: 0, sm: 1 },
               },
             }}
           >
@@ -98,7 +109,9 @@ export default function Header() {
               <MenuItem key={option.value} value={option.value}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <span>{option.flag}</span>
-                  <span>{option.label}</span>
+                  <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+                    {option.label}
+                  </Box>
                 </Box>
               </MenuItem>
             ))}
