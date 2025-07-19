@@ -5,13 +5,19 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Box from '@mui/material/Box';
 import Skeleton from '@mui/material/Skeleton';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 import { useAuth } from '@/components/providers/AuthProvider';
+import { useI18n, languageOptions } from '@/hooks/useI18n';
 import { HeaderLogo } from './header/HeaderLogo';
 import { DesktopNavigation } from './header/DesktopNavigation';
 import { MobileNavigation } from './header/MobileNavigation';
 import { UserMenu } from './header/UserMenu';
 import { AuthLink } from '../auth/LoginLink';
-import { authenticatedNavigationItems, publicNavigationItems } from './header/navigationItems';
+import {
+  getAuthenticatedNavigationItems,
+  getPublicNavigationItems,
+} from './header/navigationItems';
 
 /**
  * アプリケーションヘッダーコンポーネント
@@ -20,15 +26,16 @@ import { authenticatedNavigationItems, publicNavigationItems } from './header/na
  */
 export default function Header() {
   const { isLoggedIn, isLoading, logout } = useAuth();
+  const { lang, changeLanguage, messages } = useI18n();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   // ログイン状態に応じて表示するナビゲーション項目を決定（useMemoで最適化）
   const navigationItems = useMemo(
     () =>
       isLoggedIn
-        ? [...publicNavigationItems, ...authenticatedNavigationItems]
-        : publicNavigationItems,
-    [isLoggedIn],
+        ? [...getPublicNavigationItems(messages), ...getAuthenticatedNavigationItems(messages)]
+        : getPublicNavigationItems(messages),
+    [isLoggedIn, messages], // tに言語情報が含まれているため、langは不要
   );
 
   const handleLogout = () => {
@@ -71,6 +78,31 @@ export default function Header() {
           <DesktopNavigation items={navigationItems} isLoading={isLoading} />
 
           <Box sx={{ flexGrow: 1 }} />
+
+          {/* 言語切り替え */}
+          <Select
+            value={lang}
+            onChange={(e) => changeLanguage(e.target.value as 'ja' | 'en')}
+            size="small"
+            sx={{
+              mr: 2,
+              minWidth: 100,
+              '& .MuiSelect-select': {
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+              },
+            }}
+          >
+            {languageOptions.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <span>{option.flag}</span>
+                  <span>{option.label}</span>
+                </Box>
+              </MenuItem>
+            ))}
+          </Select>
 
           {/* デスクトップのみ: 認証ボタン/ユーザーメニュー */}
           <Box sx={{ display: { xs: 'none', sm: 'block' } }}>

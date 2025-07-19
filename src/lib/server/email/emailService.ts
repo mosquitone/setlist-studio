@@ -1,5 +1,6 @@
 import { Resend } from 'resend';
 import crypto from 'crypto';
+import { getMessages, Language } from '../../i18n/messages';
 import { EmailReliabilityService, EmailResult } from './emailReliability';
 
 // ビルド時エラーを避けるため、環境変数が存在しない場合はダミー値を使用
@@ -163,26 +164,16 @@ export class EmailService {
     email: string,
     username: string,
     token: string,
+    lang?: Language,
   ): Promise<boolean> {
     const verificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/auth/verify-email?token=${token}`;
+    const messages = getMessages(lang || 'ja');
+    const emailBody = messages.emails.verificationBody(username, verificationUrl);
 
     const html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #1976d2;">Setlist Studio - メール認証</h2>
-        <p>こんにちは ${username} さん、</p>
-        <p>アカウントの作成ありがとうございます。以下のリンクをクリックしてメールアドレスを認証してください。</p>
-        <div style="margin: 20px 0;">
-          <a href="${verificationUrl}" 
-             style="background-color: #1976d2; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">
-            メールアドレスを認証する
-          </a>
-        </div>
-        <p>このリンクは24時間で有効期限が切れます。</p>
-        <p>もしこのメールに心当たりがない場合は、このメールを無視してください。</p>
-        <hr>
-        <p style="color: #666; font-size: 12px;">
-          このメールは自動送信されています。返信しないでください。
-        </p>
+        <h2 style="color: #1976d2;">Setlist Studio</h2>
+        <pre style="font-family: Arial, sans-serif; white-space: pre-wrap;">${emailBody}</pre>
       </div>
     `;
 
@@ -190,7 +181,7 @@ export class EmailService {
       {
         from: this.fromEmail,
         to: email,
-        subject: 'Setlist Studio - メール認証のお願い',
+        subject: `Setlist Studio - ${messages.emails.verificationSubject}`,
         html,
       },
       'verification',
@@ -204,26 +195,16 @@ export class EmailService {
     email: string,
     username: string,
     token: string,
+    lang?: Language,
   ): Promise<boolean> {
     const resetUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/auth/reset-password?token=${token}`;
+    const messages = getMessages(lang || 'ja');
+    const emailBody = messages.emails.passwordResetBody(username, resetUrl);
 
     const html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #1976d2;">Setlist Studio - パスワードリセット</h2>
-        <p>こんにちは ${username} さん、</p>
-        <p>パスワードリセットのリクエストを受け付けました。以下のリンクをクリックして新しいパスワードを設定してください。</p>
-        <div style="margin: 20px 0;">
-          <a href="${resetUrl}" 
-             style="background-color: #d32f2f; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">
-            パスワードをリセット
-          </a>
-        </div>
-        <p>このリンクは1時間で有効期限が切れます。</p>
-        <p>もしこのリクエストに心当たりがない場合は、このメールを無視してください。</p>
-        <hr>
-        <p style="color: #666; font-size: 12px;">
-          このメールは自動送信されています。返信しないでください。
-        </p>
+        <h2 style="color: #1976d2;">Setlist Studio</h2>
+        <pre style="font-family: Arial, sans-serif; white-space: pre-wrap;">${emailBody}</pre>
       </div>
     `;
 
@@ -231,7 +212,7 @@ export class EmailService {
       {
         from: this.fromEmail,
         to: email,
-        subject: 'Setlist Studio - パスワードリセットのご案内',
+        subject: `Setlist Studio - ${messages.emails.passwordResetSubject}`,
         html,
       },
       'password_reset',
@@ -245,26 +226,16 @@ export class EmailService {
     newEmail: string,
     username: string,
     token: string,
+    lang?: Language,
   ): Promise<boolean> {
     const confirmUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/auth/confirm-email-change?token=${token}`;
+    const messages = getMessages(lang || 'ja');
+    const emailBody = messages.emails.emailChangeBody(username, confirmUrl);
 
     const html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #1976d2;">Setlist Studio - メールアドレス変更確認</h2>
-        <p>こんにちは ${username} さん、</p>
-        <p>メールアドレスの変更リクエストを受け付けました。以下のリンクをクリックして変更を確定してください。</p>
-        <div style="margin: 20px 0;">
-          <a href="${confirmUrl}" 
-             style="background-color: #388e3c; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">
-            メールアドレス変更を確定
-          </a>
-        </div>
-        <p>このリンクは24時間で有効期限が切れます。</p>
-        <p>もしこのリクエストに心当たりがない場合は、このメールを無視してください。</p>
-        <hr>
-        <p style="color: #666; font-size: 12px;">
-          このメールは自動送信されています。返信しないでください。
-        </p>
+        <h2 style="color: #1976d2;">Setlist Studio</h2>
+        <pre style="font-family: Arial, sans-serif; white-space: pre-wrap;">${emailBody}</pre>
       </div>
     `;
 
@@ -272,7 +243,7 @@ export class EmailService {
       {
         from: this.fromEmail,
         to: newEmail,
-        subject: 'Setlist Studio - メールアドレス変更確認',
+        subject: `Setlist Studio - ${messages.emails.emailChangeSubject}`,
         html,
       },
       'email_change',
@@ -282,23 +253,18 @@ export class EmailService {
   /**
    * パスワードリセット完了通知メールを送信
    */
-  public async sendPasswordResetSuccessEmail(email: string, username: string): Promise<boolean> {
+  public async sendPasswordResetSuccessEmail(
+    email: string,
+    username: string,
+    lang?: Language,
+  ): Promise<boolean> {
+    const messages = getMessages(lang || 'ja');
+    const emailBody = messages.emails.passwordResetSuccessBody(username);
+
     const html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #1976d2;">Setlist Studio - パスワード変更完了</h2>
-        <p>こんにちは ${username} さん、</p>
-        <p>パスワードが正常に変更されました。</p>
-        <p>もしこの変更に心当たりがない場合は、すぐにお問い合わせください。</p>
-        <div style="margin: 20px 0;">
-          <a href="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/login"
-             style="background-color: #1976d2; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">
-            ログイン
-          </a>
-        </div>
-        <hr>
-        <p style="color: #666; font-size: 12px;">
-          このメールは自動送信されています。返信しないでください。
-        </p>
+        <h2 style="color: #1976d2;">Setlist Studio</h2>
+        <pre style="font-family: Arial, sans-serif; white-space: pre-wrap;">${emailBody}</pre>
       </div>
     `;
 
@@ -306,7 +272,7 @@ export class EmailService {
       {
         from: this.fromEmail,
         to: email,
-        subject: 'Setlist Studio - パスワード変更完了のお知らせ',
+        subject: `Setlist Studio - ${messages.emails.passwordResetSuccessSubject}`,
         html,
       },
       'notification',
@@ -320,26 +286,16 @@ export class EmailService {
     email: string,
     username: string,
     token: string,
+    lang?: Language,
   ): Promise<EmailResult> {
     const verificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/auth/verify-email?token=${token}`;
+    const messages = getMessages(lang || 'ja');
+    const emailBody = messages.emails.verificationBody(username, verificationUrl);
 
     const html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #1976d2;">Setlist Studio - メール認証</h2>
-        <p>こんにちは ${username} さん、</p>
-        <p>アカウントの作成ありがとうございます。以下のリンクをクリックしてメールアドレスを認証してください。</p>
-        <div style="margin: 20px 0;">
-          <a href="${verificationUrl}"
-             style="background-color: #1976d2; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">
-            メールアドレスを認証する
-          </a>
-        </div>
-        <p>このリンクは24時間で有効期限が切れます。</p>
-        <p>もしこのメールに心当たりがない場合は、このメールを無視してください。</p>
-        <hr>
-        <p style="color: #666; font-size: 12px;">
-          このメールは自動送信されています。返信しないでください。
-        </p>
+        <h2 style="color: #1976d2;">Setlist Studio</h2>
+        <pre style="font-family: Arial, sans-serif; white-space: pre-wrap;">${emailBody}</pre>
       </div>
     `;
 
@@ -347,7 +303,7 @@ export class EmailService {
       {
         from: this.fromEmail,
         to: email,
-        subject: `Setlist Studio - メールアドレスの確認`,
+        subject: `Setlist Studio - ${messages.emails.verificationSubject}`,
         html,
       },
       'verification',
@@ -361,26 +317,16 @@ export class EmailService {
     email: string,
     username: string,
     token: string,
+    lang?: Language,
   ): Promise<EmailResult> {
     const resetUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/auth/reset-password?token=${token}`;
+    const messages = getMessages(lang || 'ja');
+    const emailBody = messages.emails.passwordResetBody(username, resetUrl);
 
     const html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #1976d2;">Setlist Studio - パスワードリセット</h2>
-        <p>こんにちは ${username} さん、</p>
-        <p>パスワードリセットのリクエストを受け付けました。以下のリンクをクリックして新しいパスワードを設定してください。</p>
-        <div style="margin: 20px 0;">
-          <a href="${resetUrl}"
-             style="background-color: #d32f2f; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">
-            パスワードをリセット
-          </a>
-        </div>
-        <p>このリンクは1時間で有効期限が切れます。</p>
-        <p>もしこのリクエストに心当たりがない場合は、このメールを無視してください。</p>
-        <hr>
-        <p style="color: #666; font-size: 12px;">
-          このメールは自動送信されています。返信しないでください。
-        </p>
+        <h2 style="color: #1976d2;">Setlist Studio</h2>
+        <pre style="font-family: Arial, sans-serif; white-space: pre-wrap;">${emailBody}</pre>
       </div>
     `;
 
@@ -388,7 +334,7 @@ export class EmailService {
       {
         from: this.fromEmail,
         to: email,
-        subject: `Setlist Studio - パスワードリセットのご案内`,
+        subject: `Setlist Studio - ${messages.emails.passwordResetSubject}`,
         html,
       },
       'password_reset',

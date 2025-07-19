@@ -24,6 +24,7 @@ import { useMutation } from '@apollo/client';
 import { gql } from '@apollo/client';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { useI18n } from '@/hooks/useI18n';
 
 const RESEND_VERIFICATION_EMAIL = gql`
   mutation ResendVerificationEmail($email: String!) {
@@ -35,6 +36,7 @@ const RESEND_VERIFICATION_EMAIL = gql`
 `;
 
 export default function CheckEmailClient() {
+  const { messages } = useI18n();
   const [email, setEmail] = useState('');
   const [canResend, setCanResend] = useState(true);
   const [resendCooldown, setResendCooldown] = useState(0);
@@ -57,7 +59,7 @@ export default function CheckEmailClient() {
           setResendCooldown(cooldownTime);
           setCanResend(false);
         } else {
-          setError(data.resendVerificationEmail.message || '再送信に失敗しました');
+          setError(data.resendVerificationEmail.message || messages.common.error);
           setSuccessMessage('');
         }
       },
@@ -108,18 +110,18 @@ export default function CheckEmailClient() {
 
   const steps = [
     {
-      label: 'アカウント作成完了',
-      content: 'アカウントが正常に作成されました。',
+      label: messages.auth.accountCreated,
+      content: messages.auth.accountCreatedDescription,
       completed: true,
     },
     {
-      label: 'メール認証待ち',
-      content: `${email} に認証メールを送信しました。`,
+      label: messages.auth.emailVerificationPending,
+      content: `${email} ${messages.auth.emailVerificationPendingDescription}`,
       completed: false,
     },
     {
-      label: 'ログイン可能',
-      content: 'メール認証後にログインできます。',
+      label: messages.auth.loginAvailable,
+      content: messages.auth.loginAvailableDescription,
       completed: false,
     },
   ];
@@ -131,10 +133,10 @@ export default function CheckEmailClient() {
           <Box sx={{ textAlign: 'center', mb: 4 }}>
             <EmailIcon sx={{ fontSize: 64, color: 'primary.main', mb: 2 }} />
             <Typography variant="h4" component="h1" gutterBottom>
-              メール認証をお願いします
+              {messages.auth.emailVerificationTitle}
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              アカウントを有効化するため、メールをご確認ください
+              {messages.auth.emailVerificationDescription}
             </Typography>
           </Box>
 
@@ -177,16 +179,16 @@ export default function CheckEmailClient() {
           {/* メール確認の詳細 */}
           <Box sx={{ bgcolor: 'grey.50', p: 3, borderRadius: 2, mb: 3 }}>
             <Typography variant="h6" gutterBottom>
-              📧 メール確認のお願い
+              {messages.auth.emailConfirmationRequest}
             </Typography>
             <Typography variant="body2" paragraph>
-              <strong>{email}</strong> に認証メールを送信しました。
+              <strong>{email}</strong> {messages.auth.verificationEmailSent}
             </Typography>
             <Typography variant="body2" paragraph>
-              メールに記載されている認証リンクをクリックしてアカウントを有効化してください。
+              {messages.auth.clickVerificationLink}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              ※ メールが見つからない場合は、迷惑メールフォルダもご確認ください。
+              {messages.auth.emailNotInSpam}
             </Typography>
           </Box>
 
@@ -200,15 +202,15 @@ export default function CheckEmailClient() {
               sx={{ mb: 2 }}
             >
               {resendLoading
-                ? '再送信中...'
+                ? messages.common.loading
                 : !canResend
-                  ? `再送信可能まで ${formatTime(resendCooldown)}`
-                  : '認証メールを再送信'}
+                  ? `${messages.auth.resendAvailable} ${formatTime(resendCooldown)}`
+                  : messages.auth.resendVerificationEmail}
             </Button>
 
             {resendCount > 0 && (
               <Typography variant="body2" color="text.secondary">
-                {resendCount}回再送信済み
+                {resendCount} {messages.auth.resendCount2}
               </Typography>
             )}
           </Box>
@@ -216,19 +218,17 @@ export default function CheckEmailClient() {
           {/* 注意事項 */}
           <Alert severity="info" sx={{ mb: 3 }}>
             <Typography variant="body2">
-              <strong>メールが届かない場合：</strong>
-              <br />
-              • 迷惑メールフォルダを確認してください
-              <br />
-              • 数分かかる場合があります
-              <br />• メールアドレスの入力間違いがないか確認してください
+              <strong>{messages.auth.emailNotReceived}</strong>
+              <br />• {messages.auth.checkSpamFolder2}
+              <br />• {messages.auth.mayTakeMinutes2}
+              <br />• {messages.auth.checkEmailTypo}
             </Typography>
           </Alert>
 
           <Box textAlign="center">
             <Typography variant="body2">
               <Link href="/login" style={{ color: 'inherit' }}>
-                ← ログインページに戻る
+                ← {messages.auth.backToLogin}
               </Link>
             </Typography>
           </Box>

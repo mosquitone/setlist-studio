@@ -15,6 +15,7 @@ import { LockReset as LockResetIcon, Refresh as RefreshIcon } from '@mui/icons-m
 import { useMutation } from '@apollo/client';
 import { gql } from '@apollo/client';
 import Link from 'next/link';
+import { useI18n } from '@/hooks/useI18n';
 
 const REQUEST_PASSWORD_RESET = gql`
   mutation RequestPasswordReset($input: PasswordResetRequestInput!) {
@@ -26,6 +27,7 @@ const REQUEST_PASSWORD_RESET = gql`
 `;
 
 export default function ForgotPasswordClient() {
+  const { messages } = useI18n();
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -45,7 +47,7 @@ export default function ForgotPasswordClient() {
         setResendCooldown(cooldownTime);
         setCanResend(false);
       } else {
-        setError(data.requestPasswordReset.message || 'リクエストに失敗しました');
+        setError(data.requestPasswordReset.message || messages.common.error);
         setSuccessMessage('');
       }
     },
@@ -84,7 +86,7 @@ export default function ForgotPasswordClient() {
     setSuccessMessage('');
 
     if (!canResend) {
-      setError('再送信まで時間をおいてください');
+      setError(messages.common.wait);
       return;
     }
 
@@ -102,10 +104,10 @@ export default function ForgotPasswordClient() {
           <Box sx={{ textAlign: 'center', mb: 4 }}>
             <LockResetIcon sx={{ fontSize: 64, color: 'primary.main', mb: 2 }} />
             <Typography variant="h4" component="h1" gutterBottom>
-              パスワードリセット
+              {messages.auth.passwordResetTitle}
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              メールアドレスを入力してパスワードリセット手順をお送りします
+              {messages.auth.passwordResetDescription}
             </Typography>
           </Box>
 
@@ -113,7 +115,7 @@ export default function ForgotPasswordClient() {
             <Alert severity="success" sx={{ mb: 3 }}>
               {successMessage}
               <Typography variant="body2" sx={{ mt: 1 }}>
-                メールをご確認ください。
+                {messages.auth.checkYourEmail || 'メールをご確認ください。'}
               </Typography>
             </Alert>
           )}
@@ -127,14 +129,14 @@ export default function ForgotPasswordClient() {
           <Box component="form" onSubmit={handleSubmit}>
             <TextField
               fullWidth
-              label="メールアドレス"
+              label={messages.auth.email}
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               margin="normal"
               required
               autoComplete="email"
-              helperText="登録済みのメールアドレスを入力してください"
+              helperText={messages.auth.resetEmailHelp}
             />
             <Button
               type="submit"
@@ -145,17 +147,17 @@ export default function ForgotPasswordClient() {
               startIcon={loading ? <CircularProgress size={20} /> : <RefreshIcon />}
             >
               {loading
-                ? 'リクエスト送信中...'
+                ? messages.common.loading
                 : !canResend
-                  ? `再送信可能まで ${formatTime(resendCooldown)}`
+                  ? `${messages.auth.resendAvailableIn} ${formatTime(resendCooldown)}`
                   : resendCount > 0
-                    ? 'パスワードリセットを再送信'
-                    : 'パスワードリセット'}
+                    ? messages.auth.resendPasswordReset
+                    : messages.auth.resetPassword}
             </Button>
 
             {resendCount > 0 && (
               <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center' }}>
-                {resendCount}回送信済み
+                {resendCount} {messages.auth.resendCount}
               </Typography>
             )}
           </Box>
@@ -163,12 +165,10 @@ export default function ForgotPasswordClient() {
           {successMessage && (
             <Alert severity="info" sx={{ mb: 3 }}>
               <Typography variant="body2">
-                <strong>メールが届かない場合：</strong>
-                <br />
-                • 迷惑メールフォルダを確認してください
-                <br />
-                • 数分かかる場合があります
-                <br />• 上記ボタンから再送信できます
+                <strong>{messages.auth.emailNotFound}</strong>
+                <br />• {messages.auth.checkSpamFolder}
+                <br />• {messages.auth.mayTakeMinutes}
+                <br />• {messages.auth.canResendAbove}
               </Typography>
             </Alert>
           )}
@@ -176,7 +176,7 @@ export default function ForgotPasswordClient() {
           <Box textAlign="center">
             <Typography variant="body2">
               <Link href="/login" style={{ color: 'inherit' }}>
-                ← ログインページに戻る
+                ← {messages.auth.backToLogin}
               </Link>
             </Typography>
           </Box>
