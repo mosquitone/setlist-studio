@@ -86,10 +86,10 @@ export default function RegisterClient() {
           <Box sx={{ textAlign: 'center', mb: 4 }}>
             <PersonAddIcon sx={{ fontSize: 64, color: 'primary.main', mb: 2 }} />
             <Typography variant="h4" component="h1" gutterBottom>
-              {t.ui.register}
+              {t.auth.register}
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              {t.ui.createAccountToStart}
+              {t.auth.createAccountToStart}
             </Typography>
           </Box>
 
@@ -102,7 +102,7 @@ export default function RegisterClient() {
           <Box component="form" onSubmit={handleSubmit}>
             <TextField
               fullWidth
-              label={t.ui.username}
+              label={t.auth.username}
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               margin="normal"
@@ -111,7 +111,7 @@ export default function RegisterClient() {
             />
             <TextField
               fullWidth
-              label={t.ui.email}
+              label={t.auth.email}
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -121,7 +121,7 @@ export default function RegisterClient() {
             />
             <TextField
               fullWidth
-              label={t.ui.password}
+              label={t.auth.password}
               type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -147,7 +147,7 @@ export default function RegisterClient() {
             />
             <TextField
               fullWidth
-              label={t.ui.confirmPassword}
+              label={t.auth.confirmPassword}
               type={showConfirmPassword ? 'text' : 'password'}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
@@ -179,13 +179,13 @@ export default function RegisterClient() {
               label={
                 <Typography variant="body2">
                   <Link href="/terms" style={{ color: 'inherit', textDecoration: 'underline' }}>
-                    {t.ui.terms}
+                    {t.auth.terms}
                   </Link>
-                  {t.ui.and || 'and'}
+                  {t.auth.and || 'and'}
                   <Link href="/privacy" style={{ color: 'inherit', textDecoration: 'underline' }}>
-                    {t.ui.privacy}
+                    {t.auth.privacy}
                   </Link>
-                  {t.ui.agree || 'に同意します'}
+                  {t.auth.agree || 'に同意します'}
                 </Typography>
               }
               sx={{ mt: 2, mb: 1 }}
@@ -198,15 +198,15 @@ export default function RegisterClient() {
               disabled={loading || !agreeToTerms}
               sx={{ mt: 2, mb: 2, py: 1.5 }}
             >
-              {loading ? t.ui.loading : t.ui.register}
+              {loading ? t.auth.loading : t.auth.register}
             </Button>
           </Box>
 
           <Box textAlign="center">
             <Typography variant="body2">
-              {t.ui.alreadyHaveAccount}{' '}
+              {t.auth.alreadyHaveAccount}{' '}
               <Link href="/login" style={{ color: 'inherit' }}>
-                <strong>{t.ui.login}</strong>
+                <strong>{t.auth.login}</strong>
               </Link>
             </Typography>
           </Box>

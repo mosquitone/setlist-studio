@@ -17,7 +17,7 @@ const getTypeConfig = (t: Messages) => ({
   login: {
     href: '/login',
     icon: LoginIcon,
-    text: t.ui.login,
+    text: t.auth.login,
     colors: {
       primary: '#3b82f6',
       hover: '#2563eb',
@@ -29,7 +29,7 @@ const getTypeConfig = (t: Messages) => ({
   register: {
     href: '/register',
     icon: PersonAddIcon,
-    text: t.ui.register,
+    text: t.auth.register,
     colors: {
       primary: '#059669',
       hover: '#047857',
@@ -117,7 +117,7 @@ export function AuthLink({ variant, type }: AuthLinkProps) {
       authButton
       sx={sx}
     >
-      {isLoading ? t.ui.loading : typeConf.text}
+      {isLoading ? t.auth.loading : typeConf.text}
     </Button>
   );
 }

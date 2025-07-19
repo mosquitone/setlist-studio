@@ -63,10 +63,10 @@ export default function LoginClient() {
           <Box sx={{ textAlign: 'center', mb: 4 }}>
             <LoginIcon sx={{ fontSize: 64, color: 'primary.main', mb: 2 }} />
             <Typography variant="h4" component="h1" gutterBottom>
-              {t.ui.login}
+              {t.auth.login}
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              {t.ui.loginToManageSetlists}
+              {t.auth.loginToManageSetlists}
             </Typography>
           </Box>
 
@@ -85,7 +85,7 @@ export default function LoginClient() {
           <Box component="form" onSubmit={handleSubmit}>
             <TextField
               fullWidth
-              label={t.ui.email}
+              label={t.auth.email}
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -95,7 +95,7 @@ export default function LoginClient() {
             />
             <TextField
               fullWidth
-              label={t.ui.password}
+              label={t.auth.password}
               type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -119,20 +119,20 @@ export default function LoginClient() {
               disabled={loading}
               sx={{ mt: 3, mb: 2, py: 1.5 }}
             >
-              {loading ? t.ui.loading : t.ui.login}
+              {loading ? t.auth.loading : t.auth.login}
             </Button>
           </Box>
 
           <Box textAlign="center">
             <Typography variant="body2" sx={{ mb: 2 }}>
               <Link href="/auth/forgot-password" style={{ color: 'inherit' }}>
-                {t.ui.forgotPassword}
+                {t.auth.forgotPassword}
               </Link>
             </Typography>
             <Typography variant="body2">
-              {t.ui.dontHaveAccount}{' '}
+              {t.auth.dontHaveAccount}{' '}
               <Link href="/register" style={{ color: 'inherit' }}>
-                <strong>{t.ui.register}</strong>
+                <strong>{t.auth.register}</strong>
               </Link>
             </Typography>
           </Box>

@@ -179,7 +179,7 @@ function ProfileContent() {
               {t.errors.somethingWentWrong}
             </Typography>
             <Button sx={{ mt: 2 }} onClick={() => window.location.reload()}>
-              {t.ui.back}
+              {t.auth.back}
             </Button>
           </Box>
         </Paper>
@@ -206,7 +206,7 @@ function ProfileContent() {
           </Avatar>
           <Box sx={{ flexGrow: 1 }}>
             <Typography variant="h4" gutterBottom>
-              {t.ui.profile}
+              {t.auth.profile}
             </Typography>
             <Typography variant="body2" color="text.secondary">
               {t.pages.profile.description}
@@ -240,7 +240,7 @@ function ProfileContent() {
             {isEditing ? (
               <TextField
                 fullWidth
-                label={t.ui.username}
+                label={t.auth.username}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 size="small"
@@ -248,9 +248,9 @@ function ProfileContent() {
             ) : (
               <Box>
                 <Typography variant="body2" color="text.secondary">
-                  {t.ui.username}
+                  {t.auth.username}
                 </Typography>
-                <Typography variant="body1">{currentUser?.username || t.ui.noData}</Typography>
+                <Typography variant="body1">{currentUser?.username || t.auth.noData}</Typography>
               </Box>
             )}
           </Box>
@@ -259,7 +259,7 @@ function ProfileContent() {
             <EmailIcon sx={{ mr: 2, color: 'text.secondary' }} />
             <Box>
               <Typography variant="body2" color="text.secondary">
-                {t.ui.email}
+                {t.auth.email}
               </Typography>
               <Typography variant="body1">{currentUser?.email}</Typography>
             </Box>
@@ -269,12 +269,12 @@ function ProfileContent() {
             <CalendarTodayIcon sx={{ mr: 2, color: 'text.secondary' }} />
             <Box>
               <Typography variant="body2" color="text.secondary">
-                {t.ui.createdAt}
+                {t.auth.createdAt}
               </Typography>
               <Typography variant="body1">
                 {currentUser?.createdAt
                   ? format(new Date(currentUser.createdAt), 'yyyy年MM月dd日', { locale: ja })
-                  : t.ui.noData}
+                  : t.auth.noData}
               </Typography>
             </Box>
           </Box>
@@ -286,7 +286,7 @@ function ProfileContent() {
         <Box sx={{ mb: 3 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             <LockIcon sx={{ mr: 2, color: 'text.secondary' }} />
-            <Typography variant="h6">{t.ui.changePassword}</Typography>
+            <Typography variant="h6">{t.auth.changePassword}</Typography>
           </Box>
 
           {passwordError && (
@@ -299,7 +299,7 @@ function ProfileContent() {
             <Box sx={{ mb: 2 }}>
               <TextField
                 fullWidth
-                label={t.ui.currentPassword}
+                label={t.auth.currentPassword}
                 type={showCurrentPassword ? 'text' : 'password'}
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
@@ -320,7 +320,7 @@ function ProfileContent() {
               />
               <TextField
                 fullWidth
-                label={t.ui.newPassword}
+                label={t.auth.newPassword}
                 type={showNewPassword ? 'text' : 'password'}
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
@@ -339,7 +339,7 @@ function ProfileContent() {
               />
               <TextField
                 fullWidth
-                label={t.ui.confirmPassword}
+                label={t.auth.confirmPassword}
                 type={showConfirmPassword ? 'text' : 'password'}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
@@ -364,10 +364,10 @@ function ProfileContent() {
                   onClick={resetPasswordForm}
                   disabled={changePasswordLoading}
                 >
-                  {t.ui.cancel}
+                  {t.auth.cancel}
                 </Button>
                 <Button onClick={handleChangePassword} disabled={changePasswordLoading}>
-                  {changePasswordLoading ? t.ui.loading : t.ui.changePassword}
+                  {changePasswordLoading ? t.auth.loading : t.auth.changePassword}
                 </Button>
               </Box>
             </Box>
@@ -378,7 +378,7 @@ function ProfileContent() {
                 onClick={() => setIsChangingPassword(true)}
                 startIcon={<LockIcon />}
               >
-                {t.ui.changePassword}
+                {t.auth.changePassword}
               </Button>
             </Box>
           )}
@@ -398,22 +398,22 @@ function ProfileContent() {
                 }}
                 disabled={updateLoading}
               >
-                {t.ui.cancel}
+                {t.auth.cancel}
               </Button>
               <Button onClick={handleUpdateProfile} disabled={updateLoading}>
-                {updateLoading ? t.ui.loading : t.ui.save}
+                {updateLoading ? t.auth.loading : t.auth.save}
               </Button>
             </>
           ) : (
             <Button onClick={() => setIsEditing(true)} sx={{ borderRadius: 10 }}>
-              {t.ui.edit}
+              {t.auth.edit}
             </Button>
           )}
         </Box>
 
         <Box sx={{ mt: 4, pt: 3, borderTop: 1, borderColor: 'divider' }}>
           <Typography variant="body2" color="text.secondary" align="center">
-            {t.ui.accountId}: {currentUser?.id}
+            {t.auth.accountId}: {currentUser?.id}
           </Typography>
         </Box>
       </Paper>
