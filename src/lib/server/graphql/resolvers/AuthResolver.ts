@@ -25,6 +25,7 @@ import {
   logSecurityEventDB,
 } from '../../../security/security-logger-db';
 import { DatabaseThreatDetection } from '../../../security/threat-detection-db';
+import { logSimpleAudit } from '../../../security/simple-audit-logger';
 import { emailService } from '../../email/emailService';
 import { createEmailRateLimit } from '../../../security/email-rate-limit';
 import { AuthMiddleware } from '../middleware/jwt-auth-middleware';
@@ -192,6 +193,21 @@ export class AuthResolver {
         ctx.req?.headers?.['user-agent'] || 'unknown',
       );
 
+      // シンプルな監査ログを作成（失敗時）
+      await logSimpleAudit(ctx.prisma, {
+        id: 'temp',
+        type: SecurityEventType.LOGIN_FAILURE,
+        severity: SecurityEventSeverity.MEDIUM,
+        timestamp: new Date(),
+        ipAddress: getClientIP(ctx),
+        userAgent: ctx.req?.headers?.['user-agent'],
+        resource: '/auth/login',
+        details: {
+          email: input.email,
+          reason: 'user_not_found',
+        },
+      });
+
       throw new Error(
         ctx.i18n?.messages.auth.invalidCredentials ||
           'メールアドレスまたはパスワードが正しくありません',
@@ -217,6 +233,22 @@ export class AuthResolver {
         getClientIP(ctx),
         ctx.req?.headers?.['user-agent'] || 'unknown',
       );
+
+      // シンプルな監査ログを作成（パスワード不正）
+      await logSimpleAudit(ctx.prisma, {
+        id: 'temp',
+        type: SecurityEventType.LOGIN_FAILURE,
+        severity: SecurityEventSeverity.MEDIUM,
+        timestamp: new Date(),
+        userId: user.id,
+        ipAddress: getClientIP(ctx),
+        userAgent: ctx.req?.headers?.['user-agent'],
+        resource: '/auth/login',
+        details: {
+          email: input.email,
+          reason: 'invalid_password',
+        },
+      });
 
       throw new Error(
         ctx.i18n?.messages.auth.invalidCredentials ||
@@ -254,6 +286,21 @@ export class AuthResolver {
       getClientIP(ctx),
       ctx.req?.headers['user-agent'],
     );
+
+    // シンプルな監査ログを作成
+    await logSimpleAudit(ctx.prisma, {
+      id: 'temp',
+      type: SecurityEventType.LOGIN_SUCCESS,
+      severity: SecurityEventSeverity.LOW,
+      timestamp: new Date(),
+      userId: user.id,
+      ipAddress: getClientIP(ctx),
+      userAgent: ctx.req?.headers['user-agent'],
+      resource: '/auth/login',
+      details: {
+        email: input.email,
+      },
+    });
 
     return {
       token,
