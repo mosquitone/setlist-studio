@@ -463,6 +463,13 @@ export interface Messages {
   // セットリスト詳細ページ
   setlistDetail: {
     successMessage: string;
+    actions: {
+      download: string;
+      share: string;
+      duplicate: string;
+      makePublic: string;
+      makePrivate: string;
+    };
     deleteDialog: {
       title: string;
       message: string;
@@ -1045,6 +1052,13 @@ const jaMessages: Messages = {
   },
   setlistDetail: {
     successMessage: 'セットリストが正常に生成されました！',
+    actions: {
+      download: 'ダウンロード',
+      share: '共有',
+      duplicate: '複製',
+      makePublic: '公開にする',
+      makePrivate: '非公開にする',
+    },
     deleteDialog: {
       title: 'セットリストを削除',
       message: '?',
@@ -1709,6 +1723,13 @@ const enMessages: Messages = {
   },
   setlistDetail: {
     successMessage: 'Setlist generated successfully!',
+    actions: {
+      download: 'Download',
+      share: 'Share',
+      duplicate: 'Duplicate',
+      makePublic: 'Make Public',
+      makePrivate: 'Make Private',
+    },
     deleteDialog: {
       title: 'Delete Setlist',
       message: '?',
