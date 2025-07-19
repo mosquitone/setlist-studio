@@ -10,6 +10,7 @@ import { CREATE_SONG } from '@/lib/server/graphql/apollo-operations';
 import { useRouter } from 'next/navigation';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { useI18n } from '@/hooks/useI18n';
+import { Messages } from '@/lib/i18n/messages';
 
 interface SongFormValues {
   title: string;
@@ -19,12 +20,12 @@ interface SongFormValues {
   notes: string;
 }
 
-const getValidationSchema = (t: any) =>
+const getValidationSchema = (messages: Messages) =>
   Yup.object({
-    title: Yup.string().required(t.songs.newSong.validation.titleRequired),
-    artist: Yup.string().required(t.songs.newSong.validation.artistRequired),
+    title: Yup.string().required(messages.songs.newSong.validation.titleRequired),
+    artist: Yup.string().required(messages.songs.newSong.validation.artistRequired),
     key: Yup.string(),
-    tempo: Yup.number().typeError(t.songs.newSong.validation.tempoInvalid).nullable(),
+    tempo: Yup.number().typeError(messages.songs.newSong.validation.tempoInvalid).nullable(),
     notes: Yup.string(),
   });
 
@@ -37,7 +38,7 @@ const initialValues: SongFormValues = {
 };
 
 export default function NewSongPage() {
-  const { t } = useI18n();
+  const { messages } = useI18n();
   const router = useRouter();
   const [createSong, { loading, error }] = useMutation(CREATE_SONG);
 
@@ -63,12 +64,12 @@ export default function NewSongPage() {
     <ProtectedRoute>
       <Container maxWidth="md" sx={{ py: 4 }}>
         <Typography variant="h4" gutterBottom>
-          {t.songs.newSong.title}
+          {messages.songs.newSong.title}
         </Typography>
 
         <Formik
           initialValues={initialValues}
-          validationSchema={getValidationSchema(t)}
+          validationSchema={getValidationSchema(messages)}
           onSubmit={handleSubmit}
         >
           {({ values, errors, touched, handleChange, handleBlur }) => (
@@ -78,7 +79,7 @@ export default function NewSongPage() {
                   <TextField
                     fullWidth
                     name="title"
-                    label={t.songs.form.titleLabel}
+                    label={messages.songs.form.titleLabel}
                     value={values.title}
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -89,7 +90,7 @@ export default function NewSongPage() {
                   <TextField
                     fullWidth
                     name="artist"
-                    label={t.songs.form.artistLabel}
+                    label={messages.songs.form.artistLabel}
                     value={values.artist}
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -100,7 +101,7 @@ export default function NewSongPage() {
                   <TextField
                     fullWidth
                     name="key"
-                    label={t.songs.form.keyLabel}
+                    label={messages.songs.form.keyLabel}
                     value={values.key}
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -108,7 +109,7 @@ export default function NewSongPage() {
                   <TextField
                     fullWidth
                     name="tempo"
-                    label={t.songs.form.tempoLabel}
+                    label={messages.songs.form.tempoLabel}
                     type="number"
                     value={values.tempo}
                     onChange={handleChange}
@@ -119,7 +120,7 @@ export default function NewSongPage() {
                   <TextField
                     fullWidth
                     name="notes"
-                    label={t.songs.form.notesLabel}
+                    label={messages.songs.form.notesLabel}
                     multiline
                     rows={3}
                     value={values.notes}
@@ -131,16 +132,16 @@ export default function NewSongPage() {
 
               {error && (
                 <Alert severity="error" sx={{ mb: 2 }}>
-                  {t.songs.newSong.createError}: {error.message}
+                  {messages.songs.newSong.createError}: {error.message}
                 </Alert>
               )}
 
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
                 <Button variant="outlined" disabled={loading} onClick={() => router.back()}>
-                  {t.songs.newSong.cancel}
+                  {messages.common.cancel}
                 </Button>
                 <Button type="submit" loading={loading}>
-                  {t.songs.newSong.create}
+                  {messages.songs.newSong.create}
                 </Button>
               </Box>
             </Form>

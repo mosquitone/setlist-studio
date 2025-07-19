@@ -30,7 +30,7 @@ import { useI18n } from '@/hooks/useI18n';
 export default function SetlistDetailPage() {
   const params = useParams();
   const setlistId = params.id as string;
-  const { t } = useI18n();
+  const { messages } = useI18n();
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedTheme, setSelectedTheme] = useState<Theme | null>(null);
@@ -135,7 +135,7 @@ export default function SetlistDetailPage() {
             {/* Success Banner */}
             {showSuccess && (
               <Alert severity="success" sx={{ mb: 3 }}>
-                {t.setlistDetail.successMessage}
+                {messages.setlistDetail.successMessage}
               </Alert>
             )}
 
@@ -178,21 +178,21 @@ export default function SetlistDetailPage() {
             )}
 
             <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
-              <DialogTitle>{t.setlistDetail.deleteDialog.title}</DialogTitle>
+              <DialogTitle>{messages.setlistDetail.deleteDialog.title}</DialogTitle>
               <DialogContent>
                 <Typography>
-                  「{data?.setlist?.title}」{t.setlistDetail.deleteDialog.message}{' '}
-                  {t.setlistDetail.deleteDialog.warning}
+                  「{data?.setlist?.title}」{messages.setlistDetail.deleteDialog.message}{' '}
+                  {messages.setlistDetail.deleteDialog.warning}
                 </Typography>
               </DialogContent>
               <DialogActions>
                 <Button onClick={() => setDeleteDialogOpen(false)}>
-                  {t.setlistDetail.deleteDialog.cancel}
+                  {messages.setlistDetail.deleteDialog.cancel}
                 </Button>
                 <Button onClick={handleDelete} color="error" disabled={deleteLoading}>
                   {deleteLoading
-                    ? t.setlistDetail.deleteDialog.deleting
-                    : t.setlistDetail.deleteDialog.delete}
+                    ? messages.setlistDetail.deleteDialog.deleting
+                    : messages.setlistDetail.deleteDialog.delete}
                 </Button>
               </DialogActions>
             </Dialog>

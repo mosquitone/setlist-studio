@@ -10,12 +10,12 @@ import { useAuth } from '@/components/providers/AuthProvider';
 import { useI18n } from '@/hooks/useI18n';
 export function FeatureSection() {
   const { isLoggedIn } = useAuth();
-  const { t } = useI18n();
+  const { messages } = useI18n();
 
   return (
     <Box>
       <Typography variant="h4" component="h2" textAlign="center" gutterBottom sx={{ mb: 4 }}>
-        {t.features.title || '主な機能'}
+        {messages.features.title || '主な機能'}
       </Typography>
       <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 4 }}>
         <Card
@@ -36,10 +36,10 @@ export function FeatureSection() {
                 gutterBottom
                 sx={{ fontSize: { xs: '1.25rem', md: '1.5rem' } }}
               >
-                {t.features.songLibrary.title}
+                {messages.features.songLibrary.title}
               </Typography>
               <Typography color="text.secondary" sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}>
-                {t.features.songLibrary.description}
+                {messages.features.songLibrary.description}
               </Typography>
             </CardContent>
           </CardActionArea>
@@ -62,10 +62,10 @@ export function FeatureSection() {
                 gutterBottom
                 sx={{ fontSize: { xs: '1.25rem', md: '1.5rem' } }}
               >
-                {t.features.setlistManagement.title}
+                {messages.features.setlistManagement.title}
               </Typography>
               <Typography color="text.secondary" sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}>
-                {t.features.setlistManagement.description}
+                {messages.features.setlistManagement.description}
               </Typography>
             </CardContent>
           </CardActionArea>

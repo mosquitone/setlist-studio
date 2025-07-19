@@ -5,18 +5,18 @@ import HelpIcon from '@mui/icons-material/Help';
 import { Messages } from '@/lib/i18n/messages';
 
 // 認証が必要なナビゲーション項目を取得する関数
-export const getAuthenticatedNavigationItems = (t: Messages) => {
+export const getAuthenticatedNavigationItems = (messages: Messages) => {
   return [
-    { label: t.ui.songs, path: '/songs', icon: LibraryMusicIcon },
-    { label: t.ui.newSetlist, path: '/setlists/new', icon: PlaylistAddIcon },
+    { label: messages.navigation.songs, path: '/songs', icon: LibraryMusicIcon },
+    { label: messages.navigation.newSetlist, path: '/setlists/new', icon: PlaylistAddIcon },
   ];
 };
 
 // 認証不要のナビゲーション項目を取得する関数
-export const getPublicNavigationItems = (t: Messages) => {
+export const getPublicNavigationItems = (messages: Messages) => {
   return [
-    { label: t.ui.home, path: '/', icon: HomeIcon },
-    { label: t.ui.guide, path: '/guide', icon: HelpIcon },
+    { label: messages.navigation.home, path: '/', icon: HomeIcon },
+    { label: messages.navigation.guide, path: '/guide', icon: HelpIcon },
   ];
 };
 
@@ -32,9 +32,9 @@ export const publicNavigationItems = [
 ];
 
 // 全ナビゲーション項目を取得する関数
-export const getNavigationItems = (t: Messages) => {
-  const publicItems = getPublicNavigationItems(t);
-  const authenticatedItems = getAuthenticatedNavigationItems(t);
+export const getNavigationItems = (messages: Messages) => {
+  const publicItems = getPublicNavigationItems(messages);
+  const authenticatedItems = getAuthenticatedNavigationItems(messages);
   return [...publicItems, ...authenticatedItems];
 };
 

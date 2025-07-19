@@ -38,7 +38,7 @@ export function LogoOfficialLink({
   openNewTab = true,
   sx = {},
 }: LogoOfficialLinkProps) {
-  const { t } = useI18n();
+  const { messages } = useI18n();
   return (
     <Link
       href={href}
@@ -75,7 +75,7 @@ export function LogoOfficialLink({
             opacity: 1,
           },
           '&::after': {
-            content: `"${t.common.logoOfficialSite}"`,
+            content: `"${messages.common.logoOfficialSite}"`,
             bottom: -15,
             fontSize: '12px',
             opacity: 0,
@@ -92,7 +92,7 @@ export function LogoOfficialLink({
             animation: 'pulse 2s infinite',
           },
           '&::after': {
-            content: `"${t.common.logoOfficialSiteTap}"`,
+            content: `"${messages.common.logoOfficialSiteTap}"`,
             bottom: -8,
             fontSize: '11px',
             opacity: 0.8,

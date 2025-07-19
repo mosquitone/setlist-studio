@@ -9,7 +9,7 @@ import { useI18n } from '@/hooks/useI18n';
 export const dynamic = 'force-dynamic';
 
 export default function HomePage() {
-  const { t } = useI18n();
+  const { messages } = useI18n();
 
   return (
     <NoSSR
@@ -24,7 +24,7 @@ export default function HomePage() {
             }}
           >
             <Typography variant="h6" color="text.secondary">
-              {t.ui.loading}
+              {messages.common.loading}
             </Typography>
           </Box>
         </Container>

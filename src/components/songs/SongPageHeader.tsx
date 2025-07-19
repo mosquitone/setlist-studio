@@ -22,7 +22,7 @@ export function SongPageHeader({
   onCreateSetlist,
   onDeleteSelected,
 }: SongPageHeaderProps) {
-  const { t } = useI18n();
+  const { messages } = useI18n();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -36,7 +36,7 @@ export function SongPageHeader({
         sx={{ mb: 2 }}
       >
         <Typography variant={isMobile ? 'h5' : 'h4'} component="h1">
-          {t.songs.title}
+          {messages.songs.title}
         </Typography>
         <Stack direction={isMobile ? 'column' : 'row'} spacing={isMobile ? 1 : 2}>
           {selectedSongs.length > 0 && (
@@ -48,8 +48,8 @@ export function SongPageHeader({
                 size={isMobile ? 'medium' : 'medium'}
                 sx={isMobile ? { minHeight: 40 } : {}}
               >
-                {t.songs.actions.createSetlist} ({selectedSongs.length}
-                {t.songs.actions.songsCount})
+                {messages.songs.actions.createSetlist} ({selectedSongs.length}
+                {messages.songs.actions.songsCount})
               </Button>
               <Button
                 variant="danger"
@@ -58,8 +58,8 @@ export function SongPageHeader({
                 size={isMobile ? 'medium' : 'medium'}
                 sx={isMobile ? { minHeight: 40 } : {}}
               >
-                {t.songs.actions.deleteSelected} ({selectedSongs.length}
-                {t.songs.actions.songsCount})
+                {messages.songs.actions.deleteSelected} ({selectedSongs.length}
+                {messages.songs.actions.songsCount})
               </Button>
             </Stack>
           )}
@@ -70,12 +70,12 @@ export function SongPageHeader({
             size={isMobile ? 'medium' : 'medium'}
             sx={isMobile ? { minHeight: 40 } : {}}
           >
-            {t.songs.actions.addNew}
+            {messages.songs.actions.addNew}
           </Button>
         </Stack>
       </Stack>
       <Typography variant="body1" color="text.secondary">
-        {t.songs.description}
+        {messages.songs.description}
       </Typography>
     </Box>
   );

@@ -6,10 +6,10 @@ import LegalPageTemplate from '@/components/common/templates/LegalPageTemplate';
 import { useI18n } from '@/hooks/useI18n';
 
 const PrivacyPage: React.FC = () => {
-  const { t } = useI18n();
+  const { messages } = useI18n();
 
   return (
-    <LegalPageTemplate title={t.pages.privacy.title}>
+    <LegalPageTemplate title={messages.pages.privacy.title}>
       <Typography variant="body2" color="text.secondary" paragraph>
         mosquitone（以下、「当方」といいます。）は、本ウェブサイト上で提供するサービス「Setlist
         Studio」（以下、「本サービス」といいます。）における、ユーザーの個人情報の取扱いについて、以下のとおりプライバシーポリシー（以下、「本ポリシー」といいます。）を定めます。

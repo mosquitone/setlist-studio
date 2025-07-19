@@ -34,7 +34,6 @@ export interface Messages {
     login: string;
     logout: string;
     register: string;
-    wait: string;
     email: string;
     password: string;
     username: string;
@@ -94,15 +93,10 @@ export interface Messages {
     privacy: string;
     and: string;
     agree: string;
-    loading: string;
-    // プロフィール関連
+    // プロフィール関連（auth固有のみ）
     profile: string;
     noData: string;
     createdAt: string;
-    save: string;
-    edit: string;
-    cancel: string;
-    back: string;
     accountId: string;
   };
 
@@ -119,147 +113,12 @@ export interface Messages {
     somethingWentWrong: string;
   };
 
-  // UI関連
-  ui: {
-    accountCreated: string;
-    accountCreatedDescription: string;
-    emailVerificationPending: string;
-    emailVerificationPendingDescription: string;
-    loginAvailable: string;
-    loginAvailableDescription: string;
-    emailConfirmationRequest: string;
-    verificationEmailSent: string;
-    clickVerificationLink: string;
-    emailNotInSpam: string;
-    resendVerificationEmail: string;
-    resendAvailable: string;
-    resendCount2: string;
-    emailNotReceived: string;
-    checkSpamFolder2: string;
-    mayTakeMinutes2: string;
-    checkEmailTypo: string;
-    verifyEmail: string;
-    resendVerification: string;
-    alreadyHaveAccount: string;
-    dontHaveAccount: string;
-    loginToManageSetlists: string;
-    createAccountToStart: string;
-
-    // ナビゲーション
-    home: string;
-    setlists: string;
-    songs: string;
-    profile: string;
-    guide: string;
-    privacy: string;
-    terms: string;
-
-    // 共通アクション
-    back: string;
-    submit: string;
-    cancel: string;
-    save: string;
-    edit: string;
-    delete: string;
-    create: string;
-    update: string;
-    confirm: string;
-    loading: string;
-    success: string;
-    error: string;
-    wait: string;
-    yes: string;
-    no: string;
-    close: string;
-
-    // セットリスト関連
-    setlist: string;
-    newSetlist: string;
-    editSetlist: string;
-    deleteSetlist: string;
-    duplicateSetlist: string;
-    setlistTitle: string;
-    setlistName: string;
-    bandName: string;
-    eventName: string;
-    eventDate: string;
-    venue: string;
-    openTime: string;
-    startTime: string;
-    theme: string;
-    isPublic: string;
-    makePublic: string;
-    makePrivate: string;
-    shareSetlist: string;
-    downloadImage: string;
-    previewImage: string;
-    generateImage: string;
-
-    // 楽曲関連
-    song: string;
-    newSong: string;
-    editSong: string;
-    deleteSong: string;
-    songTitle: string;
-    artist: string;
-    key: string;
-    tempo: string;
-    duration: string;
-    notes: string;
-    addSong: string;
-    removeSong: string;
-
-    // フォーム関連
-    required: string;
-    optional: string;
-    pleaseEnter: string;
-    pleaseSelect: string;
-    invalid: string;
-    tooShort: string;
-    tooLong: string;
-
-    // 状態
-    draft: string;
-    published: string;
-    private: string;
-    public: string;
-    empty: string;
-    noData: string;
-    noResults: string;
-
-    // 時間
-    minutes: string;
-    hours: string;
-    days: string;
-    weeks: string;
-    months: string;
-    years: string;
-    ago: string;
-
-    // その他
-    search: string;
-    filter: string;
-    sort: string;
-    language: string;
-    settings: string;
-    help: string;
-    about: string;
-    contact: string;
-    support: string;
-    version: string;
-    copyright: string;
-    createdAt: string;
-    accountId: string;
-    and: string;
-    agree: string;
-    effectiveDate: string;
-  };
-
   // ページタイトル・説明
   pages: {
     home: {
       title: string;
       description: string;
+      subtitle: string;
       heroTitle: string;
       heroSubtitle: string;
       sampleSetlists: {
@@ -303,11 +162,13 @@ export interface Messages {
       title: string;
       description: string;
       empty: string;
+      createFirst: string;
     };
     songs: {
       title: string;
       description: string;
       empty: string;
+      createFirst: string;
     };
     profile: {
       title: string;
@@ -467,6 +328,7 @@ export interface Messages {
     setlistCreated: string;
     setlistUpdated: string;
     setlistDeleted: string;
+    songCreated: string;
     songAdded: string;
     songUpdated: string;
     songDeleted: string;
@@ -490,25 +352,11 @@ export interface Messages {
     makePrivate: string;
   };
 
-  // プレースホルダー
-  placeholders: {
-    setlistTitle: string;
-    bandName: string;
-    eventName: string;
-    venue: string;
-    songTitle: string;
-    artist: string;
-    notes: string;
-    search: string;
-    email: string;
-    username: string;
-    password: string;
-  };
-
   // バリデーション
   validation: {
     required: string;
     emailInvalid: string;
+    usernameInvalid: string;
     passwordTooShort: string;
     passwordsDoNotMatch: string;
     usernameTooShort: string;
@@ -523,15 +371,93 @@ export interface Messages {
 
   // 共通のUI要素
   common: {
-    loading: string;
+    back: string;
+    submit: string;
     cancel: string;
+    save: string;
+    edit: string;
     delete: string;
+    create: string;
+    update: string;
+    confirm: string;
+    loading: string;
+    success: string;
+    error: string;
+    wait: string;
+    yes: string;
+    no: string;
+    song: string;
+    newSong: string;
+    editSong: string;
+    deleteSong: string;
+    songTitle: string;
+    artist: string;
+    key: string;
+    tempo: string;
+    duration: string;
+    notes: string;
+    addSong: string;
+    removeSong: string;
+    required: string;
+    optional: string;
+    pleaseEnter: string;
+    pleaseSelect: string;
+    invalid: string;
+    tooShort: string;
+    tooLong: string;
+    draft: string;
+    published: string;
+    private: string;
+    public: string;
+    empty: string;
+    noData: string;
+    noResults: string;
+    minutes: string;
+    hours: string;
+    days: string;
+    weeks: string;
+    months: string;
+    years: string;
+    ago: string;
+    search: string;
+    filter: string;
+    sort: string;
+    language: string;
+    settings: string;
+    help: string;
+    about: string;
+    contact: string;
+    feedback: string;
+    version: string;
+    madeWith: string;
+    setlist: string;
+    editSetlist: string;
+    deleteSetlist: string;
+    setlistTitle: string;
+    bandName: string;
+    venue: string;
+    eventDate: string;
+    eventTime: string;
+    songOrder: string;
+    timing: string;
+    appliedFilters: string;
+    clearFilters: string;
+    filterByArtist: string;
+    filterByKey: string;
+    downloadImage: string;
+    shareSetlist: string;
+    duplicateSetlist: string;
+    duplicateSuccess: string;
+    linkCopied: string;
+    theme: string;
+    basicBlack: string;
+    basicWhite: string;
     deleteConfirmation: string;
     deleteWarning: string;
     logoOfficialSite: string;
     logoOfficialSiteTap: string;
-    error: string;
-    wait: string;
+    close: string;
+    effectiveDate: string;
   };
 
   // セットリスト詳細ページ
@@ -598,7 +524,13 @@ export interface Messages {
 
   // ナビゲーションメニュー
   navigation: {
+    home: string;
+    songs: string;
     profile: string;
+    guide: string;
+    privacy: string;
+    terms: string;
+    newSetlist: string;
     logout: string;
     loading: string;
   };
@@ -657,7 +589,7 @@ export interface Messages {
   };
 
   // メールテンプレート
-  email: {
+  emails: {
     verificationSubject: string;
     verificationBody: (username: string, link: string) => string;
     passwordResetSubject: string;
@@ -693,11 +625,10 @@ const jaMessages: Messages = {
     rateLimitExceeded: 'リクエスト制限に達しました。しばらく待ってから再試行してください',
     checkingLoginStatus: 'ログイン状態を確認中...',
     redirectingToLogin: 'ログインページにリダイレクトしています...',
-    
+
     login: 'ログイン',
     logout: 'ログアウト',
     register: '新規登録',
-    wait: '待機',
     email: 'メールアドレス',
     password: 'パスワード',
     username: 'ユーザー名',
@@ -736,7 +667,8 @@ const jaMessages: Messages = {
     loginAvailableDescription: 'メール認証後にログインできます。',
     emailConfirmationRequest: '📧 メール確認のお願い',
     verificationEmailSent: 'に認証メールを送信しました。',
-    clickVerificationLink: 'メールに記載されている認証リンクをクリックしてアカウントを有効化してください。',
+    clickVerificationLink:
+      'メールに記載されている認証リンクをクリックしてアカウントを有効化してください。',
     emailNotInSpam: '※ メールが見つからない場合は、迷惑メールフォルダもご確認ください。',
     resendVerificationEmail: '認証メールを再送信',
     resendAvailable: '再送信可能まで',
@@ -755,14 +687,10 @@ const jaMessages: Messages = {
     privacy: 'プライバシーポリシー',
     and: 'と',
     agree: 'に同意します',
-    loading: '読み込み中...',
+    // プロフィール関連（auth固有のみ）
     profile: 'プロフィール',
     noData: 'データなし',
     createdAt: '作成日',
-    save: '保存',
-    edit: '編集',
-    cancel: 'キャンセル',
-    back: '戻る',
     accountId: 'アカウントID',
   },
   errors: {
@@ -777,13 +705,6 @@ const jaMessages: Messages = {
     somethingWentWrong: '何らかのエラーが発生しました',
   },
   common: {
-    home: 'ホーム',
-    setlists: 'セットリスト',
-    songs: '楽曲',
-    profile: 'プロフィール',
-    guide: 'ガイド',
-    privacy: 'プライバシーポリシー',
-    terms: '利用規約',
     back: '戻る',
     submit: '送信',
     cancel: 'キャンセル',
@@ -844,7 +765,6 @@ const jaMessages: Messages = {
     version: 'バージョン',
     madeWith: '♪ Made with music in mind',
     setlist: 'セットリスト',
-    newSetlist: '新しいセットリスト',
     editSetlist: 'セットリストを編集',
     deleteSetlist: 'セットリストを削除',
     setlistTitle: 'セットリストタイトル',
@@ -866,6 +786,12 @@ const jaMessages: Messages = {
     theme: 'テーマ',
     basicBlack: 'ベーシック（黒）',
     basicWhite: 'ベーシック（白）',
+    deleteConfirmation: '?',
+    deleteWarning: 'この操作は取り消せません。',
+    logoOfficialSite: '公式サイト',
+    logoOfficialSiteTap: 'タップして公式サイトにアクセス',
+    close: '閉じる',
+    effectiveDate: '施行日',
   },
   validation: {
     required: '必須項目です',
@@ -873,29 +799,71 @@ const jaMessages: Messages = {
     usernameInvalid: '無効なユーザー名です',
     passwordTooShort: 'パスワードは8文字以上で、大文字・小文字・数字を含む必要があります',
     passwordsDoNotMatch: 'パスワードが一致しません',
-    titleRequired: 'タイトルは必須です',
+    usernameTooShort: 'ユーザー名が短すぎます',
+    titleTooShort: 'タイトルが短すぎます',
     titleTooLong: 'タイトルが長すぎます（100文字以内）',
-    artistTooLong: 'アーティスト名が長すぎます（100文字以内）',
     agreeToTerms: '利用規約とプライバシーポリシーに同意してください',
   },
   notifications: {
-    profileUpdated: 'プロフィールが更新されました',
-    songCreated: '楽曲が作成されました',
-    songUpdated: '楽曲が更新されました',
-    songDeleted: '楽曲が削除されました',
     setlistCreated: 'セットリストが作成されました',
     setlistUpdated: 'セットリストが更新されました',
     setlistDeleted: 'セットリストが削除されました',
-    accountCreated: 'アカウントが作成されました。ログインしてください。',
+    songCreated: '楽曲が作成されました',
+    songAdded: '楽曲が追加されました',
+    songUpdated: '楽曲が更新されました',
+    songDeleted: '楽曲が削除されました',
+    imageGenerated: '画像が生成されました',
+    copied: 'コピーされました',
+    saved: '保存されました',
+    profileUpdated: 'プロフィールが更新されました',
     passwordChanged: 'パスワードが変更されました',
     emailSent: 'メールが送信されました',
-    logout: 'ログアウトしました',
+    linkCopied: 'リンクがコピーされました',
+    accountCreated: 'アカウントが作成されました。ログインしてください。',
   },
   pages: {
     home: {
       title: 'Setlist Studio',
-      subtitle: 'バンド向けセットリスト作成ツール',
       description: 'シンプルで直感的なセットリスト管理',
+      subtitle: 'バンド向けセットリスト作成ツール',
+      heroTitle: 'ステージで使えるセットリスト作成アプリ',
+      heroSubtitle: 'ExcelやA4用紙に手書きの時代は終わりです。',
+      sampleSetlists: {
+        title: 'サンプルセットリスト',
+        description: 'Setlist Studioで作成できるセットリストの例をご覧ください',
+        blackTheme: 'ブラックテーマ',
+        whiteTheme: 'ホワイトテーマ',
+        blackThemeAlt: 'サンプルセットリスト - ブラックテーマ',
+        whiteThemeAlt: 'サンプルセットリスト - ホワイトテーマ',
+        footer: 'このようなセットリストを簡単に作成・ダウンロードできます',
+      },
+      dashboard: {
+        title: 'あなたのセットリスト',
+        loading: 'セットリストを読み込み中...',
+        empty: {
+          title: 'まだセットリストがありません',
+          description: 'はじめてのセットリストを作成して、パフォーマンスリストを管理しましょう',
+          createButton: 'セットリストを作成',
+        },
+        public: '公開',
+        private: '非公開',
+        white: 'ホワイト',
+        black: 'ブラック',
+        songsCount: '曲',
+        edit: '編集',
+        delete: {
+          title: 'セットリストを削除',
+          itemType: 'セットリスト',
+        },
+      },
+    },
+    login: {
+      title: 'ログイン',
+      description: 'アカウントにログイン',
+    },
+    register: {
+      title: '新規登録',
+      description: '新しいアカウントを作成',
     },
     setlists: {
       title: 'セットリスト一覧',
@@ -916,6 +884,284 @@ const jaMessages: Messages = {
     guide: {
       title: 'ガイド',
       description: 'Setlist Studioの使い方',
+      subtitle: '機能と使用方法の完全ガイド',
+      aboutSection: {
+        title: 'Setlist Studioについて',
+        description1:
+          'Setlist Studioは、バンドや音楽グループ向けのセットリスト生成・管理ツールです。楽曲情報を管理し、高品質なセットリスト画像を簡単に作成できます。',
+        description2:
+          'セットリストは「公開」または「非公開」として管理でき、公開セットリストはアカウント登録なしでも閲覧・ダウンロードが可能です。',
+        alertInfo:
+          '公開セットリストは共有URLを知っている人なら誰でもアクセスできます。非公開セットリストは所有者のみが閲覧できます。',
+      },
+      featureComparison: {
+        title: '利用可能な機能',
+        features: '機能',
+        unregisteredUser: '未登録ユーザー',
+        registeredUser: '登録ユーザー',
+        publicSetlistView: '公開セットリスト閲覧',
+        imageDownload: '画像ダウンロード（黒/白テーマ）',
+        setlistShare: 'セットリスト共有（URL コピー）',
+        setlistManagement: 'セットリスト作成・編集・削除',
+        songDatabase: '楽曲データベース管理',
+        publicitySettings: 'セットリスト公開設定変更',
+        duplicateFunction: '自分のセットリスト複製機能',
+        personalDashboard: '個人ダッシュボード',
+        profileManagement: 'プロフィール管理',
+      },
+      accountBenefits: {
+        title: 'アカウント作成でより便利に',
+        description: '無料アカウントを作成すると、公開機能に加えて以下の機能が利用できます：',
+        setlistCreation: {
+          title: 'セットリスト作成',
+          description: '無制限にオリジナルセットリストを作成・編集',
+        },
+        songManagement: {
+          title: '楽曲管理',
+          description: '個人の楽曲データベースで楽曲情報を効率的に管理',
+        },
+        privateFeatures: {
+          title: 'プライベート機能',
+          description: '非公開セットリストや個人設定などの管理機能',
+        },
+        signUpNow: '今すぐ始める：',
+        signUpDescription:
+          '右上の「新規登録」ボタンからアカウントを作成できます。メールアドレスとパスワードだけで、すぐに全機能をご利用いただけます。',
+      },
+      publicUsage: {
+        title: '公開セットリストの使い方',
+        step1: {
+          title: '共有URLにアクセス',
+          description: '公開セットリストの共有URLをクリックまたは入力してアクセスします',
+        },
+        step2: {
+          title: 'セットリストを確認',
+          description: '楽曲リスト、バンド情報、イベント詳細などを確認できます',
+        },
+        step3: {
+          title: 'テーマ選択',
+          description: 'ブラックまたはホワイトテーマから選択できます',
+        },
+        step4: {
+          title: '画像ダウンロード',
+          description: '「ダウンロード」ボタンをクリックして高品質画像をダウンロードします',
+        },
+      },
+      pageDetails: {
+        title: '詳細ページ機能',
+        homePage: {
+          title: 'ホームページ',
+          unregisteredDescription: 'アプリケーションの紹介とアカウント作成への案内',
+          registeredDescription:
+            'あなたのセットリスト一覧を表示する個人ダッシュボード。各セットリストはカード形式で表示され、直接閲覧・編集できます。',
+          feature1: 'セットリスト作成への素早いアクセス',
+          feature2: 'レスポンシブグリッドレイアウト',
+          feature3: 'テーマベースのカードデザイン',
+        },
+        setlistDetail: {
+          title: 'セットリスト詳細ページ',
+          description: 'セットリストの詳細表示と各種操作が可能です。',
+          feature1: '楽曲リストとイベント情報表示',
+          feature2: 'テーマ変更（ブラック/ホワイト）',
+          feature3: '高品質画像ダウンロード',
+          feature4: 'URL共有機能',
+          feature5: '編集機能（所有者のみ）',
+          feature6: '複製機能（ログインユーザー）',
+        },
+        songManagement: {
+          title: '楽曲管理ページ',
+          description: '個人の楽曲データベースを管理できます。',
+          feature1: '楽曲の追加・編集・削除',
+          feature2: 'タイトル、アーティスト、キー、テンポ管理',
+          feature3: '演奏時間とメモ機能',
+          feature4: '検索・絞り込み機能',
+          feature5: 'セットリスト作成時の楽曲選択',
+        },
+        setlistCreation: {
+          title: 'セットリスト作成ページ',
+          description: '新しいセットリストを作成できます。',
+          feature1: '基本情報設定（タイトル、バンド名）',
+          feature2: 'イベント情報（会場、日時、開演時間）',
+          feature3: '楽曲追加とドラッグ&ドロップ並び替え',
+          feature4: '最大20曲まで追加可能',
+          feature5: 'テーマ選択（ブラック/ホワイト）',
+          feature6: '非公開/公開設定',
+          feature7: '複製元がある場合の自動入力',
+        },
+        profile: {
+          title: 'プロフィールページ',
+          description: 'アカウント情報の確認・管理ができます。',
+          feature1: 'ユーザー名とメールアドレス表示',
+          feature2: 'アカウント作成日時',
+          feature3: '統計情報（作成セットリスト数など）',
+          feature4: 'アカウント設定',
+        },
+      },
+    },
+    privacy: {
+      title: 'プライバシーポリシー',
+    },
+    terms: {
+      title: '利用規約',
+    },
+  },
+  features: {
+    title: '主な機能',
+    setlistManagement: {
+      title: 'セットリスト作成',
+      description: '登録した楽曲からセットリストを作成します。',
+    },
+    songLibrary: {
+      title: '楽曲管理',
+      description: '楽曲の詳細情報（タイトル、アーティスト、キー、テンポ）を登録・管理します。',
+    },
+    imageGeneration: {
+      title: '画像生成',
+      description: '美しいセットリスト画像を生成',
+    },
+    sharing: {
+      title: '共有',
+      description: 'セットリストを簡単に共有',
+    },
+    themes: {
+      title: 'テーマ',
+      description: '複数のテーマから選択',
+    },
+    qrCode: {
+      title: 'QRコード',
+      description: 'QRコード経由でアクセス',
+    },
+  },
+  confirmations: {
+    deleteSetlist: 'このセットリストを削除してもよろしいですか？',
+    deleteSong: 'この楽曲を削除してもよろしいですか？',
+    logout: 'ログアウトしてもよろしいですか？',
+    unsavedChanges: '保存されていない変更があります。破棄してもよろしいですか？',
+    makePublic: 'このセットリストを公開してもよろしいですか？',
+    makePrivate: 'このセットリストを非公開にしてもよろしいですか？',
+  },
+  footer: {
+    contact: 'お問い合わせはこちら',
+  },
+  setlistDetail: {
+    successMessage: 'セットリストが正常に生成されました！',
+    deleteDialog: {
+      title: 'セットリストを削除',
+      message: '?',
+      warning: 'この操作は取り消せません。',
+      cancel: 'キャンセル',
+      delete: '削除',
+      deleting: '削除中...',
+    },
+  },
+  setlistForm: {
+    titles: {
+      create: '新しいセットリストを作成',
+      duplicate: 'セットリストを複製',
+      fromSongs: '選択した楽曲からセットリストを作成',
+    },
+    fields: {
+      title: 'セットリスト名',
+      titlePlaceholder: '任意',
+      titleHelperText: '空欄の場合、自動的に番号が付けられます',
+      bandName: 'バンド名',
+      bandNameRequired: '必須',
+      eventName: 'イベント名',
+      eventDate: 'イベント日',
+      openTime: '開場時間',
+      startTime: '開始時間',
+      theme: 'テーマ',
+    },
+    songsList: {
+      title: '楽曲リスト',
+      maxSongsWarning: '最大20曲まで追加できます。',
+      songTitle: '楽曲タイトル',
+      songNote: 'メモ',
+      addSong: '楽曲を追加',
+    },
+    buttons: {
+      create: 'セットリストを作成',
+      cancel: 'キャンセル',
+    },
+    validation: {
+      titleMaxLength: 'セットリスト名は100文字以内で入力してください',
+      titleInvalidChars: 'セットリスト名に無効な文字が含まれています',
+      bandNameRequired: 'バンド名は必須です',
+      bandNameMaxLength: 'バンド名は100文字以内で入力してください',
+      bandNameInvalidChars: 'バンド名に無効な文字が含まれています',
+      eventNameMaxLength: 'イベント名は200文字以内で入力してください',
+      eventNameInvalidChars: 'イベント名に無効な文字が含まれています',
+      songTitleRequired: '楽曲タイトルは必須です',
+      songTitleMaxLength: '楽曲タイトルは200文字以内で入力してください',
+      songTitleInvalidChars: '楽曲タイトルに無効な文字が含まれています',
+      songNoteMaxLength: 'メモは500文字以内で入力してください',
+      songNoteInvalidChars: 'メモに無効な文字が含まれています',
+      minSongsRequired: '最低1曲は必要です',
+      maxSongsExceeded: '最大20曲まで許可されています',
+    },
+    copy: 'コピー',
+  },
+  navigation: {
+    home: 'ホーム',
+    songs: '楽曲',
+    profile: 'プロフィール',
+    guide: 'ガイド',
+    privacy: 'プライバシーポリシー',
+    terms: '利用規約',
+    newSetlist: '新しいセットリスト',
+    logout: 'ログアウト',
+    loading: '読み込み中...',
+  },
+  songs: {
+    title: '楽曲管理',
+    description:
+      '楽曲を管理・編集します。チェックボックスで楽曲を選択してセットリストを作成できます。',
+    empty: {
+      title: '楽曲がありません',
+      description: '新しい楽曲を追加してください',
+    },
+    table: {
+      title: 'タイトル',
+      artist: 'アーティスト',
+      key: 'キー',
+      tempo: 'テンポ',
+      notes: 'メモ',
+      actions: 'アクション',
+      selectAll: '全選択/全解除',
+      selectSong: ' 楽曲',
+      editSong: ' 楽曲',
+      deleteSong: ' 楽曲',
+    },
+    actions: {
+      addNew: '新しい楽曲を追加',
+      createSetlist: '選択した楽曲でセットリストを作成',
+      deleteSelected: '選択した楽曲を削除',
+      songsCount: ' 曲',
+    },
+    form: {
+      editTitle: '楽曲を編集',
+      titleLabel: 'タイトル',
+      artistLabel: 'アーティスト',
+      keyLabel: 'キー',
+      tempoLabel: 'テンポ',
+      notesLabel: 'メモ',
+      save: '保存',
+      cancel: 'キャンセル',
+    },
+    chips: {
+      keyPrefix: 'キー: ',
+      tempoPrefix: 'テンポ: ',
+    },
+    newSong: {
+      title: '新しい楽曲を追加',
+      create: '作成',
+      cancel: 'キャンセル',
+      createError: '楽曲の作成に失敗しました',
+      validation: {
+        titleRequired: '楽曲タイトルは必須です',
+        artistRequired: 'アーティスト名は必須です',
+        tempoInvalid: '有効な数値を入力してください',
+      },
     },
   },
   emails: {
@@ -948,6 +1194,16 @@ ${link}
 よろしくお願いします,
 Setlist Studio チーム
 `,
+    passwordResetSuccessSubject: 'パスワード変更完了',
+    passwordResetSuccessBody: (username: string) => `
+こんにちは ${username} さん,
+
+パスワードが正常に変更されました。
+この変更に心当たりがない場合は、すぐにサポートまでご連絡ください。
+
+よろしくお願いします,
+Setlist Studio チーム
+`,
     emailChangeSubject: 'メールアドレス変更の確認',
     emailChangeBody: (username: string, link: string) => `
 こんにちは ${username} さん,
@@ -971,7 +1227,7 @@ export function detectLanguage(acceptLanguage?: string): Language {
   if (!acceptLanguage) {
     return 'ja'; // デフォルトは日本語
   }
-  
+
   // Accept-Language ヘッダーをパース
   const languages = acceptLanguage
     .split(',')
@@ -983,14 +1239,14 @@ export function detectLanguage(acceptLanguage?: string): Language {
       };
     })
     .sort((a, b) => b.quality - a.quality);
-  
+
   // サポートされている言語から最適なものを選択
   for (const { locale } of languages) {
     if (locale === 'ja' || locale === 'en') {
       return locale as Language;
     }
   }
-  
+
   return 'ja'; // デフォルトは日本語
 }
 
@@ -1033,7 +1289,6 @@ const enMessages: Messages = {
     login: 'Login',
     logout: 'Logout',
     register: 'Register',
-    wait: 'Please wait',
     email: 'Email',
     password: 'Password',
     username: 'Username',
@@ -1095,15 +1350,10 @@ const enMessages: Messages = {
     privacy: 'Privacy Policy',
     and: ' and ',
     agree: ' agreement',
-    loading: 'Loading...',
-    // Profile related
+    // Profile related（auth固有のみ）
     profile: 'Profile',
     noData: 'No data',
     createdAt: 'Created at',
-    save: 'Save',
-    edit: 'Edit',
-    cancel: 'Cancel',
-    back: 'Back',
     accountId: 'Account ID',
   },
   errors: {
@@ -1117,175 +1367,11 @@ const enMessages: Messages = {
     forbidden: 'Access denied',
     somethingWentWrong: 'Something went wrong',
   },
-  ui: {
-    // 認証
-    login: 'Login',
-    register: 'Register',
-    logout: 'Logout',
-    email: 'Email',
-    username: 'Username',
-    password: 'Password',
-    currentPassword: 'Current Password',
-    newPassword: 'New Password',
-    confirmPassword: 'Confirm Password',
-    changePassword: 'Change Password',
-    resetPassword: 'Reset Password',
-    forgotPassword: 'Forgot Password?',
-    sendResetEmail: 'Send Reset Email',
-    passwordResetTitle: 'Password Reset',
-    passwordResetDescription:
-      "Enter your email address and we'll send you password reset instructions",
-    resendPasswordReset: 'Resend Password Reset',
-    resendAvailableIn: 'Resend available in',
-    resendCount: 'sent',
-    emailNotFound: 'Email not received?',
-    resetEmailHelp: 'Enter your registered email address',
-    checkSpamFolder: 'Check your spam folder',
-    mayTakeMinutes: 'It may take a few minutes',
-    canResendAbove: 'You can resend from the button above',
-    backToLogin: 'Back to Login',
-    checkYourEmail: 'Check your email.',
-    // Email verification page
-    emailVerificationTitle: 'Please Verify Your Email',
-    emailVerificationDescription: 'Check your email to activate your account',
-    accountCreated: 'Account Created',
-    accountCreatedDescription: 'Your account has been created successfully.',
-    emailVerificationPending: 'Email Verification Pending',
-    emailVerificationPendingDescription: 'Verification email has been sent to',
-    loginAvailable: 'Login Available',
-    loginAvailableDescription: 'You can login after email verification.',
-    emailConfirmationRequest: '📧 Email Confirmation Request',
-    verificationEmailSent: 'Verification email has been sent to',
-    clickVerificationLink:
-      'Please click the verification link in the email to activate your account.',
-    emailNotInSpam: "※ If you can't find the email, please check your spam folder.",
-    resendVerificationEmail: 'Resend Verification Email',
-    resendAvailable: 'Resend available in',
-    resendCount2: 'times resent',
-    emailNotReceived: 'Email not received?',
-    checkSpamFolder2: 'Check your spam folder',
-    mayTakeMinutes2: 'It may take a few minutes',
-    checkEmailTypo: 'Check for typos in your email address',
-    verifyEmail: 'Verify Email',
-    resendVerification: 'Resend Verification',
-    alreadyHaveAccount: 'Already have an account?',
-    dontHaveAccount: "Don't have an account?",
-    loginToManageSetlists: 'Login to manage your setlists',
-    createAccountToStart: 'Create an account to start creating setlists',
-
-    // ナビゲーション
-    home: 'Home',
-    setlists: 'Setlists',
-    songs: 'Songs',
-    profile: 'Profile',
-    guide: 'Guide',
-    privacy: 'Privacy Policy',
-    terms: 'Terms of Service',
-
-    // 共通アクション
-    back: 'Back',
-    submit: 'Submit',
-    cancel: 'Cancel',
-    save: 'Save',
-    edit: 'Edit',
-    delete: 'Delete',
-    create: 'Create',
-    update: 'Update',
-    confirm: 'Confirm',
-    loading: 'Loading...',
-    success: 'Success',
-    error: 'Error',
-    wait: 'Please wait',
-    yes: 'Yes',
-    no: 'No',
-    close: 'Close',
-
-    // セットリスト関連
-    setlist: 'Setlist',
-    newSetlist: 'New Setlist',
-    editSetlist: 'Edit Setlist',
-    deleteSetlist: 'Delete Setlist',
-    duplicateSetlist: 'Duplicate Setlist',
-    setlistTitle: 'Setlist Title',
-    setlistName: 'Setlist Name',
-    bandName: 'Band Name',
-    eventName: 'Event Name',
-    eventDate: 'Event Date',
-    venue: 'Venue',
-    openTime: 'Open Time',
-    startTime: 'Start Time',
-    theme: 'Theme',
-    isPublic: 'Public Setting',
-    makePublic: 'Make Public',
-    makePrivate: 'Make Private',
-    shareSetlist: 'Share Setlist',
-    downloadImage: 'Download Image',
-    previewImage: 'Preview Image',
-    generateImage: 'Generate Image',
-
-    // 楽曲関連
-    song: 'Song',
-    newSong: 'New Song',
-    editSong: 'Edit Song',
-    deleteSong: 'Delete Song',
-    songTitle: 'Song Title',
-    artist: 'Artist',
-    key: 'Key',
-    tempo: 'Tempo',
-    duration: 'Duration',
-    notes: 'Notes',
-    addSong: 'Add Song',
-    removeSong: 'Remove Song',
-
-    // フォーム関連
-    required: 'Required',
-    optional: 'Optional',
-    pleaseEnter: 'Please enter',
-    pleaseSelect: 'Please select',
-    invalid: 'Invalid',
-    tooShort: 'Too short',
-    tooLong: 'Too long',
-
-    // 状態
-    draft: 'Draft',
-    published: 'Published',
-    private: 'Private',
-    public: 'Public',
-    empty: 'Empty',
-    noData: 'No data',
-    noResults: 'No results',
-
-    // 時間
-    minutes: 'minutes',
-    hours: 'hours',
-    days: 'days',
-    weeks: 'weeks',
-    months: 'months',
-    years: 'years',
-    ago: 'ago',
-
-    // その他
-    search: 'Search',
-    filter: 'Filter',
-    sort: 'Sort',
-    language: 'Language',
-    settings: 'Settings',
-    help: 'Help',
-    about: 'About',
-    contact: 'Contact',
-    support: 'Support',
-    version: 'Version',
-    copyright: 'Copyright',
-    createdAt: 'Created At',
-    accountId: 'Account ID',
-    and: 'and',
-    agree: 'I agree to the',
-    effectiveDate: 'Effective Date',
-  },
   pages: {
     home: {
       title: 'Home',
       description: 'Setlist management app',
+      subtitle: 'Setlist creation tool for bands',
       heroTitle: 'Setlist creation app for artists that can be used on stage.',
       heroSubtitle: 'The era of Excel and handwritten lists is over.',
       sampleSetlists: {
@@ -1329,11 +1415,13 @@ const enMessages: Messages = {
       title: 'Setlists',
       description: 'Manage your setlists',
       empty: 'No setlists yet',
+      createFirst: 'Create your first setlist',
     },
     songs: {
       title: 'Songs',
       description: 'Manage your songs',
       empty: 'No songs yet',
+      createFirst: 'Add your first song',
     },
     profile: {
       title: 'Profile',
@@ -1495,6 +1583,7 @@ const enMessages: Messages = {
     setlistCreated: 'Setlist created',
     setlistUpdated: 'Setlist updated',
     setlistDeleted: 'Setlist deleted',
+    songCreated: 'Song created',
     songAdded: 'Song added',
     songUpdated: 'Song updated',
     songDeleted: 'Song deleted',
@@ -1515,22 +1604,10 @@ const enMessages: Messages = {
     makePublic: 'Are you sure you want to make this setlist public?',
     makePrivate: 'Are you sure you want to make this setlist private?',
   },
-  placeholders: {
-    setlistTitle: 'Enter setlist title',
-    bandName: 'Enter band name',
-    eventName: 'Enter event name',
-    venue: 'Enter venue name',
-    songTitle: 'Enter song title',
-    artist: 'Enter artist name',
-    notes: 'Enter notes',
-    search: 'Search...',
-    email: 'Enter email address',
-    username: 'Enter username',
-    password: 'Enter password',
-  },
   validation: {
     required: 'This field is required',
     emailInvalid: 'Invalid email address',
+    usernameInvalid: 'Invalid username',
     passwordTooShort: 'Password is too short',
     passwordsDoNotMatch: 'Passwords do not match',
     usernameTooShort: 'Username is too short',
@@ -1542,15 +1619,93 @@ const enMessages: Messages = {
     contact: 'Contact us here',
   },
   common: {
-    loading: 'Loading...',
+    back: 'Back',
+    submit: 'Submit',
     cancel: 'Cancel',
+    save: 'Save',
+    edit: 'Edit',
     delete: 'Delete',
+    create: 'Create',
+    update: 'Update',
+    confirm: 'Confirm',
+    loading: 'Loading...',
+    success: 'Success',
+    error: 'Error',
+    wait: 'Please wait',
+    yes: 'Yes',
+    no: 'No',
+    song: 'Song',
+    newSong: 'New Song',
+    editSong: 'Edit Song',
+    deleteSong: 'Delete Song',
+    songTitle: 'Song Title',
+    artist: 'Artist',
+    key: 'Key',
+    tempo: 'Tempo',
+    duration: 'Duration',
+    notes: 'Notes',
+    addSong: 'Add Song',
+    removeSong: 'Remove Song',
+    required: 'Required',
+    optional: 'Optional',
+    pleaseEnter: 'Please enter',
+    pleaseSelect: 'Please select',
+    invalid: 'Invalid',
+    tooShort: 'Too short',
+    tooLong: 'Too long',
+    draft: 'Draft',
+    published: 'Published',
+    private: 'Private',
+    public: 'Public',
+    empty: 'Empty',
+    noData: 'No data',
+    noResults: 'No results',
+    minutes: 'minutes',
+    hours: 'hours',
+    days: 'days',
+    weeks: 'weeks',
+    months: 'months',
+    years: 'years',
+    ago: 'ago',
+    search: 'Search',
+    filter: 'Filter',
+    sort: 'Sort',
+    language: 'Language',
+    settings: 'Settings',
+    help: 'Help',
+    about: 'About',
+    contact: 'Contact',
+    feedback: 'Feedback',
+    version: 'Version',
+    madeWith: '♪ Made with music in mind',
+    setlist: 'Setlist',
+    editSetlist: 'Edit Setlist',
+    deleteSetlist: 'Delete Setlist',
+    setlistTitle: 'Setlist Title',
+    bandName: 'Band Name',
+    venue: 'Venue',
+    eventDate: 'Event Date',
+    eventTime: 'Start Time',
+    songOrder: 'Song Order',
+    timing: 'Timing',
+    appliedFilters: 'Applied filters:',
+    clearFilters: 'Clear filters',
+    filterByArtist: 'Filter by artist',
+    filterByKey: 'Filter by key',
+    downloadImage: 'Download Image',
+    shareSetlist: 'Share Setlist',
+    duplicateSetlist: 'Duplicate Setlist',
+    duplicateSuccess: 'Setlist duplicated successfully',
+    linkCopied: 'Link copied',
+    theme: 'Theme',
+    basicBlack: 'Basic (Black)',
+    basicWhite: 'Basic (White)',
     deleteConfirmation: '?',
     deleteWarning: 'This action cannot be undone.',
     logoOfficialSite: 'Official Site',
     logoOfficialSiteTap: 'Tap to visit official site',
-    error: 'Error',
-    wait: 'Please wait',
+    close: 'Close',
+    effectiveDate: 'Effective Date',
   },
   setlistDetail: {
     successMessage: 'Setlist generated successfully!',
@@ -1611,7 +1766,13 @@ const enMessages: Messages = {
     copy: 'Copy',
   },
   navigation: {
+    home: 'Home',
+    songs: 'Songs',
     profile: 'Profile',
+    guide: 'Guide',
+    privacy: 'Privacy Policy',
+    terms: 'Terms of Service',
+    newSetlist: 'New Setlist',
     logout: 'Logout',
     loading: 'Loading...',
   },
@@ -1666,7 +1827,7 @@ const enMessages: Messages = {
       },
     },
   },
-  email: {
+  emails: {
     verificationSubject: 'Verify your email address',
     verificationBody: (username: string, link: string) => `
 Hello ${username},

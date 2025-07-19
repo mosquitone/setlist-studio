@@ -22,7 +22,7 @@ interface SetlistFormFieldsProps {
 
 export function SetlistFormFields({ formik }: SetlistFormFieldsProps) {
   const { values, errors, touched, handleChange, handleBlur } = formik;
-  const { t } = useI18n();
+  const { messages } = useI18n();
 
   const themes = [
     { value: 'black', label: 'Black' },
@@ -42,13 +42,15 @@ export function SetlistFormFields({ formik }: SetlistFormFieldsProps) {
         <TextField
           fullWidth
           name="title"
-          label={`${t.setlistForm.fields.title}（${t.setlistForm.fields.titlePlaceholder}）`}
+          label={`${messages.setlistForm.fields.title}（${messages.setlistForm.fields.titlePlaceholder}）`}
           value={values.title}
           onChange={handleChange}
           onBlur={handleBlur}
           error={touched.title && Boolean(errors.title)}
           helperText={
-            touched.title && errors.title ? errors.title : t.setlistForm.fields.titleHelperText
+            touched.title && errors.title
+              ? errors.title
+              : messages.setlistForm.fields.titleHelperText
           }
         />
       </Grid>
@@ -79,7 +81,7 @@ export function SetlistFormFields({ formik }: SetlistFormFieldsProps) {
           renderInput={(params) => (
             <TextField
               {...params}
-              label={t.setlistForm.fields.bandName}
+              label={messages.setlistForm.fields.bandName}
               error={touched.bandName && Boolean(errors.bandName)}
               helperText={touched.bandName && errors.bandName}
               required
@@ -91,12 +93,12 @@ export function SetlistFormFields({ formik }: SetlistFormFieldsProps) {
 
       <Grid item xs={12} sm={6}>
         <FormControl fullWidth>
-          <InputLabel>{t.setlistForm.fields.theme}</InputLabel>
+          <InputLabel>{messages.setlistForm.fields.theme}</InputLabel>
           <Select
             name="theme"
             value={values.theme}
             onChange={handleChange}
-            label={t.setlistForm.fields.theme}
+            label={messages.setlistForm.fields.theme}
             sx={{
               '& .MuiOutlinedInput-notchedOutline': {
                 borderRadius: '12px',
@@ -116,7 +118,7 @@ export function SetlistFormFields({ formik }: SetlistFormFieldsProps) {
         <TextField
           fullWidth
           name="eventName"
-          label={t.setlistForm.fields.eventName}
+          label={messages.setlistForm.fields.eventName}
           value={values.eventName}
           onChange={handleChange}
           onBlur={handleBlur}
@@ -126,7 +128,7 @@ export function SetlistFormFields({ formik }: SetlistFormFieldsProps) {
         <TextField
           fullWidth
           name="eventDate"
-          label={t.setlistForm.fields.eventDate}
+          label={messages.setlistForm.fields.eventDate}
           type="date"
           value={values.eventDate}
           onChange={handleChange}
@@ -138,7 +140,7 @@ export function SetlistFormFields({ formik }: SetlistFormFieldsProps) {
         <TextField
           fullWidth
           name="openTime"
-          label={t.setlistForm.fields.openTime}
+          label={messages.setlistForm.fields.openTime}
           type="time"
           value={values.openTime}
           onChange={handleChange}
@@ -150,7 +152,7 @@ export function SetlistFormFields({ formik }: SetlistFormFieldsProps) {
         <TextField
           fullWidth
           name="startTime"
-          label={t.setlistForm.fields.startTime}
+          label={messages.setlistForm.fields.startTime}
           type="time"
           value={values.startTime}
           onChange={handleChange}

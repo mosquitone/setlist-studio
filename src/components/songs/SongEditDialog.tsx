@@ -21,7 +21,7 @@ export function SongEditDialog({
   onSave,
   loading = false,
 }: SongEditDialogProps) {
-  const { t } = useI18n();
+  const { messages } = useI18n();
   const [formValues, setFormValues] = useState<Omit<Song, 'id' | 'createdAt' | 'updatedAt'>>({
     title: '',
     artist: '',
@@ -65,39 +65,39 @@ export function SongEditDialog({
 
   return (
     <Dialog open={open} onClose={loading ? undefined : onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>{t.songs.form.editTitle}</DialogTitle>
+      <DialogTitle>{messages.songs.form.editTitle}</DialogTitle>
       <DialogContent>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
           <TextField
             ref={titleRef}
-            label={t.songs.form.titleLabel}
+            label={messages.songs.form.titleLabel}
             value={formValues.title}
             onChange={(e) => handleFieldChange('title', e.target.value)}
             fullWidth
             required
           />
           <TextField
-            label={t.songs.form.artistLabel}
+            label={messages.songs.form.artistLabel}
             value={formValues.artist}
             onChange={(e) => handleFieldChange('artist', e.target.value)}
             fullWidth
             required
           />
           <TextField
-            label={t.songs.form.keyLabel}
+            label={messages.songs.form.keyLabel}
             value={formValues.key || ''}
             onChange={(e) => handleFieldChange('key', e.target.value)}
             fullWidth
           />
           <TextField
-            label={t.songs.form.tempoLabel}
+            label={messages.songs.form.tempoLabel}
             type="number"
             value={formValues.tempo || ''}
             onChange={(e) => handleFieldChange('tempo', e.target.value)}
             fullWidth
           />
           <TextField
-            label={t.songs.form.notesLabel}
+            label={messages.songs.form.notesLabel}
             value={formValues.notes || ''}
             onChange={(e) => handleFieldChange('notes', e.target.value)}
             fullWidth
@@ -108,10 +108,10 @@ export function SongEditDialog({
       </DialogContent>
       <DialogActions>
         <Button variant="outlined" onClick={onClose} disabled={loading}>
-          {t.songs.form.cancel}
+          {messages.common.cancel}
         </Button>
         <Button onClick={handleSave} loading={loading}>
-          {t.songs.form.save}
+          {messages.common.save}
         </Button>
       </DialogActions>
     </Dialog>

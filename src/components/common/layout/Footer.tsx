@@ -6,7 +6,7 @@ import NextLink from 'next/link';
 import { useI18n } from '@/hooks/useI18n';
 
 export default function Footer() {
-  const { t } = useI18n();
+  const { messages } = useI18n();
 
   return (
     <Box
@@ -23,17 +23,17 @@ export default function Footer() {
       {/* 法的情報 */}
       <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, flexWrap: 'wrap', mb: 2 }}>
         <NextLink href="/terms" style={{ textDecoration: 'none', fontSize: '0.875rem' }}>
-          {t.ui.terms}
+          {messages.navigation.terms}
         </NextLink>
         <NextLink href="/privacy" style={{ textDecoration: 'none', fontSize: '0.875rem' }}>
-          {t.ui.privacy}
+          {messages.navigation.privacy}
         </NextLink>
       </Box>
 
       {/* サポート連絡先 */}
       <Box sx={{ mb: 2 }}>
         <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.875rem', mb: 1 }}>
-          {t.footer.contact}
+          {messages.footer.contact}
         </Typography>
         <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, flexWrap: 'wrap' }}>
           <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.875rem' }}>

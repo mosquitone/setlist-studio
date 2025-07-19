@@ -40,7 +40,7 @@ export function MobileNavigation({
   onToggle,
 }: MobileNavigationProps) {
   const { isLoggedIn, user, logout } = useAuth();
-  const { t } = useI18n();
+  const { messages } = useI18n();
   const pathname = usePathname();
 
   const handleLogout = () => {
@@ -134,7 +134,7 @@ export function MobileNavigation({
                   },
                 }}
               >
-                {t.navigation.profile}
+                {messages.navigation.profile}
               </Button>
               <Button
                 fullWidth
@@ -161,7 +161,7 @@ export function MobileNavigation({
                   },
                 }}
               >
-                {isLoading ? t.navigation.loading : t.navigation.logout}
+                {isLoading ? messages.common.loading : messages.navigation.logout}
               </Button>
             </>
           ) : (
