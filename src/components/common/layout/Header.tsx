@@ -99,6 +99,7 @@ export default function Header() {
               );
             }}
             sx={{
+              mr: { xs: 0, sm: 2 },
               minWidth: { xs: 20, sm: 100 },
               '& .MuiSelect-select': {
                 display: 'flex',
