@@ -13,11 +13,11 @@ interface AuthLinkProps {
   type: AuthLinkType;
 }
 
-const getTypeConfig = (t: Messages) => ({
+const getTypeConfig = (messages: Messages) => ({
   login: {
     href: '/login',
     icon: LoginIcon,
-    text: t.auth.login,
+    text: messages.auth.login,
     colors: {
       primary: '#3b82f6',
       hover: '#2563eb',
@@ -29,7 +29,7 @@ const getTypeConfig = (t: Messages) => ({
   register: {
     href: '/register',
     icon: PersonAddIcon,
-    text: t.auth.register,
+    text: messages.auth.register,
     colors: {
       primary: '#059669',
       hover: '#047857',
@@ -98,8 +98,8 @@ const variantConfig = {
 
 export function AuthLink({ variant, type }: AuthLinkProps) {
   const { isLoading } = useAuth();
-  const { t } = useI18n();
-  const typeConf = getTypeConfig(t)[type];
+  const { messages } = useI18n();
+  const typeConf = getTypeConfig(messages)[type];
   const variantConf = variantConfig[variant];
   const IconComponent = typeConf.icon;
 
@@ -117,7 +117,7 @@ export function AuthLink({ variant, type }: AuthLinkProps) {
       authButton
       sx={sx}
     >
-      {isLoading ? t.auth.loading : typeConf.text}
+      {isLoading ? messages.common.loading : typeConf.text}
     </Button>
   );
 }

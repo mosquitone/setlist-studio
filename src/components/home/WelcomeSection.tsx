@@ -5,7 +5,7 @@ import { LogoOfficialLink } from '@/components/common/LogoOfficialLink';
 import { useI18n } from '@/hooks/useI18n';
 
 export function WelcomeSection() {
-  const { t } = useI18n();
+  const { messages } = useI18n();
 
   return (
     <Box sx={{ textAlign: 'center' }}>
@@ -45,10 +45,10 @@ export function WelcomeSection() {
         }}
       >
         <Box component="span" sx={{ display: { xs: 'block', md: 'inline' }, fontWeight: 'bold' }}>
-          {t.pages.home.heroTitle}
+          {messages.pages.home.heroTitle}
         </Box>
         <Box component="span" sx={{ display: 'block' }}>
-          {t.pages.home.heroSubtitle}
+          {messages.pages.home.heroSubtitle}
         </Box>
       </Typography>
     </Box>

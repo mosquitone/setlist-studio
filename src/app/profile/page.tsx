@@ -39,7 +39,7 @@ const CHANGE_PASSWORD_MUTATION = gql`
 
 function ProfileContent() {
   const { user } = useAuth();
-  const { t } = useI18n();
+  const { messages } = useI18n();
   const [isEditing, setIsEditing] = useState(false);
   const [username, setUsername] = useState('');
   const [error, setError] = useState('');
@@ -68,13 +68,13 @@ function ProfileContent() {
           },
         });
 
-        setSuccess(t.notifications.profileUpdated);
+        setSuccess(messages.notifications.profileUpdated);
         setIsEditing(false);
       } catch (error) {
         if (process.env.NODE_ENV === 'development') {
           console.error('Failed to update cache:', error);
         }
-        setError(t.errors.somethingWentWrong);
+        setError(messages.errors.somethingWentWrong);
       }
     },
     onError: (error) => {
@@ -111,7 +111,7 @@ function ProfileContent() {
   const handleUpdateProfile = async () => {
     setError('');
     if (!username.trim()) {
-      setError(t.validation.required);
+      setError(messages.validation.required);
       return;
     }
 
@@ -128,22 +128,22 @@ function ProfileContent() {
 
     // バリデーション
     if (!currentPassword || !newPassword || !confirmPassword) {
-      setPasswordError(t.validation.required);
+      setPasswordError(messages.validation.required);
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setPasswordError(t.validation.passwordsDoNotMatch);
+      setPasswordError(messages.validation.passwordsDoNotMatch);
       return;
     }
 
     if (newPassword.length < 8) {
-      setPasswordError(t.validation.passwordTooShort);
+      setPasswordError(messages.validation.passwordTooShort);
       return;
     }
 
     if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(newPassword)) {
-      setPasswordError(t.validation.passwordTooShort);
+      setPasswordError(messages.validation.passwordTooShort);
       return;
     }
 
@@ -173,13 +173,13 @@ function ProfileContent() {
         <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
           <Box sx={{ textAlign: 'center' }}>
             <Typography variant="h6" color="error" gutterBottom>
-              {t.errors.somethingWentWrong}
+              {messages.errors.somethingWentWrong}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              {t.errors.somethingWentWrong}
+              {messages.errors.somethingWentWrong}
             </Typography>
             <Button sx={{ mt: 2 }} onClick={() => window.location.reload()}>
-              {t.auth.back}
+              {messages.common.back}
             </Button>
           </Box>
         </Paper>
@@ -206,10 +206,10 @@ function ProfileContent() {
           </Avatar>
           <Box sx={{ flexGrow: 1 }}>
             <Typography variant="h4" gutterBottom>
-              {t.auth.profile}
+              {messages.auth.profile}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              {t.pages.profile.description}
+              {messages.pages.profile.description}
             </Typography>
           </Box>
         </Box>
@@ -240,7 +240,7 @@ function ProfileContent() {
             {isEditing ? (
               <TextField
                 fullWidth
-                label={t.auth.username}
+                label={messages.auth.username}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 size="small"
@@ -248,9 +248,11 @@ function ProfileContent() {
             ) : (
               <Box>
                 <Typography variant="body2" color="text.secondary">
-                  {t.auth.username}
+                  {messages.auth.username}
                 </Typography>
-                <Typography variant="body1">{currentUser?.username || t.auth.noData}</Typography>
+                <Typography variant="body1">
+                  {currentUser?.username || messages.auth.noData}
+                </Typography>
               </Box>
             )}
           </Box>
@@ -259,7 +261,7 @@ function ProfileContent() {
             <EmailIcon sx={{ mr: 2, color: 'text.secondary' }} />
             <Box>
               <Typography variant="body2" color="text.secondary">
-                {t.auth.email}
+                {messages.auth.email}
               </Typography>
               <Typography variant="body1">{currentUser?.email}</Typography>
             </Box>
@@ -269,12 +271,12 @@ function ProfileContent() {
             <CalendarTodayIcon sx={{ mr: 2, color: 'text.secondary' }} />
             <Box>
               <Typography variant="body2" color="text.secondary">
-                {t.auth.createdAt}
+                {messages.auth.createdAt}
               </Typography>
               <Typography variant="body1">
                 {currentUser?.createdAt
                   ? format(new Date(currentUser.createdAt), 'yyyy年MM月dd日', { locale: ja })
-                  : t.auth.noData}
+                  : messages.auth.noData}
               </Typography>
             </Box>
           </Box>
@@ -286,7 +288,7 @@ function ProfileContent() {
         <Box sx={{ mb: 3 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             <LockIcon sx={{ mr: 2, color: 'text.secondary' }} />
-            <Typography variant="h6">{t.auth.changePassword}</Typography>
+            <Typography variant="h6">{messages.auth.changePassword}</Typography>
           </Box>
 
           {passwordError && (
@@ -299,7 +301,7 @@ function ProfileContent() {
             <Box sx={{ mb: 2 }}>
               <TextField
                 fullWidth
-                label={t.auth.currentPassword}
+                label={messages.auth.currentPassword}
                 type={showCurrentPassword ? 'text' : 'password'}
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
@@ -320,13 +322,13 @@ function ProfileContent() {
               />
               <TextField
                 fullWidth
-                label={t.auth.newPassword}
+                label={messages.auth.newPassword}
                 type={showNewPassword ? 'text' : 'password'}
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 size="small"
                 sx={{ mb: 2 }}
-                helperText={t.validation.passwordTooShort}
+                helperText={messages.validation.passwordTooShort}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -339,7 +341,7 @@ function ProfileContent() {
               />
               <TextField
                 fullWidth
-                label={t.auth.confirmPassword}
+                label={messages.auth.confirmPassword}
                 type={showConfirmPassword ? 'text' : 'password'}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
@@ -364,10 +366,10 @@ function ProfileContent() {
                   onClick={resetPasswordForm}
                   disabled={changePasswordLoading}
                 >
-                  {t.auth.cancel}
+                  {messages.common.cancel}
                 </Button>
                 <Button onClick={handleChangePassword} disabled={changePasswordLoading}>
-                  {changePasswordLoading ? t.auth.loading : t.auth.changePassword}
+                  {changePasswordLoading ? messages.common.loading : messages.auth.changePassword}
                 </Button>
               </Box>
             </Box>
@@ -378,7 +380,7 @@ function ProfileContent() {
                 onClick={() => setIsChangingPassword(true)}
                 startIcon={<LockIcon />}
               >
-                {t.auth.changePassword}
+                {messages.auth.changePassword}
               </Button>
             </Box>
           )}
@@ -398,22 +400,22 @@ function ProfileContent() {
                 }}
                 disabled={updateLoading}
               >
-                {t.auth.cancel}
+                {messages.common.cancel}
               </Button>
               <Button onClick={handleUpdateProfile} disabled={updateLoading}>
-                {updateLoading ? t.auth.loading : t.auth.save}
+                {updateLoading ? messages.common.loading : messages.common.save}
               </Button>
             </>
           ) : (
             <Button onClick={() => setIsEditing(true)} sx={{ borderRadius: 10 }}>
-              {t.auth.edit}
+              {messages.common.edit}
             </Button>
           )}
         </Box>
 
         <Box sx={{ mt: 4, pt: 3, borderTop: 1, borderColor: 'divider' }}>
           <Typography variant="body2" color="text.secondary" align="center">
-            {t.auth.accountId}: {currentUser?.id}
+            {messages.auth.accountId}: {currentUser?.id}
           </Typography>
         </Box>
       </Paper>

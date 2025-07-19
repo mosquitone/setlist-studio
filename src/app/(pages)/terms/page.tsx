@@ -6,10 +6,10 @@ import LegalPageTemplate from '@/components/common/templates/LegalPageTemplate';
 import { useI18n } from '@/hooks/useI18n';
 
 const TermsPage: React.FC = () => {
-  const { t } = useI18n();
+  const { messages } = useI18n();
 
   return (
-    <LegalPageTemplate title={t.pages.terms.title}>
+    <LegalPageTemplate title={messages.pages.terms.title}>
       <Typography variant="body2" color="text.secondary" paragraph>
         この利用規約（以下、「本規約」といいます。）は、mosquitone（以下、「当方」といいます。）がこのウェブサイト上で提供するサービス「Setlist
         Studio」（以下、「本サービス」といいます。）の利用条件を定めるものです。登録ユーザーの皆さま（以下、「ユーザー」といいます。）には、本規約に従って、本サービスをご利用いただきます。

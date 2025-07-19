@@ -168,7 +168,7 @@ export class EmailService {
   ): Promise<boolean> {
     const verificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/auth/verify-email?token=${token}`;
     const messages = getMessages(lang || 'ja');
-    const emailBody = messages.email.verificationBody(username, verificationUrl);
+    const emailBody = messages.emails.verificationBody(username, verificationUrl);
 
     const html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -181,7 +181,7 @@ export class EmailService {
       {
         from: this.fromEmail,
         to: email,
-        subject: `Setlist Studio - ${messages.email.verificationSubject}`,
+        subject: `Setlist Studio - ${messages.emails.verificationSubject}`,
         html,
       },
       'verification',
@@ -199,7 +199,7 @@ export class EmailService {
   ): Promise<boolean> {
     const resetUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/auth/reset-password?token=${token}`;
     const messages = getMessages(lang || 'ja');
-    const emailBody = messages.email.passwordResetBody(username, resetUrl);
+    const emailBody = messages.emails.passwordResetBody(username, resetUrl);
 
     const html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -212,7 +212,7 @@ export class EmailService {
       {
         from: this.fromEmail,
         to: email,
-        subject: `Setlist Studio - ${messages.email.passwordResetSubject}`,
+        subject: `Setlist Studio - ${messages.emails.passwordResetSubject}`,
         html,
       },
       'password_reset',
@@ -230,7 +230,7 @@ export class EmailService {
   ): Promise<boolean> {
     const confirmUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/auth/confirm-email-change?token=${token}`;
     const messages = getMessages(lang || 'ja');
-    const emailBody = messages.email.emailChangeBody(username, confirmUrl);
+    const emailBody = messages.emails.emailChangeBody(username, confirmUrl);
 
     const html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -243,7 +243,7 @@ export class EmailService {
       {
         from: this.fromEmail,
         to: newEmail,
-        subject: `Setlist Studio - ${messages.email.emailChangeSubject}`,
+        subject: `Setlist Studio - ${messages.emails.emailChangeSubject}`,
         html,
       },
       'email_change',
@@ -259,7 +259,7 @@ export class EmailService {
     lang?: Language,
   ): Promise<boolean> {
     const messages = getMessages(lang || 'ja');
-    const emailBody = messages.email.passwordResetSuccessBody(username);
+    const emailBody = messages.emails.passwordResetSuccessBody(username);
 
     const html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -272,7 +272,7 @@ export class EmailService {
       {
         from: this.fromEmail,
         to: email,
-        subject: `Setlist Studio - ${messages.email.passwordResetSuccessSubject}`,
+        subject: `Setlist Studio - ${messages.emails.passwordResetSuccessSubject}`,
         html,
       },
       'notification',
@@ -290,7 +290,7 @@ export class EmailService {
   ): Promise<EmailResult> {
     const verificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/auth/verify-email?token=${token}`;
     const messages = getMessages(lang || 'ja');
-    const emailBody = messages.email.verificationBody(username, verificationUrl);
+    const emailBody = messages.emails.verificationBody(username, verificationUrl);
 
     const html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -303,7 +303,7 @@ export class EmailService {
       {
         from: this.fromEmail,
         to: email,
-        subject: `Setlist Studio - ${messages.email.verificationSubject}`,
+        subject: `Setlist Studio - ${messages.emails.verificationSubject}`,
         html,
       },
       'verification',
@@ -321,7 +321,7 @@ export class EmailService {
   ): Promise<EmailResult> {
     const resetUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/auth/reset-password?token=${token}`;
     const messages = getMessages(lang || 'ja');
-    const emailBody = messages.email.passwordResetBody(username, resetUrl);
+    const emailBody = messages.emails.passwordResetBody(username, resetUrl);
 
     const html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -334,7 +334,7 @@ export class EmailService {
       {
         from: this.fromEmail,
         to: email,
-        subject: `Setlist Studio - ${messages.email.passwordResetSubject}`,
+        subject: `Setlist Studio - ${messages.emails.passwordResetSubject}`,
         html,
       },
       'password_reset',

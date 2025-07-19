@@ -15,6 +15,7 @@ import { validateAndSanitizeInput } from '@/lib/security/security-utils';
 import { useI18n } from '@/hooks/useI18n';
 
 import { SetlistFormValues } from '@/types/components';
+import { Messages } from '@/lib/i18n/messages';
 
 interface SetlistFormProps {
   title: string;
@@ -40,11 +41,11 @@ interface SetlistFormProps {
  */
 
 // バリデーションスキーマを関数として定義し、i18nメッセージを動的に取得
-const createValidationSchema = (t: any) =>
+const createValidationSchema = (messages: Messages) =>
   Yup.object({
     title: Yup.string()
-      .max(100, t.setlistForm.validation.titleMaxLength)
-      .test('sanitize', t.setlistForm.validation.titleInvalidChars, function (value) {
+      .max(100, messages.setlistForm.validation.titleMaxLength)
+      .test('sanitize', messages.setlistForm.validation.titleInvalidChars, function (value) {
         if (!value) return true;
         try {
           validateAndSanitizeInput(value, 100);
@@ -54,9 +55,9 @@ const createValidationSchema = (t: any) =>
         }
       }),
     bandName: Yup.string()
-      .required(t.setlistForm.validation.bandNameRequired)
-      .max(100, t.setlistForm.validation.bandNameMaxLength)
-      .test('sanitize', t.setlistForm.validation.bandNameInvalidChars, function (value) {
+      .required(messages.setlistForm.validation.bandNameRequired)
+      .max(100, messages.setlistForm.validation.bandNameMaxLength)
+      .test('sanitize', messages.setlistForm.validation.bandNameInvalidChars, function (value) {
         if (!value) return true;
         try {
           validateAndSanitizeInput(value, 100);
@@ -66,8 +67,8 @@ const createValidationSchema = (t: any) =>
         }
       }),
     eventName: Yup.string()
-      .max(200, t.setlistForm.validation.eventNameMaxLength)
-      .test('sanitize', t.setlistForm.validation.eventNameInvalidChars, function (value) {
+      .max(200, messages.setlistForm.validation.eventNameMaxLength)
+      .test('sanitize', messages.setlistForm.validation.eventNameInvalidChars, function (value) {
         if (!value) return true;
         try {
           validateAndSanitizeInput(value, 200);
@@ -79,37 +80,47 @@ const createValidationSchema = (t: any) =>
     eventDate: Yup.string(),
     openTime: Yup.string(),
     startTime: Yup.string(),
-    theme: Yup.string().required(t.ui.required),
+    theme: Yup.string().required(messages.validation.required),
     items: Yup.array()
       .of(
         Yup.object({
           title: Yup.string()
-            .required(t.setlistForm.validation.songTitleRequired || t.ui.required)
-            .max(200, t.setlistForm.validation.songTitleMaxLength)
-            .test('sanitize', t.setlistForm.validation.songTitleInvalidChars, function (value) {
-              if (!value) return true;
-              try {
-                validateAndSanitizeInput(value, 200);
-                return true;
-              } catch {
-                return false;
-              }
-            }),
+            .required(
+              messages.setlistForm.validation.songTitleRequired || messages.validation.required,
+            )
+            .max(200, messages.setlistForm.validation.songTitleMaxLength)
+            .test(
+              'sanitize',
+              messages.setlistForm.validation.songTitleInvalidChars,
+              function (value) {
+                if (!value) return true;
+                try {
+                  validateAndSanitizeInput(value, 200);
+                  return true;
+                } catch {
+                  return false;
+                }
+              },
+            ),
           note: Yup.string()
-            .max(500, t.setlistForm.validation.songNoteMaxLength)
-            .test('sanitize', t.setlistForm.validation.songNoteInvalidChars, function (value) {
-              if (!value) return true;
-              try {
-                validateAndSanitizeInput(value, 500);
-                return true;
-              } catch {
-                return false;
-              }
-            }),
+            .max(500, messages.setlistForm.validation.songNoteMaxLength)
+            .test(
+              'sanitize',
+              messages.setlistForm.validation.songNoteInvalidChars,
+              function (value) {
+                if (!value) return true;
+                try {
+                  validateAndSanitizeInput(value, 500);
+                  return true;
+                } catch {
+                  return false;
+                }
+              },
+            ),
         }),
       )
-      .min(1, t.setlistForm.validation.minSongsRequired)
-      .max(20, t.setlistForm.validation.maxSongsExceeded),
+      .min(1, messages.setlistForm.validation.minSongsRequired)
+      .max(20, messages.setlistForm.validation.maxSongsExceeded),
   });
 
 export default function SetlistForm({
@@ -122,7 +133,7 @@ export default function SetlistForm({
   enableDragAndDrop = true,
 }: SetlistFormProps) {
   const { data: songsData } = useQuery(GET_SONGS);
-  const { t } = useI18n();
+  const { messages } = useI18n();
   const songs = useMemo(() => songsData?.songs || [], [songsData]);
 
   return (
@@ -138,7 +149,7 @@ export default function SetlistForm({
 
       <Formik
         initialValues={initialValues}
-        validationSchema={createValidationSchema(t)}
+        validationSchema={createValidationSchema(messages)}
         onSubmit={onSubmit}
         enableReinitialize
       >
@@ -153,10 +164,10 @@ export default function SetlistForm({
 
               <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
                 <Typography variant="h6" gutterBottom>
-                  {t.setlistForm.songsList.title}
+                  {messages.setlistForm.songsList.title}
                 </Typography>
                 <Alert severity="info" sx={{ mb: 2 }}>
-                  {t.setlistForm.songsList.maxSongsWarning}
+                  {messages.setlistForm.songsList.maxSongsWarning}
                 </Alert>
 
                 <FieldArray name="items">
@@ -241,8 +252,8 @@ export default function SetlistForm({
                           disabled={values.items.length >= 20}
                         >
                           {values.items.length >= 20
-                            ? t.setlistForm.songsList.maxSongsWarning
-                            : t.setlistForm.songsList.addSong}
+                            ? messages.setlistForm.songsList.maxSongsWarning
+                            : messages.setlistForm.songsList.addSong}
                         </Button>
                       </>
                     );
@@ -263,7 +274,7 @@ export default function SetlistForm({
                   disabled={loading}
                   onClick={() => window.history.back()}
                 >
-                  {t.setlistForm.buttons.cancel}
+                  {messages.common.cancel}
                 </Button>
                 <Button type="submit" loading={loading} size="large">
                   {submitButtonText}

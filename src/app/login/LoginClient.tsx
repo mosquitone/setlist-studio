@@ -29,7 +29,7 @@ export default function LoginClient() {
   const searchParams = useSearchParams();
   const successMessage = searchParams.get('message');
   const { login: authLogin } = useAuth();
-  const { t } = useI18n();
+  const { messages } = useI18n();
 
   const [loginMutation, { loading }] = useMutation(LOGIN, {
     onCompleted: async (data) => {
@@ -63,10 +63,10 @@ export default function LoginClient() {
           <Box sx={{ textAlign: 'center', mb: 4 }}>
             <LoginIcon sx={{ fontSize: 64, color: 'primary.main', mb: 2 }} />
             <Typography variant="h4" component="h1" gutterBottom>
-              {t.auth.login}
+              {messages.auth.login}
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              {t.auth.loginToManageSetlists}
+              {messages.auth.loginToManageSetlists}
             </Typography>
           </Box>
 
@@ -85,7 +85,7 @@ export default function LoginClient() {
           <Box component="form" onSubmit={handleSubmit}>
             <TextField
               fullWidth
-              label={t.auth.email}
+              label={messages.auth.email}
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -95,7 +95,7 @@ export default function LoginClient() {
             />
             <TextField
               fullWidth
-              label={t.auth.password}
+              label={messages.auth.password}
               type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -119,20 +119,20 @@ export default function LoginClient() {
               disabled={loading}
               sx={{ mt: 3, mb: 2, py: 1.5 }}
             >
-              {loading ? t.auth.loading : t.auth.login}
+              {loading ? messages.common.loading : messages.auth.login}
             </Button>
           </Box>
 
           <Box textAlign="center">
             <Typography variant="body2" sx={{ mb: 2 }}>
               <Link href="/auth/forgot-password" style={{ color: 'inherit' }}>
-                {t.auth.forgotPassword}
+                {messages.auth.forgotPassword}
               </Link>
             </Typography>
             <Typography variant="body2">
-              {t.auth.dontHaveAccount}{' '}
+              {messages.auth.dontHaveAccount}{' '}
               <Link href="/register" style={{ color: 'inherit' }}>
-                <strong>{t.auth.register}</strong>
+                <strong>{messages.auth.register}</strong>
               </Link>
             </Typography>
           </Box>

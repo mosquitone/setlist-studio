@@ -15,7 +15,7 @@ export default function NewSetlistPage() {
   const searchParams = useSearchParams();
   const duplicateId = searchParams.get('duplicate');
   const selectedSongsParam = searchParams.get('selectedSongs');
-  const { t } = useI18n();
+  const { messages } = useI18n();
   const [initialValues, setInitialValues] = useState<SetlistFormValues>({
     title: '',
     bandName: '',
@@ -69,7 +69,7 @@ export default function NewSetlistPage() {
     if (duplicateData?.setlist) {
       const setlist = duplicateData.setlist;
       setInitialValues({
-        title: `${setlist.title} (${t.setlistForm.copy})`,
+        title: `${setlist.title} (${messages.setlistForm.copy})`,
         bandName: setlist.bandName || '',
         eventName: setlist.eventName || '',
         eventDate: setlist.eventDate || '',
@@ -99,9 +99,9 @@ export default function NewSetlistPage() {
         console.error('Failed to parse selected songs:', error);
       }
     }
-  }, [duplicateData, selectedSongsParam, t.setlistForm.copy]);
+  }, [duplicateData, selectedSongsParam, messages.setlistForm.copy]);
 
-  const createError = error ? new Error(`${t.errors.serverError}: ${error.message}`) : null;
+  const createError = error ? new Error(`${messages.errors.serverError}: ${error.message}`) : null;
   const isLoading = loading || duplicateLoading;
 
   return (
@@ -109,16 +109,16 @@ export default function NewSetlistPage() {
       <SetlistForm
         title={
           duplicateId
-            ? t.setlistForm.titles.duplicate
+            ? messages.setlistForm.titles.duplicate
             : selectedSongsParam
-              ? t.setlistForm.titles.fromSongs
-              : t.setlistForm.titles.create
+              ? messages.setlistForm.titles.fromSongs
+              : messages.setlistForm.titles.create
         }
         initialValues={initialValues}
         onSubmit={handleSubmit}
         loading={isLoading}
         error={createError}
-        submitButtonText={t.setlistForm.buttons.create}
+        submitButtonText={messages.setlistForm.buttons.create}
         enableDragAndDrop={true}
       />
     </ProtectedRoute>

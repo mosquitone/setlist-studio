@@ -14,7 +14,7 @@ import { useI18n } from '@/hooks/useI18n';
 
 export default function HomeClient() {
   const { isLoggedIn, isLoading } = useAuth();
-  const { t } = useI18n();
+  const { messages } = useI18n();
 
   const { data: setlistsData, loading: setlistsLoading } = useQuery<GetSetlistsResponse>(
     GET_SETLISTS,
@@ -38,7 +38,7 @@ export default function HomeClient() {
           }}
         >
           <Typography variant="h6" color="text.secondary">
-            {t.ui.loading}
+            {messages.common.loading}
           </Typography>
         </Box>
       </Container>

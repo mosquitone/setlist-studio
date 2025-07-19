@@ -20,7 +20,7 @@ interface UserMenuProps {
 
 export function UserMenu({ onAuthClick }: UserMenuProps) {
   const { user } = useAuth();
-  const { t } = useI18n();
+  const { messages } = useI18n();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleUserMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -78,7 +78,7 @@ export function UserMenu({ onAuthClick }: UserMenuProps) {
         >
           <PersonIcon fontSize="small" />
           <Link href="/profile" underline="none" color="inherit">
-            {t.navigation.profile}
+            {messages.navigation.profile}
           </Link>
         </MenuItem>
         <Divider />
@@ -90,7 +90,7 @@ export function UserMenu({ onAuthClick }: UserMenuProps) {
           sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
         >
           <LogoutIcon fontSize="small" />
-          {t.navigation.logout}
+          {messages.navigation.logout}
         </MenuItem>
       </Menu>
     </>

@@ -37,7 +37,7 @@ interface SetlistDashboardProps {
 }
 
 export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashboardProps) {
-  const { t, lang } = useI18n();
+  const { messages, lang } = useI18n();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [setlistToDelete, setSetlistToDelete] = useState<Setlist | null>(null);
 
@@ -73,11 +73,11 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
     return (
       <Box>
         <Typography variant="h4" component="h2" gutterBottom sx={{ mb: 4 }}>
-          {t.pages.home.dashboard.title}
+          {messages.pages.home.dashboard.title}
         </Typography>
         <Box sx={{ textAlign: 'center', py: 8 }}>
           <Typography variant="h6" color="text.secondary">
-            {t.pages.home.dashboard.loading}
+            {messages.pages.home.dashboard.loading}
           </Typography>
         </Box>
       </Box>
@@ -88,15 +88,15 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
     return (
       <Box>
         <Typography variant="h4" component="h2" gutterBottom sx={{ mb: 4 }}>
-          {t.pages.home.dashboard.title}
+          {messages.pages.home.dashboard.title}
         </Typography>
         <Card sx={{ p: 6, textAlign: 'center', bgcolor: 'grey.50' }}>
           <PlaylistPlayIcon sx={{ fontSize: 64, color: 'grey.400', mb: 3 }} />
           <Typography variant="h5" gutterBottom color="text.secondary">
-            {t.pages.home.dashboard.empty.title}
+            {messages.pages.home.dashboard.empty.title}
           </Typography>
           <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-            {t.pages.home.dashboard.empty.description}
+            {messages.pages.home.dashboard.empty.description}
           </Typography>
           <Button
             component={Link}
@@ -105,7 +105,7 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
             size="large"
             sx={{ borderRadius: 3 }}
           >
-            {t.pages.home.dashboard.empty.createButton}
+            {messages.pages.home.dashboard.empty.createButton}
           </Button>
         </Card>
       </Box>
@@ -115,7 +115,7 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
   return (
     <Box>
       <Typography variant="h4" component="h2" gutterBottom sx={{ mb: 4 }}>
-        {t.pages.home.dashboard.title}
+        {messages.pages.home.dashboard.title}
       </Typography>
       <Grid container spacing={2}>
         {setlistsData.setlists.map((setlist: Setlist) => (
@@ -182,8 +182,8 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
                         icon={setlist.isPublic ? <PublicIcon /> : <LockIcon />}
                         label={
                           setlist.isPublic
-                            ? t.pages.home.dashboard.public
-                            : t.pages.home.dashboard.private
+                            ? messages.pages.home.dashboard.public
+                            : messages.pages.home.dashboard.private
                         }
                         size="small"
                         sx={{
@@ -200,8 +200,8 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
                       <Chip
                         label={
                           setlist.theme === 'white'
-                            ? t.pages.home.dashboard.white
-                            : t.pages.home.dashboard.black
+                            ? messages.pages.home.dashboard.white
+                            : messages.pages.home.dashboard.black
                         }
                         size="small"
                         sx={{
@@ -289,7 +289,7 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
                       mb: 1,
                     }}
                   >
-                    {setlist.items.length} {t.pages.home.dashboard.songsCount}
+                    {setlist.items.length} {messages.pages.home.dashboard.songsCount}
                   </Typography>
                 </Box>
               </CardActionArea>
@@ -327,7 +327,7 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
                   }}
                   onClick={(e) => e.stopPropagation()}
                 >
-                  {t.pages.home.dashboard.edit}
+                  {messages.pages.home.dashboard.edit}
                 </Button>
                 <IconButton
                   onClick={(e) => handleDeleteClick(setlist, e)}
@@ -353,9 +353,9 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
         open={deleteDialogOpen}
         onClose={handleDeleteCancel}
         onConfirm={handleDeleteConfirm}
-        title={t.pages.home.dashboard.delete.title}
+        title={messages.pages.home.dashboard.delete.title}
         itemName={setlistToDelete?.title || ''}
-        itemType={t.pages.home.dashboard.delete.itemType}
+        itemType={messages.pages.home.dashboard.delete.itemType}
         loading={deleteLoading}
       />
     </Box>

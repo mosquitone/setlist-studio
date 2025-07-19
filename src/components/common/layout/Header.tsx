@@ -26,16 +26,16 @@ import {
  */
 export default function Header() {
   const { isLoggedIn, isLoading, logout } = useAuth();
-  const { lang, changeLanguage, t } = useI18n();
+  const { lang, changeLanguage, messages } = useI18n();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   // ログイン状態に応じて表示するナビゲーション項目を決定（useMemoで最適化）
   const navigationItems = useMemo(
     () =>
       isLoggedIn
-        ? [...getPublicNavigationItems(t), ...getAuthenticatedNavigationItems(t)]
-        : getPublicNavigationItems(t),
-    [isLoggedIn, t], // tに言語情報が含まれているため、langは不要
+        ? [...getPublicNavigationItems(messages), ...getAuthenticatedNavigationItems(messages)]
+        : getPublicNavigationItems(messages),
+    [isLoggedIn, messages], // tに言語情報が含まれているため、langは不要
   );
 
   const handleLogout = () => {

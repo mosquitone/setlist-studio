@@ -42,18 +42,18 @@ import {
 import { useI18n } from '@/hooks/useI18n';
 
 export default function GuidePage() {
-  const { t } = useI18n();
+  const { messages } = useI18n();
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Box sx={{ mb: 4 }}>
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mb: 2 }}>
           <Typography variant="h3" component="h1">
-            {t.pages.guide.title}
+            {messages.pages.guide.title}
           </Typography>
         </Box>
         <Typography variant="h6" color="text.secondary" align="center" sx={{ mb: 4 }}>
-          {t.pages.guide.subtitle}
+          {messages.pages.guide.subtitle}
         </Typography>
       </Box>
 
@@ -67,16 +67,16 @@ export default function GuidePage() {
             sx={{ display: 'flex', alignItems: 'center' }}
           >
             <Public sx={{ mr: 2, color: 'primary.main' }} />
-            {t.pages.guide.aboutSection.title}
+            {messages.pages.guide.aboutSection.title}
           </Typography>
           <Typography variant="body1" paragraph>
-            {t.pages.guide.aboutSection.description1}
+            {messages.pages.guide.aboutSection.description1}
           </Typography>
           <Typography variant="body1" paragraph>
-            {t.pages.guide.aboutSection.description2}
+            {messages.pages.guide.aboutSection.description2}
           </Typography>
           <Alert severity="info" sx={{ mt: 2 }}>
-            {t.pages.guide.aboutSection.alertInfo}
+            {messages.pages.guide.aboutSection.alertInfo}
           </Alert>
         </CardContent>
       </Card>
@@ -85,7 +85,7 @@ export default function GuidePage() {
       <Card sx={{ mb: 4 }}>
         <CardContent>
           <Typography variant="h4" component="h2" gutterBottom>
-            {t.pages.guide.featureComparison.title}
+            {messages.pages.guide.featureComparison.title}
           </Typography>
 
           <TableContainer component={Paper}>
@@ -93,25 +93,25 @@ export default function GuidePage() {
               <TableHead>
                 <TableRow>
                   <TableCell>
-                    <strong>{t.pages.guide.featureComparison.features}</strong>
+                    <strong>{messages.pages.guide.featureComparison.features}</strong>
                   </TableCell>
                   <TableCell align="center">
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <PersonOff sx={{ mr: 1, color: 'warning.main' }} />
-                      <strong>{t.pages.guide.featureComparison.unregisteredUser}</strong>
+                      <strong>{messages.pages.guide.featureComparison.unregisteredUser}</strong>
                     </Box>
                   </TableCell>
                   <TableCell align="center">
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <AccountCircle sx={{ mr: 1, color: 'primary.main' }} />
-                      <strong>{t.pages.guide.featureComparison.registeredUser}</strong>
+                      <strong>{messages.pages.guide.featureComparison.registeredUser}</strong>
                     </Box>
                   </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 <TableRow>
-                  <TableCell>{t.pages.guide.featureComparison.publicSetlistView}</TableCell>
+                  <TableCell>{messages.pages.guide.featureComparison.publicSetlistView}</TableCell>
                   <TableCell align="center">
                     <Check sx={{ color: 'success.main' }} />
                   </TableCell>
@@ -120,7 +120,7 @@ export default function GuidePage() {
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>{t.pages.guide.featureComparison.imageDownload}</TableCell>
+                  <TableCell>{messages.pages.guide.featureComparison.imageDownload}</TableCell>
                   <TableCell align="center">
                     <Check sx={{ color: 'success.main' }} />
                   </TableCell>
@@ -129,7 +129,7 @@ export default function GuidePage() {
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>{t.pages.guide.featureComparison.setlistShare}</TableCell>
+                  <TableCell>{messages.pages.guide.featureComparison.setlistShare}</TableCell>
                   <TableCell align="center">
                     <Check sx={{ color: 'success.main' }} />
                   </TableCell>
@@ -138,7 +138,7 @@ export default function GuidePage() {
                   </TableCell>
                 </TableRow>
                 <TableRow sx={{ bgcolor: 'grey.50' }}>
-                  <TableCell>{t.pages.guide.featureComparison.setlistManagement}</TableCell>
+                  <TableCell>{messages.pages.guide.featureComparison.setlistManagement}</TableCell>
                   <TableCell align="center">
                     <Close sx={{ color: 'error.main' }} />
                   </TableCell>
@@ -147,7 +147,7 @@ export default function GuidePage() {
                   </TableCell>
                 </TableRow>
                 <TableRow sx={{ bgcolor: 'grey.50' }}>
-                  <TableCell>{t.pages.guide.featureComparison.songDatabase}</TableCell>
+                  <TableCell>{messages.pages.guide.featureComparison.songDatabase}</TableCell>
                   <TableCell align="center">
                     <Close sx={{ color: 'error.main' }} />
                   </TableCell>
@@ -156,7 +156,7 @@ export default function GuidePage() {
                   </TableCell>
                 </TableRow>
                 <TableRow sx={{ bgcolor: 'grey.50' }}>
-                  <TableCell>{t.pages.guide.featureComparison.publicitySettings}</TableCell>
+                  <TableCell>{messages.pages.guide.featureComparison.publicitySettings}</TableCell>
                   <TableCell align="center">
                     <Close sx={{ color: 'error.main' }} />
                   </TableCell>
@@ -165,7 +165,7 @@ export default function GuidePage() {
                   </TableCell>
                 </TableRow>
                 <TableRow sx={{ bgcolor: 'grey.50' }}>
-                  <TableCell>{t.pages.guide.featureComparison.duplicateFunction}</TableCell>
+                  <TableCell>{messages.pages.guide.featureComparison.duplicateFunction}</TableCell>
                   <TableCell align="center">
                     <Close sx={{ color: 'error.main' }} />
                   </TableCell>
@@ -174,7 +174,7 @@ export default function GuidePage() {
                   </TableCell>
                 </TableRow>
                 <TableRow sx={{ bgcolor: 'grey.50' }}>
-                  <TableCell>{t.pages.guide.featureComparison.personalDashboard}</TableCell>
+                  <TableCell>{messages.pages.guide.featureComparison.personalDashboard}</TableCell>
                   <TableCell align="center">
                     <Close sx={{ color: 'error.main' }} />
                   </TableCell>
@@ -183,7 +183,7 @@ export default function GuidePage() {
                   </TableCell>
                 </TableRow>
                 <TableRow sx={{ bgcolor: 'grey.50' }}>
-                  <TableCell>{t.pages.guide.featureComparison.profileManagement}</TableCell>
+                  <TableCell>{messages.pages.guide.featureComparison.profileManagement}</TableCell>
                   <TableCell align="center">
                     <Close sx={{ color: 'error.main' }} />
                   </TableCell>
@@ -207,10 +207,10 @@ export default function GuidePage() {
             sx={{ display: 'flex', alignItems: 'center' }}
           >
             <PersonAdd sx={{ mr: 2, color: 'warning.main' }} />
-            {t.pages.guide.accountBenefits.title}
+            {messages.pages.guide.accountBenefits.title}
           </Typography>
           <Typography variant="body1" paragraph>
-            {t.pages.guide.accountBenefits.description}
+            {messages.pages.guide.accountBenefits.description}
           </Typography>
 
           <Grid container spacing={2}>
@@ -218,10 +218,10 @@ export default function GuidePage() {
               <Paper sx={{ p: 2, textAlign: 'center', height: '100%' }}>
                 <PlaylistAdd sx={{ fontSize: 40, color: 'primary.main', mb: 1 }} />
                 <Typography variant="h6" gutterBottom>
-                  {t.pages.guide.accountBenefits.setlistCreation.title}
+                  {messages.pages.guide.accountBenefits.setlistCreation.title}
                 </Typography>
                 <Typography variant="body2">
-                  {t.pages.guide.accountBenefits.setlistCreation.description}
+                  {messages.pages.guide.accountBenefits.setlistCreation.description}
                 </Typography>
               </Paper>
             </Grid>
@@ -229,10 +229,10 @@ export default function GuidePage() {
               <Paper sx={{ p: 2, textAlign: 'center', height: '100%' }}>
                 <LibraryMusic sx={{ fontSize: 40, color: 'info.main', mb: 1 }} />
                 <Typography variant="h6" gutterBottom>
-                  {t.pages.guide.accountBenefits.songManagement.title}
+                  {messages.pages.guide.accountBenefits.songManagement.title}
                 </Typography>
                 <Typography variant="body2">
-                  {t.pages.guide.accountBenefits.songManagement.description}
+                  {messages.pages.guide.accountBenefits.songManagement.description}
                 </Typography>
               </Paper>
             </Grid>
@@ -240,10 +240,10 @@ export default function GuidePage() {
               <Paper sx={{ p: 2, textAlign: 'center', height: '100%' }}>
                 <Lock sx={{ fontSize: 40, color: 'secondary.main', mb: 1 }} />
                 <Typography variant="h6" gutterBottom>
-                  {t.pages.guide.accountBenefits.privateFeatures.title}
+                  {messages.pages.guide.accountBenefits.privateFeatures.title}
                 </Typography>
                 <Typography variant="body2">
-                  {t.pages.guide.accountBenefits.privateFeatures.description}
+                  {messages.pages.guide.accountBenefits.privateFeatures.description}
                 </Typography>
               </Paper>
             </Grid>
@@ -251,8 +251,8 @@ export default function GuidePage() {
 
           <Alert severity="info" sx={{ mt: 3 }}>
             <Typography variant="body2">
-              <strong>{t.pages.guide.accountBenefits.signUpNow}</strong>{' '}
-              {t.pages.guide.accountBenefits.signUpDescription}
+              <strong>{messages.pages.guide.accountBenefits.signUpNow}</strong>{' '}
+              {messages.pages.guide.accountBenefits.signUpDescription}
             </Typography>
           </Alert>
         </CardContent>
@@ -262,7 +262,7 @@ export default function GuidePage() {
       <Card sx={{ mb: 4 }}>
         <CardContent>
           <Typography variant="h4" component="h2" gutterBottom>
-            {t.pages.guide.publicUsage.title}
+            {messages.pages.guide.publicUsage.title}
           </Typography>
           <List>
             <ListItem>
@@ -284,8 +284,8 @@ export default function GuidePage() {
                 </Box>
               </ListItemIcon>
               <ListItemText
-                primary={t.pages.guide.publicUsage.step1.title}
-                secondary={t.pages.guide.publicUsage.step1.description}
+                primary={messages.pages.guide.publicUsage.step1.title}
+                secondary={messages.pages.guide.publicUsage.step1.description}
               />
             </ListItem>
             <ListItem>
@@ -307,8 +307,8 @@ export default function GuidePage() {
                 </Box>
               </ListItemIcon>
               <ListItemText
-                primary={t.pages.guide.publicUsage.step2.title}
-                secondary={t.pages.guide.publicUsage.step2.description}
+                primary={messages.pages.guide.publicUsage.step2.title}
+                secondary={messages.pages.guide.publicUsage.step2.description}
               />
             </ListItem>
             <ListItem>
@@ -330,8 +330,8 @@ export default function GuidePage() {
                 </Box>
               </ListItemIcon>
               <ListItemText
-                primary={t.pages.guide.publicUsage.step3.title}
-                secondary={t.pages.guide.publicUsage.step3.description}
+                primary={messages.pages.guide.publicUsage.step3.title}
+                secondary={messages.pages.guide.publicUsage.step3.description}
               />
             </ListItem>
             <ListItem>
@@ -353,8 +353,8 @@ export default function GuidePage() {
                 </Box>
               </ListItemIcon>
               <ListItemText
-                primary={t.pages.guide.publicUsage.step4.title}
-                secondary={t.pages.guide.publicUsage.step4.description}
+                primary={messages.pages.guide.publicUsage.step4.title}
+                secondary={messages.pages.guide.publicUsage.step4.description}
               />
             </ListItem>
           </List>
@@ -365,7 +365,7 @@ export default function GuidePage() {
       <Card sx={{ mb: 4 }}>
         <CardContent>
           <Typography variant="h4" component="h2" gutterBottom>
-            {t.pages.guide.pageDetails.title}
+            {messages.pages.guide.pageDetails.title}
           </Typography>
 
           <Grid container spacing={3}>
@@ -374,25 +374,33 @@ export default function GuidePage() {
               <Paper sx={{ p: 3, height: '100%' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                   <Home sx={{ mr: 2, color: 'primary.main' }} />
-                  <Typography variant="h6">{t.pages.guide.pageDetails.homePage.title}</Typography>
+                  <Typography variant="h6">
+                    {messages.pages.guide.pageDetails.homePage.title}
+                  </Typography>
                 </Box>
                 <Typography variant="body2" paragraph>
-                  <strong>{t.pages.guide.featureComparison.unregisteredUser}:</strong>{' '}
-                  {t.pages.guide.pageDetails.homePage.unregisteredDescription}
+                  <strong>{messages.pages.guide.featureComparison.unregisteredUser}:</strong>{' '}
+                  {messages.pages.guide.pageDetails.homePage.unregisteredDescription}
                 </Typography>
                 <Typography variant="body2" paragraph>
-                  <strong>{t.pages.guide.featureComparison.registeredUser}:</strong>{' '}
-                  {t.pages.guide.pageDetails.homePage.registeredDescription}
+                  <strong>{messages.pages.guide.featureComparison.registeredUser}:</strong>{' '}
+                  {messages.pages.guide.pageDetails.homePage.registeredDescription}
                 </Typography>
                 <List dense>
                   <ListItem sx={{ pl: 0 }}>
-                    <ListItemText primary={`• ${t.pages.guide.pageDetails.homePage.feature1}`} />
+                    <ListItemText
+                      primary={`• ${messages.pages.guide.pageDetails.homePage.feature1}`}
+                    />
                   </ListItem>
                   <ListItem sx={{ pl: 0 }}>
-                    <ListItemText primary={`• ${t.pages.guide.pageDetails.homePage.feature2}`} />
+                    <ListItemText
+                      primary={`• ${messages.pages.guide.pageDetails.homePage.feature2}`}
+                    />
                   </ListItem>
                   <ListItem sx={{ pl: 0 }}>
-                    <ListItemText primary={`• ${t.pages.guide.pageDetails.homePage.feature3}`} />
+                    <ListItemText
+                      primary={`• ${messages.pages.guide.pageDetails.homePage.feature3}`}
+                    />
                   </ListItem>
                 </List>
               </Paper>
@@ -404,48 +412,60 @@ export default function GuidePage() {
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                   <Visibility sx={{ mr: 2, color: 'success.main' }} />
                   <Typography variant="h6">
-                    {t.pages.guide.pageDetails.setlistDetail.title}
+                    {messages.pages.guide.pageDetails.setlistDetail.title}
                   </Typography>
                 </Box>
                 <Typography variant="body2" paragraph>
-                  {t.pages.guide.pageDetails.setlistDetail.description}
+                  {messages.pages.guide.pageDetails.setlistDetail.description}
                 </Typography>
                 <List dense>
                   <ListItem sx={{ pl: 0 }}>
                     <ListItemIcon>
                       <Visibility sx={{ fontSize: 16 }} />
                     </ListItemIcon>
-                    <ListItemText primary={t.pages.guide.pageDetails.setlistDetail.feature1} />
+                    <ListItemText
+                      primary={messages.pages.guide.pageDetails.setlistDetail.feature1}
+                    />
                   </ListItem>
                   <ListItem sx={{ pl: 0 }}>
                     <ListItemIcon>
                       <Palette sx={{ fontSize: 16 }} />
                     </ListItemIcon>
-                    <ListItemText primary={t.pages.guide.pageDetails.setlistDetail.feature2} />
+                    <ListItemText
+                      primary={messages.pages.guide.pageDetails.setlistDetail.feature2}
+                    />
                   </ListItem>
                   <ListItem sx={{ pl: 0 }}>
                     <ListItemIcon>
                       <Download sx={{ fontSize: 16 }} />
                     </ListItemIcon>
-                    <ListItemText primary={t.pages.guide.pageDetails.setlistDetail.feature3} />
+                    <ListItemText
+                      primary={messages.pages.guide.pageDetails.setlistDetail.feature3}
+                    />
                   </ListItem>
                   <ListItem sx={{ pl: 0 }}>
                     <ListItemIcon>
                       <Share sx={{ fontSize: 16 }} />
                     </ListItemIcon>
-                    <ListItemText primary={t.pages.guide.pageDetails.setlistDetail.feature4} />
+                    <ListItemText
+                      primary={messages.pages.guide.pageDetails.setlistDetail.feature4}
+                    />
                   </ListItem>
                   <ListItem sx={{ pl: 0 }}>
                     <ListItemIcon>
                       <Edit sx={{ fontSize: 16 }} />
                     </ListItemIcon>
-                    <ListItemText primary={t.pages.guide.pageDetails.setlistDetail.feature5} />
+                    <ListItemText
+                      primary={messages.pages.guide.pageDetails.setlistDetail.feature5}
+                    />
                   </ListItem>
                   <ListItem sx={{ pl: 0 }}>
                     <ListItemIcon>
                       <FileCopy sx={{ fontSize: 16 }} />
                     </ListItemIcon>
-                    <ListItemText primary={t.pages.guide.pageDetails.setlistDetail.feature6} />
+                    <ListItemText
+                      primary={messages.pages.guide.pageDetails.setlistDetail.feature6}
+                    />
                   </ListItem>
                 </List>
               </Paper>
@@ -457,37 +477,37 @@ export default function GuidePage() {
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                   <LibraryMusic sx={{ mr: 2, color: 'info.main' }} />
                   <Typography variant="h6">
-                    {t.pages.guide.pageDetails.songManagement.title}
+                    {messages.pages.guide.pageDetails.songManagement.title}
                   </Typography>
                 </Box>
                 <Typography variant="body2" paragraph>
-                  <strong>{t.auth.authRequired}:</strong>{' '}
-                  {t.pages.guide.pageDetails.songManagement.description}
+                  <strong>{messages.auth.authRequired}:</strong>{' '}
+                  {messages.pages.guide.pageDetails.songManagement.description}
                 </Typography>
                 <List dense>
                   <ListItem sx={{ pl: 0 }}>
                     <ListItemText
-                      primary={`• ${t.pages.guide.pageDetails.songManagement.feature1}`}
+                      primary={`• ${messages.pages.guide.pageDetails.songManagement.feature1}`}
                     />
                   </ListItem>
                   <ListItem sx={{ pl: 0 }}>
                     <ListItemText
-                      primary={`• ${t.pages.guide.pageDetails.songManagement.feature2}`}
+                      primary={`• ${messages.pages.guide.pageDetails.songManagement.feature2}`}
                     />
                   </ListItem>
                   <ListItem sx={{ pl: 0 }}>
                     <ListItemText
-                      primary={`• ${t.pages.guide.pageDetails.songManagement.feature3}`}
+                      primary={`• ${messages.pages.guide.pageDetails.songManagement.feature3}`}
                     />
                   </ListItem>
                   <ListItem sx={{ pl: 0 }}>
                     <ListItemText
-                      primary={`• ${t.pages.guide.pageDetails.songManagement.feature4}`}
+                      primary={`• ${messages.pages.guide.pageDetails.songManagement.feature4}`}
                     />
                   </ListItem>
                   <ListItem sx={{ pl: 0 }}>
                     <ListItemText
-                      primary={`• ${t.pages.guide.pageDetails.songManagement.feature5}`}
+                      primary={`• ${messages.pages.guide.pageDetails.songManagement.feature5}`}
                     />
                   </ListItem>
                 </List>
@@ -500,47 +520,47 @@ export default function GuidePage() {
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                   <PlaylistAdd sx={{ mr: 2, color: 'warning.main' }} />
                   <Typography variant="h6">
-                    {t.pages.guide.pageDetails.setlistCreation.title}
+                    {messages.pages.guide.pageDetails.setlistCreation.title}
                   </Typography>
                 </Box>
                 <Typography variant="body2" paragraph>
-                  <strong>{t.auth.authRequired}:</strong>{' '}
-                  {t.pages.guide.pageDetails.setlistCreation.description}
+                  <strong>{messages.auth.authRequired}:</strong>{' '}
+                  {messages.pages.guide.pageDetails.setlistCreation.description}
                 </Typography>
                 <List dense>
                   <ListItem sx={{ pl: 0 }}>
                     <ListItemText
-                      primary={`• ${t.pages.guide.pageDetails.setlistCreation.feature1}`}
+                      primary={`• ${messages.pages.guide.pageDetails.setlistCreation.feature1}`}
                     />
                   </ListItem>
                   <ListItem sx={{ pl: 0 }}>
                     <ListItemText
-                      primary={`• ${t.pages.guide.pageDetails.setlistCreation.feature2}`}
+                      primary={`• ${messages.pages.guide.pageDetails.setlistCreation.feature2}`}
                     />
                   </ListItem>
                   <ListItem sx={{ pl: 0 }}>
                     <ListItemText
-                      primary={`• ${t.pages.guide.pageDetails.setlistCreation.feature3}`}
+                      primary={`• ${messages.pages.guide.pageDetails.setlistCreation.feature3}`}
                     />
                   </ListItem>
                   <ListItem sx={{ pl: 0 }}>
                     <ListItemText
-                      primary={`• ${t.pages.guide.pageDetails.setlistCreation.feature4}`}
+                      primary={`• ${messages.pages.guide.pageDetails.setlistCreation.feature4}`}
                     />
                   </ListItem>
                   <ListItem sx={{ pl: 0 }}>
                     <ListItemText
-                      primary={`• ${t.pages.guide.pageDetails.setlistCreation.feature5}`}
+                      primary={`• ${messages.pages.guide.pageDetails.setlistCreation.feature5}`}
                     />
                   </ListItem>
                   <ListItem sx={{ pl: 0 }}>
                     <ListItemText
-                      primary={`• ${t.pages.guide.pageDetails.setlistCreation.feature6}`}
+                      primary={`• ${messages.pages.guide.pageDetails.setlistCreation.feature6}`}
                     />
                   </ListItem>
                   <ListItem sx={{ pl: 0 }}>
                     <ListItemText
-                      primary={`• ${t.pages.guide.pageDetails.setlistCreation.feature7}`}
+                      primary={`• ${messages.pages.guide.pageDetails.setlistCreation.feature7}`}
                     />
                   </ListItem>
                 </List>
@@ -552,24 +572,34 @@ export default function GuidePage() {
               <Paper sx={{ p: 3, height: '100%' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                   <AccountCircle sx={{ mr: 2, color: 'secondary.main' }} />
-                  <Typography variant="h6">{t.pages.guide.pageDetails.profile.title}</Typography>
+                  <Typography variant="h6">
+                    {messages.pages.guide.pageDetails.profile.title}
+                  </Typography>
                 </Box>
                 <Typography variant="body2" paragraph>
-                  <strong>{t.auth.authRequired}:</strong>{' '}
-                  {t.pages.guide.pageDetails.profile.description}
+                  <strong>{messages.auth.authRequired}:</strong>{' '}
+                  {messages.pages.guide.pageDetails.profile.description}
                 </Typography>
                 <List dense>
                   <ListItem sx={{ pl: 0 }}>
-                    <ListItemText primary={`• ${t.pages.guide.pageDetails.profile.feature1}`} />
+                    <ListItemText
+                      primary={`• ${messages.pages.guide.pageDetails.profile.feature1}`}
+                    />
                   </ListItem>
                   <ListItem sx={{ pl: 0 }}>
-                    <ListItemText primary={`• ${t.pages.guide.pageDetails.profile.feature2}`} />
+                    <ListItemText
+                      primary={`• ${messages.pages.guide.pageDetails.profile.feature2}`}
+                    />
                   </ListItem>
                   <ListItem sx={{ pl: 0 }}>
-                    <ListItemText primary={`• ${t.pages.guide.pageDetails.profile.feature3}`} />
+                    <ListItemText
+                      primary={`• ${messages.pages.guide.pageDetails.profile.feature3}`}
+                    />
                   </ListItem>
                   <ListItem sx={{ pl: 0 }}>
-                    <ListItemText primary={`• ${t.pages.guide.pageDetails.profile.feature4}`} />
+                    <ListItemText
+                      primary={`• ${messages.pages.guide.pageDetails.profile.feature4}`}
+                    />
                   </ListItem>
                 </List>
               </Paper>

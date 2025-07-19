@@ -23,7 +23,7 @@ import { useRouter } from 'next/navigation';
 import { useI18n } from '@/hooks/useI18n';
 
 export default function RegisterClient() {
-  const { t } = useI18n();
+  const { messages } = useI18n();
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -38,7 +38,7 @@ export default function RegisterClient() {
     onCompleted: () => {
       // 新規登録成功後はログイン画面へ遷移
       router.push(
-        `/login?message=${t.notifications.accountCreated || 'Account created successfully. Please login.'}`,
+        `/login?message=${messages.notifications.accountCreated || 'Account created successfully. Please login.'}`,
       );
     },
     onError: (error) => {
@@ -48,7 +48,7 @@ export default function RegisterClient() {
 
   const validatePassword = (password: string): string | null => {
     const result = validateField(password, 'password');
-    return result.isValid ? null : result.message || t.validation.passwordTooShort;
+    return result.isValid ? null : result.message || messages.validation.passwordTooShort;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -63,12 +63,12 @@ export default function RegisterClient() {
     }
 
     if (password !== confirmPassword) {
-      setError(t.validation.passwordsDoNotMatch);
+      setError(messages.validation.passwordsDoNotMatch);
       return;
     }
 
     if (!agreeToTerms) {
-      setError(t.validation.agreeToTerms || 'Please agree to the terms and conditions');
+      setError(messages.validation.agreeToTerms || 'Please agree to the terms and conditions');
       return;
     }
 
@@ -86,10 +86,10 @@ export default function RegisterClient() {
           <Box sx={{ textAlign: 'center', mb: 4 }}>
             <PersonAddIcon sx={{ fontSize: 64, color: 'primary.main', mb: 2 }} />
             <Typography variant="h4" component="h1" gutterBottom>
-              {t.auth.register}
+              {messages.auth.register}
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              {t.auth.createAccountToStart}
+              {messages.auth.createAccountToStart}
             </Typography>
           </Box>
 
@@ -102,7 +102,7 @@ export default function RegisterClient() {
           <Box component="form" onSubmit={handleSubmit}>
             <TextField
               fullWidth
-              label={t.auth.username}
+              label={messages.auth.username}
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               margin="normal"
@@ -111,7 +111,7 @@ export default function RegisterClient() {
             />
             <TextField
               fullWidth
-              label={t.auth.email}
+              label={messages.auth.email}
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -121,7 +121,7 @@ export default function RegisterClient() {
             />
             <TextField
               fullWidth
-              label={t.auth.password}
+              label={messages.auth.password}
               type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -147,7 +147,7 @@ export default function RegisterClient() {
             />
             <TextField
               fullWidth
-              label={t.auth.confirmPassword}
+              label={messages.auth.confirmPassword}
               type={showConfirmPassword ? 'text' : 'password'}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
@@ -179,13 +179,13 @@ export default function RegisterClient() {
               label={
                 <Typography variant="body2">
                   <Link href="/terms" style={{ color: 'inherit', textDecoration: 'underline' }}>
-                    {t.auth.terms}
+                    {messages.auth.terms}
                   </Link>
-                  {t.auth.and || 'and'}
+                  {messages.auth.and || 'and'}
                   <Link href="/privacy" style={{ color: 'inherit', textDecoration: 'underline' }}>
-                    {t.auth.privacy}
+                    {messages.auth.privacy}
                   </Link>
-                  {t.auth.agree || 'に同意します'}
+                  {messages.auth.agree || 'に同意します'}
                 </Typography>
               }
               sx={{ mt: 2, mb: 1 }}
@@ -198,15 +198,15 @@ export default function RegisterClient() {
               disabled={loading || !agreeToTerms}
               sx={{ mt: 2, mb: 2, py: 1.5 }}
             >
-              {loading ? t.auth.loading : t.auth.register}
+              {loading ? messages.common.loading : messages.auth.register}
             </Button>
           </Box>
 
           <Box textAlign="center">
             <Typography variant="body2">
-              {t.auth.alreadyHaveAccount}{' '}
+              {messages.auth.alreadyHaveAccount}{' '}
               <Link href="/login" style={{ color: 'inherit' }}>
-                <strong>{t.auth.login}</strong>
+                <strong>{messages.auth.login}</strong>
               </Link>
             </Typography>
           </Box>

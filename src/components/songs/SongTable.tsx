@@ -43,7 +43,7 @@ export function SongTable({
   onToggleSelection,
   onSelectAll,
 }: SongTableProps) {
-  const { t } = useI18n();
+  const { messages } = useI18n();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -62,10 +62,10 @@ export function SongTable({
     return (
       <Box sx={{ textAlign: 'center', py: 8 }}>
         <Typography variant="h6" color="text.secondary">
-          {t.songs.empty.title}
+          {messages.songs.empty.title}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          {t.songs.empty.description}
+          {messages.songs.empty.description}
         </Typography>
       </Box>
     );
@@ -95,7 +95,7 @@ export function SongTable({
                         onToggleSelection(song.id);
                       }}
                       size="small"
-                      aria-label={`${song.title}${t.songs.table.selectSong}`}
+                      aria-label={`${song.title}${messages.songs.table.selectSong}`}
                     />
                     <Box sx={{ flex: 1, minWidth: 0 }}>
                       <Typography variant="h6" component="h3" noWrap>
@@ -114,7 +114,7 @@ export function SongTable({
                       }}
                       color="primary"
                       size="small"
-                      aria-label={`${song.title}${t.songs.table.editSong}`}
+                      aria-label={`${song.title}${messages.songs.table.editSong}`}
                     >
                       <EditIcon />
                     </IconButton>
@@ -125,7 +125,7 @@ export function SongTable({
                       }}
                       color="error"
                       size="small"
-                      aria-label={`${song.title}${t.songs.table.deleteSong}`}
+                      aria-label={`${song.title}${messages.songs.table.deleteSong}`}
                     >
                       <DeleteIcon />
                     </IconButton>
@@ -135,14 +135,14 @@ export function SongTable({
                 <Stack direction="row" spacing={1} flexWrap="wrap">
                   {song.key && (
                     <Chip
-                      label={`${t.songs.chips.keyPrefix}${song.key}`}
+                      label={`${messages.songs.chips.keyPrefix}${song.key}`}
                       size="small"
                       variant="outlined"
                     />
                   )}
                   {song.tempo && (
                     <Chip
-                      label={`${t.songs.chips.tempoPrefix}${song.tempo}`}
+                      label={`${messages.songs.chips.tempoPrefix}${song.tempo}`}
                       size="small"
                       variant="outlined"
                     />
@@ -173,15 +173,15 @@ export function SongTable({
                 checked={isAllSelected}
                 indeterminate={isSomeSelected}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => onSelectAll(e.target.checked)}
-                aria-label={t.songs.table.selectAll}
+                aria-label={messages.songs.table.selectAll}
               />
             </TableCell>
-            <TableCell>{t.songs.table.title}</TableCell>
-            <TableCell>{t.songs.table.artist}</TableCell>
-            <TableCell>{t.songs.table.key}</TableCell>
-            <TableCell>{t.songs.table.tempo}</TableCell>
-            <TableCell>{t.songs.table.notes}</TableCell>
-            <TableCell align="right">{t.songs.table.actions}</TableCell>
+            <TableCell>{messages.songs.table.title}</TableCell>
+            <TableCell>{messages.songs.table.artist}</TableCell>
+            <TableCell>{messages.songs.table.key}</TableCell>
+            <TableCell>{messages.songs.table.tempo}</TableCell>
+            <TableCell>{messages.songs.table.notes}</TableCell>
+            <TableCell align="right">{messages.songs.table.actions}</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -207,13 +207,13 @@ export function SongTable({
                   onDelete(song);
                 }
               }}
-              aria-label={`${t.songs.table.title}: ${song.title}。Enter${t.songs.table.editSong}、Delete${t.songs.table.deleteSong}`}
+              aria-label={`${messages.songs.table.title}: ${song.title}。Enter${messages.songs.table.editSong}、Delete${messages.songs.table.deleteSong}`}
             >
               <TableCell padding="checkbox">
                 <Checkbox
                   checked={selectedSongs.includes(song.id)}
                   onChange={() => onToggleSelection(song.id)}
-                  aria-label={`${song.title}${t.songs.table.selectSong}`}
+                  aria-label={`${song.title}${messages.songs.table.selectSong}`}
                 />
               </TableCell>
               <TableCell>{song.title}</TableCell>
@@ -226,7 +226,7 @@ export function SongTable({
                   onClick={() => onEdit(song)}
                   color="primary"
                   size="small"
-                  aria-label={`${song.title}${t.songs.table.editSong}`}
+                  aria-label={`${song.title}${messages.songs.table.editSong}`}
                 >
                   <EditIcon />
                 </IconButton>
@@ -234,7 +234,7 @@ export function SongTable({
                   onClick={() => onDelete(song)}
                   color="error"
                   size="small"
-                  aria-label={`${song.title}${t.songs.table.deleteSong}`}
+                  aria-label={`${song.title}${messages.songs.table.deleteSong}`}
                 >
                   <DeleteIcon />
                 </IconButton>

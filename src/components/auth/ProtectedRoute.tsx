@@ -20,10 +20,10 @@ export function ProtectedRoute({
   requireAuth = true,
 }: ProtectedRouteProps) {
   const { isLoggedIn, isLoading } = useAuth();
-  const { t } = useI18n();
+  const { messages } = useI18n();
   const router = useRouter();
 
-  const defaultLoadingMessage = loadingMessage || t.auth.checkingLoginStatus;
+  const defaultLoadingMessage = loadingMessage || messages.auth.checkingLoginStatus;
 
   useEffect(() => {
     if (!isLoading && !isLoggedIn && requireAuth) {
@@ -46,7 +46,7 @@ export function ProtectedRoute({
     return (
       <Container maxWidth="lg" sx={{ py: 4, textAlign: 'center' }}>
         <CircularProgress />
-        <Typography sx={{ mt: 2 }}>{t.auth.redirectingToLogin}</Typography>
+        <Typography sx={{ mt: 2 }}>{messages.auth.redirectingToLogin}</Typography>
       </Container>
     );
   }
@@ -70,7 +70,7 @@ export function SetlistProtectedRoute({
   error,
 }: SetlistProtectedRouteProps) {
   const { isLoggedIn, isLoading: authLoading } = useAuth();
-  const { t } = useI18n();
+  const { messages } = useI18n();
   const router = useRouter();
 
   // 全てのuseEffectを最初に配置
@@ -124,7 +124,7 @@ export function SetlistProtectedRoute({
     return (
       <Container maxWidth="lg" sx={{ py: 4, textAlign: 'center' }}>
         <CircularProgress />
-        <Typography sx={{ mt: 2 }}>{t.ui.loading}</Typography>
+        <Typography sx={{ mt: 2 }}>{messages.common.loading}</Typography>
       </Container>
     );
   }
@@ -143,7 +143,7 @@ export function SetlistProtectedRoute({
       return (
         <Container maxWidth="lg" sx={{ py: 4, textAlign: 'center' }}>
           <CircularProgress />
-          <Typography sx={{ mt: 2 }}>{t.auth.redirectingToLogin}</Typography>
+          <Typography sx={{ mt: 2 }}>{messages.auth.redirectingToLogin}</Typography>
         </Container>
       );
     }
@@ -153,7 +153,7 @@ export function SetlistProtectedRoute({
   if (error || !setlistData) {
     return (
       <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Alert severity="error">{t.errors.setlistNotFound}</Alert>
+        <Alert severity="error">{messages.errors.setlistNotFound}</Alert>
       </Container>
     );
   }
@@ -163,7 +163,7 @@ export function SetlistProtectedRoute({
     return (
       <Container maxWidth="lg" sx={{ py: 4, textAlign: 'center' }}>
         <CircularProgress />
-        <Typography sx={{ mt: 2 }}>{t.auth.redirectingToLogin}</Typography>
+        <Typography sx={{ mt: 2 }}>{messages.auth.redirectingToLogin}</Typography>
       </Container>
     );
   }

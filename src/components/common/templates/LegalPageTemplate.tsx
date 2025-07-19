@@ -10,7 +10,7 @@ interface LegalPageTemplateProps {
 }
 
 const LegalPageTemplate: React.FC<LegalPageTemplateProps> = ({ title, children }) => {
-  const { t } = useI18n();
+  const { messages } = useI18n();
 
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
@@ -23,7 +23,7 @@ const LegalPageTemplate: React.FC<LegalPageTemplateProps> = ({ title, children }
           {children}
 
           <Typography variant="body2" color="text.secondary" sx={{ mt: 6 }}>
-            {t.ui.effectiveDate}：2025年7月18日
+            {messages.common.effectiveDate}：2025年7月18日
           </Typography>
         </Box>
       </Paper>

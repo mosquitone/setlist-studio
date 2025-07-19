@@ -7,7 +7,6 @@ interface I18nContextValue {
   lang: Language;
   messages: Messages;
   changeLanguage: (newLang: Language) => void;
-  t: Messages;
 }
 
 const I18nContext = createContext<I18nContextValue | undefined>(undefined);
@@ -44,7 +43,6 @@ export function I18nProvider({ children }: I18nProviderProps) {
     lang,
     messages,
     changeLanguage,
-    t: messages,
   };
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;

@@ -10,7 +10,7 @@ import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { useI18n } from '@/hooks/useI18n';
 
 export default function SongsPage() {
-  const { t } = useI18n();
+  const { messages } = useI18n();
   const {
     songs,
     loading,
@@ -50,7 +50,7 @@ export default function SongsPage() {
 
           {error && (
             <Alert severity="error" sx={{ mb: 3 }}>
-              {t.errors.somethingWentWrong}
+              {messages.errors.somethingWentWrong}
             </Alert>
           )}
 
@@ -76,9 +76,9 @@ export default function SongsPage() {
             open={isDeleteDialogOpen}
             onClose={handleDeleteCancel}
             onConfirm={handleDeleteConfirm}
-            title={t.ui.deleteSong}
+            title={messages.common.deleteSong}
             itemName={songToDelete?.title || ''}
-            itemType={t.ui.song}
+            itemType={messages.common.song}
             loading={deleteLoading}
           />
 
@@ -86,10 +86,10 @@ export default function SongsPage() {
             open={isMultipleDeleteDialogOpen}
             onClose={handleDeleteSelectedCancel}
             onConfirm={handleDeleteSelectedConfirm}
-            title={t.ui.deleteSong}
-            itemName={`${selectedSongs.length} ${t.ui.songs}`}
-            itemType={t.ui.song}
-            description={t.confirmations.deleteSong}
+            title={messages.common.deleteSong}
+            itemName={`${selectedSongs.length} ${messages.navigation.songs}`}
+            itemType={messages.common.song}
+            description={messages.confirmations.deleteSong}
             loading={deleteMultipleLoading}
           />
         </Box>
