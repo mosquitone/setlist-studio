@@ -131,8 +131,8 @@ export class AuthResolver {
       },
     );
 
-    // メール認証メールを送信
-    const emailSent = await emailService.sendEmailVerification(
+    // メール認証メールを送信（詳細版を使用）
+    const emailResult = await emailService.sendEmailVerificationWithDetails(
       user.email,
       user.username,
       verificationToken,
@@ -149,7 +149,10 @@ export class AuthResolver {
       details: {
         email: user.email,
         username: user.username,
-        emailSent,
+        emailSent: emailResult.success,
+        emailAttempts: emailResult.attempts,
+        emailMessageId: emailResult.messageId,
+        emailError: emailResult.finalError?.message,
       },
     });
 
@@ -372,8 +375,8 @@ export class AuthResolver {
       },
     });
 
-    // メール送信
-    const emailSent = await emailService.sendPasswordResetEmail(
+    // メール送信（詳細版を使用）
+    const emailResult = await emailService.sendPasswordResetEmailWithDetails(
       user.email,
       user.username,
       token,
@@ -388,7 +391,10 @@ export class AuthResolver {
       userAgent: ctx.req?.headers['user-agent'],
       details: {
         email: user.email,
-        emailSent,
+        emailSent: emailResult.success,
+        emailAttempts: emailResult.attempts,
+        emailMessageId: emailResult.messageId,
+        emailError: emailResult.finalError?.message,
       },
     });
 
@@ -666,8 +672,13 @@ export class AuthResolver {
       },
     });
 
-    // メール送信
-    await emailService.sendEmailVerification(user.email, user.username, token, ctx.i18n?.lang);
+    // メール送信（詳細版を使用）
+    const emailResult = await emailService.sendEmailVerificationWithDetails(
+      user.email,
+      user.username,
+      token,
+      ctx.i18n?.lang,
+    );
 
     await logSecurityEventDB(ctx.prisma, {
       type: SecurityEventType.EMAIL_VERIFICATION_RESEND,
@@ -677,6 +688,10 @@ export class AuthResolver {
       userAgent: ctx.req?.headers['user-agent'],
       details: {
         email: user.email,
+        emailSent: emailResult.success,
+        emailAttempts: emailResult.attempts,
+        emailMessageId: emailResult.messageId,
+        emailError: emailResult.finalError?.message,
       },
     });
 
