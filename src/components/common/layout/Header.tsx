@@ -51,19 +51,22 @@ export default function Header() {
       <AppBar position="sticky" sx={{ borderRadius: 0 }}>
         <Toolbar>
           {/* モバイルハンバーガーメニュー */}
-          <MobileNavigation
-            items={navigationItems}
-            isLoading={isLoading}
-            mobileOpen={mobileOpen}
-            onToggle={handleDrawerToggle}
-          />
+          <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
+            <MobileNavigation
+              items={navigationItems}
+              isLoading={isLoading}
+              mobileOpen={mobileOpen}
+              onToggle={handleDrawerToggle}
+            />
+          </Box>
 
-          {/* モバイル: ロゴを中央配置、デスクトップ: 左寄せ */}
+          {/* モバイル: ロゴを完全中央配置 */}
           <Box
             sx={{
               display: { xs: 'flex', sm: 'none' },
-              justifyContent: 'center',
-              flexGrow: 1,
+              position: 'absolute',
+              left: '50%',
+              transform: 'translateX(-50%)',
             }}
           >
             <HeaderLogo />
@@ -96,8 +99,7 @@ export default function Header() {
               );
             }}
             sx={{
-              mr: { xs: 0, sm: 2 },
-              minWidth: { xs: 60, sm: 100 },
+              minWidth: { xs: 20, sm: 100 },
               '& .MuiSelect-select': {
                 display: 'flex',
                 alignItems: 'center',
