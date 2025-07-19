@@ -10,6 +10,8 @@ import {
   MenuItem,
   Autocomplete,
 } from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import dayjs, { Dayjs } from 'dayjs';
 import { FormikProps } from 'formik';
 import { SetlistFormValues } from '@/types/components';
 import { useQuery } from '@apollo/client';
@@ -21,8 +23,13 @@ interface SetlistFormFieldsProps {
 }
 
 export function SetlistFormFields({ formik }: SetlistFormFieldsProps) {
-  const { values, errors, touched, handleChange, handleBlur } = formik;
-  const { messages } = useI18n();
+  const { values, errors, touched, handleChange, handleBlur, setFieldValue } = formik;
+  const { messages, lang } = useI18n();
+
+  // dayjsロケール設定
+  React.useEffect(() => {
+    dayjs.locale(lang);
+  }, [lang]);
 
   const themes = [
     { value: 'black', label: 'Black' },
@@ -125,15 +132,28 @@ export function SetlistFormFields({ formik }: SetlistFormFieldsProps) {
         />
       </Grid>
       <Grid item xs={12} sm={6}>
-        <TextField
-          fullWidth
-          name="eventDate"
+        <DatePicker
           label={messages.setlistForm.fields.eventDate}
-          type="date"
-          value={values.eventDate}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          InputLabelProps={{ shrink: true }}
+          value={values.eventDate ? dayjs(values.eventDate) : null}
+          onChange={(newValue: Dayjs | null) => {
+            setFieldValue('eventDate', newValue ? newValue.format('YYYY-MM-DD') : '');
+          }}
+          slotProps={{
+            textField: {
+              fullWidth: true,
+              error: touched.eventDate && Boolean(errors.eventDate),
+              helperText: touched.eventDate && errors.eventDate,
+              onBlur: handleBlur,
+              name: 'eventDate',
+              InputProps: {
+                sx: {
+                  borderRadius: '12px',
+                  width: '100%',
+                },
+              },
+            },
+          }}
+          format={lang === 'ja' ? 'YYYY年MM月DD日' : 'MM/DD/YYYY'}
         />
       </Grid>
       <Grid item xs={12} sm={6}>
