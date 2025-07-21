@@ -21,9 +21,11 @@ import { validateField, ValidationRules } from '@/lib/security/validation-rules'
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useI18n } from '@/hooks/useI18n';
+import { useAuth } from '@/components/providers/AuthProvider';
 
 export default function RegisterClient() {
   const { messages } = useI18n();
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -37,23 +39,16 @@ export default function RegisterClient() {
   const [register, { loading }] = useMutation(REGISTER, {
     onCompleted: async (data) => {
       try {
-        // JWTトークンをHttpOnly Cookieに設定
-        const response = await fetch('/api/auth', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ token: data.register.token }),
-        });
-
-        if (response.ok) {
-          // 新規登録成功後はホーム画面へ遷移（ログイン済み）
+        // useAuthのloginメソッドを使用して認証状態を同期
+        const result = await login(data.register.token);
+        if (result.success) {
+          // 新規登録成功後はホーム画面へ遷移（認証状態が更新済み）
           router.push('/');
         } else {
           setError('認証の設定に失敗しました');
         }
       } catch (error) {
-        console.error('Auth cookie setup failed:', error);
+        console.error('Auth login failed:', error);
         setError('認証の設定に失敗しました');
       }
     },
