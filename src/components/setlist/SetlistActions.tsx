@@ -6,7 +6,6 @@ import {
   FormControl,
   Select,
   MenuItem,
-  IconButton,
   Tooltip,
   Stack,
   useTheme,
@@ -129,53 +128,60 @@ export function SetlistActions({
 
         {/* 設定・ツール群 */}
         <Stack direction="row" spacing={1} alignItems="center" justifyContent="flex-end">
-          {isOwner && onToggleVisibility && (
-            <Tooltip
-              title={
-                isPublic
-                  ? messages.setlistDetail.actions.makePrivate
-                  : messages.setlistDetail.actions.makePublic
-              }
+          {/* 公開/非公開ボタン（オーナー）または状態表示（非オーナー） */}
+          {isOwner && onToggleVisibility ? (
+            <Button
+              variant={isPublic ? 'contained' : 'outlined'}
+              startIcon={isPublic ? <PublicIcon /> : <LockIcon />}
+              onClick={onToggleVisibility}
+              size="small"
+              sx={{
+                fontSize: '0.75rem',
+                px: 1,
+                minWidth: 120,
+                whiteSpace: 'nowrap',
+                color: isPublic ? 'white' : '#374151',
+                backgroundColor: isPublic ? '#10b981' : 'transparent',
+                borderColor: isPublic ? '#10b981' : '#d1d5db',
+                '&:hover': {
+                  backgroundColor: isPublic ? '#059669' : 'rgba(17, 24, 39, 0.05)',
+                  borderColor: isPublic ? '#059669' : '#9ca3af',
+                },
+              }}
             >
-              <IconButton
-                onClick={onToggleVisibility}
-                size="small"
-                sx={{
-                  color: isPublic ? '#16a34a' : '#6b7280',
-                  backgroundColor: isPublic ? 'rgba(34, 197, 94, 0.1)' : 'rgba(156, 163, 175, 0.1)',
-                  '&:hover': {
+              {isPublic
+                ? messages.setlistDetail.actions.makePrivate
+                : messages.setlistDetail.actions.makePublic}
+            </Button>
+          ) : (
+            !isOwner && (
+              <Tooltip
+                title={
+                  isPublic
+                    ? `${messages.common.public}${messages.common.setlist}`
+                    : `${messages.common.private}${messages.common.setlist}`
+                }
+              >
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 0.5,
+                    color: isPublic ? '#10b981' : '#6b7280',
                     backgroundColor: isPublic
-                      ? 'rgba(34, 197, 94, 0.2)'
-                      : 'rgba(156, 163, 175, 0.2)',
-                  },
-                }}
-              >
-                {isPublic ? <PublicIcon /> : <LockIcon />}
-              </IconButton>
-            </Tooltip>
-          )}
-
-          {!isOwner && (
-            <Tooltip
-              title={
-                isPublic
-                  ? `${messages.common.public}${messages.common.setlist}`
-                  : `${messages.common.private}${messages.common.setlist}`
-              }
-            >
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  color: isPublic ? '#16a34a' : '#6b7280',
-                  backgroundColor: isPublic ? 'rgba(34, 197, 94, 0.1)' : 'rgba(156, 163, 175, 0.1)',
-                  borderRadius: 1,
-                  p: 1,
-                }}
-              >
-                {isPublic ? <PublicIcon /> : <LockIcon />}
-              </Box>
-            </Tooltip>
+                      ? 'rgba(16, 185, 129, 0.1)'
+                      : 'rgba(156, 163, 175, 0.1)',
+                    borderRadius: 1,
+                    px: 1.5,
+                    py: 0.5,
+                    fontSize: '0.75rem',
+                  }}
+                >
+                  {isPublic ? <PublicIcon fontSize="small" /> : <LockIcon fontSize="small" />}
+                  {isPublic ? messages.common.public : messages.common.private}
+                </Box>
+              </Tooltip>
+            )
           )}
 
           {showDebugToggle && onDebugToggle && (
@@ -248,28 +254,27 @@ export function SetlistActions({
 
       <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
         {isOwner && onToggleVisibility && (
-          <Tooltip
-            title={
-              isPublic
-                ? messages.setlistDetail.actions.makePrivate
-                : messages.setlistDetail.actions.makePublic
-            }
+          <Button
+            variant={isPublic ? 'contained' : 'outlined'}
+            startIcon={isPublic ? <PublicIcon /> : <LockIcon />}
+            onClick={onToggleVisibility}
+            sx={{
+              minWidth: 140,
+              whiteSpace: 'nowrap',
+              color: isPublic ? 'white' : '#374151',
+              backgroundColor: isPublic ? '#10b981' : 'transparent',
+              borderColor: isPublic ? '#10b981' : '#d1d5db',
+              '&:hover': {
+                backgroundColor: isPublic ? '#059669' : 'rgba(17, 24, 39, 0.05)',
+                borderColor: isPublic ? '#059669' : '#9ca3af',
+              },
+            }}
           >
-            <IconButton
-              onClick={onToggleVisibility}
-              sx={{
-                color: isPublic ? '#16a34a' : '#6b7280',
-                backgroundColor: isPublic ? 'rgba(34, 197, 94, 0.1)' : 'rgba(156, 163, 175, 0.1)',
-                '&:hover': {
-                  backgroundColor: isPublic ? 'rgba(34, 197, 94, 0.2)' : 'rgba(156, 163, 175, 0.2)',
-                },
-              }}
-            >
-              {isPublic ? <PublicIcon /> : <LockIcon />}
-            </IconButton>
-          </Tooltip>
+            {isPublic
+              ? messages.setlistDetail.actions.makePrivate
+              : messages.setlistDetail.actions.makePublic}
+          </Button>
         )}
-
         {!isOwner && (
           <Tooltip
             title={
@@ -282,13 +287,17 @@ export function SetlistActions({
               sx={{
                 display: 'flex',
                 alignItems: 'center',
-                color: isPublic ? '#16a34a' : '#6b7280',
-                backgroundColor: isPublic ? 'rgba(34, 197, 94, 0.1)' : 'rgba(156, 163, 175, 0.1)',
+                gap: 1,
+                color: isPublic ? '#10b981' : '#6b7280',
+                backgroundColor: isPublic ? 'rgba(16, 185, 129, 0.1)' : 'rgba(156, 163, 175, 0.1)',
                 borderRadius: 1,
-                p: 1,
+                px: 2,
+                py: 1,
+                fontSize: '0.875rem',
               }}
             >
-              {isPublic ? <PublicIcon /> : <LockIcon />}
+              {isPublic ? <PublicIcon fontSize="small" /> : <LockIcon fontSize="small" />}
+              {isPublic ? messages.common.public : messages.common.private}
             </Box>
           </Tooltip>
         )}
