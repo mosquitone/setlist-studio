@@ -850,13 +850,6 @@ export class AuthResolver {
     @Arg('input', () => ChangePasswordInput) input: ChangePasswordInput,
     @Ctx() ctx: Context,
   ): Promise<ChangePasswordResponse> {
-    // デバッグログ
-    if (process.env.NODE_ENV === 'development') {
-      console.log('🔐 changePassword called');
-      console.log('  ctx.userId:', ctx.userId);
-      console.log('  ctx.user:', ctx.user);
-    }
-
     // AuthMiddlewareにより認証済み
     const userId = ctx.userId!;
 

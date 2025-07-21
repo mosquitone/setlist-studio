@@ -177,15 +177,11 @@ export async function checkConnection(prisma: PrismaClient): Promise<boolean> {
  * クエリ実行時間測定
  */
 export async function measureQuery<T>(name: string, query: () => Promise<T>): Promise<T> {
-  const start = performance.now();
   try {
     const result = await query();
-    const duration = performance.now() - start;
-    console.log(`⏱️  Query ${name}: ${duration.toFixed(2)}ms`);
     return result;
   } catch (error) {
-    const duration = performance.now() - start;
-    console.error(`❌ Query ${name} failed after ${duration.toFixed(2)}ms:`, error);
+    console.error(`❌ Query ${name} failed:`, error);
     throw error;
   }
 }
@@ -195,16 +191,10 @@ export async function measureQuery<T>(name: string, query: () => Promise<T>): Pr
  */
 setInterval(() => {
   const now = Date.now();
-  let cleanedCount = 0;
 
   for (const [key, value] of queryCache.entries()) {
     if (now - value.timestamp > value.ttl) {
       queryCache.delete(key);
-      cleanedCount++;
     }
-  }
-
-  if (cleanedCount > 0) {
-    console.log(`🧹 Cleaned ${cleanedCount} expired cache entries`);
   }
 }, 300000); // 5分ごとにクリーンアップ
