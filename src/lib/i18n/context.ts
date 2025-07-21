@@ -14,6 +14,14 @@ export interface I18nContext {
  * HTTPヘッダーから言語設定を取得してi18nコンテキストを作成
  */
 export function createI18nContext(headers?: { [key: string]: string }): I18nContext {
+  // 1. X-Language ヘッダーをチェック（開発/テスト用）
+  const xLanguage = headers?.['x-language'] || headers?.['X-Language'];
+  if (xLanguage === 'en' || xLanguage === 'ja') {
+    const messages = getMessages(xLanguage);
+    return { lang: xLanguage, messages };
+  }
+
+  // 2. Accept-Language ヘッダーをチェック
   const acceptLanguage = headers?.['accept-language'] || headers?.['Accept-Language'];
   const lang = detectLanguage(acceptLanguage);
   const messages = getMessages(lang);
