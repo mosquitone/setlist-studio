@@ -54,6 +54,15 @@ export class EmailService {
   }
 
   /**
+   * メールアドレス変更用トークンを生成
+   */
+  public generateEmailChangeToken(): TokenData {
+    const token = crypto.randomBytes(32).toString('hex');
+    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24時間後
+    return { token, expires };
+  }
+
+  /**
    * メール送信のベースメソッド（リトライ機構付き）
    */
   private async sendEmail(
@@ -338,6 +347,37 @@ export class EmailService {
         html,
       },
       'password_reset',
+    );
+  }
+
+  /**
+   * 詳細な結果を返すメールアドレス変更確認メール送信
+   */
+  public async sendEmailChangeEmailWithDetails(
+    email: string,
+    username: string,
+    token: string,
+    lang?: Language,
+  ): Promise<EmailResult> {
+    const confirmUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/auth/confirm-email-change?token=${token}`;
+    const messages = getMessages(lang || 'ja');
+    const emailBody = messages.emails.emailChangeBody(username, confirmUrl);
+
+    const html = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #1976d2;">Setlist Studio</h2>
+        <pre style="font-family: Arial, sans-serif; white-space: pre-wrap;">${emailBody}</pre>
+      </div>
+    `;
+
+    return this.sendEmailWithDetails(
+      {
+        from: this.fromEmail,
+        to: email,
+        subject: `Setlist Studio - ${messages.emails.emailChangeSubject}`,
+        html,
+      },
+      'email_change',
     );
   }
 

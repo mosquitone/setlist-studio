@@ -96,6 +96,11 @@ export class EmailChangeInput {
   @IsEmail({}, { message: '有効なメールアドレスを入力してください' })
   @MaxLength(254, { message: 'メールアドレスは254文字以内で入力してください' })
   newEmail!: string;
+
+  @Field(() => String)
+  @IsString()
+  @MinLength(1, { message: '現在のパスワードは必須です' })
+  currentPassword!: string;
 }
 
 @InputType()
@@ -148,4 +153,13 @@ export class ChangePasswordResponse {
 
   @Field(() => String)
   message!: string;
+}
+
+@ObjectType()
+export class PasswordResetTokenInfo {
+  @Field(() => String)
+  email!: string;
+
+  @Field(() => Boolean)
+  isValid!: boolean;
 }
