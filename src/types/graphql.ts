@@ -20,7 +20,7 @@ export interface SetlistItem {
 export interface Setlist {
   id: string;
   title: string;
-  bandName: string | null;
+  artistName: string | null;
   eventName: string | null;
   eventDate: string | null;
   openTime: string | null;

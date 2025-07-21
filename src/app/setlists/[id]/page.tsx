@@ -103,7 +103,7 @@ export default function SetlistDetailPage() {
     ? {
         id: data.setlist.id,
         title: data.setlist.title,
-        bandName: data.setlist.bandName,
+        artistName: data.setlist.artistName,
         eventName: data.setlist.eventName,
         eventDate: data.setlist.eventDate,
         openTime: data.setlist.openTime,

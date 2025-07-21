@@ -7,7 +7,7 @@ import { SetlistItem } from './entities';
 export interface SetlistData {
   id: EntityId;
   title: string;
-  bandName: string;
+  artistName: string;
   eventName?: string;
   eventDate?: string;
   openTime?: string;
@@ -33,7 +33,7 @@ export interface SetlistFormItem {
 // セットリストフォーム値
 export interface SetlistFormValues {
   title: string;
-  bandName: string;
+  artistName: string;
   eventName: string;
   eventDate: string;
   openTime: string;

@@ -48,7 +48,7 @@ export default function EditSetlistPage() {
 
   const initialValues: SetlistFormValues = {
     title: setlist.title || '',
-    bandName: setlist.bandName || '',
+    artistName: setlist.artistName || '',
     eventName: setlist.eventName || '',
     eventDate: formatDateForInput(setlist.eventDate),
     openTime: setlist.openTime || '',
@@ -69,7 +69,7 @@ export default function EditSetlistPage() {
         id: setlistId,
         input: {
           title: values.title,
-          bandName: values.bandName,
+          artistName: values.artistName,
           eventName: values.eventName || undefined,
           eventDate: values.eventDate || undefined,
           openTime: values.openTime || undefined,

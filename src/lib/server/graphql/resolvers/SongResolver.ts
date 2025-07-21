@@ -100,6 +100,22 @@ export class SongResolver {
     }) as Promise<Song | null>;
   }
 
+  @Query(() => [String])
+  @UseMiddleware(AuthMiddleware)
+  async artistNames(@Ctx() ctx: Context): Promise<string[]> {
+    const results = await ctx.prisma.song.findMany({
+      where: {
+        userId: ctx.userId,
+        artist: { not: null },
+      },
+      select: { artist: true },
+      distinct: ['artist'],
+      orderBy: { artist: 'asc' },
+    });
+
+    return results.map((result) => result.artist).filter(Boolean) as string[];
+  }
+
   @Mutation(() => Song)
   @UseMiddleware(AuthMiddleware)
   async createSong(

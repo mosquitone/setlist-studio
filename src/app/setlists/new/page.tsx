@@ -18,7 +18,7 @@ export default function NewSetlistPage() {
   const { messages } = useI18n();
   const [initialValues, setInitialValues] = useState<SetlistFormValues>({
     title: '',
-    bandName: '',
+    artistName: '',
     eventName: '',
     eventDate: '',
     openTime: '',
@@ -45,7 +45,7 @@ export default function NewSetlistPage() {
       variables: {
         input: {
           title: values.title,
-          bandName: values.bandName,
+          artistName: values.artistName,
           eventName: values.eventName || undefined,
           eventDate: values.eventDate || undefined,
           openTime: values.openTime || undefined,
@@ -70,7 +70,7 @@ export default function NewSetlistPage() {
       const setlist = duplicateData.setlist;
       setInitialValues({
         title: `${setlist.title} (${messages.setlistForm.copy})`,
-        bandName: setlist.bandName || '',
+        artistName: setlist.artistName || '',
         eventName: setlist.eventName || '',
         eventDate: setlist.eventDate || '',
         openTime: setlist.openTime || '',

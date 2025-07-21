@@ -70,7 +70,7 @@ abstract class BaseSetlistInput {
 @InputType()
 export class CreateSetlistInput extends BaseSetlistInput {
   @Field(() => String)
-  bandName: string; // 作成時は必須
+  artistName: string; // 作成時は必須
 
   @Field(() => String)
   theme: string; // 作成時は必須
@@ -82,7 +82,7 @@ export class CreateSetlistInput extends BaseSetlistInput {
 @InputType()
 export class UpdateSetlistInput extends BaseSetlistInput {
   @Field(() => String, { nullable: true })
-  bandName?: string; // 更新時は任意
+  artistName?: string; // 更新時は任意
 
   @Field(() => String, { nullable: true })
   theme?: string; // 更新時は任意
@@ -118,27 +118,6 @@ export class SetlistResolver {
       },
       orderBy: { createdAt: 'desc' },
     }) as Promise<Setlist[]>;
-  }
-
-  /**
-   * ユーザーが使用したバンド名の一覧を取得（Autocomplete用）
-   * @param ctx - GraphQLコンテキスト（認証済みユーザー情報含む）
-   * @returns ユニークなバンド名の配列
-   */
-  @Query(() => [String])
-  @UseMiddleware(AuthMiddleware)
-  async bandNames(@Ctx() ctx: Context): Promise<string[]> {
-    const results = await ctx.prisma.setlist.findMany({
-      where: {
-        userId: ctx.userId,
-        bandName: { not: null },
-      },
-      select: { bandName: true },
-      distinct: ['bandName'],
-      orderBy: { bandName: 'asc' },
-    });
-
-    return results.map((result) => result.bandName).filter(Boolean) as string[];
   }
 
   /**
@@ -239,7 +218,7 @@ export class SetlistResolver {
 
     // セットリストの楽曲から未登録楽曲を自動登録
     if (items && items.length > 0) {
-      await this.ensureSongsExist(items, input.bandName, ctx);
+      await this.ensureSongsExist(items, input.artistName, ctx);
     }
 
     const setlist = await ctx.prisma.setlist.create({
@@ -311,12 +290,12 @@ export class SetlistResolver {
   /**
    * 楽曲リストから未登録楽曲を楽曲管理テーブルに自動登録
    * @param items - セットリストの楽曲リスト
-   * @param bandName - バンド名（artistとして使用）
+   * @param artistName - アーティスト名
    * @param ctx - GraphQLコンテキスト
    */
   private async ensureSongsExist(
     items: CreateSetlistItemForSetlistInput[],
-    bandName: string,
+    artistName: string,
     ctx: Context,
   ): Promise<void> {
     // 現在のユーザーの楽曲一覧を取得
@@ -338,7 +317,7 @@ export class SetlistResolver {
       await ctx.prisma.song.createMany({
         data: newSongs.map((item) => ({
           title: item.title,
-          artist: bandName,
+          artist: artistName,
           notes: item.note || null,
           userId: ctx.userId!,
         })),
@@ -388,8 +367,8 @@ export class SetlistResolver {
 
     // セットリストの楽曲から未登録楽曲を自動登録
     if (items && items.length > 0) {
-      const bandName = input.bandName || setlist.bandName || 'Unknown';
-      await this.ensureSongsExist(items, bandName, ctx);
+      const artistName = input.artistName || setlist.artistName || 'Unknown';
+      await this.ensureSongsExist(items, artistName, ctx);
     }
 
     // Update setlist and handle items
