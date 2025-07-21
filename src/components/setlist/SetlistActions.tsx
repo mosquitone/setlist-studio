@@ -208,14 +208,14 @@ export function SetlistActions({
                 sx={{ minWidth: 120 }}
                 renderValue={(value) => {
                   if (value === 'black')
-                    return `${messages.common.theme}: ${messages.common.basicBlack.toLowerCase()}`;
+                    return `${messages.common.theme}: ${messages.common.basicBlack}`;
                   if (value === 'white')
-                    return `${messages.common.theme}: ${messages.common.basicWhite.toLowerCase()}`;
-                  return `${messages.common.theme}: ${messages.common.basicBlack.toLowerCase()}`;
+                    return `${messages.common.theme}: ${messages.common.basicWhite}`;
+                  return `${messages.common.theme}: ${messages.common.basicBlack}`;
                 }}
               >
-                <MenuItem value="black">{messages.common.basicBlack.toLowerCase()}</MenuItem>
-                <MenuItem value="white">{messages.common.basicWhite.toLowerCase()}</MenuItem>
+                <MenuItem value="black">{messages.common.basicBlack}</MenuItem>
+                <MenuItem value="white">{messages.common.basicWhite}</MenuItem>
               </Select>
             </FormControl>
           )}
@@ -322,14 +322,14 @@ export function SetlistActions({
               sx={{ minWidth: 140 }}
               renderValue={(value) => {
                 if (value === 'black')
-                  return `${messages.common.theme}: ${messages.common.basicBlack.toLowerCase()}`;
+                  return `${messages.common.theme}: ${messages.common.basicBlack}`;
                 if (value === 'white')
-                  return `${messages.common.theme}: ${messages.common.basicWhite.toLowerCase()}`;
-                return `${messages.common.theme}: ${messages.common.basicBlack.toLowerCase()}`;
+                  return `${messages.common.theme}: ${messages.common.basicWhite}`;
+                return `${messages.common.theme}: ${messages.common.basicBlack}`;
               }}
             >
-              <MenuItem value="black">{messages.common.basicBlack.toLowerCase()}</MenuItem>
-              <MenuItem value="white">{messages.common.basicWhite.toLowerCase()}</MenuItem>
+              <MenuItem value="black">{messages.common.basicBlack}</MenuItem>
+              <MenuItem value="white">{messages.common.basicWhite}</MenuItem>
             </Select>
           </FormControl>
         )}

@@ -207,7 +207,7 @@ export const BaseTheme: React.FC<BaseThemeProps> = ({ data, className, colors })
             )}
             {startTime && (
               <Typography sx={{ fontSize: '16px', color: colors.text, fontWeight: 400 }}>
-                START: {startTime}
+                START {startTime}
               </Typography>
             )}
           </Box>

@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useMutation } from '@apollo/client';
 import { DELETE_SETLIST } from '@/lib/server/graphql/apollo-operations';
+import { useI18n } from '@/hooks/useI18n';
 
 interface UseSetlistActionsProps {
   setlistId: string;
@@ -15,6 +16,7 @@ interface UseSetlistActionsProps {
 
 export function useSetlistActions({ setlistId, setlist }: UseSetlistActionsProps) {
   const router = useRouter();
+  const { messages } = useI18n();
   const [deleteSetlist, { loading: deleteLoading }] = useMutation(DELETE_SETLIST, {
     onCompleted: () => {
       router.push('/');
@@ -45,7 +47,7 @@ export function useSetlistActions({ setlistId, setlist }: UseSetlistActionsProps
       // Fallback to clipboard
       try {
         await navigator.clipboard.writeText(url);
-        alert('URLをクリップボードにコピーしました');
+        alert(messages.errors.urlCopiedToClipboard);
       } catch {
         // Handle clipboard/sharing error silently
       }

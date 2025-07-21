@@ -7,6 +7,7 @@ import { useMutation } from '@apollo/client';
 import { gql } from '@apollo/client';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useI18n } from '@/hooks/useI18n';
 
 const CONFIRM_EMAIL_CHANGE = gql`
   mutation ConfirmEmailChange($input: EmailChangeConfirmInput!) {
@@ -22,6 +23,7 @@ export default function ConfirmEmailChangeClient() {
   const [message, setMessage] = useState('');
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { messages } = useI18n();
 
   const [confirmEmailChange] = useMutation(CONFIRM_EMAIL_CHANGE, {
     onCompleted: (data) => {
@@ -30,11 +32,11 @@ export default function ConfirmEmailChangeClient() {
         setMessage(data.confirmEmailChange.message);
         // 3秒後にプロフィールページにリダイレクト
         setTimeout(() => {
-          router.push('/profile?message=メールアドレスが正常に変更されました');
+          router.push(`/profile?message=${encodeURIComponent(messages.auth.emailChangeSuccess)}`);
         }, 3000);
       } else {
         setStatus('error');
-        setMessage(data.confirmEmailChange.message || 'メールアドレス変更に失敗しました');
+        setMessage(data.confirmEmailChange.message || messages.auth.emailChangeFailedDefault);
       }
     },
     onError: (error) => {
@@ -54,9 +56,9 @@ export default function ConfirmEmailChangeClient() {
       });
     } else {
       setStatus('error');
-      setMessage('無効な変更確認リンクです。');
+      setMessage(messages.auth.invalidChangeLink);
     }
-  }, [searchParams, confirmEmailChange]);
+  }, [searchParams, confirmEmailChange, messages.auth.invalidChangeLink]);
 
   const renderIcon = () => {
     switch (status) {
@@ -72,11 +74,11 @@ export default function ConfirmEmailChangeClient() {
   const getTitle = () => {
     switch (status) {
       case 'loading':
-        return 'メールアドレス変更処理中...';
+        return messages.auth.emailChangeProcessing;
       case 'success':
-        return 'メールアドレス変更完了';
+        return messages.auth.emailChangeComplete;
       case 'error':
-        return 'メールアドレス変更エラー';
+        return messages.auth.emailChangeError;
     }
   };
 
@@ -101,9 +103,9 @@ export default function ConfirmEmailChangeClient() {
               {getTitle()}
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              {status === 'loading' && 'メールアドレス変更を処理しています...'}
-              {status === 'success' && 'メールアドレスが正常に変更されました。'}
-              {status === 'error' && 'メールアドレス変更に問題が発生しました。'}
+              {status === 'loading' && messages.auth.emailChangeProcessingDescription}
+              {status === 'success' && messages.auth.emailChangeSuccessDescription}
+              {status === 'error' && messages.auth.emailChangeFailedDescription}
             </Typography>
           </Box>
 
@@ -112,7 +114,7 @@ export default function ConfirmEmailChangeClient() {
               {message}
               {status === 'success' && (
                 <Typography variant="body2" sx={{ mt: 1 }}>
-                  3秒後にプロフィールページに移動します...
+                  {messages.auth.redirectingToProfile}
                 </Typography>
               )}
             </Alert>
@@ -121,7 +123,7 @@ export default function ConfirmEmailChangeClient() {
           <Box textAlign="center">
             <Typography variant="body2">
               <Link href="/profile" style={{ color: 'inherit' }}>
-                ← プロフィールページに戻る
+                ← {messages.auth.backToProfile}
               </Link>
             </Typography>
           </Box>

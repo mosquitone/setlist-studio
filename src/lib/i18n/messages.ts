@@ -28,7 +28,6 @@ export interface Messages {
     userNotFound: string;
     rateLimitExceeded: string;
     checkingLoginStatus: string;
-    redirectingToLogin: string;
 
     // ログイン・登録フォーム
     login: string;
@@ -86,6 +85,19 @@ export interface Messages {
     checkEmailTypo: string;
     verifyEmail: string;
     resendVerification: string;
+    // メール認証確認ページ関連
+    emailVerificationProcessing: string;
+    emailVerificationComplete: string;
+    emailVerificationError: string;
+    emailVerificationProcessingDescription: string;
+    emailVerificationSuccessDescription: string;
+    emailVerificationFailedDescription: string;
+    emailVerificationFailedDefault: string;
+    invalidVerificationLink: string;
+    redirectingToLogin: string;
+    resendingEmail: string;
+    resendVerificationEmailButton: string;
+    backToLoginPage: string;
     alreadyHaveAccount: string;
     dontHaveAccount: string;
     loginToManageSetlists: string;
@@ -107,6 +119,16 @@ export interface Messages {
     emailChangeRequested: string;
     emailChangeSuccess: string;
     emailChangeConfirmation: string;
+    emailChangeProcessing: string;
+    emailChangeComplete: string;
+    emailChangeError: string;
+    emailChangeProcessingDescription: string;
+    emailChangeSuccessDescription: string;
+    emailChangeFailedDescription: string;
+    emailChangeFailedDefault: string;
+    invalidChangeLink: string;
+    redirectingToProfile: string;
+    backToProfile: string;
     invalidEmailFormat: string;
     emailAlreadyInUse: string;
   };
@@ -119,9 +141,23 @@ export interface Messages {
     unknownError: string;
     setlistNotFound: string;
     songNotFound: string;
+    songsNotFoundToDelete: string;
     unauthorized: string;
     forbidden: string;
+    authenticationRequired: string;
+    authenticationRequiredPrivate: string;
+    unauthorizedAccessPrivate: string;
+    jwtNotConfigured: string;
+    usernameAlreadyExists: string;
+    setlistItemNotFound: string;
     somethingWentWrong: string;
+    // セキュリティ関連
+    rateLimitExceeded: string;
+    authRateLimitExceeded: string;
+    emailRateLimitExceeded: string;
+    csrfValidationFailed: string;
+    inputTooLong: string;
+    urlCopiedToClipboard: string;
   };
 
   // ページタイトル・説明
@@ -445,6 +481,7 @@ export interface Messages {
     setlist: string;
     editSetlist: string;
     deleteSetlist: string;
+    defaultSetlistTitle: string;
     setlistTitle: string;
     bandName: string;
     venue: string;
@@ -461,6 +498,10 @@ export interface Messages {
     duplicateSetlist: string;
     duplicateSuccess: string;
     linkCopied: string;
+    generating: string;
+    imageGeneration: string;
+    setlistPreview: string;
+    generationError: string;
     theme: string;
     basicBlack: string;
     basicWhite: string;
@@ -517,6 +558,9 @@ export interface Messages {
       songTitle: string;
       songNote: string;
       addSong: string;
+      dragSongLabel: string;
+      deleteSongLabel: string;
+      dragSongKeyboardLabel: string;
     };
     buttons: {
       create: string;
@@ -605,6 +649,27 @@ export interface Messages {
         tempoInvalid: string;
       };
     };
+  };
+
+  // メタデータ・SEO
+  metadata: {
+    siteTitle: string;
+    siteDescription: string;
+    loginTitle: string;
+    loginDescription: string;
+    registerTitle: string;
+    registerDescription: string;
+    verifyEmailTitle: string;
+    verifyEmailDescription: string;
+    forgotPasswordTitle: string;
+    forgotPasswordDescription: string;
+    resetPasswordTitle: string;
+    resetPasswordDescription: string;
+    checkEmailTitle: string;
+    checkEmailDescription: string;
+    confirmEmailChangeTitle: string;
+    confirmEmailChangeDescription: string;
+    keywords: string[];
   };
 
   // メールテンプレート
@@ -700,6 +765,18 @@ const jaMessages: Messages = {
     checkEmailTypo: 'メールアドレスの入力間違いがないか確認してください',
     verifyEmail: 'メールアドレスを確認',
     resendVerification: '確認メールを再送信',
+    // メール認証確認ページ関連
+    emailVerificationProcessing: 'メール認証中...',
+    emailVerificationComplete: 'メール認証完了',
+    emailVerificationError: 'メール認証エラー',
+    emailVerificationProcessingDescription: 'メールアドレスの認証を処理しています...',
+    emailVerificationSuccessDescription: '認証が完了しました。ログインできます。',
+    emailVerificationFailedDescription: 'メール認証に問題が発生しました。',
+    emailVerificationFailedDefault: 'メール認証に失敗しました',
+    invalidVerificationLink: '無効な認証リンクです。',
+    resendingEmail: '再送信中...',
+    resendVerificationEmailButton: '認証メールを再送信',
+    backToLoginPage: 'ログインページに戻る',
     alreadyHaveAccount: 'アカウントをお持ちの方',
     dontHaveAccount: 'アカウントをお持ちでないですか？',
     loginToManageSetlists: 'アカウントにログインしてセットリストを管理',
@@ -720,6 +797,16 @@ const jaMessages: Messages = {
     emailChangeRequested: 'メールアドレス変更の確認メールを送信しました',
     emailChangeSuccess: 'メールアドレスが正常に変更されました',
     emailChangeConfirmation: 'メールアドレス変更の確認',
+    emailChangeProcessing: 'メールアドレス変更処理中...',
+    emailChangeComplete: 'メールアドレス変更完了',
+    emailChangeError: 'メールアドレス変更エラー',
+    emailChangeProcessingDescription: 'メールアドレス変更を処理しています...',
+    emailChangeSuccessDescription: 'メールアドレスが正常に変更されました。',
+    emailChangeFailedDescription: 'メールアドレス変更に問題が発生しました。',
+    emailChangeFailedDefault: 'メールアドレス変更に失敗しました',
+    invalidChangeLink: '無効な変更確認リンクです。',
+    redirectingToProfile: '3秒後にプロフィールページに移動します...',
+    backToProfile: 'プロフィールページに戻る',
     invalidEmailFormat: 'メールアドレスの形式が正しくありません',
     emailAlreadyInUse: 'このメールアドレスは既に使用されています',
   },
@@ -730,9 +817,25 @@ const jaMessages: Messages = {
     unknownError: '予期せぬエラーが発生しました',
     setlistNotFound: 'セットリストが見つかりません',
     songNotFound: '楽曲が見つかりません',
+    songsNotFoundToDelete: '削除する楽曲が見つかりません',
     unauthorized: '認証が必要です',
     forbidden: 'アクセス権限がありません',
+    authenticationRequired: '認証が必要です',
+    authenticationRequiredPrivate: '非公開セットリストへのアクセスには認証が必要です',
+    unauthorizedAccessPrivate: '非公開セットリストへの不正アクセスです',
+    jwtNotConfigured: 'JWT設定エラーです',
+    usernameAlreadyExists: 'このユーザー名は既に使用されています',
+    setlistItemNotFound: 'セットリスト項目が見つかりません',
     somethingWentWrong: '何らかのエラーが発生しました',
+    // セキュリティ関連
+    rateLimitExceeded: 'リクエスト制限に達しました。しばらく時間をおいてから再試行してください',
+    authRateLimitExceeded:
+      '認証の試行回数が上限に達しました。しばらく時間をおいてから再試行してください',
+    emailRateLimitExceeded:
+      'メール送信回数が上限に達しました。しばらく時間をおいてから再試行してください',
+    csrfValidationFailed: 'CSRFトークンの検証に失敗しました',
+    inputTooLong: '入力が長すぎます。{maxLength}文字以下にしてください',
+    urlCopiedToClipboard: 'URLをクリップボードにコピーしました',
   },
   common: {
     back: '戻る',
@@ -798,6 +901,7 @@ const jaMessages: Messages = {
     setlist: 'セットリスト',
     editSetlist: 'セットリストを編集',
     deleteSetlist: 'セットリストを削除',
+    defaultSetlistTitle: 'セットリスト {number}',
     setlistTitle: 'セットリストタイトル',
     bandName: 'バンド名',
     venue: '会場',
@@ -814,6 +918,10 @@ const jaMessages: Messages = {
     duplicateSetlist: 'セットリストを複製',
     duplicateSuccess: 'セットリストが複製されました',
     linkCopied: 'リンクがコピーされました',
+    generating: '生成中...',
+    imageGeneration: '画像生成',
+    setlistPreview: 'セットリストプレビュー',
+    generationError: '画像生成に失敗しました',
     theme: 'テーマ',
     basicBlack: 'ベーシック（黒）',
     basicWhite: 'ベーシック（白）',
@@ -1116,6 +1224,9 @@ const jaMessages: Messages = {
       songTitle: '楽曲タイトル',
       songNote: 'メモ',
       addSong: '楽曲を追加',
+      dragSongLabel: '楽曲 {number} をドラッグして移動',
+      deleteSongLabel: '楽曲 {number} を削除',
+      dragSongKeyboardLabel: '楽曲 {number} をドラッグして移動。Ctrl+矢印キーでキーボード操作可能',
     },
     buttons: {
       create: 'セットリストを作成',
@@ -1201,6 +1312,39 @@ const jaMessages: Messages = {
         tempoInvalid: '有効な数値を入力してください',
       },
     },
+  },
+  // メタデータ・SEO
+  metadata: {
+    siteTitle: 'Setlist Studio - バンド向けセットリスト管理ツール',
+    siteDescription:
+      'ステージで利用できるアーティスト向けのセットリスト作成アプリです。エクセルや手書きの時代はもう終わりです。楽曲管理から高品質なセットリスト生成まで。',
+    loginTitle: 'ログイン',
+    loginDescription: 'Setlist Studioにログインしてあなたの楽曲とセットリストを管理しましょう',
+    registerTitle: '新規登録',
+    registerDescription:
+      'Setlist Studioに新規アカウントを作成してあなたの楽曲とセットリストを管理しましょう',
+    verifyEmailTitle: 'メールアドレス認証',
+    verifyEmailDescription: 'メールアドレスの認証を行います',
+    forgotPasswordTitle: 'パスワードリセット',
+    forgotPasswordDescription: 'パスワードリセット用のメールを送信します',
+    resetPasswordTitle: 'パスワード再設定',
+    resetPasswordDescription: '新しいパスワードを設定します',
+    checkEmailTitle: 'メール確認',
+    checkEmailDescription: '送信されたメールを確認してください',
+    confirmEmailChangeTitle: 'メールアドレス変更確認',
+    confirmEmailChangeDescription: 'メールアドレスの変更を確認します',
+    keywords: [
+      'セットリスト',
+      'バンド',
+      '楽曲管理',
+      'ライブ',
+      'コンサート',
+      'ミュージシャン',
+      '音楽',
+      'パフォーマンス',
+      'セットリスト作成',
+      'mosquitone',
+    ],
   },
   emails: {
     verificationSubject: 'メールアドレスの確認',
@@ -1382,6 +1526,18 @@ const enMessages: Messages = {
     checkEmailTypo: 'Check for typos in your email address',
     verifyEmail: 'Verify Email',
     resendVerification: 'Resend Verification',
+    // メール認証確認ページ関連
+    emailVerificationProcessing: 'Verifying Email...',
+    emailVerificationComplete: 'Email Verification Complete',
+    emailVerificationError: 'Email Verification Error',
+    emailVerificationProcessingDescription: 'Processing email address verification...',
+    emailVerificationSuccessDescription: 'Verification completed. You can now login.',
+    emailVerificationFailedDescription: 'There was a problem verifying your email.',
+    emailVerificationFailedDefault: 'Failed to verify email',
+    invalidVerificationLink: 'Invalid verification link.',
+    resendingEmail: 'Resending...',
+    resendVerificationEmailButton: 'Resend Verification Email',
+    backToLoginPage: 'Back to Login',
     alreadyHaveAccount: 'Already have an account?',
     dontHaveAccount: "Don't have an account?",
     loginToManageSetlists: 'Login to manage your setlists',
@@ -1403,6 +1559,16 @@ const enMessages: Messages = {
     emailChangeRequested: 'Email change confirmation sent to your new address',
     emailChangeSuccess: 'Email address has been successfully changed',
     emailChangeConfirmation: 'Email Change Confirmation',
+    emailChangeProcessing: 'Processing Email Change...',
+    emailChangeComplete: 'Email Change Complete',
+    emailChangeError: 'Email Change Error',
+    emailChangeProcessingDescription: 'Processing email address change...',
+    emailChangeSuccessDescription: 'Email address has been successfully changed.',
+    emailChangeFailedDescription: 'There was a problem changing your email address.',
+    emailChangeFailedDefault: 'Failed to change email address',
+    invalidChangeLink: 'Invalid change confirmation link.',
+    redirectingToProfile: 'Redirecting to profile page in 3 seconds...',
+    backToProfile: 'Back to Profile',
     invalidEmailFormat: 'Invalid email format',
     emailAlreadyInUse: 'This email address is already in use',
   },
@@ -1413,9 +1579,23 @@ const enMessages: Messages = {
     unknownError: 'Unknown error occurred',
     setlistNotFound: 'Setlist not found',
     songNotFound: 'Song not found',
+    songsNotFoundToDelete: 'No songs found to delete',
     unauthorized: 'Authentication required',
     forbidden: 'Access denied',
+    authenticationRequired: 'Authentication required',
+    authenticationRequiredPrivate: 'Authentication required to access private setlist',
+    unauthorizedAccessPrivate: 'Unauthorized access to private setlist',
+    jwtNotConfigured: 'JWT_SECRET environment variable is not configured',
+    usernameAlreadyExists: 'This username is already in use',
+    setlistItemNotFound: 'Setlist item not found',
     somethingWentWrong: 'Something went wrong',
+    // セキュリティ関連
+    rateLimitExceeded: 'Request limit exceeded. Please try again later',
+    authRateLimitExceeded: 'Authentication attempts exceeded. Please try again later',
+    emailRateLimitExceeded: 'Email sending limit exceeded. Please try again later',
+    csrfValidationFailed: 'CSRF token validation failed',
+    inputTooLong: 'Input is too long. Please keep it under {maxLength} characters',
+    urlCopiedToClipboard: 'URL copied to clipboard',
   },
   pages: {
     home: {
@@ -1732,6 +1912,7 @@ const enMessages: Messages = {
     setlist: 'Setlist',
     editSetlist: 'Edit Setlist',
     deleteSetlist: 'Delete Setlist',
+    defaultSetlistTitle: 'Setlist {number}',
     setlistTitle: 'Setlist Title',
     bandName: 'Band Name',
     venue: 'Venue',
@@ -1748,6 +1929,10 @@ const enMessages: Messages = {
     duplicateSetlist: 'Duplicate Setlist',
     duplicateSuccess: 'Setlist duplicated successfully',
     linkCopied: 'Link copied',
+    generating: 'Generating...',
+    imageGeneration: 'Generate Image',
+    setlistPreview: 'Setlist Preview',
+    generationError: 'Failed to generate image',
     theme: 'Theme',
     basicBlack: 'Basic (Black)',
     basicWhite: 'Basic (White)',
@@ -1800,6 +1985,10 @@ const enMessages: Messages = {
       songTitle: 'Song Title',
       songNote: 'Note',
       addSong: 'Add Song',
+      dragSongLabel: 'Drag song {number} to move',
+      deleteSongLabel: 'Delete song {number}',
+      dragSongKeyboardLabel:
+        'Drag song {number} to move. Use Ctrl+arrow keys for keyboard navigation',
     },
     buttons: {
       create: 'Create Setlist',
@@ -1884,6 +2073,39 @@ const enMessages: Messages = {
         tempoInvalid: 'Please enter a valid number',
       },
     },
+  },
+  // Metadata & SEO
+  metadata: {
+    siteTitle: 'Setlist Studio - Setlist Management Tool for Bands',
+    siteDescription:
+      'A setlist creation app for artists that can be used on stage. The era of Excel and handwritten lists is over. From song management to high-quality setlist generation.',
+    loginTitle: 'Login',
+    loginDescription: 'Login to Setlist Studio to manage your songs and setlists',
+    registerTitle: 'Sign Up',
+    registerDescription:
+      'Create a new account for Setlist Studio to manage your songs and setlists',
+    verifyEmailTitle: 'Email Verification',
+    verifyEmailDescription: 'Verify your email address',
+    forgotPasswordTitle: 'Forgot Password',
+    forgotPasswordDescription: 'Send password reset email',
+    resetPasswordTitle: 'Reset Password',
+    resetPasswordDescription: 'Set your new password',
+    checkEmailTitle: 'Check Email',
+    checkEmailDescription: 'Please check the email that was sent',
+    confirmEmailChangeTitle: 'Confirm Email Change',
+    confirmEmailChangeDescription: 'Confirm your email address change',
+    keywords: [
+      'setlist',
+      'band',
+      'song management',
+      'live',
+      'concert',
+      'musician',
+      'music',
+      'performance',
+      'setlist creation',
+      'mosquitone',
+    ],
   },
   emails: {
     verificationSubject: 'Verify your email address',

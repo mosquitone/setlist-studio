@@ -351,7 +351,7 @@ export const validateAndSanitizeInput = (input: string, maxLength: number = 1000
 
   const trimmed = input.trim();
   if (trimmed.length > maxLength) {
-    throw new Error(`入力が長すぎます。${maxLength}文字以下にしてください。`);
+    throw new Error(`Input too long. Please limit to ${maxLength} characters.`);
   }
 
   return sanitizeText(trimmed);

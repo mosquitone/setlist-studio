@@ -45,6 +45,13 @@ export function SongItemInput({
 }: SongItemInputProps) {
   const { values, errors, touched, handleChange, handleBlur } = formik;
   const { messages } = useI18n();
+
+  // テンプレート文字列を置換するヘルパー関数
+  const formatMessage = (template: string, replacements: Record<string, string | number>) => {
+    return Object.entries(replacements).reduce((str, [key, value]) => {
+      return str.replace(new RegExp(`{${key}}`, 'g'), String(value));
+    }, template);
+  };
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -98,7 +105,9 @@ export function SongItemInput({
               <IconButton
                 size="small"
                 disabled={isDragDisabled}
-                aria-label={`楽曲 ${index + 1} をドラッグして移動`}
+                aria-label={formatMessage(messages.setlistForm.songsList.dragSongLabel, {
+                  number: index + 1,
+                })}
                 onKeyDown={handleKeyDown}
                 tabIndex={0}
               >
@@ -113,7 +122,9 @@ export function SongItemInput({
               onClick={() => onRemove(index)}
               disabled={values.items.length <= 1}
               size="small"
-              aria-label={`楽曲 ${index + 1} を削除`}
+              aria-label={formatMessage(messages.setlistForm.songsList.deleteSongLabel, {
+                number: index + 1,
+              })}
             >
               <DeleteIcon />
             </IconButton>
@@ -221,7 +232,9 @@ export function SongItemInput({
             <IconButton
               size="small"
               disabled={isDragDisabled}
-              aria-label={`楽曲 ${index + 1} をドラッグして移動。Ctrl+矢印キーでキーボード操作可能`}
+              aria-label={formatMessage(messages.setlistForm.songsList.dragSongKeyboardLabel, {
+                number: index + 1,
+              })}
               onKeyDown={handleKeyDown}
               tabIndex={0}
             >
@@ -237,7 +250,9 @@ export function SongItemInput({
               onClick={() => onRemove(index)}
               disabled={values.items.length <= 1}
               size="small"
-              aria-label={`楽曲 ${index + 1} を削除`}
+              aria-label={formatMessage(messages.setlistForm.songsList.deleteSongLabel, {
+                number: index + 1,
+              })}
             >
               <DeleteIcon />
             </IconButton>
