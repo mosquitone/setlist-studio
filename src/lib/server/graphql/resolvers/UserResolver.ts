@@ -6,6 +6,7 @@ import { AuthMiddleware } from '../middleware/jwt-auth-middleware';
 interface Context {
   prisma: PrismaClient;
   userId?: string;
+  i18n?: { messages: any };
 }
 
 @Resolver()
@@ -31,7 +32,7 @@ export class UserResolver {
     @Ctx() ctx: Context,
   ): Promise<User> {
     if (!ctx.userId) {
-      throw new Error('認証が必要です');
+      throw new Error(ctx.i18n?.messages.errors.authenticationRequired || '認証が必要です');
     }
 
     // Check if username is already taken
@@ -40,7 +41,9 @@ export class UserResolver {
     });
 
     if (existingUser && existingUser.id !== ctx.userId) {
-      throw new Error('このユーザー名は既に使用されています');
+      throw new Error(
+        ctx.i18n?.messages.errors.usernameAlreadyExists || 'このユーザー名は既に使用されています',
+      );
     }
 
     const user = await ctx.prisma.user.update({
