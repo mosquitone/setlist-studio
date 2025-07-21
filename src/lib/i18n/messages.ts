@@ -131,6 +131,7 @@ export interface Messages {
     backToProfile: string;
     invalidEmailFormat: string;
     emailAlreadyInUse: string;
+    usernameAlreadyInUse: string;
   };
 
   // エラーメッセージ
@@ -828,6 +829,7 @@ const jaMessages: Messages = {
     backToProfile: 'プロフィールページに戻る',
     invalidEmailFormat: 'メールアドレスの形式が正しくありません',
     emailAlreadyInUse: 'このメールアドレスは既に使用されています',
+    usernameAlreadyInUse: 'このユーザー名は既に使用されています',
   },
   errors: {
     serverError: 'サーバーエラーが発生しました',
@@ -1610,6 +1612,7 @@ const enMessages: Messages = {
     backToProfile: 'Back to Profile',
     invalidEmailFormat: 'Invalid email format',
     emailAlreadyInUse: 'This email address is already in use',
+    usernameAlreadyInUse: 'This username is already in use',
   },
   errors: {
     serverError: 'Server error occurred',

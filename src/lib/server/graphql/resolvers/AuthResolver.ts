@@ -72,13 +72,12 @@ export class AuthResolver {
     @Arg('input', () => RegisterInput) input: RegisterInput,
     @Ctx() ctx: Context,
   ): Promise<AuthPayload> {
-    const existingUser = await ctx.prisma.user.findFirst({
-      where: {
-        OR: [{ email: input.email }, { username: input.username }],
-      },
+    // メールアドレスの重複チェック
+    const existingEmailUser = await ctx.prisma.user.findUnique({
+      where: { email: input.email },
     });
 
-    if (existingUser) {
+    if (existingEmailUser) {
       // 登録失敗をログに記録（データベースベース）
       await logSecurityEventDB(ctx.prisma, {
         type: SecurityEventType.REGISTER_FAILURE,
@@ -88,12 +87,34 @@ export class AuthResolver {
         details: {
           email: input.email,
           username: input.username,
-          reason: 'user_already_exists',
+          reason: 'email_already_exists',
         },
       });
       throw new Error(
-        ctx.i18n?.messages.auth.userAlreadyExists ||
-          '登録に失敗しました。入力内容を確認してください',
+        ctx.i18n?.messages.auth.emailAlreadyInUse || 'このメールアドレスは既に使用されています。',
+      );
+    }
+
+    // ユーザー名の重複チェック
+    const existingUsernameUser = await ctx.prisma.user.findUnique({
+      where: { username: input.username },
+    });
+
+    if (existingUsernameUser) {
+      // 登録失敗をログに記録（データベースベース）
+      await logSecurityEventDB(ctx.prisma, {
+        type: SecurityEventType.REGISTER_FAILURE,
+        severity: SecurityEventSeverity.MEDIUM,
+        ipAddress: getClientIP(ctx),
+        userAgent: ctx.req?.headers['user-agent'],
+        details: {
+          email: input.email,
+          username: input.username,
+          reason: 'username_already_exists',
+        },
+      });
+      throw new Error(
+        ctx.i18n?.messages.auth.usernameAlreadyInUse || 'このユーザー名は既に使用されています。',
       );
     }
 
