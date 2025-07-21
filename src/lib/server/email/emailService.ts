@@ -6,31 +6,15 @@ import { EmailReliabilityService, EmailResult } from './emailReliability';
 // ビルド時エラーを避けるため、環境変数が存在しない場合はダミー値を使用
 const resend = new Resend(process.env.RESEND_API_KEY || 'dummy-key-for-build');
 
-// Setlist Studio Logo SVG
+// Setlist Studio Logo - シンプルテキスト版（最大互換性）
 const SETLIST_STUDIO_LOGO = `
-<div style="text-align: center; margin-bottom: 20px;">
-  <svg width="300" height="80" viewBox="0 0 300 80" xmlns="http://www.w3.org/2000/svg">
-    <!-- Setlist text -->
-    <text x="30" y="50" font-family="Arial, sans-serif" font-size="36" font-weight="bold" fill="#000000">Setlist</text>
-    <!-- Audio level bars after "Setlist" -->
-    <rect x="130" y="45" width="3" height="10" fill="#000000"/>
-    <rect x="135" y="40" width="3" height="20" fill="#000000"/>
-    <rect x="140" y="35" width="3" height="30" fill="#000000"/>
-    <rect x="145" y="30" width="3" height="40" fill="#000000"/>
-    <rect x="150" y="35" width="3" height="30" fill="#000000"/>
-    <rect x="155" y="40" width="3" height="20" fill="#000000"/>
-    <rect x="160" y="45" width="3" height="10" fill="#000000"/>
-    <!-- Studio text -->
-    <text x="175" y="50" font-family="Arial, sans-serif" font-size="36" font-weight="bold" fill="#000000">Studio</text>
-    <!-- Audio level bars after "Studio" -->
-    <rect x="265" y="45" width="3" height="10" fill="#000000"/>
-    <rect x="270" y="40" width="3" height="20" fill="#000000"/>
-    <rect x="275" y="35" width="3" height="30" fill="#000000"/>
-    <rect x="280" y="30" width="3" height="40" fill="#000000"/>
-    <rect x="285" y="35" width="3" height="30" fill="#000000"/>
-    <rect x="290" y="40" width="3" height="20" fill="#000000"/>
-    <rect x="295" y="45" width="3" height="10" fill="#000000"/>
-  </svg>
+<div style="text-align: center; margin: 30px 0 40px 0;">
+  <h1 style="font-family: Arial, sans-serif; font-size: 36px; font-weight: bold; color: #1976d2; margin: 0; letter-spacing: 2px;">
+    SETLIST STUDIO
+  </h1>
+  <div style="font-family: monospace; font-size: 20px; color: #1976d2; margin-top: 5px;">
+    ♪ ▁▂▃▄▃▂▁ ♪
+  </div>
 </div>
 `;
 
