@@ -40,6 +40,7 @@ import {
   PersonOff,
 } from '@mui/icons-material';
 import { useI18n } from '@/hooks/useI18n';
+import { StepIcon } from '@/components/common/ui/StepIcon';
 
 export default function GuidePage() {
   const { messages } = useI18n();
@@ -75,6 +76,11 @@ export default function GuidePage() {
           <Typography variant="body1" paragraph>
             {messages.pages.guide.aboutSection.description2}
           </Typography>
+          <Alert severity="info" icon="✨" sx={{ mt: 2, mb: 2, bgcolor: '#e3f2fd', borderColor: '#2196f3' }}>
+            <Typography variant="body1" sx={{ fontWeight: 'bold', color: '#1565c0' }}>
+              {messages.pages.guide.aboutSection.description3}
+            </Typography>
+          </Alert>
           <Alert severity="info" sx={{ mt: 2 }}>
             {messages.pages.guide.aboutSection.alertInfo}
           </Alert>
@@ -258,6 +264,113 @@ export default function GuidePage() {
         </CardContent>
       </Card>
 
+      {/* 認証・パスワード関連 */}
+      <Card sx={{ mb: 4 }}>
+        <CardContent>
+          <Typography
+            variant="h4"
+            component="h2"
+            gutterBottom
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <Lock sx={{ mr: 2, color: 'secondary.main' }} />
+            {messages.pages.guide.authentication.title}
+          </Typography>
+
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={6}>
+              <Paper sx={{ p: 3, height: '100%' }}>
+                <Typography variant="h6" gutterBottom>
+                  {messages.pages.guide.authentication.emailVerification.title}
+                </Typography>
+                <Typography variant="body2" paragraph>
+                  {messages.pages.guide.authentication.emailVerification.description}
+                </Typography>
+                <List dense>
+                  <ListItem sx={{ pl: 0 }}>
+                    <ListItemIcon>
+                      <StepIcon step={1} />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={messages.pages.guide.authentication.emailVerification.step1}
+                    />
+                  </ListItem>
+                  <ListItem sx={{ pl: 0 }}>
+                    <ListItemIcon>
+                      <StepIcon step={2} />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={messages.pages.guide.authentication.emailVerification.step2}
+                    />
+                  </ListItem>
+                  <ListItem sx={{ pl: 0 }}>
+                    <ListItemIcon>
+                      <StepIcon step={3} />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={messages.pages.guide.authentication.emailVerification.step3}
+                    />
+                  </ListItem>
+                  <ListItem sx={{ pl: 0 }}>
+                    <ListItemIcon>
+                      <StepIcon step={4} />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={messages.pages.guide.authentication.emailVerification.step4}
+                    />
+                  </ListItem>
+                </List>
+              </Paper>
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <Paper sx={{ p: 3, height: '100%' }}>
+                <Typography variant="h6" gutterBottom>
+                  {messages.pages.guide.authentication.passwordReset.title}
+                </Typography>
+                <Typography variant="body2" paragraph>
+                  {messages.pages.guide.authentication.passwordReset.description}
+                </Typography>
+                <List dense>
+                  <ListItem sx={{ pl: 0 }}>
+                    <ListItemIcon>
+                      <StepIcon step={1} />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={messages.pages.guide.authentication.passwordReset.step1}
+                    />
+                  </ListItem>
+                  <ListItem sx={{ pl: 0 }}>
+                    <ListItemIcon>
+                      <StepIcon step={2} />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={messages.pages.guide.authentication.passwordReset.step2}
+                    />
+                  </ListItem>
+                  <ListItem sx={{ pl: 0 }}>
+                    <ListItemIcon>
+                      <StepIcon step={3} />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={messages.pages.guide.authentication.passwordReset.step3}
+                    />
+                  </ListItem>
+                  <ListItem sx={{ pl: 0 }}>
+                    <ListItemIcon>
+                      <StepIcon step={4} />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={messages.pages.guide.authentication.passwordReset.step4}
+                    />
+                  </ListItem>
+                </List>
+              </Paper>
+            </Grid>
+          </Grid>
+        </CardContent>
+      </Card>
+
       {/* 使用方法 */}
       <Card sx={{ mb: 4 }}>
         <CardContent>
@@ -267,21 +380,7 @@ export default function GuidePage() {
           <List>
             <ListItem>
               <ListItemIcon>
-                <Box
-                  sx={{
-                    width: 24,
-                    height: 24,
-                    borderRadius: '50%',
-                    bgcolor: 'primary.main',
-                    color: 'white',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '0.8rem',
-                  }}
-                >
-                  1
-                </Box>
+                <StepIcon step={1} />
               </ListItemIcon>
               <ListItemText
                 primary={messages.pages.guide.publicUsage.step1.title}
@@ -290,21 +389,7 @@ export default function GuidePage() {
             </ListItem>
             <ListItem>
               <ListItemIcon>
-                <Box
-                  sx={{
-                    width: 24,
-                    height: 24,
-                    borderRadius: '50%',
-                    bgcolor: 'primary.main',
-                    color: 'white',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '0.8rem',
-                  }}
-                >
-                  2
-                </Box>
+                <StepIcon step={2} />
               </ListItemIcon>
               <ListItemText
                 primary={messages.pages.guide.publicUsage.step2.title}
@@ -313,21 +398,7 @@ export default function GuidePage() {
             </ListItem>
             <ListItem>
               <ListItemIcon>
-                <Box
-                  sx={{
-                    width: 24,
-                    height: 24,
-                    borderRadius: '50%',
-                    bgcolor: 'primary.main',
-                    color: 'white',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '0.8rem',
-                  }}
-                >
-                  3
-                </Box>
+                <StepIcon step={3} />
               </ListItemIcon>
               <ListItemText
                 primary={messages.pages.guide.publicUsage.step3.title}
@@ -336,21 +407,7 @@ export default function GuidePage() {
             </ListItem>
             <ListItem>
               <ListItemIcon>
-                <Box
-                  sx={{
-                    width: 24,
-                    height: 24,
-                    borderRadius: '50%',
-                    bgcolor: 'primary.main',
-                    color: 'white',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '0.8rem',
-                  }}
-                >
-                  4
-                </Box>
+                <StepIcon step={4} />
               </ListItemIcon>
               <ListItemText
                 primary={messages.pages.guide.publicUsage.step4.title}

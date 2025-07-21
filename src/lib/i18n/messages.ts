@@ -229,6 +229,7 @@ export interface Messages {
         title: string;
         description1: string;
         description2: string;
+        description3: string;
         alertInfo: string;
       };
       featureComparison: {
@@ -263,6 +264,25 @@ export interface Messages {
         };
         signUpNow: string;
         signUpDescription: string;
+      };
+      authentication: {
+        title: string;
+        emailVerification: {
+          title: string;
+          description: string;
+          step1: string;
+          step2: string;
+          step3: string;
+          step4: string;
+        };
+        passwordReset: {
+          title: string;
+          description: string;
+          step1: string;
+          step2: string;
+          step3: string;
+          step4: string;
+        };
       };
       publicUsage: {
         title: string;
@@ -1028,6 +1048,8 @@ const jaMessages: Messages = {
           'Setlist Studioは、バンドや音楽グループ向けのセットリスト生成・管理ツールです。楽曲情報を管理し、高品質なセットリスト画像を簡単に作成できます。',
         description2:
           'セットリストは「公開」または「非公開」として管理でき、公開セットリストはアカウント登録なしでも閲覧・ダウンロードが可能です。',
+        description3:
+          'Setlist Studioは完全無料でご利用いただけます。アカウント登録、楽曲管理、セットリスト作成、画像生成など、すべての機能を料金なしでお使いいただけます。',
         alertInfo:
           '公開セットリストは共有URLを知っている人なら誰でもアクセスできます。非公開セットリストは所有者のみが閲覧できます。',
       },
@@ -1063,7 +1085,26 @@ const jaMessages: Messages = {
         },
         signUpNow: '今すぐ始める：',
         signUpDescription:
-          '右上の「新規登録」ボタンからアカウントを作成できます。メールアドレスとパスワードだけで、すぐに全機能をご利用いただけます。',
+          '右上の「新規登録」ボタンからアカウントを作成できます。メールアドレスとパスワードを入力し、送信される確認メールでアカウントを有効化するとすぐに全機能をご利用いただけます。',
+      },
+      authentication: {
+        title: '認証・パスワード関連',
+        emailVerification: {
+          title: 'メール認証',
+          description: 'アカウント登録後、メールアドレスの確認が必要です',
+          step1: '新規登録フォームに入力',
+          step2: '確認メールを受信',
+          step3: 'メール内のリンクをクリック',
+          step4: 'アカウント有効化完了',
+        },
+        passwordReset: {
+          title: 'パスワードリセット',
+          description: 'パスワードを忘れた場合の復旧手順です',
+          step1: 'ログイン画面で「パスワードを忘れた」をクリック',
+          step2: '登録済みメールアドレスを入力',
+          step3: 'パスワードリセットメールを受信',
+          step4: 'メール内のリンクから新しいパスワードを設定',
+        },
       },
       publicUsage: {
         title: '公開セットリストの使い方',
@@ -1128,10 +1169,10 @@ const jaMessages: Messages = {
         profile: {
           title: 'プロフィールページ',
           description: 'アカウント情報の確認・管理ができます。',
-          feature1: 'ユーザー名とメールアドレス表示',
-          feature2: 'アカウント作成日時',
-          feature3: '統計情報（作成セットリスト数など）',
-          feature4: 'アカウント設定',
+          feature1: 'ユーザー名の変更・メールアドレス表示',
+          feature2: 'メールアドレス変更（確認メール付き）',
+          feature3: 'パスワード変更機能',
+          feature4: 'アカウント作成日時・ID表示',
         },
       },
     },
@@ -1665,6 +1706,8 @@ const enMessages: Messages = {
           'Setlist Studio is a setlist generation and management tool for bands and music groups. You can manage song information and easily create high-quality setlist images.',
         description2:
           'Setlists can be managed as "Public" or "Private", and public setlists can be viewed and downloaded without account registration.',
+        description3:
+          'Setlist Studio is completely free to use. You can use all features including account registration, song management, setlist creation, and image generation without any charges.',
         alertInfo:
           'Public setlists can be accessed by anyone who knows the sharing URL. Private setlists can only be viewed by the owner.',
       },
@@ -1701,7 +1744,26 @@ const enMessages: Messages = {
         },
         signUpNow: 'Get Started Now:',
         signUpDescription:
-          'You can create an account using the "Register" button in the top right. With just an email address and password, you can immediately use all features.',
+          'You can create an account using the "Register" button in the top right. Enter your email address and password, then activate your account via the confirmation email sent to you to immediately use all features.',
+      },
+      authentication: {
+        title: 'Authentication & Password',
+        emailVerification: {
+          title: 'Email Verification',
+          description: 'Email address confirmation is required after account registration',
+          step1: 'Fill out the registration form',
+          step2: 'Receive confirmation email',
+          step3: 'Click the link in the email',
+          step4: 'Account activation completed',
+        },
+        passwordReset: {
+          title: 'Password Reset',
+          description: 'Recovery procedure when you forget your password',
+          step1: 'Click "Forgot Password" on the login screen',
+          step2: 'Enter your registered email address',
+          step3: 'Receive password reset email',
+          step4: 'Set a new password via the link in the email',
+        },
       },
       publicUsage: {
         title: 'How to Use Public Setlists',
@@ -1766,10 +1828,10 @@ const enMessages: Messages = {
         profile: {
           title: 'Profile Page',
           description: 'You can check and manage your account information.',
-          feature1: 'Username and email address display',
-          feature2: 'Account creation date and time',
-          feature3: 'Statistics (number of setlists created, etc.)',
-          feature4: 'Account settings',
+          feature1: 'Username editing and email address display',
+          feature2: 'Email address change (with confirmation email)',
+          feature3: 'Password change function',
+          feature4: 'Account creation date and ID display',
         },
       },
     },
