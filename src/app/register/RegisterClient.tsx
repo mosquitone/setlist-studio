@@ -35,11 +35,27 @@ export default function RegisterClient() {
   const router = useRouter();
 
   const [register, { loading }] = useMutation(REGISTER, {
-    onCompleted: () => {
-      // 新規登録成功後はログイン画面へ遷移
-      router.push(
-        `/login?message=${messages.notifications.accountCreated || 'Account created successfully. Please login.'}`,
-      );
+    onCompleted: async (data) => {
+      try {
+        // JWTトークンをHttpOnly Cookieに設定
+        const response = await fetch('/api/auth', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ token: data.register.token }),
+        });
+
+        if (response.ok) {
+          // 新規登録成功後はホーム画面へ遷移（ログイン済み）
+          router.push('/');
+        } else {
+          setError('認証の設定に失敗しました');
+        }
+      } catch (error) {
+        console.error('Auth cookie setup failed:', error);
+        setError('認証の設定に失敗しました');
+      }
     },
     onError: (error) => {
       setError(error.message);

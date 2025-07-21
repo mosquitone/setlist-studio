@@ -97,11 +97,12 @@ export class AuthResolver {
       );
     }
 
-    const hashedPassword = await bcrypt.hash(input.password, 12);
-
-    // メール認証トークンを生成
-    const { token: verificationToken, expires: verificationExpires } =
-      emailService.generateSecureToken();
+    // 並列処理可能な部分を同時実行
+    const [hashedPassword, { token: verificationToken, expires: verificationExpires }] =
+      await Promise.all([
+        bcrypt.hash(input.password, 10), // 12から10に削減してパフォーマンス改善
+        Promise.resolve(emailService.generateSecureToken()), // トークン生成は高速なのでPromiseでラップ
+      ]);
 
     const user = await ctx.prisma.user.create({
       data: {
@@ -132,29 +133,61 @@ export class AuthResolver {
       },
     );
 
-    // メール認証メールを送信（詳細版を使用）
-    const emailResult = await emailService.sendEmailVerificationWithDetails(
-      user.email,
-      user.username,
-      verificationToken,
-      ctx.i18n?.lang,
-    );
+    // メール送信とログ記録を非同期で実行（レスポンスを待たない）
+    // 失敗してもユーザー登録は成功として扱う
+    setImmediate(async () => {
+      try {
+        // メール認証メールを送信
+        const emailResult = await emailService.sendEmailVerificationWithDetails(
+          user.email,
+          user.username,
+          verificationToken,
+          ctx.i18n?.lang,
+        );
 
-    // 登録成功をログに記録（データベースベース）
-    await logSecurityEventDB(ctx.prisma, {
-      type: SecurityEventType.REGISTER_SUCCESS,
-      severity: SecurityEventSeverity.LOW,
-      userId: user.id,
-      ipAddress: getClientIP(ctx),
-      userAgent: ctx.req?.headers['user-agent'],
-      details: {
-        email: user.email,
-        username: user.username,
-        emailSent: emailResult.success,
-        emailAttempts: emailResult.attempts,
-        emailMessageId: emailResult.messageId,
-        emailError: emailResult.finalError?.message,
-      },
+        // メール送信結果をログに記録（失敗しても続行）
+        try {
+          await logSecurityEventDB(ctx.prisma, {
+            type: SecurityEventType.REGISTER_SUCCESS,
+            severity: SecurityEventSeverity.LOW,
+            userId: user.id,
+            ipAddress: getClientIP(ctx),
+            userAgent: ctx.req?.headers['user-agent'],
+            details: {
+              email: user.email,
+              username: user.username,
+              emailSent: emailResult.success,
+              emailAttempts: emailResult.attempts,
+              emailMessageId: emailResult.messageId,
+              emailError: emailResult.finalError?.message,
+            },
+          });
+        } catch (logError) {
+          console.error('Security log failed for user registration:', {
+            userId: user.id,
+            email: user.email,
+            error: logError instanceof Error ? logError.message : String(logError),
+          });
+        }
+
+        // メール送信失敗時の追加対応
+        if (!emailResult.success) {
+          console.error('Email verification failed for new user:', {
+            userId: user.id,
+            email: user.email,
+            attempts: emailResult.attempts,
+            error: emailResult.finalError?.message,
+          });
+
+          // TODO: 管理者通知やリトライキューへの追加などを検討
+        }
+      } catch (error) {
+        console.error('Background task failed completely:', {
+          userId: user.id,
+          email: user.email,
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
     });
 
     return {
