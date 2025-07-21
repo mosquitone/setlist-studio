@@ -335,79 +335,88 @@ function ProfileContent() {
             )}
           </Box>
 
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-            <EmailIcon sx={{ mr: 2, color: 'text.secondary' }} />
-            <Box sx={{ flexGrow: 1 }}>
-              <Typography variant="body2" color="text.secondary">
-                {isChangingEmail ? messages.auth.currentEmail : messages.auth.email}
-              </Typography>
-              <Typography variant="body1" sx={{ mb: isChangingEmail ? 1 : 0 }}>
-                {currentUser?.email}
-              </Typography>
-              {isChangingEmail && (
-                <Box>
-                  <TextField
-                    fullWidth
-                    label={messages.auth.newEmail}
-                    type="email"
-                    value={newEmail}
-                    onChange={(e) => setNewEmail(e.target.value)}
+          <Box sx={{ mb: 2 }}>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
+              <EmailIcon sx={{ mr: 2, color: 'text.secondary', mt: 0.5 }} />
+              <Box sx={{ flexGrow: 1 }}>
+                <Typography variant="body2" color="text.secondary">
+                  {isChangingEmail ? messages.auth.currentEmail : messages.auth.email}
+                </Typography>
+                <Typography
+                  variant="body1"
+                  sx={{ mb: isChangingEmail ? 1 : 0, wordBreak: 'break-all' }}
+                >
+                  {currentUser?.email}
+                </Typography>
+                {!isChangingEmail && (
+                  <Button
+                    variant="outlined"
                     size="small"
-                    sx={{ mb: 1 }}
-                  />
-                  <TextField
-                    fullWidth
-                    label={messages.auth.currentPassword}
-                    type={showEmailChangePassword ? 'text' : 'password'}
-                    value={emailChangePassword}
-                    onChange={(e) => setEmailChangePassword(e.target.value)}
-                    size="small"
-                    sx={{ mb: 1 }}
-                    helperText={messages.auth.emailChangeConfirmation}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            onClick={() => setShowEmailChangePassword(!showEmailChangePassword)}
-                            edge="end"
-                          >
-                            {showEmailChangePassword ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                  {emailError && (
-                    <Alert severity="error" sx={{ mb: 1 }}>
-                      {emailError}
-                    </Alert>
-                  )}
-                  <Box sx={{ display: 'flex', gap: 1 }}>
-                    <Button
-                      variant="outlined"
+                    onClick={() => setIsChangingEmail(true)}
+                    sx={{ mt: 1, whiteSpace: 'nowrap' }}
+                  >
+                    {messages.auth.changeEmail}
+                  </Button>
+                )}
+                {isChangingEmail && (
+                  <Box sx={{ mt: 2 }}>
+                    <TextField
+                      fullWidth
+                      label={messages.auth.newEmail}
+                      type="email"
+                      value={newEmail}
+                      onChange={(e) => setNewEmail(e.target.value)}
                       size="small"
-                      onClick={resetEmailForm}
-                      disabled={emailChangeLoading}
-                    >
-                      {messages.common.cancel}
-                    </Button>
-                    <Button size="small" onClick={handleChangeEmail} disabled={emailChangeLoading}>
-                      {emailChangeLoading ? messages.common.loading : messages.auth.changeEmail}
-                    </Button>
+                      sx={{ mb: 1 }}
+                    />
+                    <TextField
+                      fullWidth
+                      label={messages.auth.currentPassword}
+                      type={showEmailChangePassword ? 'text' : 'password'}
+                      value={emailChangePassword}
+                      onChange={(e) => setEmailChangePassword(e.target.value)}
+                      size="small"
+                      sx={{ mb: 1 }}
+                      helperText={messages.auth.emailChangeConfirmation}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              onClick={() => setShowEmailChangePassword(!showEmailChangePassword)}
+                              edge="end"
+                            >
+                              {showEmailChangePassword ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                    {emailError && (
+                      <Alert severity="error" sx={{ mb: 1 }}>
+                        {emailError}
+                      </Alert>
+                    )}
+                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        onClick={resetEmailForm}
+                        disabled={emailChangeLoading}
+                      >
+                        {messages.common.cancel}
+                      </Button>
+                      <Button
+                        size="small"
+                        onClick={handleChangeEmail}
+                        disabled={emailChangeLoading}
+                      >
+                        {emailChangeLoading ? messages.common.loading : messages.auth.changeEmail}
+                      </Button>
+                    </Box>
                   </Box>
-                </Box>
-              )}
+                )}
+              </Box>
             </Box>
-            {!isChangingEmail && (
-              <Button
-                variant="outlined"
-                size="small"
-                onClick={() => setIsChangingEmail(true)}
-                sx={{ ml: 2, whiteSpace: 'nowrap' }}
-              >
-                {messages.auth.changeEmail}
-              </Button>
-            )}
           </Box>
 
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
