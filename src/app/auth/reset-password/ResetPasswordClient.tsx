@@ -17,6 +17,7 @@ import { useMutation, useQuery } from '@apollo/client';
 import { gql } from '@apollo/client';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useI18n } from '@/hooks/useI18n';
 
 const RESET_PASSWORD = gql`
   mutation ResetPassword($input: PasswordResetInput!) {
@@ -45,6 +46,7 @@ export default function ResetPasswordClient() {
   const [token, setToken] = useState('');
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { messages } = useI18n();
 
   // トークン情報を取得
   const { data: tokenInfo } = useQuery(GET_RESET_TOKEN_INFO, {
@@ -57,9 +59,9 @@ export default function ResetPasswordClient() {
     if (tokenParam) {
       setToken(tokenParam);
     } else {
-      setError('無効なリセットリンクです。');
+      setError(messages.auth.invalidResetToken);
     }
-  }, [searchParams]);
+  }, [searchParams, messages.auth.invalidResetToken]);
 
   const [resetPassword, { loading }] = useMutation(RESET_PASSWORD, {
     onCompleted: (data) => {
@@ -68,10 +70,10 @@ export default function ResetPasswordClient() {
         setError('');
         // 3秒後にログインページにリダイレクト
         setTimeout(() => {
-          router.push('/login?message=パスワードが正常にリセットされました');
+          router.push(`/login?message=${encodeURIComponent(messages.auth.passwordResetSuccess)}`);
         }, 3000);
       } else {
-        setError(data.resetPassword.message || 'パスワードリセットに失敗しました');
+        setError(data.resetPassword.message || messages.auth.serverError);
         setSuccessMessage('');
       }
     },
@@ -87,12 +89,12 @@ export default function ResetPasswordClient() {
     setSuccessMessage('');
 
     if (newPassword !== confirmPassword) {
-      setError('パスワードが一致しません');
+      setError(messages.validation.passwordsDoNotMatch);
       return;
     }
 
     if (!token) {
-      setError('無効なリセットトークンです');
+      setError(messages.auth.invalidResetToken);
       return;
     }
 
@@ -113,15 +115,15 @@ export default function ResetPasswordClient() {
           <Box sx={{ textAlign: 'center', mb: 4 }}>
             <LockResetIcon sx={{ fontSize: 64, color: 'primary.main', mb: 2 }} />
             <Typography variant="h4" component="h1" gutterBottom>
-              新しいパスワード
+              {messages.auth.resetPassword}
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              アカウントの新しいパスワードを設定してください
+              {messages.auth.passwordResetDescription}
             </Typography>
             {tokenInfo?.getPasswordResetTokenInfo?.isValid &&
               tokenInfo?.getPasswordResetTokenInfo?.email && (
                 <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                  アカウント: {tokenInfo.getPasswordResetTokenInfo.email}
+                  {messages.common.account}: {tokenInfo.getPasswordResetTokenInfo.email}
                 </Typography>
               )}
           </Box>
@@ -131,7 +133,7 @@ export default function ResetPasswordClient() {
               {successMessage}
               <br />
               <Typography variant="body2" sx={{ mt: 1 }}>
-                3秒後にログインページに移動します...
+                {messages.auth.redirectingToLogin}
               </Typography>
             </Alert>
           )}
@@ -146,14 +148,14 @@ export default function ResetPasswordClient() {
             <Box component="form" onSubmit={handleSubmit}>
               <TextField
                 fullWidth
-                label="新しいパスワード"
+                label={messages.auth.newPassword}
                 type={showPassword ? 'text' : 'password'}
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 margin="normal"
                 required
                 autoComplete="new-password"
-                helperText="8文字以上で、大文字・小文字・数字を含むパスワードを入力してください"
+                helperText={messages.auth.passwordRequirements}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -166,14 +168,14 @@ export default function ResetPasswordClient() {
               />
               <TextField
                 fullWidth
-                label="パスワード確認"
+                label={messages.auth.confirmPassword}
                 type={showPassword ? 'text' : 'password'}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 margin="normal"
                 required
                 autoComplete="new-password"
-                helperText="確認のため、もう一度同じパスワードを入力してください"
+                helperText={messages.auth.confirmPasswordHelper}
                 error={confirmPassword !== '' && newPassword !== confirmPassword}
               />
               <Button
@@ -183,7 +185,7 @@ export default function ResetPasswordClient() {
                 disabled={loading || !token}
                 sx={{ mt: 3, mb: 2, py: 1.5 }}
               >
-                {loading ? 'パスワード設定中...' : 'パスワードを設定'}
+                {loading ? messages.common.loading : messages.auth.resetPassword}
               </Button>
             </Box>
           )}
@@ -191,7 +193,7 @@ export default function ResetPasswordClient() {
           <Box textAlign="center">
             <Typography variant="body2">
               <Link href="/login" style={{ color: 'inherit' }}>
-                ← ログインページに戻る
+                ← {messages.auth.backToLogin}
               </Link>
             </Typography>
           </Box>

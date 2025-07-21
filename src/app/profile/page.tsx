@@ -483,7 +483,7 @@ function ProfileContent() {
                 onChange={(e) => setNewPassword(e.target.value)}
                 size="small"
                 sx={{ mb: 2 }}
-                helperText={messages.validation.passwordTooShort}
+                helperText={messages.auth.passwordRequirements}
                 inputProps={{
                   autoComplete: 'new-password',
                 }}
@@ -506,6 +506,7 @@ function ProfileContent() {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 size="small"
                 sx={{ mb: 2 }}
+                helperText={messages.auth.confirmPasswordHelper}
                 inputProps={{
                   autoComplete: 'new-password',
                 }}
