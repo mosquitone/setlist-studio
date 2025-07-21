@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 import { Button } from '@/components/common/ui/Button';
 import { LockReset as LockResetIcon, Visibility, VisibilityOff } from '@mui/icons-material';
-import { useMutation } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { gql } from '@apollo/client';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -27,6 +27,15 @@ const RESET_PASSWORD = gql`
   }
 `;
 
+const GET_RESET_TOKEN_INFO = gql`
+  query GetResetTokenInfo($token: String!) {
+    getPasswordResetTokenInfo(token: $token) {
+      email
+      isValid
+    }
+  }
+`;
+
 export default function ResetPasswordClient() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -36,6 +45,12 @@ export default function ResetPasswordClient() {
   const [token, setToken] = useState('');
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  // トークン情報を取得
+  const { data: tokenInfo } = useQuery(GET_RESET_TOKEN_INFO, {
+    variables: { token },
+    skip: !token,
+  });
 
   useEffect(() => {
     const tokenParam = searchParams.get('token');
@@ -103,6 +118,12 @@ export default function ResetPasswordClient() {
             <Typography variant="body1" color="text.secondary">
               アカウントの新しいパスワードを設定してください
             </Typography>
+            {tokenInfo?.getPasswordResetTokenInfo?.isValid &&
+              tokenInfo?.getPasswordResetTokenInfo?.email && (
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                  アカウント: {tokenInfo.getPasswordResetTokenInfo.email}
+                </Typography>
+              )}
           </Box>
 
           {successMessage && (

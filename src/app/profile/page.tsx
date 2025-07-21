@@ -37,6 +37,15 @@ const CHANGE_PASSWORD_MUTATION = gql`
   }
 `;
 
+const CHANGE_EMAIL_MUTATION = gql`
+  mutation RequestEmailChange($input: EmailChangeInput!) {
+    requestEmailChange(input: $input) {
+      success
+      message
+    }
+  }
+`;
+
 function ProfileContent() {
   const { user } = useAuth();
   const { messages } = useI18n();
@@ -55,6 +64,14 @@ function ProfileContent() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordError, setPasswordError] = useState('');
   const [passwordSuccess, setPasswordSuccess] = useState('');
+
+  // メールアドレス変更用の状態
+  const [isChangingEmail, setIsChangingEmail] = useState(false);
+  const [newEmail, setNewEmail] = useState('');
+  const [emailChangePassword, setEmailChangePassword] = useState('');
+  const [showEmailChangePassword, setShowEmailChangePassword] = useState(false);
+  const [emailError, setEmailError] = useState('');
+  const [emailSuccess, setEmailSuccess] = useState('');
 
   const [updateUser, { loading: updateLoading }] = useMutation(UPDATE_USER_MUTATION, {
     onCompleted: (data) => {
@@ -101,6 +118,22 @@ function ProfileContent() {
       },
     },
   );
+
+  const [requestEmailChange, { loading: emailChangeLoading }] = useMutation(CHANGE_EMAIL_MUTATION, {
+    onCompleted: (data) => {
+      if (data.requestEmailChange.success) {
+        setEmailSuccess(data.requestEmailChange.message);
+        setEmailError('');
+        setIsChangingEmail(false);
+        setNewEmail('');
+        setEmailChangePassword('');
+      }
+    },
+    onError: (error) => {
+      setEmailError(error.message);
+      setEmailSuccess('');
+    },
+  });
 
   useEffect(() => {
     if (user) {
@@ -164,6 +197,41 @@ function ProfileContent() {
     setConfirmPassword('');
     setPasswordError('');
     setPasswordSuccess('');
+  };
+
+  const handleChangeEmail = async () => {
+    setEmailError('');
+    setEmailSuccess('');
+
+    // バリデーション
+    if (!newEmail || !emailChangePassword) {
+      setEmailError(messages.validation.required);
+      return;
+    }
+
+    // メールアドレス形式チェック
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(newEmail)) {
+      setEmailError(messages.auth.invalidEmailFormat);
+      return;
+    }
+
+    await requestEmailChange({
+      variables: {
+        input: {
+          newEmail: newEmail.trim(),
+          currentPassword: emailChangePassword,
+        },
+      },
+    });
+  };
+
+  const resetEmailForm = () => {
+    setIsChangingEmail(false);
+    setNewEmail('');
+    setEmailChangePassword('');
+    setEmailError('');
+    setEmailSuccess('');
   };
 
   // ユーザー情報が取得できない場合の表示
@@ -234,16 +302,26 @@ function ProfileContent() {
           </Alert>
         )}
 
+        {emailSuccess && (
+          <Alert severity="success" sx={{ mb: 2 }}>
+            {emailSuccess}
+          </Alert>
+        )}
+
         <Box sx={{ mb: 3 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             <PersonIcon sx={{ mr: 2, color: 'text.secondary' }} />
             {isEditing ? (
               <TextField
                 fullWidth
+                name="username"
                 label={messages.auth.username}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 size="small"
+                inputProps={{
+                  autoComplete: 'username',
+                }}
               />
             ) : (
               <Box>
@@ -259,12 +337,77 @@ function ProfileContent() {
 
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             <EmailIcon sx={{ mr: 2, color: 'text.secondary' }} />
-            <Box>
+            <Box sx={{ flexGrow: 1 }}>
               <Typography variant="body2" color="text.secondary">
-                {messages.auth.email}
+                {isChangingEmail ? messages.auth.currentEmail : messages.auth.email}
               </Typography>
-              <Typography variant="body1">{currentUser?.email}</Typography>
+              <Typography variant="body1" sx={{ mb: isChangingEmail ? 1 : 0 }}>
+                {currentUser?.email}
+              </Typography>
+              {isChangingEmail && (
+                <Box>
+                  <TextField
+                    fullWidth
+                    label={messages.auth.newEmail}
+                    type="email"
+                    value={newEmail}
+                    onChange={(e) => setNewEmail(e.target.value)}
+                    size="small"
+                    sx={{ mb: 1 }}
+                  />
+                  <TextField
+                    fullWidth
+                    label={messages.auth.currentPassword}
+                    type={showEmailChangePassword ? 'text' : 'password'}
+                    value={emailChangePassword}
+                    onChange={(e) => setEmailChangePassword(e.target.value)}
+                    size="small"
+                    sx={{ mb: 1 }}
+                    helperText={messages.auth.emailChangeConfirmation}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            onClick={() => setShowEmailChangePassword(!showEmailChangePassword)}
+                            edge="end"
+                          >
+                            {showEmailChangePassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                  {emailError && (
+                    <Alert severity="error" sx={{ mb: 1 }}>
+                      {emailError}
+                    </Alert>
+                  )}
+                  <Box sx={{ display: 'flex', gap: 1 }}>
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      onClick={resetEmailForm}
+                      disabled={emailChangeLoading}
+                    >
+                      {messages.common.cancel}
+                    </Button>
+                    <Button size="small" onClick={handleChangeEmail} disabled={emailChangeLoading}>
+                      {emailChangeLoading ? messages.common.loading : messages.auth.changeEmail}
+                    </Button>
+                  </Box>
+                </Box>
+              )}
             </Box>
+            {!isChangingEmail && (
+              <Button
+                variant="outlined"
+                size="small"
+                onClick={() => setIsChangingEmail(true)}
+                sx={{ ml: 2, whiteSpace: 'nowrap' }}
+              >
+                {messages.auth.changeEmail}
+              </Button>
+            )}
           </Box>
 
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -299,14 +442,25 @@ function ProfileContent() {
 
           {isChangingPassword ? (
             <Box sx={{ mb: 2 }}>
+              {/* Hidden field for browser password manager */}
+              <input
+                type="hidden"
+                name="email"
+                value={currentUser?.email || ''}
+                autoComplete="email"
+              />
               <TextField
                 fullWidth
+                name="current-password"
                 label={messages.auth.currentPassword}
                 type={showCurrentPassword ? 'text' : 'password'}
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
                 size="small"
                 sx={{ mb: 2 }}
+                inputProps={{
+                  autoComplete: 'current-password',
+                }}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -322,6 +476,7 @@ function ProfileContent() {
               />
               <TextField
                 fullWidth
+                name="new-password"
                 label={messages.auth.newPassword}
                 type={showNewPassword ? 'text' : 'password'}
                 value={newPassword}
@@ -329,6 +484,9 @@ function ProfileContent() {
                 size="small"
                 sx={{ mb: 2 }}
                 helperText={messages.validation.passwordTooShort}
+                inputProps={{
+                  autoComplete: 'new-password',
+                }}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -341,12 +499,16 @@ function ProfileContent() {
               />
               <TextField
                 fullWidth
+                name="confirm-password"
                 label={messages.auth.confirmPassword}
                 type={showConfirmPassword ? 'text' : 'password'}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 size="small"
                 sx={{ mb: 2 }}
+                inputProps={{
+                  autoComplete: 'new-password',
+                }}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">

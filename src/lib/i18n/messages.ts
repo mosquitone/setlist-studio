@@ -98,6 +98,15 @@ export interface Messages {
     noData: string;
     createdAt: string;
     accountId: string;
+    // メールアドレス変更関連
+    changeEmail: string;
+    newEmail: string;
+    currentEmail: string;
+    emailChangeRequested: string;
+    emailChangeSuccess: string;
+    emailChangeConfirmation: string;
+    invalidEmailFormat: string;
+    emailAlreadyInUse: string;
   };
 
   // エラーメッセージ
@@ -699,6 +708,15 @@ const jaMessages: Messages = {
     noData: 'データなし',
     createdAt: '作成日',
     accountId: 'アカウントID',
+    // メールアドレス変更関連
+    changeEmail: 'メールアドレス変更',
+    newEmail: '新しいメールアドレス',
+    currentEmail: '現在のメールアドレス',
+    emailChangeRequested: 'メールアドレス変更の確認メールを送信しました',
+    emailChangeSuccess: 'メールアドレスが正常に変更されました',
+    emailChangeConfirmation: 'メールアドレス変更の確認',
+    invalidEmailFormat: 'メールアドレスの形式が正しくありません',
+    emailAlreadyInUse: 'このメールアドレスは既に使用されています',
   },
   errors: {
     serverError: 'サーバーエラーが発生しました',
@@ -1369,6 +1387,15 @@ const enMessages: Messages = {
     noData: 'No data',
     createdAt: 'Created at',
     accountId: 'Account ID',
+    // Email change related
+    changeEmail: 'Change Email',
+    newEmail: 'New Email Address',
+    currentEmail: 'Current Email Address',
+    emailChangeRequested: 'Email change confirmation sent to your new address',
+    emailChangeSuccess: 'Email address has been successfully changed',
+    emailChangeConfirmation: 'Email Change Confirmation',
+    invalidEmailFormat: 'Invalid email format',
+    emailAlreadyInUse: 'This email address is already in use',
   },
   errors: {
     serverError: 'Server error occurred',

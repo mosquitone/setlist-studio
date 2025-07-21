@@ -1,4 +1,4 @@
-import { Resolver, Mutation, Arg, Ctx, UseMiddleware } from 'type-graphql';
+import { Resolver, Mutation, Query, Arg, Ctx, UseMiddleware } from 'type-graphql';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -16,6 +16,7 @@ import {
   EmailChangeConfirmInput,
   ChangePasswordInput,
   ChangePasswordResponse,
+  PasswordResetTokenInfo,
 } from '../types/Auth';
 import {
   logAuthSuccessDB,
@@ -400,7 +401,9 @@ export class AuthResolver {
 
     return {
       success: true,
-      message: 'パスワードリセットの手順をメールで送信しました。',
+      message:
+        ctx.i18n?.messages.auth.passwordResetRequested ||
+        'パスワードリセットの手順をメールで送信しました。',
     };
   }
 
@@ -538,14 +541,120 @@ export class AuthResolver {
    * メールアドレス変更をリクエスト
    */
   @Mutation(() => EmailChangeResponse)
+  @UseMiddleware(AuthMiddleware)
   async requestEmailChange(
     @Arg('input', () => EmailChangeInput) input: EmailChangeInput,
     @Ctx() ctx: Context,
   ): Promise<EmailChangeResponse> {
-    // TODO: 認証ユーザーからユーザーIDを取得する必要がある
-    // 現在はAuthミドルウェアが実装されていないため、一時的にスキップ
-    console.log('Email change request:', input, ctx);
-    throw new Error(ctx.i18n?.messages.auth.authRequired || '認証ユーザーのみ利用できます。');
+    // AuthMiddlewareにより認証済み
+    const userId = ctx.userId!;
+
+    const user = await ctx.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new Error(ctx.i18n?.messages.auth.userNotFound || 'ユーザーが見つかりません');
+    }
+
+    // 現在のパスワードを確認
+    const isValidPassword = await bcrypt.compare(input.currentPassword, user.password);
+    if (!isValidPassword) {
+      await logSecurityEventDB(ctx.prisma, {
+        type: SecurityEventType.EMAIL_CHANGE_FAILURE,
+        severity: SecurityEventSeverity.MEDIUM,
+        userId: user.id,
+        ipAddress: getClientIP(ctx),
+        userAgent: ctx.req?.headers['user-agent'],
+        details: {
+          email: user.email,
+          newEmail: input.newEmail,
+          reason: 'invalid_current_password',
+        },
+      });
+
+      throw new Error(
+        ctx.i18n?.messages.auth.currentPasswordIncorrect || '現在のパスワードが正しくありません',
+      );
+    }
+
+    // 新しいメールアドレスが既に使用されているかチェック
+    const existingUser = await ctx.prisma.user.findUnique({
+      where: { email: input.newEmail },
+    });
+
+    if (existingUser && existingUser.id !== userId) {
+      await logSecurityEventDB(ctx.prisma, {
+        type: SecurityEventType.EMAIL_CHANGE_FAILURE,
+        severity: SecurityEventSeverity.LOW,
+        userId: user.id,
+        ipAddress: getClientIP(ctx),
+        userAgent: ctx.req?.headers['user-agent'],
+        details: {
+          email: user.email,
+          newEmail: input.newEmail,
+          reason: 'email_already_in_use',
+        },
+      });
+
+      throw new Error(
+        ctx.i18n?.messages.auth.emailAlreadyInUse || 'このメールアドレスは既に使用されています',
+      );
+    }
+
+    // 現在のメールと同じ場合は何もしない
+    if (user.email === input.newEmail) {
+      return {
+        success: true,
+        message:
+          ctx.i18n?.messages.auth.emailChangeRequested ||
+          'メールアドレス変更の確認メールを送信しました',
+      };
+    }
+
+    // メールアドレス変更トークンを生成
+    const { token, expires } = emailService.generateEmailChangeToken();
+
+    // ユーザー情報を更新（pendingEmailに新しいメールアドレスを設定）
+    await ctx.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        pendingEmail: input.newEmail,
+        emailChangeToken: token,
+        emailChangeExpires: expires,
+      },
+    });
+
+    // 新しいメールアドレスに確認メールを送信
+    const emailResult = await emailService.sendEmailChangeEmailWithDetails(
+      input.newEmail,
+      user.username,
+      token,
+      ctx.i18n?.lang,
+    );
+
+    await logSecurityEventDB(ctx.prisma, {
+      type: SecurityEventType.EMAIL_CHANGE_REQUEST,
+      severity: SecurityEventSeverity.LOW,
+      userId: user.id,
+      ipAddress: getClientIP(ctx),
+      userAgent: ctx.req?.headers['user-agent'],
+      details: {
+        oldEmail: user.email,
+        newEmail: input.newEmail,
+        emailSent: emailResult.success,
+        emailAttempts: emailResult.attempts,
+        emailMessageId: emailResult.messageId,
+        emailError: emailResult.finalError?.message,
+      },
+    });
+
+    return {
+      success: true,
+      message:
+        ctx.i18n?.messages.auth.emailChangeRequested ||
+        'メールアドレス変更の確認メールを送信しました',
+    };
   }
 
   /**
@@ -697,7 +806,7 @@ export class AuthResolver {
 
     return {
       success: true,
-      message: '認証メールを送信しました。',
+      message: ctx.i18n?.messages.auth.emailSent || '認証メールを送信しました。',
     };
   }
 
@@ -778,6 +887,39 @@ export class AuthResolver {
       success: true,
       message:
         ctx.i18n?.messages.auth.passwordChangeSuccess || 'パスワードが正常に変更されました。',
+    };
+  }
+
+  /**
+   * パスワードリセットトークン情報を取得
+   */
+  @Query(() => PasswordResetTokenInfo)
+  async getPasswordResetTokenInfo(
+    @Arg('token', () => String) token: string,
+    @Ctx() ctx: Context,
+  ): Promise<PasswordResetTokenInfo> {
+    const user = await ctx.prisma.user.findFirst({
+      where: {
+        passwordResetToken: token,
+        passwordResetExpires: {
+          gt: new Date(),
+        },
+      },
+    });
+
+    if (!user) {
+      return {
+        email: '',
+        isValid: false,
+      };
+    }
+
+    // メールアドレスを一部マスク
+    const maskedEmail = user.email.replace(/(.{2})(.*)(@.*)/, '$1***$3');
+
+    return {
+      email: maskedEmail,
+      isValid: true,
     };
   }
 }
