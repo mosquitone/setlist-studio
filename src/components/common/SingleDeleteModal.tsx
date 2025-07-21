@@ -4,7 +4,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, Box } fr
 import { Button } from '@/components/common/ui/Button';
 import { useI18n } from '@/hooks/useI18n';
 
-interface DeleteConfirmModalProps {
+interface SingleDeleteModalProps {
   open: boolean;
   onClose: () => void;
   onConfirm: () => void;
@@ -15,7 +15,7 @@ interface DeleteConfirmModalProps {
   loading?: boolean;
 }
 
-export function DeleteConfirmModal({
+export function SingleDeleteModal({
   open,
   onClose,
   onConfirm,
@@ -23,7 +23,7 @@ export function DeleteConfirmModal({
   itemName,
   description,
   loading = false,
-}: DeleteConfirmModalProps) {
+}: SingleDeleteModalProps) {
   const { messages } = useI18n();
   return (
     <Dialog

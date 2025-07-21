@@ -13,7 +13,7 @@ import {
   CardActionArea,
 } from '@mui/material';
 import { Button } from '@/components/common/ui/Button';
-import { DeleteConfirmModal } from '@/components/common/DeleteConfirmModal';
+import { SingleDeleteModal } from '@/components/common/SingleDeleteModal';
 import {
   PlaylistPlay as PlaylistPlayIcon,
   Add as AddIcon,
@@ -349,7 +349,7 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
         ))}
       </Grid>
 
-      <DeleteConfirmModal
+      <SingleDeleteModal
         open={deleteDialogOpen}
         onClose={handleDeleteCancel}
         onConfirm={handleDeleteConfirm}

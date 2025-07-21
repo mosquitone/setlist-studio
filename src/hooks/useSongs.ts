@@ -34,6 +34,11 @@ export function useSongs() {
     handleDeleteSelectedCancel,
   } = useSongDelete(clearSelection);
 
+  // 選択された楽曲の詳細情報を取得
+  const getSelectedSongsDetails = () => {
+    return songs.filter((song) => selectedSongs.includes(song.id));
+  };
+
   return {
     songs,
     loading,
@@ -47,6 +52,7 @@ export function useSongs() {
     updateLoading,
     deleteMultipleLoading,
     selectedSongs,
+    getSelectedSongsDetails,
     handleEditSong,
     handleSaveSong,
     handleDeleteClick,
