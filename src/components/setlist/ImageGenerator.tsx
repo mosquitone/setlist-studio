@@ -168,14 +168,14 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
     if (imageURL) {
       const link = document.createElement('a');
       link.href = imageURL;
-      link.download = `setlist-${data.bandName}-${selectedTheme}.png`;
+      link.download = `setlist-${data.artistName}-${selectedTheme}.png`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(imageURL);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedTheme, data.bandName]);
+  }, [selectedTheme, data.artistName]);
 
   React.useEffect(() => {
     if (onDownloadReady) {

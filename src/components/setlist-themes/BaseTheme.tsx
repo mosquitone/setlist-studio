@@ -76,7 +76,7 @@ const SongItem: React.FC<{
 );
 
 export const BaseTheme: React.FC<BaseThemeProps> = ({ data, className, colors }) => {
-  const { bandName, eventName, eventDate, openTime, startTime, items, qrCodeURL } = data;
+  const { artistName, eventName, eventDate, openTime, startTime, items, qrCodeURL } = data;
 
   // 20曲制限を適用
   const limitedItems = items.slice(0, 20);
@@ -173,7 +173,7 @@ export const BaseTheme: React.FC<BaseThemeProps> = ({ data, className, colors })
             lineHeight: 1.1,
           }}
         >
-          {bandName}
+          {artistName}
         </Typography>
 
         {eventName && (

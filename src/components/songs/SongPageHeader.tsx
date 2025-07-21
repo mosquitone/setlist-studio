@@ -39,30 +39,30 @@ export function SongPageHeader({
           {messages.songs.title}
         </Typography>
         <Stack direction={isMobile ? 'column' : 'row'} spacing={isMobile ? 1 : 2}>
-          {selectedSongs.length > 0 && (
-            <Stack direction={isMobile ? 'column' : 'row'} spacing={isMobile ? 1 : 2}>
-              <Button
-                variant="outlined"
-                startIcon={<PlaylistAddIcon />}
-                onClick={onCreateSetlist}
-                size={isMobile ? 'medium' : 'medium'}
-                sx={isMobile ? { minHeight: 40 } : {}}
-              >
-                {messages.songs.actions.createSetlist} ({selectedSongs.length}
-                {messages.songs.actions.songsCount})
-              </Button>
-              <Button
-                variant="danger"
-                startIcon={<DeleteIcon />}
-                onClick={onDeleteSelected}
-                size={isMobile ? 'medium' : 'medium'}
-                sx={isMobile ? { minHeight: 40 } : {}}
-              >
-                {messages.songs.actions.deleteSelected} ({selectedSongs.length}
-                {messages.songs.actions.songsCount})
-              </Button>
-            </Stack>
-          )}
+          <Stack direction={isMobile ? 'column' : 'row'} spacing={isMobile ? 1 : 2}>
+            <Button
+              variant="outlined"
+              startIcon={<PlaylistAddIcon />}
+              onClick={onCreateSetlist}
+              disabled={selectedSongs.length === 0}
+              size={isMobile ? 'medium' : 'medium'}
+              sx={isMobile ? { minHeight: 40 } : {}}
+            >
+              {messages.songs.actions.createSetlist} ({selectedSongs.length}
+              {messages.songs.actions.songsCount})
+            </Button>
+            <Button
+              variant="danger"
+              startIcon={<DeleteIcon />}
+              onClick={onDeleteSelected}
+              disabled={selectedSongs.length === 0}
+              size={isMobile ? 'medium' : 'medium'}
+              sx={isMobile ? { minHeight: 40 } : {}}
+            >
+              {messages.songs.actions.deleteSelected} ({selectedSongs.length}
+              {messages.songs.actions.songsCount})
+            </Button>
+          </Stack>
           <Button
             component={Link}
             href="/songs/new"

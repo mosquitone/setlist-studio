@@ -37,7 +37,7 @@ export interface SetlistItem {
 export interface Setlist {
   id: EntityId;
   title: string;
-  bandName?: string;
+  artistName?: string;
   eventName?: string;
   eventDate?: string;
   openTime?: string;

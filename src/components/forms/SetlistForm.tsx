@@ -54,10 +54,10 @@ const createValidationSchema = (messages: Messages) =>
           return false;
         }
       }),
-    bandName: Yup.string()
-      .required(messages.setlistForm.validation.bandNameRequired)
-      .max(100, messages.setlistForm.validation.bandNameMaxLength)
-      .test('sanitize', messages.setlistForm.validation.bandNameInvalidChars, function (value) {
+    artistName: Yup.string()
+      .required(messages.setlistForm.validation.artistNameRequired)
+      .max(100, messages.setlistForm.validation.artistNameMaxLength)
+      .test('sanitize', messages.setlistForm.validation.artistNameInvalidChars, function (value) {
         if (!value) return true;
         try {
           validateAndSanitizeInput(value, 100);

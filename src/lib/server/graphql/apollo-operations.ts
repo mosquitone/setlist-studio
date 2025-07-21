@@ -51,7 +51,7 @@ export const createSetlistFields = (includeUserId: boolean = false) => gql`
   fragment SetlistFields${includeUserId ? 'WithUserId' : ''} on Setlist {
     id
     title
-    bandName
+    artistName
     eventName
     eventDate
     openTime
@@ -154,9 +154,9 @@ export const GET_SETLISTS = gql`
   ${SETLIST_FIELDS}
 `;
 
-export const GET_BAND_NAMES = gql`
-  query GetBandNames {
-    bandNames
+export const GET_ARTIST_NAMES = gql`
+  query GetArtistNames {
+    artistNames
   }
 `;
 

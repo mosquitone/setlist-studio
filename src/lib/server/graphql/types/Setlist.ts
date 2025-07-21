@@ -9,7 +9,7 @@ export class Setlist {
   title!: string;
 
   @Field(() => String, { nullable: true })
-  bandName?: string;
+  artistName?: string;
 
   @Field(() => String, { nullable: true })
   eventName?: string;

@@ -65,11 +65,11 @@ export const ValidationRules = {
     message: 'セットリスト名は100文字以内で、使用可能な文字のみ入力してください',
   },
 
-  bandName: {
+  artistName: {
     minLength: 1,
     maxLength: 100,
     pattern: createPattern(CHARACTER_SETS.EXTENDED_SYMBOLS, true),
-    message: 'バンド名は100文字以内で、使用可能な文字のみ入力してください',
+    message: 'アーティスト名は100文字以内で、使用可能な文字のみ入力してください',
   },
 
   eventName: {

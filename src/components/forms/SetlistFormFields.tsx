@@ -15,7 +15,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import { FormikProps } from 'formik';
 import { SetlistFormValues } from '@/types/components';
 import { useQuery } from '@apollo/client';
-import { GET_BAND_NAMES } from '@/lib/server/graphql/apollo-operations';
+import { GET_ARTIST_NAMES } from '@/lib/server/graphql/apollo-operations';
 import { useI18n } from '@/hooks/useI18n';
 
 interface SetlistFormFieldsProps {
@@ -36,12 +36,12 @@ export function SetlistFormFields({ formik }: SetlistFormFieldsProps) {
     { value: 'white', label: messages.common.basicWhite },
   ];
 
-  // バンド名のオートコンプリート用データ取得
-  const { data: bandNamesData } = useQuery(GET_BAND_NAMES, {
+  // アーティスト名のオートコンプリート用データ取得（楽曲のアーティスト名から）
+  const { data: artistNamesData } = useQuery(GET_ARTIST_NAMES, {
     errorPolicy: 'ignore', // エラーが発生しても処理を続行
   });
 
-  const bandNames = bandNamesData?.bandNames || [];
+  const artistNames = artistNamesData?.artistNames || [];
 
   return (
     <Grid container spacing={3}>
@@ -65,13 +65,13 @@ export function SetlistFormFields({ formik }: SetlistFormFieldsProps) {
       <Grid item xs={12} sm={6}>
         <Autocomplete
           fullWidth
-          options={bandNames}
-          value={values.bandName}
-          inputValue={values.bandName}
+          options={artistNames}
+          value={values.artistName}
+          inputValue={values.artistName}
           onChange={(_, newValue) => {
             handleChange({
               target: {
-                name: 'bandName',
+                name: 'artistName',
                 value: newValue || '',
               },
             });
@@ -79,7 +79,7 @@ export function SetlistFormFields({ formik }: SetlistFormFieldsProps) {
           onInputChange={(_, newInputValue) => {
             handleChange({
               target: {
-                name: 'bandName',
+                name: 'artistName',
                 value: newInputValue,
               },
             });
@@ -88,9 +88,13 @@ export function SetlistFormFields({ formik }: SetlistFormFieldsProps) {
           renderInput={(params) => (
             <TextField
               {...params}
-              label={messages.setlistForm.fields.bandName}
-              error={touched.bandName && Boolean(errors.bandName)}
-              helperText={touched.bandName && errors.bandName}
+              label={messages.setlistForm.fields.artistName}
+              error={touched.artistName && Boolean(errors.artistName)}
+              helperText={
+                touched.artistName && errors.artistName
+                  ? errors.artistName
+                  : messages.setlistForm.fields.artistNameHelperText
+              }
               required
               onBlur={handleBlur}
             />

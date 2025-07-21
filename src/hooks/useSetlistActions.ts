@@ -10,7 +10,7 @@ interface UseSetlistActionsProps {
   setlist?: {
     id: string;
     title: string;
-    bandName: string;
+    artistName: string;
   };
 }
 
@@ -39,7 +39,7 @@ export function useSetlistActions({ setlistId, setlist }: UseSetlistActionsProps
     const url = `${window.location.origin}/setlists/${setlistId}`;
     try {
       await navigator.share({
-        title: `${setlist?.bandName || ''} - ${setlist?.title || ''}`,
+        title: `${setlist?.artistName || ''} - ${setlist?.title || ''}`,
         text: `セットリスト: ${setlist?.title || ''}`,
         url: url,
       });

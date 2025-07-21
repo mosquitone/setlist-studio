@@ -233,7 +233,7 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
                     {setlist.title}
                   </Typography>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1 }}>
-                    {setlist.bandName && (
+                    {setlist.artistName && (
                       <>
                         <GroupIcon sx={{ fontSize: 14 }} />
                         <Typography
@@ -247,13 +247,13 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
                             maxWidth: '100px',
                           }}
                         >
-                          {setlist.bandName}
+                          {setlist.artistName}
                         </Typography>
                       </>
                     )}
                     {setlist.eventName && (
                       <>
-                        <EventIcon sx={{ fontSize: 14, ml: setlist.bandName ? 1 : 0 }} />
+                        <EventIcon sx={{ fontSize: 14, ml: setlist.artistName ? 1 : 0 }} />
                         <Typography
                           variant="caption"
                           sx={{

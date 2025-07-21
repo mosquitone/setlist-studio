@@ -503,7 +503,7 @@ export interface Messages {
     editSetlist: string;
     deleteSetlist: string;
     setlistTitle: string;
-    bandName: string;
+    artistName: string;
     venue: string;
     eventDate: string;
     eventTime: string;
@@ -564,8 +564,9 @@ export interface Messages {
       title: string;
       titlePlaceholder: string;
       titleHelperText: string;
-      bandName: string;
-      bandNameRequired: string;
+      artistName: string;
+      artistNameRequired: string;
+      artistNameHelperText: string;
       eventName: string;
       eventDate: string;
       openTime: string;
@@ -589,9 +590,9 @@ export interface Messages {
     validation: {
       titleMaxLength: string;
       titleInvalidChars: string;
-      bandNameRequired: string;
-      bandNameMaxLength: string;
-      bandNameInvalidChars: string;
+      artistNameRequired: string;
+      artistNameMaxLength: string;
+      artistNameInvalidChars: string;
       eventNameMaxLength: string;
       eventNameInvalidChars: string;
       songTitleRequired: string;
@@ -923,7 +924,7 @@ const jaMessages: Messages = {
     editSetlist: 'セットリストを編集',
     deleteSetlist: 'セットリストを削除',
     setlistTitle: 'セットリストタイトル',
-    bandName: 'バンド名',
+    artistName: 'アーティスト名',
     venue: '会場',
     eventDate: 'イベント日',
     eventTime: '開始時間',
@@ -1160,7 +1161,7 @@ const jaMessages: Messages = {
         setlistCreation: {
           title: 'セットリスト作成ページ',
           description: '新しいセットリストを作成できます。',
-          feature1: '基本情報設定（タイトル、バンド名）',
+          feature1: '基本情報設定（タイトル、アーティスト名）',
           feature2: 'イベント情報（会場、日時、開演時間）',
           feature3: '楽曲追加とドラッグ&ドロップ並び替え',
           feature4: '最大20曲まで追加可能',
@@ -1251,8 +1252,9 @@ const jaMessages: Messages = {
       title: 'セットリスト名',
       titlePlaceholder: '任意',
       titleHelperText: '空欄の場合、自動的に番号が付けられます',
-      bandName: 'バンド名',
-      bandNameRequired: '必須',
+      artistName: 'アーティスト名',
+      artistNameRequired: '必須',
+      artistNameHelperText: '楽曲管理に登録したアーティスト名から選択可能',
       eventName: 'イベント名',
       eventDate: 'イベント日',
       openTime: '開場時間',
@@ -1276,9 +1278,9 @@ const jaMessages: Messages = {
     validation: {
       titleMaxLength: 'セットリスト名は100文字以内で入力してください',
       titleInvalidChars: 'セットリスト名に無効な文字が含まれています',
-      bandNameRequired: 'バンド名は必須です',
-      bandNameMaxLength: 'バンド名は100文字以内で入力してください',
-      bandNameInvalidChars: 'バンド名に無効な文字が含まれています',
+      artistNameRequired: 'アーティスト名は必須です',
+      artistNameMaxLength: 'アーティスト名は100文字以内で入力してください',
+      artistNameInvalidChars: 'アーティスト名に無効な文字が含まれています',
       eventNameMaxLength: 'イベント名は200文字以内で入力してください',
       eventNameInvalidChars: 'イベント名に無効な文字が含まれています',
       songTitleRequired: '楽曲タイトルは必須です',
@@ -1820,7 +1822,7 @@ const enMessages: Messages = {
         setlistCreation: {
           title: 'Setlist Creation Page',
           description: 'You can create new setlists.',
-          feature1: 'Basic information setting (title, band name)',
+          feature1: 'Basic information setting (title, artist name)',
           feature2: 'Event information (venue, date, show time)',
           feature3: 'Song addition and drag & drop reordering',
           feature4: 'Up to 20 songs can be added',
@@ -1976,7 +1978,7 @@ const enMessages: Messages = {
     editSetlist: 'Edit Setlist',
     deleteSetlist: 'Delete Setlist',
     setlistTitle: 'Setlist Title',
-    bandName: 'Band Name',
+    artistName: 'Artist Name',
     venue: 'Venue',
     eventDate: 'Event Date',
     eventTime: 'Start Time',
@@ -2033,8 +2035,9 @@ const enMessages: Messages = {
       title: 'Setlist Name',
       titlePlaceholder: 'Optional',
       titleHelperText: 'If left blank, will be automatically numbered',
-      bandName: 'Band Name',
-      bandNameRequired: 'Required',
+      artistName: 'Artist Name',
+      artistNameRequired: 'Required',
+      artistNameHelperText: 'Choose from artist names registered in song management',
       eventName: 'Event Name',
       eventDate: 'Event Date',
       openTime: 'Open Time',
@@ -2059,9 +2062,9 @@ const enMessages: Messages = {
     validation: {
       titleMaxLength: 'Setlist name must be 100 characters or less',
       titleInvalidChars: 'Setlist name contains invalid characters',
-      bandNameRequired: 'Band name is required',
-      bandNameMaxLength: 'Band name must be 100 characters or less',
-      bandNameInvalidChars: 'Band name contains invalid characters',
+      artistNameRequired: 'Artist name is required',
+      artistNameMaxLength: 'Artist name must be 100 characters or less',
+      artistNameInvalidChars: 'Artist name contains invalid characters',
       eventNameMaxLength: 'Event name must be 200 characters or less',
       eventNameInvalidChars: 'Event name contains invalid characters',
       songTitleRequired: 'Song title is required',

@@ -45,20 +45,20 @@ model Song {
 }
 
 model Setlist {
-  id        String        @id @default(cuid())
-  title     String
-  bandName  String?
-  eventName String?
-  eventDate DateTime?
-  openTime  String?
-  startTime String?
-  theme     String?
-  isPublic  Boolean       @default(false)
-  userId    String
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
-  items     SetlistItem[]
-  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id         String        @id @default(cuid())
+  title      String
+  artistName String?
+  eventName  String?
+  eventDate  DateTime?
+  openTime   String?
+  startTime  String?
+  theme      String?
+  isPublic   Boolean       @default(false)
+  userId     String
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+  items      SetlistItem[]
+  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("setlists")
 }
