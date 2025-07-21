@@ -51,10 +51,18 @@ const authLink = setContext(async (_, { headers }) => {
     csrfToken = await getCSRFToken();
   }
 
+  // I18nProviderと同じlocalStorageキーから言語設定を読み取る
+  const savedLang = typeof window !== 'undefined' ? localStorage.getItem('language') : null;
+
   return {
     headers: {
       ...headers,
       'x-csrf-token': csrfToken || '',
+      // 保存された言語があればそれを使用、なければブラウザの設定を使用
+      'accept-language':
+        savedLang || (typeof navigator !== 'undefined' ? navigator.language : 'ja'),
+      // X-Languageヘッダーも送信（優先度が高い）
+      ...(savedLang && { 'x-language': savedLang }),
     },
   };
 });

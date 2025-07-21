@@ -602,13 +602,11 @@ export class AuthResolver {
       );
     }
 
-    // 現在のメールと同じ場合は何もしない
+    // 現在のメールと同じ場合は何もしない（成功として扱う）
     if (user.email === input.newEmail) {
       return {
         success: true,
-        message:
-          ctx.i18n?.messages.auth.emailChangeRequested ||
-          'メールアドレス変更の確認メールを送信しました',
+        message: '', // 空のメッセージで成功を返す
       };
     }
 
