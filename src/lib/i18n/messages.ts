@@ -1326,8 +1326,8 @@ const jaMessages: Messages = {
     },
     actions: {
       addNew: '新しい楽曲を追加',
-      createSetlist: '選択した楽曲でセットリストを作成',
-      deleteSelected: '選択した楽曲を削除',
+      createSetlist: 'セットリスト作成',
+      deleteSelected: '選択楽曲を削除',
       songsCount: ' 曲',
     },
     form: {
@@ -2109,8 +2109,8 @@ const enMessages: Messages = {
     },
     actions: {
       addNew: 'Add New Song',
-      createSetlist: 'Create Setlist with Selected Songs',
-      deleteSelected: 'Delete Selected Songs',
+      createSetlist: 'Create Setlist',
+      deleteSelected: 'Delete Selected',
       songsCount: ' songs',
     },
     form: {
