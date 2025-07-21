@@ -481,7 +481,6 @@ export interface Messages {
     setlist: string;
     editSetlist: string;
     deleteSetlist: string;
-    defaultSetlistTitle: string;
     setlistTitle: string;
     bandName: string;
     venue: string;
@@ -901,7 +900,6 @@ const jaMessages: Messages = {
     setlist: 'セットリスト',
     editSetlist: 'セットリストを編集',
     deleteSetlist: 'セットリストを削除',
-    defaultSetlistTitle: 'セットリスト {number}',
     setlistTitle: 'セットリストタイトル',
     bandName: 'バンド名',
     venue: '会場',
@@ -1912,7 +1910,6 @@ const enMessages: Messages = {
     setlist: 'Setlist',
     editSetlist: 'Edit Setlist',
     deleteSetlist: 'Delete Setlist',
-    defaultSetlistTitle: 'Setlist {number}',
     setlistTitle: 'Setlist Title',
     bandName: 'Band Name',
     venue: 'Venue',

@@ -283,8 +283,7 @@ export class SetlistResolver {
 
     // 名前の衝突を避けるため、既存のセットリストタイトルをチェック
     const formatTitle = (num: number) => {
-      const template = ctx.i18n?.messages.common.defaultSetlistTitle || 'セットリスト {number}';
-      return template.replace('{number}', num.toString());
+      return `Setlist ${num}`;
     };
 
     let title = formatTitle(nextNumber);
