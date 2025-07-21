@@ -185,14 +185,6 @@ async function createSecureContext(req: NextRequest) {
 
   const token = cookies['auth_token'];
 
-  // デバッグログ
-  if (process.env.NODE_ENV === 'development') {
-    console.log('🔍 Auth Debug:');
-    console.log('  Available cookies:', Object.keys(cookies));
-    console.log('  auth_token exists:', !!token);
-    console.log('  auth_token length:', token?.length || 0);
-  }
-
   if (token) {
     try {
       const jwtSecret = process.env.JWT_SECRET;
@@ -203,16 +195,14 @@ async function createSecureContext(req: NextRequest) {
           email: decoded.email,
           username: decoded.username,
         };
-
-        if (process.env.NODE_ENV === 'development') {
-          console.log('  ✅ JWT validation successful:', user.email);
-        }
       }
     } catch (error) {
       // Token validation failed - user remains undefined
-      if (process.env.NODE_ENV === 'development') {
-        console.log('  ❌ JWT validation failed:', error);
-      }
+      // Log for security monitoring without exposing sensitive details
+      console.warn(
+        'JWT validation failed - invalid or expired token:',
+        error instanceof Error ? error.message : 'Unknown error',
+      );
     }
   }
 
