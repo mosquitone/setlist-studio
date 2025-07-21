@@ -80,9 +80,7 @@ export function SongTable({
             key={song.id}
             sx={{
               '&:hover': { backgroundColor: 'action.hover' },
-              cursor: 'pointer',
             }}
-            onClick={() => onEdit(song)}
           >
             <CardContent>
               <Stack spacing={1}>
@@ -94,7 +92,12 @@ export function SongTable({
                         e.stopPropagation();
                         onToggleSelection(song.id);
                       }}
-                      size="small"
+                      size="medium"
+                      sx={{
+                        '& .MuiSvgIcon-root': {
+                          fontSize: '1.5rem',
+                        },
+                      }}
                       aria-label={`${song.title}${messages.songs.table.selectSong}`}
                     />
                     <Box sx={{ flex: 1, minWidth: 0 }}>
@@ -113,7 +116,7 @@ export function SongTable({
                         onEdit(song);
                       }}
                       color="primary"
-                      size="small"
+                      size="medium"
                       aria-label={`${song.title}${messages.songs.table.editSong}`}
                     >
                       <EditIcon />
@@ -124,7 +127,7 @@ export function SongTable({
                         onDelete(song);
                       }}
                       color="error"
-                      size="small"
+                      size="medium"
                       aria-label={`${song.title}${messages.songs.table.deleteSong}`}
                     >
                       <DeleteIcon />
