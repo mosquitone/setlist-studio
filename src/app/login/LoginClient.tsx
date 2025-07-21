@@ -16,7 +16,7 @@ import { Login as LoginIcon, Visibility, VisibilityOff } from '@mui/icons-materi
 import { useMutation } from '@apollo/client';
 import { LOGIN } from '@/lib/server/graphql/apollo-operations';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useI18n } from '@/hooks/useI18n';
 
@@ -26,8 +26,6 @@ export default function LoginClient() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const successMessage = searchParams.get('message');
   const { login: authLogin } = useAuth();
   const { messages } = useI18n();
 
@@ -69,12 +67,6 @@ export default function LoginClient() {
               {messages.auth.loginToManageSetlists}
             </Typography>
           </Box>
-
-          {successMessage && (
-            <Alert severity="success" sx={{ mb: 3 }}>
-              {successMessage}
-            </Alert>
-          )}
 
           {error && (
             <Alert severity="error" sx={{ mb: 3 }}>
