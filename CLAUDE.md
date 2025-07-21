@@ -533,6 +533,12 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 最新の開発履歴と変更記録については、[HISTORY.md](./docs/project/HISTORY.md)を参照してください。
 
 ### 最新の主要更新
+- **楽曲削除モーダル改善 (2025-07-22)**: UX向上とコンポーネント命名統一
+  - ✅ MultiDeleteModal新規作成: 選択楽曲をリスト表示形式で表示
+  - ✅ 楽曲カウント表示を「X曲」「X songs」に多言語対応
+  - ✅ SingleDeleteModal/MultiDeleteModalに命名統一（***DeleteModalパターン）
+  - ✅ 削除確認メッセージ「？」を適切なメッセージに修正
+  - ✅ useSongsフックにgetSelectedSongsDetails関数追加
 - **利用ガイドページ大幅改善 (2025-07-22)**: ユーザビリティとコード品質の向上
   - ✅ 認証・パスワード関連セクション新規追加（メール認証・パスワードリセット手順）
   - ✅ 完全無料利用の強調表示（✨アイコン付きアラート）
