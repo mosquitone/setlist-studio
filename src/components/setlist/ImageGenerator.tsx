@@ -10,6 +10,7 @@ import { SetlistData } from '@/types/components';
 import { Theme } from '@/types/common';
 import { SetlistRenderer } from '../setlist-themes/SetlistRenderer';
 import { isValidUrl } from '@/lib/security/security-utils';
+import { useI18n } from '@/hooks/useI18n';
 
 interface ImageGeneratorProps {
   data: SetlistData;
@@ -32,6 +33,7 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [hasGenerated, setHasGenerated] = useState(false);
+  const { messages } = useI18n();
 
   const generateQRCode = React.useCallback(
     async (setlistId: string): Promise<string> => {
@@ -131,7 +133,9 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
 
         return imageURL;
       } catch (error) {
-        setError(`画像生成エラー: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        setError(
+          `${messages.common.generationError}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        );
         return null;
       } finally {
         setIsGenerating(false);
@@ -222,7 +226,7 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
           disabled={isGenerating}
           size="small"
         >
-          {isGenerating ? '生成中...' : '画像生成'}
+          {isGenerating ? messages.common.generating : messages.common.imageGeneration}
         </Button>
       </Box>
 

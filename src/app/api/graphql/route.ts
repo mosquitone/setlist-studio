@@ -7,6 +7,8 @@ import { GraphQLSchema } from 'graphql';
 import depthLimit from 'graphql-depth-limit';
 import { createApiRateLimit, createAuthRateLimit } from '../../../lib/security/rate-limit-db';
 import { csrfProtection } from '../../../lib/security/csrf-protection';
+import jwt from 'jsonwebtoken';
+import { withI18n } from '../../../lib/i18n/context';
 
 // Import pre-built schema
 import { getPreBuiltSchema } from '../../../lib/server/graphql/generated-schema';
@@ -133,7 +135,7 @@ async function createServer() {
 
         // システムエラーは汎用メッセージ
         return {
-          message: 'サーバーエラーが発生しました。しばらく時間をおいて再度お試しください。',
+          message: 'A server error occurred. Please try again later.',
         };
       }
 
@@ -150,6 +152,15 @@ async function createServer() {
 // Lazy initialization approach for Vercel Functions
 async function getServerInstance() {
   return createServer();
+}
+
+// JWT Token interface
+interface JWTPayload {
+  userId: string;
+  email: string;
+  username: string;
+  iat: number;
+  exp: number;
 }
 
 // Context helper for secure token extraction with connection assurance
@@ -169,20 +180,77 @@ async function createSecureContext(req: NextRequest) {
     headers[key] = value;
   });
 
-  return {
+  // JWTトークンを取得して認証情報を設定
+  let user: { userId: string; email: string; username: string } | undefined;
+
+  const token = cookies['auth_token'];
+
+  // デバッグログ
+  if (process.env.NODE_ENV === 'development') {
+    console.log('🔍 Auth Debug:');
+    console.log('  Available cookies:', Object.keys(cookies));
+    console.log('  auth_token exists:', !!token);
+    console.log('  auth_token length:', token?.length || 0);
+  }
+
+  if (token) {
+    try {
+      const jwtSecret = process.env.JWT_SECRET;
+      if (jwtSecret) {
+        const decoded = jwt.verify(token, jwtSecret) as JWTPayload;
+        user = {
+          userId: decoded.userId,
+          email: decoded.email,
+          username: decoded.username,
+        };
+
+        if (process.env.NODE_ENV === 'development') {
+          console.log('  ✅ JWT validation successful:', user.email);
+        }
+      }
+    } catch (error) {
+      // Token validation failed - user remains undefined
+      if (process.env.NODE_ENV === 'development') {
+        console.log('  ❌ JWT validation failed:', error);
+      }
+    }
+  }
+
+  const context = {
     req: {
       cookies,
       headers,
+      authorization: token ? `Bearer ${token}` : undefined,
     },
     prisma,
+    user,
   };
+
+  // i18n機能を追加
+  return withI18n(context);
 }
 
 export async function GET(request: NextRequest) {
+  // Create i18n context early for error message localization
+  const i18nContext = withI18n({});
+
   // Apply database-based rate limiting
   const apiRateLimit = createApiRateLimit(prisma);
   const rateLimitResponse = await apiRateLimit(request);
   if (rateLimitResponse) {
+    if (rateLimitResponse.status === 429) {
+      const json = await rateLimitResponse.clone().json();
+      return Response.json(
+        {
+          ...json,
+          error: i18nContext.i18n?.messages.errors.rateLimitExceeded || json.error,
+        },
+        {
+          status: rateLimitResponse.status,
+          headers: rateLimitResponse.headers,
+        },
+      );
+    }
     return rateLimitResponse;
   }
 
@@ -194,6 +262,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  // Create i18n context early for error message localization
+  const i18nContext = withI18n({});
+
   // Parallel processing for maximum performance optimization
   const bodyPromise = request.clone().text();
   const apiRateLimitPromise = createApiRateLimit(prisma)(request);
@@ -207,8 +278,21 @@ export async function POST(request: NextRequest) {
     serverPromise,
   ]);
 
-  // Check API rate limit first
+  // Check API rate limit first with i18n message
   if (apiRateLimitResponse) {
+    if (apiRateLimitResponse.status === 429) {
+      const json = await apiRateLimitResponse.clone().json();
+      return Response.json(
+        {
+          ...json,
+          error: i18nContext.i18n?.messages.errors.rateLimitExceeded || json.error,
+        },
+        {
+          status: apiRateLimitResponse.status,
+          headers: apiRateLimitResponse.headers,
+        },
+      );
+    }
     return apiRateLimitResponse;
   }
 
@@ -226,9 +310,36 @@ export async function POST(request: NextRequest) {
 
   const authResults = await Promise.all(authPromises);
 
-  // Check for any auth/CSRF failures
+  // Check for any auth/CSRF failures with i18n messages
   for (const result of authResults) {
     if (result) {
+      if (result.status === 429) {
+        // Auth rate limit exceeded
+        const json = await result.clone().json();
+        return Response.json(
+          {
+            ...json,
+            error: i18nContext.i18n?.messages.errors.authRateLimitExceeded || json.error,
+          },
+          {
+            status: result.status,
+            headers: result.headers,
+          },
+        );
+      } else if (result.status === 403) {
+        // CSRF validation failed
+        const json = await result.clone().json();
+        return Response.json(
+          {
+            ...json,
+            error: i18nContext.i18n?.messages.errors.csrfValidationFailed || json.error,
+          },
+          {
+            status: result.status,
+            headers: result.headers,
+          },
+        );
+      }
       return result;
     }
   }
