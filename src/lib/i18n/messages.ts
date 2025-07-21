@@ -46,6 +46,8 @@ export interface Messages {
     currentPassword: string;
     newPassword: string;
     confirmPassword: string;
+    confirmPasswordHelper: string;
+    passwordRequirements: string;
     changePassword: string;
     resetPassword: string;
     forgotPassword: string;
@@ -395,6 +397,7 @@ export interface Messages {
     wait: string;
     yes: string;
     no: string;
+    account: string;
     song: string;
     newSong: string;
     editSong: string;
@@ -657,6 +660,8 @@ const jaMessages: Messages = {
     currentPassword: '現在のパスワード',
     newPassword: '新しいパスワード',
     confirmPassword: 'パスワード（確認）',
+    confirmPasswordHelper: '確認のため、もう一度同じパスワードを入力してください',
+    passwordRequirements: 'パスワードは8文字以上で、大文字・小文字・数字を含む必要があります',
     changePassword: 'パスワードを変更',
     resetPassword: 'パスワードをリセット',
     forgotPassword: 'パスワードを忘れた方',
@@ -745,6 +750,7 @@ const jaMessages: Messages = {
     wait: 'しばらくお待ちください',
     yes: 'はい',
     no: 'いいえ',
+    account: 'アカウント',
     song: '楽曲',
     newSong: '新しい楽曲',
     editSong: '楽曲を編集',
@@ -1333,6 +1339,9 @@ const enMessages: Messages = {
     currentPassword: 'Current Password',
     newPassword: 'New Password',
     confirmPassword: 'Confirm Password',
+    confirmPasswordHelper: 'Please enter the same password again for confirmation',
+    passwordRequirements:
+      'Password must be at least 8 characters and contain uppercase, lowercase, and numbers',
     changePassword: 'Change Password',
     resetPassword: 'Reset Password',
     forgotPassword: 'Forgot Password?',
@@ -1675,6 +1684,7 @@ const enMessages: Messages = {
     wait: 'Please wait',
     yes: 'Yes',
     no: 'No',
+    account: 'Account',
     song: 'Song',
     newSong: 'New Song',
     editSong: 'Edit Song',
