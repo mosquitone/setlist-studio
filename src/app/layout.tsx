@@ -12,6 +12,8 @@ import LoadingFallback from '@/components/common/ui/LoadingFallback';
 
 const inter = Inter({ subsets: ['latin'] });
 
+// Dynamic metadata will be handled by individual pages
+// This is the fallback metadata
 export const metadata: Metadata = {
   title: {
     template: '%s | Setlist Studio',

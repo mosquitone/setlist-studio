@@ -8,6 +8,7 @@ import { useMutation } from '@apollo/client';
 import { gql } from '@apollo/client';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useI18n } from '@/hooks/useI18n';
 
 const VERIFY_EMAIL = gql`
   mutation VerifyEmail($input: EmailVerificationInput!) {
@@ -34,6 +35,7 @@ export default function VerifyEmailClient() {
   const [canResend, setCanResend] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { messages } = useI18n();
 
   const [verifyEmail] = useMutation(VERIFY_EMAIL, {
     onCompleted: (data) => {
@@ -42,11 +44,13 @@ export default function VerifyEmailClient() {
         setMessage(data.verifyEmail.message);
         // 3秒後にログインページにリダイレクト
         setTimeout(() => {
-          router.push('/login?message=メール認証が完了しました。ログインできます。');
+          router.push(
+            `/login?message=${encodeURIComponent(messages.auth.emailVerificationSuccessDescription)}`,
+          );
         }, 3000);
       } else {
         setStatus('error');
-        setMessage(data.verifyEmail.message || 'メール認証に失敗しました');
+        setMessage(data.verifyEmail.message || messages.auth.emailVerificationFailedDefault);
         setCanResend(true);
       }
     },
@@ -88,10 +92,10 @@ export default function VerifyEmailClient() {
       });
     } else {
       setStatus('error');
-      setMessage('無効な認証リンクです。');
+      setMessage(messages.auth.invalidVerificationLink);
       setCanResend(true);
     }
-  }, [searchParams, verifyEmail]);
+  }, [searchParams, verifyEmail, messages.auth.invalidVerificationLink]);
 
   const handleResendEmail = () => {
     if (email) {
@@ -115,11 +119,11 @@ export default function VerifyEmailClient() {
   const getTitle = () => {
     switch (status) {
       case 'loading':
-        return 'メール認証中...';
+        return messages.auth.emailVerificationProcessing;
       case 'success':
-        return 'メール認証完了';
+        return messages.auth.emailVerificationComplete;
       case 'error':
-        return 'メール認証エラー';
+        return messages.auth.emailVerificationError;
     }
   };
 
@@ -144,9 +148,9 @@ export default function VerifyEmailClient() {
               {getTitle()}
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              {status === 'loading' && 'メールアドレスの認証を処理しています...'}
-              {status === 'success' && '認証が完了しました。ログインできます。'}
-              {status === 'error' && 'メール認証に問題が発生しました。'}
+              {status === 'loading' && messages.auth.emailVerificationProcessingDescription}
+              {status === 'success' && messages.auth.emailVerificationSuccessDescription}
+              {status === 'error' && messages.auth.emailVerificationFailedDescription}
             </Typography>
           </Box>
 
@@ -155,7 +159,7 @@ export default function VerifyEmailClient() {
               {message}
               {status === 'success' && (
                 <Typography variant="body2" sx={{ mt: 1 }}>
-                  3秒後にログインページに移動します...
+                  {messages.auth.redirectingToLogin}
                 </Typography>
               )}
             </Alert>
@@ -169,7 +173,9 @@ export default function VerifyEmailClient() {
                 disabled={resendLoading}
                 sx={{ mb: 2 }}
               >
-                {resendLoading ? '再送信中...' : '認証メールを再送信'}
+                {resendLoading
+                  ? messages.auth.resendingEmail
+                  : messages.auth.resendVerificationEmailButton}
               </Button>
             </Box>
           )}
@@ -177,7 +183,7 @@ export default function VerifyEmailClient() {
           <Box textAlign="center">
             <Typography variant="body2">
               <Link href="/login" style={{ color: 'inherit' }}>
-                ← ログインページに戻る
+                ← {messages.auth.backToLoginPage}
               </Link>
             </Typography>
           </Box>

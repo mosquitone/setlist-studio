@@ -18,6 +18,7 @@ import { AuthMiddleware } from '@/lib/server/graphql/middleware/jwt-auth-middlew
 interface Context {
   prisma: PrismaClient;
   userId?: string;
+  i18n?: { messages: any };
 }
 
 // 基底クラス - 楽曲の共通フィールド定義
@@ -125,7 +126,7 @@ export class SongResolver {
     });
 
     if (!song) {
-      throw new Error('Song not found');
+      throw new Error(ctx.i18n?.messages.errors.songNotFound || 'Song not found');
     }
 
     return ctx.prisma.song.update({
@@ -142,7 +143,7 @@ export class SongResolver {
     });
 
     if (!song) {
-      throw new Error('Song not found');
+      throw new Error(ctx.i18n?.messages.errors.songNotFound || 'Song not found');
     }
 
     await ctx.prisma.song.delete({
@@ -168,7 +169,9 @@ export class SongResolver {
     });
 
     if (songsToDelete.length === 0) {
-      throw new Error('No songs found to delete');
+      throw new Error(
+        ctx.i18n?.messages.errors.songsNotFoundToDelete || 'No songs found to delete',
+      );
     }
 
     const songIdsToDelete = songsToDelete.map((song) => song.id);

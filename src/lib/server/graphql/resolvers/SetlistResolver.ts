@@ -30,6 +30,7 @@ interface Context {
     cookies: { [key: string]: string };
     headers: { [key: string]: string };
   };
+  i18n?: { messages: any };
 }
 
 @InputType()
@@ -169,13 +170,19 @@ export class SetlistResolver {
     // プライベートセットリストは認証が必要 - 手動で認証をチェック
     const token = ctx.req?.cookies?.auth_token;
     if (!token) {
-      throw new Error('Authentication required to access private setlist');
+      throw new Error(
+        ctx.i18n?.messages.errors.authenticationRequiredPrivate ||
+          'Authentication required to access private setlist',
+      );
     }
 
     try {
       const jwtSecret = process.env.JWT_SECRET;
       if (!jwtSecret) {
-        throw new Error('JWT_SECRET environment variable is not configured');
+        throw new Error(
+          ctx.i18n?.messages.errors.jwtNotConfigured ||
+            'JWT_SECRET environment variable is not configured',
+        );
       }
       const payload = verifyAndValidateJWT(token, jwtSecret);
 
@@ -194,11 +201,17 @@ export class SetlistResolver {
             isPublic: setlist.isPublic,
           },
         });
-        throw new Error('Unauthorized access to private setlist');
+        throw new Error(
+          ctx.i18n?.messages.errors.unauthorizedAccessPrivate ||
+            'Unauthorized access to private setlist',
+        );
       }
     } catch (error) {
       console.error('JWT verification failed:', error);
-      throw new Error('Authentication required to access private setlist');
+      throw new Error(
+        ctx.i18n?.messages.errors.authenticationRequiredPrivate ||
+          'Authentication required to access private setlist',
+      );
     }
 
     return setlist as Setlist;
@@ -269,7 +282,12 @@ export class SetlistResolver {
     const nextNumber = setlistCount + 1;
 
     // 名前の衝突を避けるため、既存のセットリストタイトルをチェック
-    let title = `セットリスト ${nextNumber}`;
+    const formatTitle = (num: number) => {
+      const template = ctx.i18n?.messages.common.defaultSetlistTitle || 'セットリスト {number}';
+      return template.replace('{number}', num.toString());
+    };
+
+    let title = formatTitle(nextNumber);
     let counter = nextNumber;
 
     while (true) {
@@ -285,7 +303,7 @@ export class SetlistResolver {
       }
 
       counter++;
-      title = `セットリスト ${counter}`;
+      title = formatTitle(counter);
     }
 
     return title;
@@ -341,7 +359,7 @@ export class SetlistResolver {
     });
 
     if (!setlist) {
-      throw new Error('Setlist not found');
+      throw new Error(ctx.i18n?.messages.errors.setlistNotFound || 'Setlist not found');
     }
 
     await ctx.prisma.setlist.update({
@@ -364,7 +382,7 @@ export class SetlistResolver {
     });
 
     if (!setlist) {
-      throw new Error('Setlist not found');
+      throw new Error(ctx.i18n?.messages.errors.setlistNotFound || 'Setlist not found');
     }
 
     const { items, ...setlistData } = input;
@@ -409,7 +427,7 @@ export class SetlistResolver {
     });
 
     if (!setlist) {
-      throw new Error('Setlist not found');
+      throw new Error(ctx.i18n?.messages.errors.setlistNotFound || 'Setlist not found');
     }
 
     await ctx.prisma.setlist.delete({

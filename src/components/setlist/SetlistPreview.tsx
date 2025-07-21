@@ -14,6 +14,7 @@ import QRCode from 'qrcode';
 import { SetlistData } from '@/types/components';
 import { Theme } from '@/types/common';
 import { SetlistRenderer } from '../setlist-themes/SetlistRenderer';
+import { useI18n } from '@/hooks/useI18n';
 
 interface SetlistPreviewProps {
   data: SetlistData;
@@ -32,6 +33,7 @@ export function SetlistPreview({
   previewImage,
   qrCodeURL = '',
 }: SetlistPreviewProps) {
+  const { messages } = useI18n();
   const [generatedQrCode, setGeneratedQrCode] = useState<string>('');
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -106,7 +108,9 @@ export function SetlistPreview({
           }}
         >
           <CircularProgress />
-          <Typography sx={{ mt: 2, color: 'text.secondary' }}>画像を生成中...</Typography>
+          <Typography sx={{ mt: 2, color: 'text.secondary' }}>
+            {messages.common.generating}
+          </Typography>
         </Box>
       );
     }
@@ -116,7 +120,7 @@ export function SetlistPreview({
       return (
         <img
           src={previewImage}
-          alt="Setlist Preview"
+          alt={messages.common.setlistPreview}
           style={{
             width: `${previewWidth}px`,
             height: `${previewHeight}px`,

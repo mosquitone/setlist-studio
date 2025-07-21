@@ -32,8 +32,8 @@ export function SetlistFormFields({ formik }: SetlistFormFieldsProps) {
   }, [lang]);
 
   const themes = [
-    { value: 'black', label: 'Black' },
-    { value: 'white', label: 'White' },
+    { value: 'black', label: messages.common.basicBlack },
+    { value: 'white', label: messages.common.basicWhite },
   ];
 
   // バンド名のオートコンプリート用データ取得
