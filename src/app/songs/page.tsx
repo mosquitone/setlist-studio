@@ -4,7 +4,8 @@ import { Container, Box, Alert } from '@mui/material';
 import { SongPageHeader } from '@/components/songs/SongPageHeader';
 import { SongTable } from '@/components/songs/SongTable';
 import { SongEditDialog } from '@/components/songs/SongEditDialog';
-import { DeleteConfirmModal } from '@/components/common/DeleteConfirmModal';
+import { SingleDeleteModal } from '@/components/common/SingleDeleteModal';
+import { MultiDeleteModal } from '@/components/common/MultiDeleteModal';
 import { useSongs } from '@/hooks/useSongs';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { useI18n } from '@/hooks/useI18n';
@@ -24,6 +25,7 @@ export default function SongsPage() {
     updateLoading,
     deleteMultipleLoading,
     selectedSongs,
+    getSelectedSongsDetails,
     handleEditSong,
     handleSaveSong,
     handleDeleteClick,
@@ -72,7 +74,7 @@ export default function SongsPage() {
             loading={updateLoading}
           />
 
-          <DeleteConfirmModal
+          <SingleDeleteModal
             open={isDeleteDialogOpen}
             onClose={handleDeleteCancel}
             onConfirm={handleDeleteConfirm}
@@ -82,14 +84,11 @@ export default function SongsPage() {
             loading={deleteLoading}
           />
 
-          <DeleteConfirmModal
+          <MultiDeleteModal
             open={isMultipleDeleteDialogOpen}
             onClose={handleDeleteSelectedCancel}
             onConfirm={handleDeleteSelectedConfirm}
-            title={messages.common.deleteSong}
-            itemName={`${selectedSongs.length} ${messages.navigation.songs}`}
-            itemType={messages.common.song}
-            description={messages.confirmations.deleteSong}
+            selectedSongs={getSelectedSongsDetails()}
             loading={deleteMultipleLoading}
           />
         </Box>
