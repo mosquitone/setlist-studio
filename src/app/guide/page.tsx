@@ -76,7 +76,11 @@ export default function GuidePage() {
           <Typography variant="body1" paragraph>
             {messages.pages.guide.aboutSection.description2}
           </Typography>
-          <Alert severity="info" icon="✨" sx={{ mt: 2, mb: 2, bgcolor: '#e3f2fd', borderColor: '#2196f3' }}>
+          <Alert
+            severity="info"
+            icon="✨"
+            sx={{ mt: 2, mb: 2, bgcolor: '#e3f2fd', borderColor: '#2196f3' }}
+          >
             <Typography variant="body1" sx={{ fontWeight: 'bold', color: '#1565c0' }}>
               {messages.pages.guide.aboutSection.description3}
             </Typography>
