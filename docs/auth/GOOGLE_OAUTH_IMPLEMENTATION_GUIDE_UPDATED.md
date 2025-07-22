@@ -242,9 +242,10 @@ export default function RootLayout({ children }) {
 ## 簡素化された理由
 
 ### 元のガイドから削除したもの
-- **PrismaAdapter**: JWT戦略では不要
+- **PrismaAdapter**: JWT戦略では不要 (依存関係も削除済み)
 - **OAuthAccountモデル**: 既存システム統合なら不要
 - **複雑なCallback処理**: シンプルな統合で十分
+- **NextAuth環境変数**: NEXTAUTH_URL/NEXTAUTH_SECRETは使用しない
 
 ### 実装の利点
 - **既存システム維持**: GraphQL APIなど既存コードは無変更
@@ -254,16 +255,13 @@ export default function RootLayout({ children }) {
 ## 環境変数
 
 ```env
-# Google OAuth
+# Google OAuth（必要な環境変数のみ）
 GOOGLE_CLIENT_ID=your-google-client-id.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=your-google-client-secret
 
-# NextAuth（既存のJWT_SECRETと同じ値を使用）
-NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=your-jwt-secret-same-as-jwt_secret
-
 # 既存の設定はそのまま
 JWT_SECRET=your-jwt-secret
+# その他の既存環境変数...
 ```
 
 この実装により、最小限の変更で既存の認証システムとGoogle OAuthが統合できます。
