@@ -102,6 +102,12 @@ export interface Messages {
     dontHaveAccount: string;
     loginToManageSetlists: string;
     createAccountToStart: string;
+    // Google認証
+    signInWithGoogle: string;
+    signUpWithGoogle: string;
+    signingIn: string;
+    signingUp: string;
+    googleAuthError: string;
     // 利用規約・プライバシー
     terms: string;
     privacy: string;
@@ -802,6 +808,12 @@ const jaMessages: Messages = {
     dontHaveAccount: 'アカウントをお持ちでないですか？',
     loginToManageSetlists: 'アカウントにログインしてセットリストを管理',
     createAccountToStart: 'アカウントを作成してセットリスト作成を開始',
+    // Google認証
+    signInWithGoogle: 'Googleでログイン',
+    signUpWithGoogle: 'Googleでアカウント作成',
+    signingIn: 'サインイン中...',
+    signingUp: 'アカウント作成中...',
+    googleAuthError: 'Google認証でエラーが発生しました',
     terms: '利用規約',
     privacy: 'プライバシーポリシー',
     and: 'と',
@@ -1585,6 +1597,12 @@ const enMessages: Messages = {
     dontHaveAccount: "Don't have an account?",
     loginToManageSetlists: 'Login to manage your setlists',
     createAccountToStart: 'Create an account to start creating setlists',
+    // Google Authentication
+    signInWithGoogle: 'Sign in with Google',
+    signUpWithGoogle: 'Sign up with Google',
+    signingIn: 'Signing in...',
+    signingUp: 'Signing up...',
+    googleAuthError: 'An error occurred during Google authentication',
     // Terms & Privacy
     terms: 'Terms of Service',
     privacy: 'Privacy Policy',
