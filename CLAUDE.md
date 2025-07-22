@@ -110,7 +110,7 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 ### 主要コンポーネント
 
 **データモデル**
-- `User`: 一意のemail/usernameによる認証とユーザー管理
+- `User`: 一意のemailによる認証とユーザー管理（username重複許可）
 - `Song`: メタデータ付き楽曲（タイトル、アーティスト、キー、テンポ、長さ、メモ）
 - `Setlist`: バンド/会場情報付きパフォーマンス用楽曲コレクション
 - `SetlistItem`: セットリストと楽曲を順序・タイミング付きで結ぶ中間テーブル

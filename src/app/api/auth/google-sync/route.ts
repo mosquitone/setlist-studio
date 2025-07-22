@@ -17,17 +17,7 @@ async function handleGoogleSync(req: NextRequest) {
     // NextAuthセッションを確認
     const session = await getServerSession(authOptions);
 
-    // デバッグログ（開発環境のみ）
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Google sync - session:', session);
-    }
-
     if (!session?.user?.email) {
-      // デバッグログ（開発環境のみ）
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Google sync - no session or email');
-      }
-
       // OAuth認証失敗をログに記録
       await logSecurityEventDB(prisma, {
         type: SecurityEventType.OAUTH_LOGIN_FAILURE,
@@ -51,24 +41,9 @@ async function handleGoogleSync(req: NextRequest) {
     });
 
     if (!user) {
-      // 安全なユーザー名を生成
+      // 安全なユーザー名を生成（重複許可）
       const baseUsername = session.user.name || session.user.email.split('@')[0];
-      let username = baseUsername.replace(/[^a-zA-Z0-9_]/g, '_'); // 特殊文字を除去
-
-      // ユーザー名の重複チェックと一意性確保
-      let counter = 1;
-      const originalUsername = username;
-
-      while (await prisma.user.findFirst({ where: { username } })) {
-        username = `${originalUsername}${counter}`;
-        counter++;
-
-        // 無限ループ防止（最大100回まで）
-        if (counter > 100) {
-          username = `${originalUsername}${Date.now()}`;
-          break;
-        }
-      }
+      const username = baseUsername.replace(/[^a-zA-Z0-9_]/g, '_'); // 特殊文字を除去
 
       // 新規ユーザーの場合は作成
       user = await prisma.user.create({
@@ -163,12 +138,7 @@ async function handleGoogleSync(req: NextRequest) {
       return NextResponse.redirect(`${req.nextUrl.origin}/login?error=auth_failed`);
     }
   } catch (error) {
-    // エラーログ（本番環境では詳細を控える）
-    if (process.env.NODE_ENV === 'development') {
-      console.error('Google sync error:', error);
-    } else {
-      console.error('Google sync error occurred');
-    }
+    console.error('Google OAuth sync error occurred');
 
     // システムエラーをログに記録
     try {
