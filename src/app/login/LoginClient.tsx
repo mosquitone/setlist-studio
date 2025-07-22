@@ -10,15 +10,18 @@ import {
   Alert,
   IconButton,
   InputAdornment,
+  Divider,
 } from '@mui/material';
 import { Button } from '@/components/common/ui/Button';
 import { Login as LoginIcon, Visibility, VisibilityOff } from '@mui/icons-material';
+import GoogleIcon from '@mui/icons-material/Google';
 import { useMutation } from '@apollo/client';
 import { LOGIN } from '@/lib/server/graphql/apollo-operations';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useI18n } from '@/hooks/useI18n';
+import { signIn } from 'next-auth/react';
 
 export default function LoginClient() {
   const [email, setEmail] = useState('');
@@ -52,6 +55,19 @@ export default function LoginClient() {
         input: { email, password },
       },
     });
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      setError('');
+
+      // NextAuthでGoogle認証（通常のリダイレクトフロー）
+      // NextAuthの設定でリダイレクト先は/api/auth/google-syncに設定済み
+      await signIn('google');
+    } catch (error) {
+      console.error('Google login error:', error);
+      setError('Google認証でエラーが発生しました');
+    }
   };
 
   return (
@@ -114,6 +130,23 @@ export default function LoginClient() {
               {loading ? messages.common.loading : messages.auth.login}
             </Button>
           </Box>
+
+          <Divider sx={{ my: 3 }}>
+            <Typography variant="body2" color="text.secondary">
+              または
+            </Typography>
+          </Divider>
+
+          <Button
+            fullWidth
+            variant="outlined"
+            size="large"
+            startIcon={<GoogleIcon />}
+            onClick={handleGoogleLogin}
+            sx={{ mb: 2 }}
+          >
+            Googleでログイン
+          </Button>
 
           <Box textAlign="center">
             <Typography variant="body2" sx={{ mb: 2 }}>

@@ -8,17 +8,17 @@ datasource db {
 }
 
 model User {
-  id                       String    @id @default(cuid())
-  email                    String    @unique
-  username                 String    @unique
+  id                       String         @id @default(cuid())
+  email                    String         @unique
+  username                 String
   password                 String
-  createdAt                DateTime  @default(now())
-  updatedAt                DateTime  @updatedAt
+  createdAt                DateTime       @default(now())
+  updatedAt                DateTime       @updatedAt
   emailChangeExpires       DateTime?
   emailChangeToken         String?
   emailVerificationExpires DateTime?
   emailVerificationToken   String?
-  emailVerified            Boolean   @default(false)
+  emailVerified            Boolean        @default(false)
   passwordResetExpires     DateTime?
   passwordResetToken       String?
   pendingEmail             String?
@@ -138,3 +138,4 @@ model AuditLog {
   @@index([ipAddress])
   @@map("audit_logs")
 }
+
