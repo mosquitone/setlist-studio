@@ -59,6 +59,10 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
   - `RESEND_FROM_EMAIL`: メール送信元アドレス
   - `EMAIL_VERIFICATION_SECRET`: メール認証用シークレット (32文字以上)
   - `PASSWORD_RESET_SECRET`: パスワードリセット用シークレット (32文字以上)
+  - `GOOGLE_CLIENT_ID`: Google OAuthクライアントID
+  - `GOOGLE_CLIENT_SECRET`: Google OAuthクライアントシークレット
+  - `NEXTAUTH_URL`: NextAuth URL (本番環境では実際のURL)
+  - `NEXTAUTH_SECRET`: NextAuth用シークレット (JWT_SECRETと同じ値推奨)
 
 ### 環境変数詳細
 
@@ -74,6 +78,10 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 | `RESEND_FROM_EMAIL` | メール送信元 | `onboarding@resend.dev` | `noreply@yourdomain.com` | 独自ドメイン設定 |
 | `EMAIL_VERIFICATION_SECRET` | メール認証署名 | 32文字以上の任意文字列 | 強力なランダム文字列 | `openssl rand -base64 32` |
 | `PASSWORD_RESET_SECRET` | パスワードリセット署名 | 32文字以上の任意文字列 | 強力なランダム文字列 | `openssl rand -base64 32` |
+| `GOOGLE_CLIENT_ID` | Google OAuth ID | Google Consoleから取得 | 本番用ID | Google Cloud Console |
+| `GOOGLE_CLIENT_SECRET` | Google OAuth秘密鍵 | Google Consoleから取得 | 本番用秘密鍵 | Google Cloud Console |
+| `NEXTAUTH_URL` | NextAuth URL | `http://localhost:3000` | `https://yourdomain.com` | 実際のURL |
+| `NEXTAUTH_SECRET` | NextAuth署名 | JWT_SECRETと同じ値 | JWT_SECRETと同じ値 | N/A (JWT_SECRET流用) |
 | `NODE_ENV` | 環境モード | `development` | Vercelで自動設定 | N/A |
 
 ## アーキテクチャ概要
@@ -121,7 +129,7 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 - **QRコード統合**: セットリストページへのリンク付き自動QRコード
 - **テーマシステム**: ドロップダウンセレクター付きBlack/Whiteテーマ
 - **複製システム**: URLクエリパラメータによる既存セットリストのクローン
-- **認証**: JWTトークンと保護ルート付きHttpOnly Cookieベースユーザーシステム
+- **認証**: JWTトークンとGoogle OAuth統合付きHttpOnly Cookieベースユーザーシステム
 
 **フロントエンドアーキテクチャ**
 - MUIProviderとApolloProviderを分離したProviderパターン
@@ -191,6 +199,10 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
   - `CSRF_SECRET`: JWT_SECRETとは別（32文字以上、一意）
   - `IP_HASH_SALT`: IPアドレス匿名化用（16文字以上、一意）
   - `CRON_SECRET`: クロンジョブ認証用（32文字以上、一意）
+  - `GOOGLE_CLIENT_ID`: Google OAuthクライアントID（本番用）
+  - `GOOGLE_CLIENT_SECRET`: Google OAuthクライアントシークレット（本番用）
+  - `NEXTAUTH_URL`: 本番環境URL（例: https://yourdomain.com）
+  - `NEXTAUTH_SECRET`: NextAuth署名（JWT_SECRETと同じ値を推奨）
 - **クロンジョブ**: Vercelダッシュボードで設定
   - path: `/api/cron/cleanup`
   - スケジュール: `0 2 * * *`（毎日午前2時）
@@ -414,7 +426,7 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 - **モバイル対応**: フルレスポンシブデザインとタッチ最適化
 
 #### **機能完成度**
-- **認証システム**: メール認証、パスワードリセット、JWT + HttpOnly Cookie完全実装
+- **認証システム**: Google OAuth・メール認証・パスワードリセット・JWT + HttpOnly Cookie完全実装
 - **セットリスト管理**: 作成、編集、削除、複製、公開/非公開設定の完全CRUD
 - **楽曲管理**: 個人ライブラリ、バルク操作、セットリスト統合
 - **画像生成**: Black/Whiteテーマ、QRコード統合、ワンクリックダウンロード
