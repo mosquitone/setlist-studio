@@ -291,7 +291,7 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 │   │   ├── home/           # ホームページ専用コンポーネント
 │   │   │   ├── AuthActions.tsx
 │   │   │   ├── FeatureSection.tsx
-│   │   │   ├── HeroAuthSection.tsx       # 認証ボタン専用コンポーネント
+│   │   │   ├── PrimaryAuthSection.tsx    # 認証ボタン専用コンポーネント
 │   │   │   ├── SampleSetlistsSection.tsx
 │   │   │   ├── SetlistDashboard.tsx
 │   │   │   └── WelcomeSection.tsx
@@ -538,7 +538,7 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 ### 最新の主要更新
 - **ホーム画面UI大幅改善 (2025-07-22)**: モバイル視認性向上と全体的なUX改善
   - ✅ 認証ボタンをファーストビューに移動し、グラデーション・アニメーション付きprimaryボタン実装
-  - ✅ 責務分離: WelcomeSectionから独立したHeroAuthSectionコンポーネント作成
+  - ✅ 責務分離: WelcomeSectionから独立したPrimaryAuthSectionコンポーネント作成
   - ✅ 背景色最適化（#f0f4f8）とカード視認性向上（border + shadow統一）
   - ✅ レスポンシブスペーシング調整でモバイルコンパクト化
   - ✅ サンプルセットリスト表示ロジック改善（未ログイン時 + セットリスト未存在時）
