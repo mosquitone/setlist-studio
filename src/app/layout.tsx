@@ -6,6 +6,7 @@ import ApolloProviderWrapper from '@/components/providers/ApolloProvider';
 import CSRFProvider from '@/components/providers/CSRFProvider';
 import { AuthProvider } from '@/components/providers/AuthProvider';
 import { I18nProvider } from '@/components/providers/I18nProvider';
+import NextAuthProvider from '@/components/providers/NextAuthProvider';
 import Header from '@/components/common/layout/Header';
 import Footer from '@/components/common/layout/Footer';
 import LoadingFallback from '@/components/common/ui/LoadingFallback';
@@ -121,23 +122,25 @@ export default function RootLayout({
         />
       </head>
       <body className={inter.className}>
-        <I18nProvider>
-          <ApolloProviderWrapper>
-            <MUIProvider>
-              <CSRFProvider>
-                <AuthProvider>
-                  <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-                    <Header />
-                    <main style={{ flex: 1 }}>
-                      <Suspense fallback={<LoadingFallback />}>{children}</Suspense>
-                    </main>
-                    <Footer />
-                  </div>
-                </AuthProvider>
-              </CSRFProvider>
-            </MUIProvider>
-          </ApolloProviderWrapper>
-        </I18nProvider>
+        <NextAuthProvider>
+          <I18nProvider>
+            <ApolloProviderWrapper>
+              <MUIProvider>
+                <CSRFProvider>
+                  <AuthProvider>
+                    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+                      <Header />
+                      <main style={{ flex: 1 }}>
+                        <Suspense fallback={<LoadingFallback />}>{children}</Suspense>
+                      </main>
+                      <Footer />
+                    </div>
+                  </AuthProvider>
+                </CSRFProvider>
+              </MUIProvider>
+            </ApolloProviderWrapper>
+          </I18nProvider>
+        </NextAuthProvider>
       </body>
     </html>
   );

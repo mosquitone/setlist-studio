@@ -10,9 +10,11 @@ import {
   Alert,
   IconButton,
   InputAdornment,
+  Divider,
 } from '@mui/material';
 import { Button } from '@/components/common/ui/Button';
 import { Login as LoginIcon, Visibility, VisibilityOff } from '@mui/icons-material';
+import GoogleAuthButton from '@/components/auth/GoogleAuthButton';
 import { useMutation } from '@apollo/client';
 import { LOGIN } from '@/lib/server/graphql/apollo-operations';
 import Link from 'next/link';
@@ -114,6 +116,14 @@ export default function LoginClient() {
               {loading ? messages.common.loading : messages.auth.login}
             </Button>
           </Box>
+
+          <Divider sx={{ my: 3 }}>
+            <Typography variant="body2" color="text.secondary">
+              または
+            </Typography>
+          </Divider>
+
+          <GoogleAuthButton onError={setError} sx={{ mb: 2 }} />
 
           <Box textAlign="center">
             <Typography variant="body2" sx={{ mb: 2 }}>

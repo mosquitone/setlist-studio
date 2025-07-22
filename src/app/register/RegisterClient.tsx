@@ -22,6 +22,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useI18n } from '@/hooks/useI18n';
 import { useAuth } from '@/components/providers/AuthProvider';
+import GoogleAuthButton from '@/components/auth/GoogleAuthButton';
+import { Divider } from '@mui/material';
 
 export default function RegisterClient() {
   const { messages } = useI18n();
@@ -212,6 +214,14 @@ export default function RegisterClient() {
               {loading ? messages.common.loading : messages.auth.register}
             </Button>
           </Box>
+
+          <Divider sx={{ my: 2 }}>
+            <Typography variant="body2" color="text.secondary">
+              または
+            </Typography>
+          </Divider>
+
+          <GoogleAuthButton mode="signup" onError={setError} sx={{ mb: 2 }} />
 
           <Box textAlign="center">
             <Typography variant="body2">

@@ -6,10 +6,10 @@ import { GET_SETLISTS } from '@/lib/server/graphql/apollo-operations';
 import { GetSetlistsResponse } from '../types/graphql';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { WelcomeSection } from '../components/home/WelcomeSection';
+import { PrimaryAuthSection } from '../components/home/PrimaryAuthSection';
 import { FeatureSection } from '../components/home/FeatureSection';
 import { SampleSetlistsSection } from '../components/home/SampleSetlistsSection';
 import { SetlistDashboard } from '../components/home/SetlistDashboard';
-import { AuthActions } from '../components/home/AuthActions';
 import { useI18n } from '@/hooks/useI18n';
 
 export default function HomeClient() {
@@ -45,25 +45,31 @@ export default function HomeClient() {
     );
   }
 
+  const hasNoSetlists =
+    !setlistsLoading && (!setlistsData?.setlists || setlistsData.setlists.length === 0);
+  const shouldShowSamples = !isLoggedIn || hasNoSetlists;
+
   return (
     <Container maxWidth="lg">
       <Box
         sx={{
-          py: 4,
+          py: { xs: 2, sm: 3, md: 3 },
           display: 'flex',
           flexDirection: 'column',
-          gap: 6,
+          gap: { xs: 3, sm: 4, md: 5 },
         }}
       >
         <WelcomeSection />
+
+        {!isLoggedIn && <PrimaryAuthSection />}
+
+        {shouldShowSamples && <SampleSetlistsSection />}
+
         <FeatureSection />
-        <SampleSetlistsSection />
 
         {isLoggedIn && (
           <SetlistDashboard setlistsData={setlistsData} setlistsLoading={setlistsLoading} />
         )}
-
-        {!isLoggedIn && <AuthActions />}
       </Box>
     </Container>
   );
