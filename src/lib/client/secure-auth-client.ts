@@ -26,7 +26,11 @@ class SecureAuthClient {
   // 認証状態の確認
   async checkAuthStatus(): Promise<AuthState> {
     try {
-      // まず、Cookieが存在するか確認
+      // クライアントサイドのみで実行（サーバーサイドレンダリング時はスキップ）
+      if (typeof window === 'undefined') {
+        return this.currentState;
+      }
+
       const response = await fetch('/api/auth', {
         credentials: 'include', // HttpOnly Cookieを含める
       });

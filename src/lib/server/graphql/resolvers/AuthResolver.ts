@@ -95,28 +95,7 @@ export class AuthResolver {
       );
     }
 
-    // ユーザー名の重複チェック
-    const existingUsernameUser = await ctx.prisma.user.findUnique({
-      where: { username: input.username },
-    });
-
-    if (existingUsernameUser) {
-      // 登録失敗をログに記録（データベースベース）
-      await logSecurityEventDB(ctx.prisma, {
-        type: SecurityEventType.REGISTER_FAILURE,
-        severity: SecurityEventSeverity.MEDIUM,
-        ipAddress: getClientIP(ctx),
-        userAgent: ctx.req?.headers['user-agent'],
-        details: {
-          email: input.email,
-          username: input.username,
-          reason: 'username_already_exists',
-        },
-      });
-      throw new Error(
-        ctx.i18n?.messages.auth.usernameAlreadyInUse || 'このユーザー名は既に使用されています。',
-      );
-    }
+    // ユーザー名重複チェックを削除（重複を許可するため）
 
     // 並列処理可能な部分を同時実行
     const [hashedPassword, { token: verificationToken, expires: verificationExpires }] =
