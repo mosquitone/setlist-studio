@@ -5,7 +5,7 @@ import { useI18n } from '@/hooks/useI18n';
 import NextLink from 'next/link';
 import { Messages } from '@/lib/i18n/messages';
 
-export type AuthLinkVariant = 'header' | 'mobile' | 'home';
+export type AuthLinkVariant = 'header' | 'mobile' | 'home' | 'hero';
 export type AuthLinkType = 'login' | 'register';
 
 interface AuthLinkProps {
@@ -82,15 +82,43 @@ const variantConfig = {
     size: 'large' as const,
     showIcon: true,
     sx: (colors: ColorConfig) => ({
-      minWidth: { xs: 200, sm: 220 },
-      width: { xs: '100%', sm: 'auto' },
-      maxWidth: { xs: 300, sm: 'none' },
+      minWidth: { xs: 140, sm: 220 },
+      width: { xs: 'auto', sm: 'auto' },
+      maxWidth: { xs: 180, sm: 'none' },
+      fontSize: { xs: '0.875rem', sm: '1rem' },
+      padding: { xs: '10px 16px', sm: '12px 24px' },
       backgroundColor: colors.primary,
       fontWeight: 600,
       boxShadow: `0 2px 8px ${colors.shadow}`,
       '&:hover': {
         backgroundColor: colors.hover,
         boxShadow: `0 8px 20px ${colors.hoverShadow}`,
+      },
+    }),
+  },
+  hero: {
+    variant: 'contained' as const,
+    size: 'large' as const,
+    showIcon: true,
+    sx: (colors: ColorConfig) => ({
+      minWidth: { xs: 130, sm: 180 },
+      fontSize: { xs: '0.875rem', sm: '1rem' },
+      fontWeight: 600,
+      borderRadius: '25px',
+      px: { xs: 2.5, sm: 3 },
+      py: { xs: 1.2, sm: 1.5 },
+      backgroundColor: colors.primary,
+      background: `linear-gradient(135deg, ${colors.primary} 0%, ${colors.hover} 100%)`,
+      boxShadow: `0 4px 15px ${colors.shadow}`,
+      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+      transform: 'scale(1)',
+      '&:hover': {
+        transform: 'scale(1.05)',
+        boxShadow: `0 8px 25px ${colors.hoverShadow}`,
+        background: `linear-gradient(135deg, ${colors.hover} 0%, ${colors.primary} 100%)`,
+      },
+      '&:active': {
+        transform: 'scale(0.98)',
       },
     }),
   },

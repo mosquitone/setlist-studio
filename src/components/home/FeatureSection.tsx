@@ -14,7 +14,7 @@ export function FeatureSection() {
 
   return (
     <Box>
-      <Typography variant="h4" component="h2" textAlign="center" gutterBottom sx={{ mb: 4 }}>
+      <Typography variant="h4" component="h2" textAlign="center" gutterBottom sx={{ mb: { xs: 2, sm: 3 } }}>
         {messages.features.title || '主な機能'}
       </Typography>
       <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 4 }}>
