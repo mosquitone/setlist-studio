@@ -45,6 +45,10 @@ export default function HomeClient() {
     );
   }
 
+  const hasNoSetlists =
+    !setlistsLoading && (!setlistsData?.setlists || setlistsData.setlists.length === 0);
+  const shouldShowSamples = !isLoggedIn || hasNoSetlists;
+
   return (
     <Container maxWidth="lg">
       <Box
@@ -59,7 +63,7 @@ export default function HomeClient() {
 
         {!isLoggedIn && <HeroAuthSection />}
 
-        {!isLoggedIn && <SampleSetlistsSection />}
+        {shouldShowSamples && <SampleSetlistsSection />}
 
         <FeatureSection />
 
