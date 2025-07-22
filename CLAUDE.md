@@ -543,6 +543,7 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
   - ✅ レスポンシブスペーシング調整でモバイルコンパクト化
   - ✅ サンプルセットリスト表示ロジック改善（未ログイン時 + セットリスト未存在時）
   - ✅ 条件分岐リファクタリングで保守性向上
+  - ✅ 命名統一: hero→primaryバリアント、HeroAuthSection→PrimaryAuthSectionファイル名変更
 - **楽曲削除モーダル改善 (2025-07-22)**: UX向上とコンポーネント命名統一
   - ✅ MultiDeleteModal新規作成: 選択楽曲をリスト表示形式で表示
   - ✅ 楽曲カウント表示を「X曲」「X songs」に多言語対応
