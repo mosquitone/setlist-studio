@@ -36,7 +36,7 @@ export function WelcomeSection() {
         variant="body1"
         color="text.secondary"
         sx={{
-          mb: 2,
+          mb: 0,
           lineHeight: 1.6,
           maxWidth: { xs: '100%', md: '600px' },
           mx: 'auto',

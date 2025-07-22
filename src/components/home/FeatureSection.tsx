@@ -14,15 +14,28 @@ export function FeatureSection() {
 
   return (
     <Box>
-      <Typography variant="h4" component="h2" textAlign="center" gutterBottom sx={{ mb: { xs: 2, sm: 3 } }}>
+      <Typography
+        variant="h4"
+        component="h2"
+        textAlign="center"
+        gutterBottom
+        sx={{ mb: { xs: 2, sm: 3 } }}
+      >
         {messages.features.title || '主な機能'}
       </Typography>
       <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 4 }}>
         <Card
           sx={{
             flex: 1,
-            transition: 'transform 0.2s',
-            '&:hover': { transform: 'translateY(-4px)' },
+            border: '1px solid',
+            borderColor: 'divider',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+            transition: 'all 0.3s ease',
+            '&:hover': {
+              transform: 'translateY(-4px)',
+              boxShadow: '0 8px 25px rgba(0, 0, 0, 0.15)',
+              borderColor: 'primary.main',
+            },
           }}
         >
           <CardActionArea component={Link} href={isLoggedIn ? '/songs' : '/login'}>
@@ -47,8 +60,15 @@ export function FeatureSection() {
         <Card
           sx={{
             flex: 1,
-            transition: 'transform 0.2s',
-            '&:hover': { transform: 'translateY(-4px)' },
+            border: '1px solid',
+            borderColor: 'divider',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+            transition: 'all 0.3s ease',
+            '&:hover': {
+              transform: 'translateY(-4px)',
+              boxShadow: '0 8px 25px rgba(0, 0, 0, 0.15)',
+              borderColor: 'primary.main',
+            },
           }}
         >
           <CardActionArea component={Link} href={isLoggedIn ? '/setlists/new' : '/login'}>

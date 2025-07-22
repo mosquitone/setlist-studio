@@ -5,7 +5,7 @@ import { useI18n } from '@/hooks/useI18n';
 import NextLink from 'next/link';
 import { Messages } from '@/lib/i18n/messages';
 
-export type AuthLinkVariant = 'header' | 'mobile' | 'home' | 'hero';
+export type AuthLinkVariant = 'header' | 'mobile' | 'home' | 'primary';
 export type AuthLinkType = 'login' | 'register';
 
 interface AuthLinkProps {
@@ -96,7 +96,7 @@ const variantConfig = {
       },
     }),
   },
-  hero: {
+  primary: {
     variant: 'contained' as const,
     size: 'large' as const,
     showIcon: true,

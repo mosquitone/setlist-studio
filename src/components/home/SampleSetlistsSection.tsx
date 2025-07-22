@@ -9,7 +9,13 @@ export function SampleSetlistsSection() {
 
   return (
     <Box>
-      <Typography variant="h4" component="h2" textAlign="center" gutterBottom sx={{ mb: 2 }}>
+      <Typography
+        variant="h4"
+        component="h2"
+        textAlign="center"
+        gutterBottom
+        sx={{ mb: { xs: 2, sm: 3 } }}
+      >
         {messages.pages.home.sampleSetlists.title}
       </Typography>
       <Box textAlign="center" sx={{ mb: 2 }}>
@@ -27,10 +33,14 @@ export function SampleSetlistsSection() {
             sx={{
               maxWidth: 400,
               margin: '0 auto',
-              transition: 'transform 0.2s, box-shadow 0.2s',
+              border: '1px solid',
+              borderColor: 'divider',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+              transition: 'all 0.3s ease',
               '&:hover': {
                 transform: 'translateY(-4px)',
-                boxShadow: 6,
+                boxShadow: '0 8px 25px rgba(0, 0, 0, 0.15)',
+                borderColor: 'primary.main',
               },
             }}
           >
@@ -69,10 +79,14 @@ export function SampleSetlistsSection() {
             sx={{
               maxWidth: 400,
               margin: '0 auto',
-              transition: 'transform 0.2s, box-shadow 0.2s',
+              border: '1px solid',
+              borderColor: 'divider',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+              transition: 'all 0.3s ease',
               '&:hover': {
                 transform: 'translateY(-4px)',
-                boxShadow: 6,
+                boxShadow: '0 8px 25px rgba(0, 0, 0, 0.15)',
+                borderColor: 'primary.main',
               },
             }}
           >

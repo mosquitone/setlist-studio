@@ -33,8 +33,8 @@ export function HeroAuthSection() {
           },
         }}
       >
-        <AuthLink variant="hero" type="login" />
-        <AuthLink variant="hero" type="register" />
+        <AuthLink variant="primary" type="login" />
+        <AuthLink variant="primary" type="register" />
       </Stack>
     </Box>
   );
