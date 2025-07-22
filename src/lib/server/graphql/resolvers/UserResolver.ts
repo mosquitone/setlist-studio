@@ -35,16 +35,7 @@ export class UserResolver {
       throw new Error(ctx.i18n?.messages.errors.authenticationRequired || '認証が必要です');
     }
 
-    // Check if username is already taken
-    const existingUser = await ctx.prisma.user.findUnique({
-      where: { username },
-    });
-
-    if (existingUser && existingUser.id !== ctx.userId) {
-      throw new Error(
-        ctx.i18n?.messages.errors.usernameAlreadyExists || 'このユーザー名は既に使用されています',
-      );
-    }
+    // ユーザー名重複チェックを削除（重複を許可するため）
 
     const user = await ctx.prisma.user.update({
       where: { id: ctx.userId },
