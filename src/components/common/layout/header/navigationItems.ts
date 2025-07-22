@@ -1,14 +1,18 @@
 import HomeIcon from '@mui/icons-material/Home';
 import LibraryMusicIcon from '@mui/icons-material/LibraryMusic';
-import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
+import PlaylistPlayIcon from '@mui/icons-material/PlaylistPlay';
 import HelpIcon from '@mui/icons-material/Help';
 import { Messages } from '@/lib/i18n/messages';
 
 // 認証が必要なナビゲーション項目を取得する関数
 export const getAuthenticatedNavigationItems = (messages: Messages) => {
   return [
-    { label: messages.navigation.songs, path: '/songs', icon: LibraryMusicIcon },
-    { label: messages.navigation.newSetlist, path: '/setlists/new', icon: PlaylistAddIcon },
+    { label: messages.features.songLibrary.title, path: '/songs', icon: LibraryMusicIcon },
+    {
+      label: messages.features.setlistManagement.title,
+      path: '/setlists/new',
+      icon: PlaylistPlayIcon,
+    },
   ];
 };
 
@@ -23,7 +27,7 @@ export const getPublicNavigationItems = (messages: Messages) => {
 // 下位互換性のため - 廃止予定
 export const authenticatedNavigationItems = [
   { label: 'Songs', path: '/songs', icon: LibraryMusicIcon },
-  { label: 'New Setlist', path: '/setlists/new', icon: PlaylistAddIcon },
+  { label: 'New Setlist', path: '/setlists/new', icon: PlaylistPlayIcon },
 ];
 
 export const publicNavigationItems = [
