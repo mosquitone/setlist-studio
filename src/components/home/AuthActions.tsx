@@ -8,11 +8,15 @@ export function AuthActions() {
     <Fade in timeout={1000} style={{ transitionDelay: '400ms' }}>
       <Box sx={{ textAlign: 'center', display: 'flex', justifyContent: 'center', width: '100%' }}>
         <Stack
-          direction={{ xs: 'column', sm: 'row' }}
-          spacing={{ xs: 2, sm: 3 }}
+          direction={{ xs: 'row', sm: 'row' }}
+          spacing={{ xs: 1.5, sm: 3 }}
           justifyContent="center"
           alignItems="center"
-          sx={{ width: 'fit-content' }}
+          sx={{
+            width: 'fit-content',
+            flexWrap: 'wrap',
+            gap: { xs: 1.5, sm: 3 },
+          }}
         >
           <AuthLink variant="home" type="login" />
           <AuthLink variant="home" type="register" />
