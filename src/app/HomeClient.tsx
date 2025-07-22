@@ -6,7 +6,7 @@ import { GET_SETLISTS } from '@/lib/server/graphql/apollo-operations';
 import { GetSetlistsResponse } from '../types/graphql';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { WelcomeSection } from '../components/home/WelcomeSection';
-import { HeroAuthSection } from '../components/home/HeroAuthSection';
+import { PrimaryAuthSection } from '../components/home/PrimaryAuthSection';
 import { FeatureSection } from '../components/home/FeatureSection';
 import { SampleSetlistsSection } from '../components/home/SampleSetlistsSection';
 import { SetlistDashboard } from '../components/home/SetlistDashboard';
@@ -61,7 +61,7 @@ export default function HomeClient() {
       >
         <WelcomeSection />
 
-        {!isLoggedIn && <HeroAuthSection />}
+        {!isLoggedIn && <PrimaryAuthSection />}
 
         {shouldShowSamples && <SampleSetlistsSection />}
 
