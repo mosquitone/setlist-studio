@@ -10,6 +10,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/common/ui/Button';
 import { useSnackbar } from '@/components/providers/SnackbarProvider';
 import { useI18n } from '@/hooks/useI18n';
+import type { VerifyEmailData, ResendVerificationEmailData } from '@/types/graphql';
 
 const VERIFY_EMAIL = gql`
   mutation VerifyEmail($input: EmailVerificationInput!) {
@@ -39,7 +40,7 @@ export default function VerifyEmailClient() {
   const { showError, showSuccess } = useSnackbar();
 
   const [verifyEmail] = useMutation(VERIFY_EMAIL, {
-    onCompleted: (data) => {
+    onCompleted: (data: VerifyEmailData) => {
       if (data.verifyEmail.success) {
         setStatus('success');
         showSuccess(data.verifyEmail.message);
@@ -63,7 +64,7 @@ export default function VerifyEmailClient() {
   const [resendVerificationEmail, { loading: resendLoading }] = useMutation(
     RESEND_VERIFICATION_EMAIL,
     {
-      onCompleted: (data) => {
+      onCompleted: (data: ResendVerificationEmailData) => {
         if (data.resendVerificationEmail.success) {
           showSuccess(data.resendVerificationEmail.message);
           setCanResend(false);

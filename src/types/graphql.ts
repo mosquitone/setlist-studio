@@ -80,3 +80,91 @@ export interface GetSongsResponse {
 export interface GetSetlistResponse {
   setlist: Setlist;
 }
+
+// Authentication Response Types
+export interface RegistrationResponse {
+  success: boolean;
+  message: string;
+  email: string;
+  requiresEmailVerification: boolean;
+  token?: string;
+}
+
+export interface PasswordResetResponse {
+  success: boolean;
+  message: string;
+}
+
+export interface EmailVerificationResponse {
+  success: boolean;
+  message: string;
+}
+
+export interface EmailVerificationStatusResponse {
+  isVerified: boolean;
+  canLogin?: boolean;
+}
+
+export interface EmailChangeResponse {
+  success: boolean;
+  message: string;
+}
+
+export interface ChangePasswordResponse {
+  success: boolean;
+  message: string;
+}
+
+export interface PasswordResetTokenInfo {
+  email: string;
+  isValid: boolean;
+}
+
+// GraphQL mutation response wrapper types
+export interface LoginData {
+  login: AuthPayload;
+}
+
+export interface RegisterData {
+  register: RegistrationResponse;
+}
+
+export interface ResetPasswordData {
+  resetPassword: PasswordResetResponse;
+}
+
+export interface RequestPasswordResetData {
+  requestPasswordReset: PasswordResetResponse;
+}
+
+export interface VerifyEmailData {
+  verifyEmail: EmailVerificationResponse;
+}
+
+export interface ResendVerificationEmailData {
+  resendVerificationEmail: EmailVerificationResponse;
+}
+
+export interface CheckEmailVerificationStatusData {
+  checkEmailVerificationStatus: EmailVerificationStatusResponse;
+}
+
+export interface ConfirmEmailChangeData {
+  confirmEmailChange: EmailChangeResponse;
+}
+
+export interface RequestEmailChangeData {
+  requestEmailChange: EmailChangeResponse;
+}
+
+export interface ChangePasswordData {
+  changePassword: ChangePasswordResponse;
+}
+
+export interface UpdateUserData {
+  updateUser: User;
+}
+
+export interface ToggleSetlistVisibilityData {
+  toggleSetlistVisibility: Setlist;
+}

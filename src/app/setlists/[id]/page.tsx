@@ -28,6 +28,7 @@ import { useSetlistActions } from '@/hooks/useSetlistActions';
 import { GET_SETLIST, TOGGLE_SETLIST_VISIBILITY } from '@/lib/server/graphql/apollo-operations';
 import { Theme, THEMES } from '@/types/common';
 import { SetlistData } from '@/types/components';
+import type { ToggleSetlistVisibilityData } from '@/types/graphql';
 
 export default function SetlistDetailPage() {
   const params = useParams();
@@ -49,8 +50,8 @@ export default function SetlistDetailPage() {
   });
 
   const [toggleVisibility] = useMutation(TOGGLE_SETLIST_VISIBILITY, {
-    onCompleted: (data) => {
-      const isNowPublic = data?.toggleSetlistVisibility?.isPublic;
+    onCompleted: (data: ToggleSetlistVisibilityData) => {
+      const isNowPublic = data.toggleSetlistVisibility.isPublic;
       if (isNowPublic) {
         showSnackbarSuccess(messages.notifications.setlistMadePublic);
       } else {

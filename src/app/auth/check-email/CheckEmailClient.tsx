@@ -26,6 +26,10 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/common/ui/Button';
 import { useSnackbar } from '@/components/providers/SnackbarProvider';
 import { useI18n } from '@/hooks/useI18n';
+import type {
+  CheckEmailVerificationStatusData,
+  ResendVerificationEmailData,
+} from '@/types/graphql';
 
 const RESEND_VERIFICATION_EMAIL = gql`
   mutation ResendVerificationEmail($email: String!) {
@@ -60,7 +64,7 @@ export default function CheckEmailClient() {
     variables: { email },
     skip: !email, // emailが設定されるまでスキップ
     pollInterval: 5000, // 5秒ごとにポーリング
-    onCompleted: (data) => {
+    onCompleted: (data: CheckEmailVerificationStatusData) => {
       if (data?.checkEmailVerificationStatus?.isVerified) {
         setIsVerified(true);
       }
@@ -70,7 +74,7 @@ export default function CheckEmailClient() {
   const [resendVerificationEmail, { loading: resendLoading }] = useMutation(
     RESEND_VERIFICATION_EMAIL,
     {
-      onCompleted: (data) => {
+      onCompleted: (data: ResendVerificationEmailData) => {
         if (data.resendVerificationEmail.success) {
           showSuccess(data.resendVerificationEmail.message);
           setResendCount((prev) => prev + 1);

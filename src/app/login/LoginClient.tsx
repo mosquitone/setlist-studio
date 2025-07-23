@@ -22,6 +22,7 @@ import { useAuth } from '@/components/providers/AuthProvider';
 import { useSnackbar } from '@/components/providers/SnackbarProvider';
 import { useI18n } from '@/hooks/useI18n';
 import { LOGIN } from '@/lib/server/graphql/apollo-operations';
+import type { LoginData } from '@/types/graphql';
 
 export default function LoginClient() {
   const [email, setEmail] = useState('');
@@ -51,7 +52,7 @@ export default function LoginClient() {
   }, [searchParams, showError, messages]);
 
   const [loginMutation, { loading }] = useMutation(LOGIN, {
-    onCompleted: async (data) => {
+    onCompleted: async (data: LoginData) => {
       const result = await authLogin(data.login.token);
       if (result.success) {
         router.push('/');

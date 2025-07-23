@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react';
 
 import { useSnackbar } from '@/components/providers/SnackbarProvider';
 import { useI18n } from '@/hooks/useI18n';
+import type { ConfirmEmailChangeData } from '@/types/graphql';
 
 const CONFIRM_EMAIL_CHANGE = gql`
   mutation ConfirmEmailChange($input: EmailChangeConfirmInput!) {
@@ -27,7 +28,7 @@ export default function ConfirmEmailChangeClient() {
   const { showError, showSuccess } = useSnackbar();
 
   const [confirmEmailChange] = useMutation(CONFIRM_EMAIL_CHANGE, {
-    onCompleted: (data) => {
+    onCompleted: (data: ConfirmEmailChangeData) => {
       if (data.confirmEmailChange.success) {
         setStatus('success');
         showSuccess(data.confirmEmailChange.message);

@@ -35,6 +35,7 @@ import { apolloClient } from '@/lib/client/apollo-client';
 import { PASSWORD_POLICY } from '@/lib/constants/auth';
 import { formatDate } from '@/lib/i18n/date-format';
 import { UPDATE_USER_MUTATION, GET_ME_QUERY } from '@/lib/server/graphql/apollo-operations';
+import type { UpdateUserData, ChangePasswordData, RequestEmailChangeData } from '@/types/graphql';
 
 const CHANGE_PASSWORD_MUTATION = gql`
   mutation ChangePassword($input: ChangePasswordInput!) {
@@ -83,7 +84,7 @@ function ProfileContent() {
     useState(false);
 
   const [updateUser, { loading: updateLoading }] = useMutation(UPDATE_USER_MUTATION, {
-    onCompleted: (data) => {
+    onCompleted: (data: UpdateUserData) => {
       try {
         // Apollo Clientのキャッシュを更新
         // secureAuthClientは自動的にGET_ME_QUERYの変更を検知する
@@ -111,7 +112,7 @@ function ProfileContent() {
   const [changePassword, { loading: changePasswordLoading }] = useMutation(
     CHANGE_PASSWORD_MUTATION,
     {
-      onCompleted: (data) => {
+      onCompleted: (data: ChangePasswordData) => {
         if (data.changePassword.success) {
           showSuccess(data.changePassword.message);
           setIsChangingPassword(false);
@@ -127,7 +128,7 @@ function ProfileContent() {
   );
 
   const [requestEmailChange, { loading: emailChangeLoading }] = useMutation(CHANGE_EMAIL_MUTATION, {
-    onCompleted: async (data) => {
+    onCompleted: async (data: RequestEmailChangeData) => {
       if (data.requestEmailChange.success) {
         showSuccess(data.requestEmailChange.message);
         setIsChangingEmail(false);

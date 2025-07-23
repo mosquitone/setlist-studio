@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/common/ui/Button';
 import { useSnackbar } from '@/components/providers/SnackbarProvider';
 import { useI18n } from '@/hooks/useI18n';
+import type { RequestPasswordResetData } from '@/types/graphql';
 
 const REQUEST_PASSWORD_RESET = gql`
   mutation RequestPasswordReset($input: PasswordResetRequestInput!) {
@@ -28,7 +29,7 @@ export default function ForgotPasswordClient() {
   const [resendCount, setResendCount] = useState(0);
 
   const [requestPasswordReset, { loading }] = useMutation(REQUEST_PASSWORD_RESET, {
-    onCompleted: (data) => {
+    onCompleted: (data: RequestPasswordResetData) => {
       if (data.requestPasswordReset.success) {
         showSuccess(data.requestPasswordReset.message);
         setResendCount((prev) => prev + 1);

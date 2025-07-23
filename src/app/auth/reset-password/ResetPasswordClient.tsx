@@ -18,6 +18,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/common/ui/Button';
 import { useSnackbar } from '@/components/providers/SnackbarProvider';
 import { useI18n } from '@/hooks/useI18n';
+import type { ResetPasswordData } from '@/types/graphql';
 
 const RESET_PASSWORD = gql`
   mutation ResetPassword($input: PasswordResetInput!) {
@@ -63,7 +64,7 @@ export default function ResetPasswordClient() {
   }, [searchParams, messages.auth.invalidResetToken, showError]);
 
   const [resetPassword, { loading }] = useMutation(RESET_PASSWORD, {
-    onCompleted: (data) => {
+    onCompleted: (data: ResetPasswordData) => {
       if (data.resetPassword.success) {
         showSuccess(data.resetPassword.message);
         // 3秒後にログインページにリダイレクト

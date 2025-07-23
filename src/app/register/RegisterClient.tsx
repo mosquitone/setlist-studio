@@ -25,6 +25,7 @@ import { useSnackbar } from '@/components/providers/SnackbarProvider';
 import { useI18n } from '@/hooks/useI18n';
 import { validateField, ValidationRules } from '@/lib/security/validation-rules';
 import { REGISTER } from '@/lib/server/graphql/apollo-operations';
+import type { RegisterData } from '@/types/graphql';
 
 export default function RegisterClient() {
   const { messages } = useI18n();
@@ -40,21 +41,27 @@ export default function RegisterClient() {
   const router = useRouter();
 
   const [register, { loading }] = useMutation(REGISTER, {
-    onCompleted: async (data) => {
+    onCompleted: async (data: RegisterData) => {
       try {
         // 新しいレスポンス形式：メール認証が必要
         if (data.register.requiresEmailVerification) {
-          // メール認証画面に遷移
           router.push(`/auth/check-email?email=${encodeURIComponent(data.register.email)}`);
-        } else {
-          // 従来のトークンレスポンス（Google認証など）
-          const result = await login(data.register.token);
-          if (result.success) {
-            router.push('/');
-          } else {
-            showError('認証の設定に失敗しました');
-          }
+          return;
         }
+
+        // 従来のトークンレスポンス（Google認証など）
+        if (!data.register.token) {
+          showError('認証トークンが見つかりません');
+          return;
+        }
+
+        const result = await login(data.register.token);
+        if (result.success) {
+          router.push('/');
+          return;
+        }
+
+        showError('認証の設定に失敗しました');
       } catch (error) {
         console.error('Auth login failed:', error);
         showError('認証の設定に失敗しました');
