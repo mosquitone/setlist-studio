@@ -36,7 +36,23 @@ export function UserMenu({ onAuthClick }: UserMenuProps) {
 
   return (
     <>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+      <Box
+        onClick={handleUserMenuOpen}
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1,
+          cursor: 'pointer',
+          padding: '4px 8px',
+          borderRadius: 1,
+          '&:hover': {
+            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+          },
+        }}
+      >
+        <Avatar sx={{ width: 32, height: 32, bgcolor: 'secondary.main' }}>
+          {(user.username || user.email || '?').charAt(0).toUpperCase()}
+        </Avatar>
         <Typography
           variant="body2"
           sx={{
@@ -46,19 +62,6 @@ export function UserMenu({ onAuthClick }: UserMenuProps) {
         >
           {user.username || user.email}
         </Typography>
-        <IconButton
-          onClick={handleUserMenuOpen}
-          sx={{
-            color: 'white',
-            '&:hover': {
-              backgroundColor: 'rgba(255, 255, 255, 0.1)',
-            },
-          }}
-        >
-          <Avatar sx={{ width: 32, height: 32, bgcolor: 'secondary.main' }}>
-            {(user.username || user.email || '?').charAt(0).toUpperCase()}
-          </Avatar>
-        </IconButton>
       </Box>
       <Menu
         anchorEl={anchorEl}
