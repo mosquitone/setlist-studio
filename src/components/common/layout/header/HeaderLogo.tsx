@@ -1,8 +1,9 @@
 import { Box } from '@mui/material';
 import Image from 'next/image';
 import Link from 'next/link';
+import React from 'react';
 
-export function HeaderLogo() {
+export const HeaderLogo = React.memo(function HeaderLogo() {
   return (
     <Link href="/" passHref style={{ textDecoration: 'none' }}>
       <Box
@@ -32,4 +33,4 @@ export function HeaderLogo() {
       </Box>
     </Link>
   );
-}
+});

@@ -1,6 +1,7 @@
 'use client';
 
 import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, Box } from '@mui/material';
+import React from 'react';
 
 import { Button } from '@/components/common/ui/Button';
 import { useI18n } from '@/hooks/useI18n';
@@ -16,7 +17,7 @@ interface SingleDeleteModalProps {
   loading?: boolean;
 }
 
-export function SingleDeleteModal({
+export const SingleDeleteModal = React.memo(function SingleDeleteModal({
   open,
   onClose,
   onConfirm,
@@ -56,4 +57,4 @@ export function SingleDeleteModal({
       </DialogActions>
     </Dialog>
   );
-}
+});

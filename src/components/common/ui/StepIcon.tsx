@@ -6,7 +6,7 @@ interface StepIconProps {
   step: number;
 }
 
-export const StepIcon: React.FC<StepIconProps> = ({ step }) => {
+export const StepIcon: React.FC<StepIconProps> = React.memo(({ step }) => {
   return (
     <Box
       sx={{
@@ -25,4 +25,6 @@ export const StepIcon: React.FC<StepIconProps> = ({ step }) => {
       {step}
     </Box>
   );
-};
+});
+
+StepIcon.displayName = 'StepIcon';

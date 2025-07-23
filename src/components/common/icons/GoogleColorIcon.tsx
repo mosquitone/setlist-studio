@@ -2,7 +2,7 @@ import { SvgIcon, SvgIconProps } from '@mui/material';
 import React from 'react';
 
 // Google公式カラーロゴのSVGコンポーネント
-export default function GoogleColorIcon(props: SvgIconProps) {
+export default React.memo(function GoogleColorIcon(props: SvgIconProps) {
   return (
     <SvgIcon {...props} viewBox="0 0 24 24">
       <path
@@ -23,4 +23,4 @@ export default function GoogleColorIcon(props: SvgIconProps) {
       />
     </SvgIcon>
   );
-}
+});

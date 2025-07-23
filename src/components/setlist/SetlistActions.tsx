@@ -40,7 +40,7 @@ interface SetlistActionsProps {
   isOwner?: boolean;
 }
 
-export function SetlistActions({
+export const SetlistActions = React.memo(function SetlistActions({
   onEdit,
   onDownload,
   onShare,
@@ -346,4 +346,4 @@ export function SetlistActions({
       </Box>
     </Box>
   );
-}
+});

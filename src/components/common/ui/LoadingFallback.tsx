@@ -1,10 +1,11 @@
 'use client';
 
 import { Container, CircularProgress, Typography, Box } from '@mui/material';
+import React from 'react';
 
 import { useI18n } from '@/hooks/useI18n';
 
-export default function LoadingFallback() {
+export default React.memo(function LoadingFallback() {
   const { messages } = useI18n();
   return (
     <Container maxWidth="md" sx={{ py: 8, textAlign: 'center' }}>
@@ -16,4 +17,4 @@ export default function LoadingFallback() {
       </Box>
     </Container>
   );
-}
+});

@@ -21,6 +21,7 @@ import {
   Chip,
   Checkbox,
 } from '@mui/material';
+import React from 'react';
 
 import { useI18n } from '@/hooks/useI18n';
 
@@ -36,7 +37,7 @@ interface SongTableProps {
   onSelectAll: (selected: boolean) => void;
 }
 
-export function SongTable({
+export const SongTable = React.memo(function SongTable({
   songs,
   loading,
   onEdit,
@@ -250,4 +251,4 @@ export function SongTable({
       </Table>
     </TableContainer>
   );
-}
+});

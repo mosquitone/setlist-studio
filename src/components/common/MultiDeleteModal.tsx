@@ -11,6 +11,7 @@ import {
   ListItem,
   ListItemText,
 } from '@mui/material';
+import React from 'react';
 
 import { Button } from '@/components/common/ui/Button';
 import { useI18n } from '@/hooks/useI18n';
@@ -24,7 +25,7 @@ interface MultiDeleteModalProps {
   loading?: boolean;
 }
 
-export function MultiDeleteModal({
+export const MultiDeleteModal = React.memo(function MultiDeleteModal({
   open,
   onClose,
   onConfirm,
@@ -87,4 +88,4 @@ export function MultiDeleteModal({
       </DialogActions>
     </Dialog>
   );
-}
+});

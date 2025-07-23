@@ -33,7 +33,7 @@ interface SongItemInputProps {
   onMoveDown?: (index: number) => void;
 }
 
-export function SongItemInput({
+export const SongItemInput = React.memo(function SongItemInput({
   item,
   index,
   formik,
@@ -361,4 +361,4 @@ export function SongItemInput({
       )}
     </Paper>
   );
-}
+});
