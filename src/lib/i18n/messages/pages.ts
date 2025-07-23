@@ -176,8 +176,7 @@ export const pagesMessages = {
             feature1: '楽曲の追加・編集・削除',
             feature2: 'タイトル、アーティスト、キー、テンポ管理',
             feature3: '演奏時間とメモ機能',
-            feature4: '検索・絞り込み機能',
-            feature5: 'セットリスト作成時の楽曲選択',
+            feature4: 'セットリスト作成時の楽曲選択',
           },
           setlistCreation: {
             title: 'セットリスト作成ページ',
@@ -387,8 +386,7 @@ export const pagesMessages = {
             feature1: 'Add, edit, and delete songs',
             feature2: 'Title, artist, key, tempo management',
             feature3: 'Play time and memo function',
-            feature4: 'Search and filtering functions',
-            feature5: 'Song selection when creating setlists',
+            feature4: 'Song selection when creating setlists',
           },
           setlistCreation: {
             title: 'Setlist Creation Page',

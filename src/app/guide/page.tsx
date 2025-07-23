@@ -589,11 +589,6 @@ export default function GuidePage() {
                         primary={`• ${messages.pages.guide.pageDetails.songManagement.feature4}`}
                       />
                     </ListItem>
-                    <ListItem sx={{ pl: 0 }}>
-                      <ListItemText
-                        primary={`• ${messages.pages.guide.pageDetails.songManagement.feature5}`}
-                      />
-                    </ListItem>
                   </List>
                 </Paper>
               </Grid>
