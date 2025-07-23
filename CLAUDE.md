@@ -380,6 +380,26 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 │   │   │   ├── threatDetection.ts
 │   │   │   ├── simple-audit-logger.ts
 │   │   │   └── security-logger-db.ts
+│   │   ├── i18n/           # 国際化システム（細分化構造）
+│   │   │   ├── index.ts    # 統合エントリーポイント
+│   │   │   ├── types.ts    # TypeScript型定義
+│   │   │   ├── utils.ts    # ユーティリティ関数
+│   │   │   ├── messages.ts # 後方互換レイヤー（非推奨）
+│   │   │   └── messages/   # ドメイン別メッセージファイル
+│   │   │       ├── auth.ts         # 認証・ユーザー管理
+│   │   │       ├── common.ts       # 共通UI要素
+│   │   │       ├── pages.ts        # ページ固有メッセージ
+│   │   │       ├── features.ts     # 機能説明
+│   │   │       ├── errors.ts       # エラーメッセージ
+│   │   │       ├── notifications.ts # 通知・確認
+│   │   │       ├── validation.ts   # バリデーション
+│   │   │       ├── setlists.ts     # セットリスト関連
+│   │   │       ├── songs.ts        # 楽曲管理
+│   │   │       ├── emails.ts       # メールテンプレート
+│   │   │       ├── metadata.ts     # SEO・メタデータ
+│   │   │       ├── navigation.ts   # ナビゲーション
+│   │   │       ├── footer.ts       # フッター
+│   │   │       └── confirmations.ts # 確認メッセージ
 │   │   └── shared/         # クライアント/サーバー共有ユーティリティ
 │   │       └── types.ts
 │   └── types/              # TypeScript型定義
@@ -428,7 +448,7 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 - `server/graphql/`: GraphQLスキーマ、リゾルバー、型定義
 - `server/email/`: メール配信システム（Circuit Breaker・リトライ機構付き信頼性向上）
 - `security/`: レート制限、脅威検出、CSRF保護、軽量監査ログ（AuditLog）
-- `i18n/`: 国際化システム（2,200+メッセージ、日本語・英語完全対応）
+- `i18n/`: 国際化システム（細分化済み・14ファイル構造、日本語・英語完全対応）
 - `client/`: Apollo Client、認証クライアント
 
 ### 現在のステータス
@@ -472,8 +492,10 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
   - ✅ セキュリティ強化（軽量監査ログ、Circuit Breaker、リトライ機構）
   - ✅ 本番環境マイグレーション対応（完全ガイド・P3005エラー対応）
   - ✅ Vercelリソース効率化（軽量実装、コスト最適化）
-- **i18n(国際化)機能**: 完全実装完了（2025-07-19）
+- **i18n(国際化)機能**: 完全実装・細分化完了（2025-07-23）
+  - ✅ 保守性向上: 巨大ファイル（2,400行）を14の機能別ファイルに分割
   - ✅ 日本語・英語対応の完全なメッセージシステム（2,200+メッセージ）
+  - ✅ TypeScript型安全性・既存コード互換性完全維持
   - ✅ 認証状態メッセージ・フォームバリデーション国際化
   - ✅ メール機能WithDetails版への移行完了
   - ✅ 全UIコンポーネントの多言語対応実装
@@ -620,6 +642,14 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
   - ✅ StepIconコンポーネント共通化による200行コード削減と保守性向上
   - ✅ 全ステップアイコンの色・サイズ統一（青色24px）
   - ✅ プロフィール機能説明の実装反映更新
+- **i18nメッセージシステム細分化・リファクタリング (2025-07-23)**: 保守性・可読性大幅向上
+  - ✅ 巨大messages.ts（2,400行）を14の機能別ファイルに分割
+  - ✅ ドメイン別責務分離（auth、common、pages、features、forms等）
+  - ✅ TypeScript型安全性完全維持・統合エントリーポイント実装
+  - ✅ 既存コードとの完全互換性確保（後方互換レイヤー）
+  - ✅ 静的インポート採用による型推論・Tree-shaking最適化
+  - ✅ ESLint import/order準拠・デフォルト言語統一（日本語）
+  - ✅ 新規コードでは個別ファイル直接インポート推奨構造
 - **i18n(国際化)機能完全実装 (2025-07-19)**: 日本語・英語対応の完全な多言語システム
   - ✅ 統合メッセージ構造（messages.ts）による一元管理
   - ✅ 認証状態・フォームバリデーション・UI全体の国際化

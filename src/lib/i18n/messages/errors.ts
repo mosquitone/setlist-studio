@@ -1,0 +1,86 @@
+/**
+ * Error messages for i18n system
+ * エラーメッセージの多言語化
+ */
+
+export interface ErrorMessages {
+  serverError: string;
+  validationError: string;
+  networkError: string;
+  unknownError: string;
+  setlistNotFound: string;
+  songNotFound: string;
+  songsNotFoundToDelete: string;
+  unauthorized: string;
+  forbidden: string;
+  authenticationRequired: string;
+  authenticationRequiredPrivate: string;
+  unauthorizedAccessPrivate: string;
+  jwtNotConfigured: string;
+  usernameAlreadyExists: string;
+  setlistItemNotFound: string;
+  somethingWentWrong: string;
+  // セキュリティ関連
+  rateLimitExceeded: string;
+  authRateLimitExceeded: string;
+  emailRateLimitExceeded: string;
+  csrfValidationFailed: string;
+  inputTooLong: string;
+  urlCopiedToClipboard: string;
+}
+
+// 日本語版
+export const errorsJa: ErrorMessages = {
+  serverError: 'サーバーエラーが発生しました',
+  validationError: '入力内容に誤りがあります',
+  networkError: 'ネットワークエラーが発生しました',
+  unknownError: '予期せぬエラーが発生しました',
+  setlistNotFound: 'セットリストが見つかりません',
+  songNotFound: '楽曲が見つかりません',
+  songsNotFoundToDelete: '削除する楽曲が見つかりません',
+  unauthorized: '認証が必要です',
+  forbidden: 'アクセス権限がありません',
+  authenticationRequired: '認証が必要です',
+  authenticationRequiredPrivate: '非公開セットリストへのアクセスには認証が必要です',
+  unauthorizedAccessPrivate: '非公開セットリストへの不正アクセスです',
+  jwtNotConfigured: 'JWT設定エラーです',
+  usernameAlreadyExists: 'このユーザー名は既に使用されています',
+  setlistItemNotFound: 'セットリスト項目が見つかりません',
+  somethingWentWrong: '何らかのエラーが発生しました',
+  // セキュリティ関連
+  rateLimitExceeded: 'リクエスト制限に達しました。しばらく時間をおいてから再試行してください',
+  authRateLimitExceeded:
+    '認証の試行回数が上限に達しました。しばらく時間をおいてから再試行してください',
+  emailRateLimitExceeded:
+    'メール送信回数が上限に達しました。しばらく時間をおいてから再試行してください',
+  csrfValidationFailed: 'CSRFトークンの検証に失敗しました',
+  inputTooLong: '入力が長すぎます。{maxLength}文字以下にしてください',
+  urlCopiedToClipboard: 'URLをクリップボードにコピーしました',
+};
+
+// 英語版
+export const errorsEn: ErrorMessages = {
+  serverError: 'Server error occurred',
+  validationError: 'Validation error',
+  networkError: 'Network error occurred',
+  unknownError: 'Unknown error occurred',
+  setlistNotFound: 'Setlist not found',
+  songNotFound: 'Song not found',
+  songsNotFoundToDelete: 'No songs found to delete',
+  unauthorized: 'Authentication required',
+  forbidden: 'Access denied',
+  authenticationRequired: 'Authentication required',
+  authenticationRequiredPrivate: 'Authentication required to access private setlist',
+  unauthorizedAccessPrivate: 'Unauthorized access to private setlist',
+  jwtNotConfigured: 'JWT_SECRET environment variable is not configured',
+  usernameAlreadyExists: 'This username is already in use',
+  setlistItemNotFound: 'Setlist item not found',
+  somethingWentWrong: 'Something went wrong',
+  // セキュリティ関連
+  rateLimitExceeded: 'Request limit exceeded. Please try again later',
+  authRateLimitExceeded: 'Authentication attempts exceeded. Please try again later',
+  emailRateLimitExceeded: 'Email sending limit exceeded. Please try again later',
+  csrfValidationFailed: 'CSRF token validation failed',
+  inputTooLong: 'Input is too long. Please keep it under {maxLength} characters',
+  urlCopiedToClipboard: 'URL copied to clipboard',
+};
