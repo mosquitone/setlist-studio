@@ -1,32 +1,39 @@
 'use client';
 
+import { useMutation, gql } from '@apollo/client';
+import {
+  CalendarToday as CalendarTodayIcon,
+  Email as EmailIcon,
+  Lock as LockIcon,
+  Person as PersonIcon,
+  Security as SecurityIcon,
+  Visibility,
+  VisibilityOff,
+} from '@mui/icons-material';
+import {
+  Alert,
+  Avatar,
+  Box,
+  Container,
+  Divider,
+  IconButton,
+  InputAdornment,
+  Paper,
+  TextField,
+  Typography,
+} from '@mui/material';
+import { signIn } from 'next-auth/react';
 import { useState, useEffect } from 'react';
-import Container from '@mui/material/Container';
-import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
-import { Button } from '@/components/common/ui/Button';
-import TextField from '@mui/material/TextField';
-import Avatar from '@mui/material/Avatar';
-import Divider from '@mui/material/Divider';
-import Alert from '@mui/material/Alert';
-import PersonIcon from '@mui/icons-material/Person';
-import EmailIcon from '@mui/icons-material/Email';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import LockIcon from '@mui/icons-material/Lock';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import IconButton from '@mui/material/IconButton';
-import InputAdornment from '@mui/material/InputAdornment';
-import { useAuth } from '@/components/providers/AuthProvider';
-import { useMutation } from '@apollo/client';
-import { UPDATE_USER_MUTATION, GET_ME_QUERY } from '@/lib/server/graphql/apollo-operations';
-import { gql } from '@apollo/client';
-import { apolloClient } from '@/lib/client/apollo-client';
-import { format } from 'date-fns';
-import { ja } from 'date-fns/locale';
+
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import GoogleColorIcon from '@/components/common/icons/GoogleColorIcon';
+import { Button } from '@/components/common/ui/Button';
+import { useAuth } from '@/components/providers/AuthProvider';
 import { useI18n } from '@/hooks/useI18n';
+import { apolloClient } from '@/lib/client/apollo-client';
+import { PASSWORD_POLICY } from '@/lib/constants/auth';
+import { formatDate } from '@/lib/i18n/date-format';
+import { UPDATE_USER_MUTATION, GET_ME_QUERY } from '@/lib/server/graphql/apollo-operations';
 
 const CHANGE_PASSWORD_MUTATION = gql`
   mutation ChangePassword($input: ChangePasswordInput!) {
@@ -47,8 +54,8 @@ const CHANGE_EMAIL_MUTATION = gql`
 `;
 
 function ProfileContent() {
-  const { user } = useAuth();
-  const { messages } = useI18n();
+  const { user, refreshUser } = useAuth();
+  const { messages, lang } = useI18n();
   const [isEditing, setIsEditing] = useState(false);
   const [username, setUsername] = useState('');
   const [error, setError] = useState('');
@@ -72,6 +79,12 @@ function ProfileContent() {
   const [showEmailChangePassword, setShowEmailChangePassword] = useState(false);
   const [emailError, setEmailError] = useState('');
   const [emailSuccess, setEmailSuccess] = useState('');
+  // Google認証ユーザー用パスワード設定
+  const [newPasswordForEmailAuth, setNewPasswordForEmailAuth] = useState('');
+  const [confirmNewPasswordForEmailAuth, setConfirmNewPasswordForEmailAuth] = useState('');
+  const [showNewPasswordForEmailAuth, setShowNewPasswordForEmailAuth] = useState(false);
+  const [showConfirmNewPasswordForEmailAuth, setShowConfirmNewPasswordForEmailAuth] =
+    useState(false);
 
   const [updateUser, { loading: updateLoading }] = useMutation(UPDATE_USER_MUTATION, {
     onCompleted: (data) => {
@@ -120,13 +133,18 @@ function ProfileContent() {
   );
 
   const [requestEmailChange, { loading: emailChangeLoading }] = useMutation(CHANGE_EMAIL_MUTATION, {
-    onCompleted: (data) => {
+    onCompleted: async (data) => {
       if (data.requestEmailChange.success) {
         setEmailSuccess(data.requestEmailChange.message);
         setEmailError('');
         setIsChangingEmail(false);
         setNewEmail('');
         setEmailChangePassword('');
+        setNewPasswordForEmailAuth('');
+        setConfirmNewPasswordForEmailAuth('');
+
+        // 通常のメール変更は確認が必要なため、ここではrefreshしない
+        // 確認後に自動的にuseAuthが更新される
       }
     },
     onError: (error) => {
@@ -134,6 +152,8 @@ function ProfileContent() {
       setEmailSuccess('');
     },
   });
+
+  const [googleEmailChangeLoading, setGoogleEmailChangeLoading] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -170,12 +190,12 @@ function ProfileContent() {
       return;
     }
 
-    if (newPassword.length < 8) {
+    if (newPassword.length < PASSWORD_POLICY.MIN_LENGTH) {
       setPasswordError(messages.validation.passwordTooShort);
       return;
     }
 
-    if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(newPassword)) {
+    if (!PASSWORD_POLICY.REGEX.test(newPassword)) {
       setPasswordError(messages.validation.passwordTooShort);
       return;
     }
@@ -204,7 +224,7 @@ function ProfileContent() {
     setEmailSuccess('');
 
     // バリデーション
-    if (!newEmail || !emailChangePassword) {
+    if (!newEmail) {
       setEmailError(messages.validation.required);
       return;
     }
@@ -216,12 +236,54 @@ function ProfileContent() {
       return;
     }
 
+    // Google認証ユーザーの場合はパスワード設定が必要
+    if (currentUser?.authProvider === 'google') {
+      if (!newPasswordForEmailAuth || !confirmNewPasswordForEmailAuth) {
+        setEmailError(messages.validation.required);
+        return;
+      }
+
+      if (newPasswordForEmailAuth !== confirmNewPasswordForEmailAuth) {
+        setEmailError(messages.validation.passwordsDoNotMatch);
+        return;
+      }
+
+      if (newPasswordForEmailAuth.length < PASSWORD_POLICY.MIN_LENGTH) {
+        setEmailError(messages.validation.passwordTooShort);
+        return;
+      }
+
+      if (!PASSWORD_POLICY.REGEX.test(newPasswordForEmailAuth)) {
+        setEmailError(messages.validation.passwordTooShort);
+        return;
+      }
+    } else {
+      // メール認証ユーザーの場合は現在のパスワードが必要
+      if (!emailChangePassword) {
+        setEmailError(messages.validation.required);
+        return;
+      }
+    }
+
+    const inputData: {
+      newEmail: string;
+      currentPassword?: string;
+      newPassword?: string;
+    } = {
+      newEmail: newEmail.trim(),
+    };
+
+    if (currentUser?.authProvider === 'google') {
+      // Google認証ユーザーは新しいパスワードを設定
+      inputData.newPassword = newPasswordForEmailAuth;
+    } else {
+      // メール認証ユーザーは現在のパスワードを確認
+      inputData.currentPassword = emailChangePassword;
+    }
+
     await requestEmailChange({
       variables: {
-        input: {
-          newEmail: newEmail.trim(),
-          currentPassword: emailChangePassword,
-        },
+        input: inputData,
       },
     });
   };
@@ -232,6 +294,97 @@ function ProfileContent() {
     setEmailChangePassword('');
     setEmailError('');
     setEmailSuccess('');
+    // Google認証ユーザー用パスワードフィールドもリセット
+    setNewPasswordForEmailAuth('');
+    setConfirmNewPasswordForEmailAuth('');
+  };
+
+  const handleGoogleEmailChange = async () => {
+    setEmailError('');
+    setEmailSuccess('');
+    setGoogleEmailChangeLoading(true);
+
+    try {
+      // パスワード設定の場合のバリデーション（オプション）
+      if (newPasswordForEmailAuth || confirmNewPasswordForEmailAuth) {
+        if (!newPasswordForEmailAuth || !confirmNewPasswordForEmailAuth) {
+          setEmailError(messages.validation.required);
+          return;
+        }
+
+        if (newPasswordForEmailAuth !== confirmNewPasswordForEmailAuth) {
+          setEmailError(messages.validation.passwordsDoNotMatch);
+          return;
+        }
+
+        if (newPasswordForEmailAuth.length < PASSWORD_POLICY.MIN_LENGTH) {
+          setEmailError(messages.validation.passwordTooShort);
+          return;
+        }
+
+        if (!PASSWORD_POLICY.REGEX.test(newPasswordForEmailAuth)) {
+          setEmailError(messages.validation.passwordTooShort);
+          return;
+        }
+      }
+
+      // 現在のユーザーIDを保存（セッション切り替え前に）
+      const currentUserId = currentUser?.id;
+      if (!currentUserId) {
+        setEmailError('ユーザー情報が見つかりません。');
+        return;
+      }
+
+      // NextAuthのGoogle認証を使用（アカウント選択を強制）
+      const result = await signIn('google', {
+        redirect: false,
+        callbackUrl: '/profile',
+        // Googleのアカウント選択画面を強制表示
+        // 新しいアカウント作成へのリンクも含まれる
+        // 参考: https://developers.google.com/identity/protocols/oauth2/web-server#creatingclient
+      });
+
+      if (result?.error) {
+        setEmailError('Google認証でエラーが発生しました。再度お試しください。');
+        return;
+      }
+
+      if (result?.ok) {
+        // 認証成功後、Googleアカウント切り替えAPIを呼び出し
+        const response = await fetch('/api/auth/google-account-switch', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            currentUserId, // 元のユーザーIDを送信
+            transferData: true, // データ移行フラグ
+            newPassword: newPasswordForEmailAuth || undefined,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          setEmailSuccess(data.message);
+          setEmailError('');
+          setIsChangingEmail(false);
+          setNewEmail('');
+          setEmailChangePassword('');
+          setNewPasswordForEmailAuth('');
+          setConfirmNewPasswordForEmailAuth('');
+
+          // ユーザー情報を再取得して表示を更新
+          await refreshUser();
+        } else {
+          setEmailError(data.message);
+        }
+      }
+    } catch {
+      setEmailError('Google認証でエラーが発生しました。再度お試しください。');
+    } finally {
+      setGoogleEmailChangeLoading(false);
+    }
   };
 
   // ユーザー情報が取得できない場合の表示
@@ -312,25 +465,80 @@ function ProfileContent() {
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             <PersonIcon sx={{ mr: 2, color: 'text.secondary' }} />
             {isEditing ? (
-              <TextField
-                fullWidth
-                name="username"
-                label={messages.auth.username}
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                size="small"
-                inputProps={{
-                  autoComplete: 'username',
-                }}
-              />
+              <Box sx={{ flexGrow: 1 }}>
+                <TextField
+                  fullWidth
+                  name="username"
+                  label={messages.auth.username}
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  size="small"
+                  inputProps={{
+                    autoComplete: 'username',
+                  }}
+                  sx={{ mb: 2 }}
+                />
+                <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
+                  <Button
+                    variant="outlined"
+                    onClick={() => {
+                      setIsEditing(false);
+                      setUsername(user?.username || '');
+                      setError('');
+                    }}
+                    disabled={updateLoading}
+                    size="small"
+                    sx={{
+                      minWidth: { xs: 'auto', sm: 64 },
+                      px: { xs: 1.5, sm: 2 },
+                      fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                    }}
+                  >
+                    {messages.common.cancel}
+                  </Button>
+                  <Button
+                    onClick={handleUpdateProfile}
+                    disabled={updateLoading}
+                    size="small"
+                    sx={{
+                      minWidth: { xs: 'auto', sm: 64 },
+                      px: { xs: 1.5, sm: 2 },
+                      fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                    }}
+                  >
+                    {updateLoading ? messages.common.loading : messages.common.save}
+                  </Button>
+                </Box>
+              </Box>
             ) : (
-              <Box>
-                <Typography variant="body2" color="text.secondary">
-                  {messages.auth.username}
-                </Typography>
-                <Typography variant="body1">
-                  {currentUser?.username || messages.auth.noData}
-                </Typography>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  width: '100%',
+                }}
+              >
+                <Box>
+                  <Typography variant="body2" color="text.secondary">
+                    {messages.auth.username}
+                  </Typography>
+                  <Typography variant="body1">
+                    {currentUser?.username || messages.auth.noData}
+                  </Typography>
+                </Box>
+                <Button
+                  onClick={() => setIsEditing(true)}
+                  size="small"
+                  variant="outlined"
+                  sx={{
+                    minWidth: { xs: 'auto', sm: 64 },
+                    px: { xs: 1.5, sm: 2 },
+                    fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                  }}
+                >
+                  {messages.common.edit}
+                </Button>
               </Box>
             )}
           </Box>
@@ -353,13 +561,24 @@ function ProfileContent() {
                     variant="outlined"
                     size="small"
                     onClick={() => setIsChangingEmail(true)}
-                    sx={{ mt: 1, whiteSpace: 'nowrap' }}
+                    sx={{
+                      mt: 1,
+                      whiteSpace: 'nowrap',
+                      minWidth: { xs: 'auto', sm: 64 },
+                      px: { xs: 1.5, sm: 2 },
+                      fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                    }}
                   >
                     {messages.auth.changeEmail}
                   </Button>
                 )}
                 {isChangingEmail && (
                   <Box sx={{ mt: 2 }}>
+                    {currentUser?.authProvider === 'google' && (
+                      <Alert severity="info" sx={{ mb: 2 }}>
+                        {messages.auth.googleUserEmailChangeNote}
+                      </Alert>
+                    )}
                     <TextField
                       fullWidth
                       label={messages.auth.newEmail}
@@ -369,53 +588,164 @@ function ProfileContent() {
                       size="small"
                       sx={{ mb: 1 }}
                     />
-                    <TextField
-                      fullWidth
-                      label={messages.auth.currentPassword}
-                      type={showEmailChangePassword ? 'text' : 'password'}
-                      value={emailChangePassword}
-                      onChange={(e) => setEmailChangePassword(e.target.value)}
-                      size="small"
-                      sx={{ mb: 1 }}
-                      helperText={messages.auth.emailChangeConfirmation}
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              onClick={() => setShowEmailChangePassword(!showEmailChangePassword)}
-                              edge="end"
-                            >
-                              {showEmailChangePassword ? <VisibilityOff /> : <Visibility />}
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
+                    {currentUser?.authProvider !== 'google' && (
+                      <TextField
+                        fullWidth
+                        label={messages.auth.currentPassword}
+                        type={showEmailChangePassword ? 'text' : 'password'}
+                        value={emailChangePassword}
+                        onChange={(e) => setEmailChangePassword(e.target.value)}
+                        size="small"
+                        sx={{ mb: 1 }}
+                        helperText={messages.auth.emailChangeConfirmation}
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <IconButton
+                                onClick={() => setShowEmailChangePassword(!showEmailChangePassword)}
+                                edge="end"
+                              >
+                                {showEmailChangePassword ? <VisibilityOff /> : <Visibility />}
+                              </IconButton>
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    )}
+                    {currentUser?.authProvider === 'google' && (
+                      <>
+                        <TextField
+                          fullWidth
+                          label={messages.auth.setNewPassword}
+                          type={showNewPasswordForEmailAuth ? 'text' : 'password'}
+                          value={newPasswordForEmailAuth}
+                          onChange={(e) => setNewPasswordForEmailAuth(e.target.value)}
+                          size="small"
+                          sx={{ mb: 1 }}
+                          helperText={messages.auth.setNewPasswordHelper}
+                          InputProps={{
+                            endAdornment: (
+                              <InputAdornment position="end">
+                                <IconButton
+                                  onClick={() =>
+                                    setShowNewPasswordForEmailAuth(!showNewPasswordForEmailAuth)
+                                  }
+                                  edge="end"
+                                >
+                                  {showNewPasswordForEmailAuth ? <VisibilityOff /> : <Visibility />}
+                                </IconButton>
+                              </InputAdornment>
+                            ),
+                          }}
+                        />
+                        <TextField
+                          fullWidth
+                          label={messages.auth.confirmPassword}
+                          type={showConfirmNewPasswordForEmailAuth ? 'text' : 'password'}
+                          value={confirmNewPasswordForEmailAuth}
+                          onChange={(e) => setConfirmNewPasswordForEmailAuth(e.target.value)}
+                          size="small"
+                          sx={{ mb: 1 }}
+                          helperText={messages.auth.confirmPasswordHelper}
+                          InputProps={{
+                            endAdornment: (
+                              <InputAdornment position="end">
+                                <IconButton
+                                  onClick={() =>
+                                    setShowConfirmNewPasswordForEmailAuth(
+                                      !showConfirmNewPasswordForEmailAuth,
+                                    )
+                                  }
+                                  edge="end"
+                                >
+                                  {showConfirmNewPasswordForEmailAuth ? (
+                                    <VisibilityOff />
+                                  ) : (
+                                    <Visibility />
+                                  )}
+                                </IconButton>
+                              </InputAdornment>
+                            ),
+                          }}
+                        />
+                      </>
+                    )}
                     {emailError && (
                       <Alert severity="error" sx={{ mb: 1 }}>
                         {emailError}
                       </Alert>
                     )}
-                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 2 }}>
                       <Button
                         variant="outlined"
                         size="small"
                         onClick={resetEmailForm}
-                        disabled={emailChangeLoading}
+                        disabled={emailChangeLoading || googleEmailChangeLoading}
+                        sx={{
+                          minWidth: { xs: 'auto', sm: 64 },
+                          px: { xs: 1.5, sm: 2 },
+                          fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                        }}
                       >
                         {messages.common.cancel}
                       </Button>
                       <Button
                         size="small"
                         onClick={handleChangeEmail}
-                        disabled={emailChangeLoading}
+                        disabled={emailChangeLoading || googleEmailChangeLoading}
+                        sx={{
+                          minWidth: { xs: 'auto', sm: 64 },
+                          px: { xs: 1.5, sm: 2 },
+                          fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                        }}
                       >
                         {emailChangeLoading ? messages.common.loading : messages.auth.changeEmail}
+                      </Button>
+                    </Box>
+
+                    {/* または ディバイダー */}
+                    <Box sx={{ my: 2, display: 'flex', alignItems: 'center' }}>
+                      <Divider sx={{ flexGrow: 1, borderTopWidth: 2 }} />
+                      <Typography variant="body2" color="text.secondary" sx={{ mx: 2 }}>
+                        {messages.common.or}
+                      </Typography>
+                      <Divider sx={{ flexGrow: 1, borderTopWidth: 2 }} />
+                    </Box>
+
+                    <Box sx={{ mb: 2 }}>
+                      <Alert severity="info" sx={{ mb: 2 }}>
+                        {messages.auth.googleChangeEmailDescription}
+                      </Alert>
+                      <Button
+                        variant="outlined"
+                        size="large"
+                        fullWidth
+                        startIcon={<GoogleColorIcon />}
+                        onClick={handleGoogleEmailChange}
+                        disabled={emailChangeLoading || googleEmailChangeLoading}
+                      >
+                        {googleEmailChangeLoading
+                          ? messages.common.loading
+                          : messages.auth.googleChangeEmail}
                       </Button>
                     </Box>
                   </Box>
                 )}
               </Box>
+            </Box>
+          </Box>
+
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+            <SecurityIcon sx={{ mr: 2, color: 'text.secondary' }} />
+            <Box>
+              <Typography variant="body2" color="text.secondary">
+                {messages.auth.authProvider}
+              </Typography>
+              <Typography variant="body1">
+                {currentUser?.authProvider === 'google'
+                  ? messages.auth.authProviderGoogle
+                  : messages.auth.authProviderEmail}
+              </Typography>
             </Box>
           </Box>
 
@@ -427,7 +757,7 @@ function ProfileContent() {
               </Typography>
               <Typography variant="body1">
                 {currentUser?.createdAt
-                  ? format(new Date(currentUser.createdAt), 'yyyy年MM月dd日', { locale: ja })
+                  ? formatDate(currentUser.createdAt, 'short', lang)
                   : messages.auth.noData}
               </Typography>
             </Box>
@@ -436,156 +766,149 @@ function ProfileContent() {
 
         <Divider sx={{ mb: 3 }} />
 
-        {/* パスワード変更セクション */}
-        <Box sx={{ mb: 3 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-            <LockIcon sx={{ mr: 2, color: 'text.secondary' }} />
-            <Typography variant="h6">{messages.auth.changePassword}</Typography>
-          </Box>
+        {/* パスワード変更セクション - Google認証ユーザーは非表示 */}
+        {currentUser?.authProvider !== 'google' && (
+          <Box sx={{ mb: 3 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+              <LockIcon sx={{ mr: 2, color: 'text.secondary' }} />
+              <Typography variant="h6">{messages.auth.changePassword}</Typography>
+            </Box>
 
-          {passwordError && (
-            <Alert severity="error" sx={{ mb: 2 }}>
-              {passwordError}
-            </Alert>
-          )}
+            {passwordError && (
+              <Alert severity="error" sx={{ mb: 2 }}>
+                {passwordError}
+              </Alert>
+            )}
 
-          {isChangingPassword ? (
-            <Box sx={{ mb: 2 }}>
-              {/* Hidden field for browser password manager */}
-              <input
-                type="hidden"
-                name="email"
-                value={currentUser?.email || ''}
-                autoComplete="email"
-              />
-              <TextField
-                fullWidth
-                name="current-password"
-                label={messages.auth.currentPassword}
-                type={showCurrentPassword ? 'text' : 'password'}
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                size="small"
-                sx={{ mb: 2 }}
-                inputProps={{
-                  autoComplete: 'current-password',
-                }}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                        edge="end"
-                      >
-                        {showCurrentPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-              <TextField
-                fullWidth
-                name="new-password"
-                label={messages.auth.newPassword}
-                type={showNewPassword ? 'text' : 'password'}
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                size="small"
-                sx={{ mb: 2 }}
-                helperText={messages.auth.passwordRequirements}
-                inputProps={{
-                  autoComplete: 'new-password',
-                }}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={() => setShowNewPassword(!showNewPassword)} edge="end">
-                        {showNewPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-              <TextField
-                fullWidth
-                name="confirm-password"
-                label={messages.auth.confirmPassword}
-                type={showConfirmPassword ? 'text' : 'password'}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                size="small"
-                sx={{ mb: 2 }}
-                helperText={messages.auth.confirmPasswordHelper}
-                inputProps={{
-                  autoComplete: 'new-password',
-                }}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        edge="end"
-                      >
-                        {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-              <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
+            {isChangingPassword ? (
+              <Box sx={{ mb: 2 }}>
+                {/* Hidden field for browser password manager */}
+                <input
+                  type="hidden"
+                  name="email"
+                  value={currentUser?.email || ''}
+                  autoComplete="email"
+                />
+                <TextField
+                  fullWidth
+                  name="current-password"
+                  label={messages.auth.currentPassword}
+                  type={showCurrentPassword ? 'text' : 'password'}
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  size="small"
+                  sx={{ mb: 2 }}
+                  inputProps={{
+                    autoComplete: 'current-password',
+                  }}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                          edge="end"
+                        >
+                          {showCurrentPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                <TextField
+                  fullWidth
+                  name="new-password"
+                  label={messages.auth.newPassword}
+                  type={showNewPassword ? 'text' : 'password'}
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  size="small"
+                  sx={{ mb: 2 }}
+                  helperText={messages.auth.passwordRequirements}
+                  inputProps={{
+                    autoComplete: 'new-password',
+                  }}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton onClick={() => setShowNewPassword(!showNewPassword)} edge="end">
+                          {showNewPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                <TextField
+                  fullWidth
+                  name="confirm-password"
+                  label={messages.auth.confirmPassword}
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  size="small"
+                  sx={{ mb: 2 }}
+                  helperText={messages.auth.confirmPasswordHelper}
+                  inputProps={{
+                    autoComplete: 'new-password',
+                  }}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          edge="end"
+                        >
+                          {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
+                  <Button
+                    variant="outlined"
+                    onClick={resetPasswordForm}
+                    disabled={changePasswordLoading}
+                    sx={{
+                      minWidth: { xs: 'auto', sm: 64 },
+                      px: { xs: 1.5, sm: 2 },
+                      fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                    }}
+                  >
+                    {messages.common.cancel}
+                  </Button>
+                  <Button
+                    onClick={handleChangePassword}
+                    disabled={changePasswordLoading}
+                    sx={{
+                      minWidth: { xs: 'auto', sm: 64 },
+                      px: { xs: 1.5, sm: 2 },
+                      fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                    }}
+                  >
+                    {changePasswordLoading ? messages.common.loading : messages.auth.changePassword}
+                  </Button>
+                </Box>
+              </Box>
+            ) : (
+              <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-start' }}>
                 <Button
                   variant="outlined"
-                  onClick={resetPasswordForm}
-                  disabled={changePasswordLoading}
+                  onClick={() => setIsChangingPassword(true)}
+                  startIcon={<LockIcon />}
+                  sx={{
+                    minWidth: { xs: 'auto', sm: 64 },
+                    px: { xs: 1.5, sm: 2 },
+                    fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                  }}
                 >
-                  {messages.common.cancel}
-                </Button>
-                <Button onClick={handleChangePassword} disabled={changePasswordLoading}>
-                  {changePasswordLoading ? messages.common.loading : messages.auth.changePassword}
+                  {messages.auth.changePassword}
                 </Button>
               </Box>
-            </Box>
-          ) : (
-            <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-start' }}>
-              <Button
-                variant="outlined"
-                onClick={() => setIsChangingPassword(true)}
-                startIcon={<LockIcon />}
-              >
-                {messages.auth.changePassword}
-              </Button>
-            </Box>
-          )}
-        </Box>
+            )}
+          </Box>
+        )}
 
-        <Divider sx={{ mb: 3 }} />
-
-        <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
-          {isEditing ? (
-            <>
-              <Button
-                variant="outlined"
-                onClick={() => {
-                  setIsEditing(false);
-                  setUsername(user?.username || '');
-                  setError('');
-                }}
-                disabled={updateLoading}
-              >
-                {messages.common.cancel}
-              </Button>
-              <Button onClick={handleUpdateProfile} disabled={updateLoading}>
-                {updateLoading ? messages.common.loading : messages.common.save}
-              </Button>
-            </>
-          ) : (
-            <Button onClick={() => setIsEditing(true)} sx={{ borderRadius: 10 }}>
-              {messages.common.edit}
-            </Button>
-          )}
-        </Box>
-
-        <Box sx={{ mt: 4, pt: 3, borderTop: 1, borderColor: 'divider' }}>
+        <Box sx={{ mt: 4 }}>
           <Typography variant="body2" color="text.secondary" align="center">
             {messages.auth.accountId}: {currentUser?.id}
           </Typography>

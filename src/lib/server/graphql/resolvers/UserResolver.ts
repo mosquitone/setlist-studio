@@ -1,7 +1,8 @@
-import { Resolver, Query, Mutation, Arg, Ctx, UseMiddleware } from 'type-graphql';
 import { PrismaClient } from '@prisma/client';
-import { User } from '../types/User';
+import { Resolver, Query, Mutation, Arg, Ctx, UseMiddleware } from 'type-graphql';
+
 import { AuthMiddleware } from '../middleware/jwt-auth-middleware';
+import { User } from '../types/User';
 
 interface Context {
   prisma: PrismaClient;

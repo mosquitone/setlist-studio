@@ -1,6 +1,5 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
 import {
   Box,
   Paper,
@@ -11,10 +10,13 @@ import {
   useMediaQuery,
 } from '@mui/material';
 import QRCode from 'qrcode';
-import { SetlistData } from '@/types/components';
-import { Theme } from '@/types/common';
-import { SetlistRenderer } from '../setlist-themes/SetlistRenderer';
+import React, { useState, useEffect } from 'react';
+
 import { useI18n } from '@/hooks/useI18n';
+import { Theme } from '@/types/common';
+import { SetlistData } from '@/types/components';
+
+import { SetlistRenderer } from '../setlist-themes/SetlistRenderer';
 
 interface SetlistPreviewProps {
   data: SetlistData;

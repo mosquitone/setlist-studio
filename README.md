@@ -133,12 +133,30 @@ CRON_SECRET="secret-for-vercel-cron-job-authentication"
 
 # Docker PostgreSQL パスワード（ローカル開発用）
 POSTGRES_PASSWORD="postgres"
+
+# メール配信システム（必須）
+RESEND_API_KEY="your-resend-api-key-here"
+RESEND_FROM_EMAIL="onboarding@resend.dev"
+
+# メール認証用シークレット（32文字以上）
+EMAIL_VERIFICATION_SECRET="your-email-verification-secret-here"
+PASSWORD_RESET_SECRET="your-password-reset-secret-here"
+
+# Google OAuth設定（必須）
+GOOGLE_CLIENT_ID="your-google-client-id.apps.googleusercontent.com"
+GOOGLE_CLIENT_SECRET="your-google-client-secret"
+
+# NextAuth設定
+NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_SECRET="your-nextauth-secret-same-as-jwt-secret"
 ```
 
 > **セキュリティ注意**: 
 > - 本番環境では必ず強力で異なる秘密鍵を設定してください
-> - JWT_SECRET、CSRF_SECRET、IP_HASH_SALT、CRON_SECRETは全て異なる値にしてください
-> - シークレット生成方法: `openssl rand -base64 32`
+> - 全てのシークレットは異なる値にしてください
+> - シークレット生成方法: `openssl rand -base64 32` (IP_HASH_SALTは`openssl rand -base64 16`)
+> - Google OAuth設定はGoogle Cloud Consoleで取得してください
+> - Resend APIキーはResendダッシュボードで取得してください
 
 4. データベースを起動:
 
@@ -297,15 +315,18 @@ docs/
 - **Railway**: シンプルな管理画面
 
 ### セキュリティチェックリスト
-- [ ] 全ての環境変数が異なる値に設定されている
+- [ ] 全てのシークレット環境変数が異なる値に設定されている
 - [ ] シークレットが32文字以上（IP_HASH_SALTは16文字以上）
 - [ ] データベース接続がSSL/TLSを使用している
+- [ ] Google OAuth設定が正しく構成されている
+- [ ] Resendメール設定が正しく構成されている
 - [ ] Vercel Cron Jobsが設定されている（`/api/cron/cleanup`）
 
 ### 注意事項
 - `docker-compose.yml`はローカル開発専用
 - 本番環境ではマネージドデータベースサービスを使用
 - セキュリティ設定は全てデータベースベースで動作
+- Google OAuthとResendメール機能は必須設定
 - 環境変数の合計サイズは64KB以下に収める
 ## ライセンス
 

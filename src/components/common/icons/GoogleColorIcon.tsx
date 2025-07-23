@@ -1,5 +1,5 @@
-import React from 'react';
 import { SvgIcon, SvgIconProps } from '@mui/material';
+import React from 'react';
 
 // Google公式カラーロゴのSVGコンポーネント
 export default function GoogleColorIcon(props: SvgIconProps) {

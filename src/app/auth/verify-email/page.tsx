@@ -1,6 +1,8 @@
 import { Metadata } from 'next';
 import { headers } from 'next/headers';
+
 import { getMessages, type Language } from '@/lib/i18n/messages';
+
 import VerifyEmailClient from './VerifyEmailClient';
 
 export async function generateMetadata(): Promise<Metadata> {

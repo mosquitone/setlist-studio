@@ -1,7 +1,8 @@
+import HelpIcon from '@mui/icons-material/Help';
 import HomeIcon from '@mui/icons-material/Home';
 import LibraryMusicIcon from '@mui/icons-material/LibraryMusic';
 import PlaylistPlayIcon from '@mui/icons-material/PlaylistPlay';
-import HelpIcon from '@mui/icons-material/Help';
+
 import { Messages } from '@/lib/i18n/messages';
 
 // 認証が必要なナビゲーション項目を取得する関数

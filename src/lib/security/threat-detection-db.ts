@@ -2,8 +2,10 @@
 
 import { PrismaClient } from '@prisma/client';
 import { NextRequest } from 'next/server';
-import { getSecureClientIP } from './security-utils';
+
 import { StringArray, Timestamp } from '@/types/common';
+
+import { getSecureClientIP } from './security-utils';
 
 export enum ThreatType {
   BRUTE_FORCE_ATTACK = 'BRUTE_FORCE_ATTACK',

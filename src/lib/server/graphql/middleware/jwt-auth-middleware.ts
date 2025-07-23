@@ -1,12 +1,14 @@
-import { MiddlewareFn } from 'type-graphql';
 import { PrismaClient } from '@prisma/client';
+import { MiddlewareFn } from 'type-graphql';
+
 import { verifyAndValidateJWT } from '@/types/jwt';
+
+import { I18nContext } from '../../../i18n/context';
 import {
   logSecurityEventDB,
   SecurityEventType,
   SecurityEventSeverity,
 } from '../../../security/security-logger-db';
-import { I18nContext } from '../../../i18n/context';
 
 interface Context {
   req: {

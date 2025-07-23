@@ -1,6 +1,6 @@
-import { AuthChecker } from 'type-graphql';
 import { PrismaClient } from '@prisma/client';
 import jwt from 'jsonwebtoken';
+import { AuthChecker } from 'type-graphql';
 
 interface Context {
   prisma: PrismaClient;

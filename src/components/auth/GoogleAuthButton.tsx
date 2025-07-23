@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
-import { Button } from '@/components/common/ui/Button';
-import GoogleColorIcon from '@/components/common/icons/GoogleColorIcon';
 import { signIn } from 'next-auth/react';
+import { useState } from 'react';
+
+import GoogleColorIcon from '@/components/common/icons/GoogleColorIcon';
+import { Button } from '@/components/common/ui/Button';
 import { useI18n } from '@/hooks/useI18n';
 
 interface GoogleAuthButtonProps {

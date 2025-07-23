@@ -1,8 +1,9 @@
 'use client';
 
-import React from 'react';
 import { Box, Link, Typography } from '@mui/material';
 import NextLink from 'next/link';
+import React from 'react';
+
 import { useI18n } from '@/hooks/useI18n';
 
 export default function Footer() {

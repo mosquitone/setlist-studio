@@ -7,6 +7,7 @@ export interface User {
   id: EntityId;
   email: string;
   username: string;
+  authProvider: string;
   createdAt?: ISODateString;
   updatedAt?: ISODateString;
 }

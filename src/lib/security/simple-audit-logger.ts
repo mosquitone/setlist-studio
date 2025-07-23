@@ -1,6 +1,7 @@
 // シンプルな監査ログシステム - 軽量版
 
 import { PrismaClient } from '@prisma/client';
+
 import { SecurityEvent, SecurityEventType } from './security-logger-db';
 
 // 簡素化された監査ログエントリー

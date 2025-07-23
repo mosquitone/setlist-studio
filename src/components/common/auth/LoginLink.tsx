@@ -1,8 +1,9 @@
-import { Button } from '@/components/common/ui/Button';
 import { Login as LoginIcon, PersonAdd as PersonAddIcon } from '@mui/icons-material';
+import NextLink from 'next/link';
+
+import { Button } from '@/components/common/ui/Button';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useI18n } from '@/hooks/useI18n';
-import NextLink from 'next/link';
 import { Messages } from '@/lib/i18n/messages';
 
 export type AuthLinkVariant = 'header' | 'mobile' | 'home' | 'primary';

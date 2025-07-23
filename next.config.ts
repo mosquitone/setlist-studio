@@ -55,11 +55,12 @@ const nextConfig: NextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              `script-src 'self' 'wasm-unsafe-eval' 'unsafe-inline' 'unsafe-eval'`,
+              `script-src 'self' 'wasm-unsafe-eval' ${process.env.NODE_ENV === 'development' ? "'unsafe-inline' 'unsafe-eval'" : ''} https://accounts.google.com`,
               "style-src 'self' 'unsafe-inline'", // Material-UIのため一時的に保持
               "img-src 'self' data: https: blob:", // 画像生成とQRコードのため
               "font-src 'self' data:",
-              "connect-src 'self'", // API通信を自身のドメインに制限
+              "connect-src 'self' https://accounts.google.com", // NextAuth Google認証用
+              'frame-src https://accounts.google.com', // Google認証ポップアップのため
               "object-src 'none'", // プラグイン無効化
               "base-uri 'self'", // base要素制限
               "form-action 'self'", // フォーム送信先制限

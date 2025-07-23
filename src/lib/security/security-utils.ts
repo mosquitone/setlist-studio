@@ -1,8 +1,10 @@
 // セキュリティ関連共通ユーティリティ
 
-import { NextRequest } from 'next/server';
-import DOMPurify from 'dompurify';
 import { createHash } from 'crypto';
+
+import DOMPurify from 'dompurify';
+import { NextRequest } from 'next/server';
+
 import { StringArray } from '@/types/common';
 
 // =============================================================================

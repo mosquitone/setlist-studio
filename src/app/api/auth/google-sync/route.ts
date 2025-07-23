@@ -1,8 +1,8 @@
+import jwt from 'jsonwebtoken';
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
+
 import { authOptions } from '@/lib/auth/nextauth';
-import { prisma } from '@/lib/server/prisma';
-import jwt from 'jsonwebtoken';
 import { csrfProtection } from '@/lib/security/csrf-protection';
 import { createAuthRateLimit } from '@/lib/security/rate-limit-db';
 import {
@@ -11,6 +11,8 @@ import {
   SecurityEventSeverity,
 } from '@/lib/security/security-logger-db';
 import { getSecureClientIP } from '@/lib/security/security-utils';
+import { generateSafeUsername } from '@/lib/server/auth/username-generator';
+import { prisma } from '@/lib/server/prisma';
 
 async function handleGoogleSync(req: NextRequest) {
   try {
@@ -41,9 +43,8 @@ async function handleGoogleSync(req: NextRequest) {
     });
 
     if (!user) {
-      // 安全なユーザー名を生成（重複許可）
-      const baseUsername = session.user.name || session.user.email.split('@')[0];
-      const username = baseUsername.replace(/[^a-zA-Z0-9_]/g, '_'); // 特殊文字を除去
+      // 改善されたユーザー名生成（日本語名対応 + 重複処理）
+      const username = await generateSafeUsername(session.user.name, session.user.email);
 
       // 新規ユーザーの場合は作成
       user = await prisma.user.create({
@@ -51,6 +52,7 @@ async function handleGoogleSync(req: NextRequest) {
           email: session.user.email,
           username,
           password: '', // Google認証なのでパスワードは空
+          authProvider: 'google',
           emailVerified: true,
         },
       });

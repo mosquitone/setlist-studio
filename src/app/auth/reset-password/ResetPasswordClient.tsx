@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useMutation, useQuery, gql } from '@apollo/client';
+import { LockReset as LockResetIcon, Visibility, VisibilityOff } from '@mui/icons-material';
 import {
   Container,
   Paper,
@@ -11,12 +12,11 @@ import {
   IconButton,
   InputAdornment,
 } from '@mui/material';
-import { Button } from '@/components/common/ui/Button';
-import { LockReset as LockResetIcon, Visibility, VisibilityOff } from '@mui/icons-material';
-import { useMutation, useQuery } from '@apollo/client';
-import { gql } from '@apollo/client';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
+
+import { Button } from '@/components/common/ui/Button';
 import { useI18n } from '@/hooks/useI18n';
 
 const RESET_PASSWORD = gql`

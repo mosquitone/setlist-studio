@@ -2,6 +2,7 @@
 
 import { Box, Typography, Grid, Card, CardContent } from '@mui/material';
 import Image from 'next/image';
+
 import { useI18n } from '@/hooks/useI18n';
 
 export function SampleSetlistsSection() {

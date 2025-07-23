@@ -22,6 +22,7 @@ export const USER_FIELDS = gql`
     id
     email
     username
+    authProvider
     createdAt
     updatedAt
   }
@@ -238,6 +239,7 @@ export const GET_ME_QUERY = gql`
       id
       email
       username
+      authProvider
       createdAt
     }
   }

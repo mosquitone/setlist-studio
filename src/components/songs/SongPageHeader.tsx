@@ -1,14 +1,15 @@
 'use client';
 
-import React from 'react';
-import { Box, Typography, Stack, useTheme, useMediaQuery } from '@mui/material';
-import { Button } from '@/components/common/ui/Button';
 import {
   Add as AddIcon,
   PlaylistAdd as PlaylistAddIcon,
   Delete as DeleteIcon,
 } from '@mui/icons-material';
+import { Box, Typography, Stack, useTheme, useMediaQuery } from '@mui/material';
 import Link from 'next/link';
+import React from 'react';
+
+import { Button } from '@/components/common/ui/Button';
 import { useI18n } from '@/hooks/useI18n';
 
 interface SongPageHeaderProps {

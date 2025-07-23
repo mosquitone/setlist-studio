@@ -1,6 +1,7 @@
 'use client';
 
 import { Container, CircularProgress, Typography, Box } from '@mui/material';
+
 import { useI18n } from '@/hooks/useI18n';
 
 export default function LoadingFallback() {
