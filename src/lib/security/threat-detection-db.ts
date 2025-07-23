@@ -52,10 +52,10 @@ export interface ThreatAlert {
 export class DatabaseThreatDetection {
   private prisma: PrismaClient;
   private readonly thresholds = {
-    maxFailedLogins: 5, // 連続ログイン失敗回数
-    maxLoginAttemptsPerHour: 10, // 1時間あたりの最大ログイン試行
-    maxRequestsPerMinute: 100, // 1分あたりの最大リクエスト数
-    maxUsersPerIP: 5, // 1つのIPから同時利用できる最大ユーザー数
+    maxFailedLogins: 20, // IP単位：1時間での連続ログイン失敗回数（緩和）
+    maxLoginAttemptsPerHour: 30, // 1時間あたりの最大ログイン試行（緩和）
+    maxRequestsPerMinute: 200, // 1分あたりの最大リクエスト数（厳格化）
+    maxUsersPerIP: 10, // 1つのIPから同時利用できる最大ユーザー数（緩和）
     suspiciousUserAgents: ['bot', 'crawler', 'spider', 'scraper', 'automated'],
   };
 
@@ -221,7 +221,7 @@ export class DatabaseThreatDetection {
 
       const uniqueUsers = new Set(activities.map((a) => a.userId).filter(Boolean));
 
-      if (uniqueUsers.size >= 5 && activities.length >= 10) {
+      if (uniqueUsers.size >= 8 && activities.length >= 20) {
         return {
           id: this.generateAlertId(),
           type: ThreatType.CREDENTIAL_STUFFING,
