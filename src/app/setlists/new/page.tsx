@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import SetlistForm from '@/components/forms/SetlistForm';
+import { useSnackbar } from '@/components/providers/SnackbarProvider';
 import { useI18n } from '@/hooks/useI18n';
 import { CREATE_SETLIST, GET_SETLIST, GET_SETLISTS } from '@/lib/server/graphql/apollo-operations';
 import { SetlistFormValues } from '@/types/components';
@@ -17,6 +18,7 @@ export default function NewSetlistPage() {
   const duplicateId = searchParams.get('duplicate');
   const selectedSongsParam = searchParams.get('selectedSongs');
   const { messages } = useI18n();
+  const { showError, showSuccess } = useSnackbar();
   const [initialValues, setInitialValues] = useState<SetlistFormValues>({
     title: '',
     artistName: '',
@@ -28,9 +30,16 @@ export default function NewSetlistPage() {
     items: [{ title: '', note: '' }],
   });
 
-  const [createSetlist, { loading, error }] = useMutation(CREATE_SETLIST, {
+  const [createSetlist, { loading }] = useMutation(CREATE_SETLIST, {
     refetchQueries: [{ query: GET_SETLISTS }],
     awaitRefetchQueries: true,
+    onCompleted: (data) => {
+      showSuccess(messages.setlistForm.buttons.createSuccess || 'セットリストが作成されました');
+      router.push(`/setlists/${data.createSetlist.id}`);
+    },
+    onError: (error) => {
+      showError(error.message);
+    },
   });
 
   const { data: duplicateData, loading: duplicateLoading } = useQuery<GetSetlistResponse>(
@@ -42,7 +51,7 @@ export default function NewSetlistPage() {
   );
 
   const handleSubmit = async (values: SetlistFormValues) => {
-    const { data } = await createSetlist({
+    await createSetlist({
       variables: {
         input: {
           title: values.title,
@@ -60,10 +69,6 @@ export default function NewSetlistPage() {
         },
       },
     });
-
-    if (data?.createSetlist) {
-      router.push(`/setlists/${data.createSetlist.id}`);
-    }
   };
 
   useEffect(() => {
@@ -102,7 +107,6 @@ export default function NewSetlistPage() {
     }
   }, [duplicateData, selectedSongsParam, messages.setlistForm.copy]);
 
-  const createError = error ? new Error(`${messages.errors.serverError}: ${error.message}`) : null;
   const isLoading = loading || duplicateLoading;
 
   return (
@@ -118,7 +122,6 @@ export default function NewSetlistPage() {
         initialValues={initialValues}
         onSubmit={handleSubmit}
         loading={isLoading}
-        error={createError}
         submitButtonText={messages.setlistForm.buttons.create}
         enableDragAndDrop={true}
       />

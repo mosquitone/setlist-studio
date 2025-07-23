@@ -29,6 +29,7 @@ import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import GoogleColorIcon from '@/components/common/icons/GoogleColorIcon';
 import { Button } from '@/components/common/ui/Button';
 import { useAuth } from '@/components/providers/AuthProvider';
+import { useSnackbar } from '@/components/providers/SnackbarProvider';
 import { useI18n } from '@/hooks/useI18n';
 import { apolloClient } from '@/lib/client/apollo-client';
 import { PASSWORD_POLICY } from '@/lib/constants/auth';
@@ -56,10 +57,9 @@ const CHANGE_EMAIL_MUTATION = gql`
 function ProfileContent() {
   const { user, refreshUser } = useAuth();
   const { messages, lang } = useI18n();
+  const { showError, showSuccess } = useSnackbar();
   const [isEditing, setIsEditing] = useState(false);
   const [username, setUsername] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
 
   // パスワード変更用の状態
   const [isChangingPassword, setIsChangingPassword] = useState(false);
@@ -69,16 +69,12 @@ function ProfileContent() {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [passwordError, setPasswordError] = useState('');
-  const [passwordSuccess, setPasswordSuccess] = useState('');
 
   // メールアドレス変更用の状態
   const [isChangingEmail, setIsChangingEmail] = useState(false);
   const [newEmail, setNewEmail] = useState('');
   const [emailChangePassword, setEmailChangePassword] = useState('');
   const [showEmailChangePassword, setShowEmailChangePassword] = useState(false);
-  const [emailError, setEmailError] = useState('');
-  const [emailSuccess, setEmailSuccess] = useState('');
   // Google認証ユーザー用パスワード設定
   const [newPasswordForEmailAuth, setNewPasswordForEmailAuth] = useState('');
   const [confirmNewPasswordForEmailAuth, setConfirmNewPasswordForEmailAuth] = useState('');
@@ -98,17 +94,17 @@ function ProfileContent() {
           },
         });
 
-        setSuccess(messages.notifications.profileUpdated);
+        showSuccess(messages.notifications.profileUpdated);
         setIsEditing(false);
       } catch (error) {
         if (process.env.NODE_ENV === 'development') {
           console.error('Failed to update cache:', error);
         }
-        setError(messages.errors.somethingWentWrong);
+        showError(messages.errors.somethingWentWrong);
       }
     },
     onError: (error) => {
-      setError(error.message);
+      showError(error.message);
     },
   });
 
@@ -117,8 +113,7 @@ function ProfileContent() {
     {
       onCompleted: (data) => {
         if (data.changePassword.success) {
-          setPasswordSuccess(data.changePassword.message);
-          setPasswordError('');
+          showSuccess(data.changePassword.message);
           setIsChangingPassword(false);
           setCurrentPassword('');
           setNewPassword('');
@@ -126,8 +121,7 @@ function ProfileContent() {
         }
       },
       onError: (error) => {
-        setPasswordError(error.message);
-        setPasswordSuccess('');
+        showError(error.message);
       },
     },
   );
@@ -135,8 +129,7 @@ function ProfileContent() {
   const [requestEmailChange, { loading: emailChangeLoading }] = useMutation(CHANGE_EMAIL_MUTATION, {
     onCompleted: async (data) => {
       if (data.requestEmailChange.success) {
-        setEmailSuccess(data.requestEmailChange.message);
-        setEmailError('');
+        showSuccess(data.requestEmailChange.message);
         setIsChangingEmail(false);
         setNewEmail('');
         setEmailChangePassword('');
@@ -148,8 +141,7 @@ function ProfileContent() {
       }
     },
     onError: (error) => {
-      setEmailError(error.message);
-      setEmailSuccess('');
+      showError(error.message);
     },
   });
 
@@ -162,9 +154,8 @@ function ProfileContent() {
   }, [user]);
 
   const handleUpdateProfile = async () => {
-    setError('');
     if (!username.trim()) {
-      setError(messages.validation.required);
+      showError(messages.validation.required);
       return;
     }
 
@@ -176,27 +167,24 @@ function ProfileContent() {
   };
 
   const handleChangePassword = async () => {
-    setPasswordError('');
-    setPasswordSuccess('');
-
     // バリデーション
     if (!currentPassword || !newPassword || !confirmPassword) {
-      setPasswordError(messages.validation.required);
+      showError(messages.validation.required);
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setPasswordError(messages.validation.passwordsDoNotMatch);
+      showError(messages.validation.passwordsDoNotMatch);
       return;
     }
 
     if (newPassword.length < PASSWORD_POLICY.MIN_LENGTH) {
-      setPasswordError(messages.validation.passwordTooShort);
+      showError(messages.validation.passwordTooShort);
       return;
     }
 
     if (!PASSWORD_POLICY.REGEX.test(newPassword)) {
-      setPasswordError(messages.validation.passwordTooShort);
+      showError(messages.validation.passwordTooShort);
       return;
     }
 
@@ -215,52 +203,47 @@ function ProfileContent() {
     setCurrentPassword('');
     setNewPassword('');
     setConfirmPassword('');
-    setPasswordError('');
-    setPasswordSuccess('');
   };
 
   const handleChangeEmail = async () => {
-    setEmailError('');
-    setEmailSuccess('');
-
     // バリデーション
     if (!newEmail) {
-      setEmailError(messages.validation.required);
+      showError(messages.validation.required);
       return;
     }
 
     // メールアドレス形式チェック
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(newEmail)) {
-      setEmailError(messages.auth.invalidEmailFormat);
+      showError(messages.auth.invalidEmailFormat);
       return;
     }
 
     // Google認証ユーザーの場合はパスワード設定が必要
     if (currentUser?.authProvider === 'google') {
       if (!newPasswordForEmailAuth || !confirmNewPasswordForEmailAuth) {
-        setEmailError(messages.validation.required);
+        showError(messages.validation.required);
         return;
       }
 
       if (newPasswordForEmailAuth !== confirmNewPasswordForEmailAuth) {
-        setEmailError(messages.validation.passwordsDoNotMatch);
+        showError(messages.validation.passwordsDoNotMatch);
         return;
       }
 
       if (newPasswordForEmailAuth.length < PASSWORD_POLICY.MIN_LENGTH) {
-        setEmailError(messages.validation.passwordTooShort);
+        showError(messages.validation.passwordTooShort);
         return;
       }
 
       if (!PASSWORD_POLICY.REGEX.test(newPasswordForEmailAuth)) {
-        setEmailError(messages.validation.passwordTooShort);
+        showError(messages.validation.passwordTooShort);
         return;
       }
     } else {
       // メール認証ユーザーの場合は現在のパスワードが必要
       if (!emailChangePassword) {
-        setEmailError(messages.validation.required);
+        showError(messages.validation.required);
         return;
       }
     }
@@ -292,38 +275,34 @@ function ProfileContent() {
     setIsChangingEmail(false);
     setNewEmail('');
     setEmailChangePassword('');
-    setEmailError('');
-    setEmailSuccess('');
     // Google認証ユーザー用パスワードフィールドもリセット
     setNewPasswordForEmailAuth('');
     setConfirmNewPasswordForEmailAuth('');
   };
 
   const handleGoogleEmailChange = async () => {
-    setEmailError('');
-    setEmailSuccess('');
     setGoogleEmailChangeLoading(true);
 
     try {
       // パスワード設定の場合のバリデーション（オプション）
       if (newPasswordForEmailAuth || confirmNewPasswordForEmailAuth) {
         if (!newPasswordForEmailAuth || !confirmNewPasswordForEmailAuth) {
-          setEmailError(messages.validation.required);
+          showError(messages.validation.required);
           return;
         }
 
         if (newPasswordForEmailAuth !== confirmNewPasswordForEmailAuth) {
-          setEmailError(messages.validation.passwordsDoNotMatch);
+          showError(messages.validation.passwordsDoNotMatch);
           return;
         }
 
         if (newPasswordForEmailAuth.length < PASSWORD_POLICY.MIN_LENGTH) {
-          setEmailError(messages.validation.passwordTooShort);
+          showError(messages.validation.passwordTooShort);
           return;
         }
 
         if (!PASSWORD_POLICY.REGEX.test(newPasswordForEmailAuth)) {
-          setEmailError(messages.validation.passwordTooShort);
+          showError(messages.validation.passwordTooShort);
           return;
         }
       }
@@ -331,7 +310,7 @@ function ProfileContent() {
       // 現在のユーザーIDを保存（セッション切り替え前に）
       const currentUserId = currentUser?.id;
       if (!currentUserId) {
-        setEmailError('ユーザー情報が見つかりません。');
+        showError('ユーザー情報が見つかりません。');
         return;
       }
 
@@ -348,7 +327,7 @@ function ProfileContent() {
       });
 
       if (result?.error) {
-        setEmailError('Google認証でエラーが発生しました。再度お試しください。');
+        showError('Google認証でエラーが発生しました。再度お試しください。');
         return;
       }
 
@@ -369,8 +348,7 @@ function ProfileContent() {
         const data = await response.json();
 
         if (data.success) {
-          setEmailSuccess(data.message);
-          setEmailError('');
+          showSuccess(data.message);
           setIsChangingEmail(false);
           setNewEmail('');
           setEmailChangePassword('');
@@ -380,11 +358,11 @@ function ProfileContent() {
           // ユーザー情報を再取得して表示を更新
           await refreshUser();
         } else {
-          setEmailError(data.message);
+          showError(data.message);
         }
       }
     } catch {
-      setEmailError('Google認証でエラーが発生しました。再度お試しください。');
+      showError('Google認証でエラーが発生しました。再度お試しください。');
     } finally {
       setGoogleEmailChangeLoading(false);
     }
@@ -440,30 +418,6 @@ function ProfileContent() {
 
         <Divider sx={{ mb: 3 }} />
 
-        {error && (
-          <Alert severity="error" sx={{ mb: 2 }}>
-            {error}
-          </Alert>
-        )}
-
-        {success && (
-          <Alert severity="success" sx={{ mb: 2 }}>
-            {success}
-          </Alert>
-        )}
-
-        {passwordSuccess && (
-          <Alert severity="success" sx={{ mb: 2 }}>
-            {passwordSuccess}
-          </Alert>
-        )}
-
-        {emailSuccess && (
-          <Alert severity="success" sx={{ mb: 2 }}>
-            {emailSuccess}
-          </Alert>
-        )}
-
         <Box sx={{ mb: 3 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             <PersonIcon sx={{ mr: 2, color: 'text.secondary' }} />
@@ -487,7 +441,6 @@ function ProfileContent() {
                     onClick={() => {
                       setIsEditing(false);
                       setUsername(user?.username || '');
-                      setError('');
                     }}
                     disabled={updateLoading}
                     size="small"
@@ -673,11 +626,6 @@ function ProfileContent() {
                         />
                       </>
                     )}
-                    {emailError && (
-                      <Alert severity="error" sx={{ mb: 1 }}>
-                        {emailError}
-                      </Alert>
-                    )}
                     <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 2 }}>
                       <Button
                         variant="outlined"
@@ -776,12 +724,6 @@ function ProfileContent() {
               <LockIcon sx={{ mr: 2, color: 'text.secondary' }} />
               <Typography variant="h6">{messages.auth.changePassword}</Typography>
             </Box>
-
-            {passwordError && (
-              <Alert severity="error" sx={{ mb: 2 }}>
-                {passwordError}
-              </Alert>
-            )}
 
             {isChangingPassword ? (
               <Box sx={{ mb: 2 }}>

@@ -8,7 +8,6 @@ import {
   TextField,
   Typography,
   Box,
-  Alert,
   IconButton,
   InputAdornment,
   FormControlLabel,
@@ -22,6 +21,7 @@ import { useState } from 'react';
 import GoogleAuthButton from '@/components/auth/GoogleAuthButton';
 import { Button } from '@/components/common/ui/Button';
 import { useAuth } from '@/components/providers/AuthProvider';
+import { useSnackbar } from '@/components/providers/SnackbarProvider';
 import { useI18n } from '@/hooks/useI18n';
 import { validateField, ValidationRules } from '@/lib/security/validation-rules';
 import { REGISTER } from '@/lib/server/graphql/apollo-operations';
@@ -29,6 +29,7 @@ import { REGISTER } from '@/lib/server/graphql/apollo-operations';
 export default function RegisterClient() {
   const { messages } = useI18n();
   const { login } = useAuth();
+  const { showError } = useSnackbar();
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -36,7 +37,6 @@ export default function RegisterClient() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
-  const [error, setError] = useState('');
   const router = useRouter();
 
   const [register, { loading }] = useMutation(REGISTER, {
@@ -52,16 +52,16 @@ export default function RegisterClient() {
           if (result.success) {
             router.push('/');
           } else {
-            setError('認証の設定に失敗しました');
+            showError('認証の設定に失敗しました');
           }
         }
       } catch (error) {
         console.error('Auth login failed:', error);
-        setError('認証の設定に失敗しました');
+        showError('認証の設定に失敗しました');
       }
     },
     onError: (error) => {
-      setError(error.message);
+      showError(error.message);
     },
   });
 
@@ -72,22 +72,21 @@ export default function RegisterClient() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
 
     // パスワード強度チェック
     const passwordError = validatePassword(password);
     if (passwordError) {
-      setError(passwordError);
+      showError(passwordError);
       return;
     }
 
     if (password !== confirmPassword) {
-      setError(messages.validation.passwordsDoNotMatch);
+      showError(messages.validation.passwordsDoNotMatch);
       return;
     }
 
     if (!agreeToTerms) {
-      setError(messages.validation.agreeToTerms || 'Please agree to the terms and conditions');
+      showError(messages.validation.agreeToTerms || 'Please agree to the terms and conditions');
       return;
     }
 
@@ -111,12 +110,6 @@ export default function RegisterClient() {
               {messages.auth.createAccountToStart}
             </Typography>
           </Box>
-
-          {error && (
-            <Alert severity="error" sx={{ mb: 3 }}>
-              {error}
-            </Alert>
-          )}
 
           <Box component="form" onSubmit={handleSubmit}>
             <TextField
@@ -227,7 +220,7 @@ export default function RegisterClient() {
             </Typography>
           </Divider>
 
-          <GoogleAuthButton mode="signup" onError={setError} sx={{ mb: 2 }} />
+          <GoogleAuthButton mode="signup" onError={showError} sx={{ mb: 2 }} />
 
           <Box textAlign="center">
             <Typography variant="body2">

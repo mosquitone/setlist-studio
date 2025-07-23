@@ -11,6 +11,7 @@ import CSRFProvider from '@/components/providers/CSRFProvider';
 import { I18nProvider } from '@/components/providers/I18nProvider';
 import MUIProvider from '@/components/providers/MUIProvider';
 import NextAuthProvider from '@/components/providers/NextAuthProvider';
+import { SnackbarProvider } from '@/components/providers/SnackbarProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -127,17 +128,19 @@ export default function RootLayout({
           <I18nProvider>
             <ApolloProviderWrapper>
               <MUIProvider>
-                <CSRFProvider>
-                  <AuthProvider>
-                    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-                      <Header />
-                      <main style={{ flex: 1 }}>
-                        <Suspense fallback={<LoadingFallback />}>{children}</Suspense>
-                      </main>
-                      <Footer />
-                    </div>
-                  </AuthProvider>
-                </CSRFProvider>
+                <SnackbarProvider>
+                  <CSRFProvider>
+                    <AuthProvider>
+                      <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+                        <Header />
+                        <main style={{ flex: 1 }}>
+                          <Suspense fallback={<LoadingFallback />}>{children}</Suspense>
+                        </main>
+                        <Footer />
+                      </div>
+                    </AuthProvider>
+                  </CSRFProvider>
+                </SnackbarProvider>
               </MUIProvider>
             </ApolloProviderWrapper>
           </I18nProvider>

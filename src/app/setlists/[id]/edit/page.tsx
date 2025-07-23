@@ -7,6 +7,7 @@ import React from 'react';
 
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import SetlistForm from '@/components/forms/SetlistForm';
+import { useSnackbar } from '@/components/providers/SnackbarProvider';
 import { GET_SETLIST, UPDATE_SETLIST } from '@/lib/server/graphql/apollo-operations';
 import { formatDateForInput } from '@/lib/shared/dateUtils';
 import { SetlistFormValues } from '@/types/components';
@@ -14,6 +15,7 @@ import { SetlistFormValues } from '@/types/components';
 export default function EditSetlistPage() {
   const params = useParams();
   const router = useRouter();
+  const { showError, showSuccess } = useSnackbar();
   const setlistId = params.id as string;
 
   const {
@@ -25,8 +27,15 @@ export default function EditSetlistPage() {
     skip: !setlistId,
   });
 
-  const [updateSetlist, { loading: updateLoading, error: updateError }] =
-    useMutation(UPDATE_SETLIST);
+  const [updateSetlist, { loading: updateLoading }] = useMutation(UPDATE_SETLIST, {
+    onCompleted: () => {
+      showSuccess('セットリストが更新されました');
+      router.push(`/setlists/${setlistId}`);
+    },
+    onError: (error) => {
+      showError(error.message);
+    },
+  });
 
   if (queryLoading) {
     return (
@@ -65,7 +74,7 @@ export default function EditSetlistPage() {
   };
 
   const handleSubmit = async (values: SetlistFormValues) => {
-    const { data } = await updateSetlist({
+    await updateSetlist({
       variables: {
         id: setlistId,
         input: {
@@ -84,15 +93,7 @@ export default function EditSetlistPage() {
         },
       },
     });
-
-    if (data?.updateSetlist) {
-      router.push(`/setlists/${setlistId}`);
-    }
   };
-
-  const updateErrorMessage = updateError
-    ? new Error(`セットリストの更新に失敗しました: ${updateError.message}`)
-    : null;
 
   return (
     <ProtectedRoute>
@@ -101,7 +102,6 @@ export default function EditSetlistPage() {
         initialValues={initialValues}
         onSubmit={handleSubmit}
         loading={updateLoading}
-        error={updateErrorMessage}
         submitButtonText="変更を保存"
         enableDragAndDrop={true}
       />

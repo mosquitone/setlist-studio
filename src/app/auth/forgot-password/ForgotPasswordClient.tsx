@@ -2,19 +2,12 @@
 
 import { useMutation, gql } from '@apollo/client';
 import { LockReset as LockResetIcon, Refresh as RefreshIcon } from '@mui/icons-material';
-import {
-  Container,
-  Paper,
-  TextField,
-  Typography,
-  Box,
-  Alert,
-  CircularProgress,
-} from '@mui/material';
+import { Container, Paper, TextField, Typography, Box, CircularProgress } from '@mui/material';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 
 import { Button } from '@/components/common/ui/Button';
+import { useSnackbar } from '@/components/providers/SnackbarProvider';
 import { useI18n } from '@/hooks/useI18n';
 
 const REQUEST_PASSWORD_RESET = gql`
@@ -28,9 +21,8 @@ const REQUEST_PASSWORD_RESET = gql`
 
 export default function ForgotPasswordClient() {
   const { messages } = useI18n();
+  const { showError, showSuccess } = useSnackbar();
   const [email, setEmail] = useState('');
-  const [error, setError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
   const [canResend, setCanResend] = useState(true);
   const [resendCooldown, setResendCooldown] = useState(0);
   const [resendCount, setResendCount] = useState(0);
@@ -38,8 +30,7 @@ export default function ForgotPasswordClient() {
   const [requestPasswordReset, { loading }] = useMutation(REQUEST_PASSWORD_RESET, {
     onCompleted: (data) => {
       if (data.requestPasswordReset.success) {
-        setSuccessMessage(data.requestPasswordReset.message);
-        setError('');
+        showSuccess(data.requestPasswordReset.message);
         setResendCount((prev) => prev + 1);
 
         // 再送信後のクールダウン設定
@@ -47,13 +38,11 @@ export default function ForgotPasswordClient() {
         setResendCooldown(cooldownTime);
         setCanResend(false);
       } else {
-        setError(data.requestPasswordReset.message || messages.common.error);
-        setSuccessMessage('');
+        showError(data.requestPasswordReset.message || messages.common.error);
       }
     },
     onError: (error) => {
-      setError(error.message);
-      setSuccessMessage('');
+      showError(error.message);
     },
   });
 
@@ -82,11 +71,9 @@ export default function ForgotPasswordClient() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setSuccessMessage('');
 
     if (!canResend) {
-      setError(messages.common.wait);
+      showError(messages.common.wait);
       return;
     }
 
@@ -110,21 +97,6 @@ export default function ForgotPasswordClient() {
               {messages.auth.passwordResetDescription}
             </Typography>
           </Box>
-
-          {successMessage && (
-            <Alert severity="success" sx={{ mb: 3 }}>
-              {successMessage}
-              <Typography variant="body2" sx={{ mt: 1 }}>
-                {messages.auth.checkYourEmail || 'メールをご確認ください。'}
-              </Typography>
-            </Alert>
-          )}
-
-          {error && (
-            <Alert severity="error" sx={{ mb: 3 }}>
-              {error}
-            </Alert>
-          )}
 
           <Box component="form" onSubmit={handleSubmit}>
             <TextField
@@ -161,17 +133,6 @@ export default function ForgotPasswordClient() {
               </Typography>
             )}
           </Box>
-
-          {successMessage && (
-            <Alert severity="info" sx={{ mb: 3 }}>
-              <Typography variant="body2">
-                <strong>{messages.auth.emailNotFound}</strong>
-                <br />• {messages.auth.checkSpamFolder}
-                <br />• {messages.auth.mayTakeMinutes}
-                <br />• {messages.auth.canResendAbove}
-              </Typography>
-            </Alert>
-          )}
 
           <Box textAlign="center">
             <Typography variant="body2">

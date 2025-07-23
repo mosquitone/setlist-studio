@@ -1,7 +1,7 @@
 'use client';
 
 import { useMutation } from '@apollo/client';
-import { Container, Typography, TextField, Box, Paper, Alert } from '@mui/material';
+import { Container, Typography, TextField, Box, Paper } from '@mui/material';
 import { Formik, Form } from 'formik';
 import { useRouter } from 'next/navigation';
 import React from 'react';
@@ -9,6 +9,7 @@ import * as Yup from 'yup';
 
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { Button } from '@/components/common/ui/Button';
+import { useSnackbar } from '@/components/providers/SnackbarProvider';
 import { useI18n } from '@/hooks/useI18n';
 import { Messages } from '@/lib/i18n/messages';
 import { CREATE_SONG } from '@/lib/server/graphql/apollo-operations';
@@ -41,11 +42,22 @@ const initialValues: SongFormValues = {
 export default function NewSongPage() {
   const { messages } = useI18n();
   const router = useRouter();
-  const [createSong, { loading, error }] = useMutation(CREATE_SONG);
+  const { showError, showSuccess } = useSnackbar();
+  const [createSong, { loading }] = useMutation(CREATE_SONG, {
+    onCompleted: (data) => {
+      if (data?.createSong?.id) {
+        showSuccess(messages.songs.newSong.success || '楽曲が作成されました');
+        router.push('/songs');
+      }
+    },
+    onError: (error) => {
+      showError(error.message);
+    },
+  });
 
   const handleSubmit = async (values: SongFormValues) => {
     const tempoVal = values.tempo ? parseInt(values.tempo, 10) : undefined;
-    const { data } = await createSong({
+    await createSong({
       variables: {
         input: {
           title: values.title,
@@ -56,9 +68,6 @@ export default function NewSongPage() {
         },
       },
     });
-    if (data?.createSong?.id) {
-      router.push('/songs');
-    }
   };
 
   return (
@@ -130,12 +139,6 @@ export default function NewSongPage() {
                   />
                 </Box>
               </Paper>
-
-              {error && (
-                <Alert severity="error" sx={{ mb: 2 }}>
-                  {messages.songs.newSong.createError}: {error.message}
-                </Alert>
-              )}
 
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
                 <Button variant="outlined" disabled={loading} onClick={() => router.back()}>

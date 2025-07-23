@@ -1,12 +1,13 @@
 'use client';
 
 import { Image as ImageIcon } from '@mui/icons-material';
-import { Box, Alert, CircularProgress } from '@mui/material';
+import { Box, CircularProgress } from '@mui/material';
 import html2canvas from 'html2canvas';
 import QRCode from 'qrcode';
 import React, { useState, useEffect } from 'react';
 
 import { Button } from '@/components/common/ui/Button';
+import { useSnackbar } from '@/components/providers/SnackbarProvider';
 import { useI18n } from '@/hooks/useI18n';
 import { isValidUrl } from '@/lib/security/security-utils';
 import { Theme } from '@/types/common';
@@ -32,10 +33,10 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
   baseUrl = typeof window !== 'undefined' ? window.location.origin : '',
 }) => {
   const [isGenerating, setIsGenerating] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [hasGenerated, setHasGenerated] = useState(false);
   const { messages } = useI18n();
+  const { showError, showSuccess } = useSnackbar();
 
   const generateQRCode = React.useCallback(
     async (setlistId: string): Promise<string> => {
@@ -72,7 +73,6 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
   const generateImage = React.useCallback(
     async (theme: string): Promise<string | null> => {
       setIsGenerating(true);
-      setError(null);
 
       try {
         // Temporarily disable QR code for image generation
@@ -135,7 +135,7 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
 
         return imageURL;
       } catch (error) {
-        setError(
+        showError(
           `${messages.common.generationError}: ${error instanceof Error ? error.message : 'Unknown error'}`,
         );
         return null;
@@ -143,7 +143,7 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
         setIsGenerating(false);
       }
     },
-    [data, baseUrl, generateQRCode],
+    [data, baseUrl, generateQRCode, messages.common.generationError, showError],
   );
 
   const handleGeneratePreview = React.useCallback(async () => {
@@ -175,9 +175,10 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(imageURL);
+      showSuccess('Setlist Generated !');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedTheme, data.artistName]);
+  }, [selectedTheme, data.artistName, showSuccess]);
 
   React.useEffect(() => {
     if (onDownloadReady) {
@@ -215,12 +216,6 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
 
   return (
     <Box>
-      {error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
-        </Alert>
-      )}
-
       <Box sx={{ display: 'inline-flex', gap: 1, mb: 2 }}>
         <Button
           startIcon={isGenerating ? <CircularProgress size={20} /> : <ImageIcon />}

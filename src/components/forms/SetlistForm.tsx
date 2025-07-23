@@ -23,7 +23,6 @@ interface SetlistFormProps {
   initialValues: SetlistFormValues;
   onSubmit: (values: SetlistFormValues) => Promise<void>;
   loading: boolean;
-  error?: Error | null;
   submitButtonText: string;
   enableDragAndDrop?: boolean;
 }
@@ -129,7 +128,6 @@ export default function SetlistForm({
   initialValues,
   onSubmit,
   loading,
-  error,
   submitButtonText,
   enableDragAndDrop = true,
 }: SetlistFormProps) {
@@ -261,12 +259,6 @@ export default function SetlistForm({
                   }}
                 </FieldArray>
               </Paper>
-
-              {error && (
-                <Alert severity="error" sx={{ mb: 3 }}>
-                  {error.message}
-                </Alert>
-              )}
 
               <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
                 <Button

@@ -8,7 +8,6 @@ import {
   TextField,
   Typography,
   Box,
-  Alert,
   IconButton,
   InputAdornment,
   Divider,
@@ -20,6 +19,7 @@ import { useState } from 'react';
 import GoogleAuthButton from '@/components/auth/GoogleAuthButton';
 import { Button } from '@/components/common/ui/Button';
 import { useAuth } from '@/components/providers/AuthProvider';
+import { useSnackbar } from '@/components/providers/SnackbarProvider';
 import { useI18n } from '@/hooks/useI18n';
 import { LOGIN } from '@/lib/server/graphql/apollo-operations';
 
@@ -27,10 +27,10 @@ export default function LoginClient() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
   const router = useRouter();
   const { login: authLogin } = useAuth();
   const { messages } = useI18n();
+  const { showError } = useSnackbar();
 
   const [loginMutation, { loading }] = useMutation(LOGIN, {
     onCompleted: async (data) => {
@@ -38,17 +38,16 @@ export default function LoginClient() {
       if (result.success) {
         router.push('/');
       } else {
-        setError(result.error || 'Login failed');
+        showError(result.error || 'Login failed');
       }
     },
     onError: (error) => {
-      setError(error.message);
+      showError(error.message);
     },
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
 
     await loginMutation({
       variables: {
@@ -70,12 +69,6 @@ export default function LoginClient() {
               {messages.auth.loginToManageSetlists}
             </Typography>
           </Box>
-
-          {error && (
-            <Alert severity="error" sx={{ mb: 3 }}>
-              {error}
-            </Alert>
-          )}
 
           <Box component="form" onSubmit={handleSubmit}>
             <TextField
@@ -124,7 +117,7 @@ export default function LoginClient() {
             </Typography>
           </Divider>
 
-          <GoogleAuthButton onError={setError} sx={{ mb: 2 }} />
+          <GoogleAuthButton onError={showError} sx={{ mb: 2 }} />
 
           <Box textAlign="center">
             <Typography variant="body2" sx={{ mb: 2 }}>

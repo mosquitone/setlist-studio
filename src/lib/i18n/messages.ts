@@ -619,6 +619,7 @@ export interface Messages {
     buttons: {
       create: string;
       cancel: string;
+      createSuccess: string;
     };
     validation: {
       titleMaxLength: string;
@@ -697,6 +698,7 @@ export interface Messages {
       create: string;
       cancel: string;
       createError: string;
+      success: string;
       validation: {
         titleRequired: string;
         artistRequired: string;
@@ -1350,6 +1352,7 @@ const jaMessages: Messages = {
     buttons: {
       create: 'セットリストを作成',
       cancel: 'キャンセル',
+      createSuccess: 'セットリストが正常に作成されました！',
     },
     validation: {
       titleMaxLength: 'セットリスト名は100文字以内で入力してください',
@@ -1425,6 +1428,7 @@ const jaMessages: Messages = {
       create: '作成',
       cancel: 'キャンセル',
       createError: '楽曲の作成に失敗しました',
+      success: '楽曲を作成しました',
       validation: {
         titleRequired: '楽曲タイトルは必須です',
         artistRequired: 'アーティスト名は必須です',
@@ -2179,6 +2183,7 @@ const enMessages: Messages = {
     buttons: {
       create: 'Create Setlist',
       cancel: 'Cancel',
+      createSuccess: 'Setlist created successfully!',
     },
     validation: {
       titleMaxLength: 'Setlist name must be 100 characters or less',
@@ -2253,6 +2258,7 @@ const enMessages: Messages = {
       create: 'Create',
       cancel: 'Cancel',
       createError: 'Failed to create song',
+      success: 'Song created successfully',
       validation: {
         titleRequired: 'Song title is required',
         artistRequired: 'Artist name is required',

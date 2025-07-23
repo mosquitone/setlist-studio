@@ -24,6 +24,7 @@ import { useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
 import { Button } from '@/components/common/ui/Button';
+import { useSnackbar } from '@/components/providers/SnackbarProvider';
 import { useI18n } from '@/hooks/useI18n';
 
 const RESEND_VERIFICATION_EMAIL = gql`
@@ -46,12 +47,11 @@ const CHECK_EMAIL_VERIFICATION_STATUS = gql`
 
 export default function CheckEmailClient() {
   const { messages } = useI18n();
+  const { showError, showSuccess } = useSnackbar();
   const [email, setEmail] = useState('');
   const [canResend, setCanResend] = useState(true);
   const [resendCooldown, setResendCooldown] = useState(0);
   const [resendCount, setResendCount] = useState(0);
-  const [successMessage, setSuccessMessage] = useState('');
-  const [error, setError] = useState('');
   const [isVerified, setIsVerified] = useState(false);
   const searchParams = useSearchParams();
 
@@ -72,8 +72,7 @@ export default function CheckEmailClient() {
     {
       onCompleted: (data) => {
         if (data.resendVerificationEmail.success) {
-          setSuccessMessage(data.resendVerificationEmail.message);
-          setError('');
+          showSuccess(data.resendVerificationEmail.message);
           setResendCount((prev) => prev + 1);
 
           // 再送信後のクールダウン設定
@@ -81,13 +80,11 @@ export default function CheckEmailClient() {
           setResendCooldown(cooldownTime);
           setCanResend(false);
         } else {
-          setError(data.resendVerificationEmail.message || messages.common.error);
-          setSuccessMessage('');
+          showError(data.resendVerificationEmail.message || messages.common.error);
         }
       },
       onError: (error) => {
-        setError(error.message);
-        setSuccessMessage('');
+        showError(error.message);
       },
     },
   );
@@ -162,20 +159,8 @@ export default function CheckEmailClient() {
             </Typography>
           </Box>
 
-          {successMessage && (
-            <Alert severity="success" sx={{ mb: 3 }}>
-              {successMessage}
-            </Alert>
-          )}
-
-          {error && (
-            <Alert severity="error" sx={{ mb: 3 }}>
-              {error}
-            </Alert>
-          )}
-
           {isVerified && (
-            <Alert severity="success" sx={{ mb: 3 }}>
+            <Box sx={{ mb: 3, textAlign: 'center' }}>
               <Typography variant="body2" sx={{ mb: 2 }}>
                 🎉 メール認証が完了しました！ログインできるようになりました。
               </Typography>
@@ -188,7 +173,7 @@ export default function CheckEmailClient() {
               >
                 ログインページへ
               </Button>
-            </Alert>
+            </Box>
           )}
 
           {/* プロセス表示 */}
