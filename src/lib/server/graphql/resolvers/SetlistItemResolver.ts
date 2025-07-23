@@ -1,3 +1,4 @@
+import { PrismaClient } from '@prisma/client';
 import {
   Resolver,
   Query,
@@ -10,9 +11,10 @@ import {
   ID,
   Int,
 } from 'type-graphql';
-import { PrismaClient } from '@prisma/client';
-import { SetlistItem } from '../types/SetlistItem';
+
 import { AuthMiddleware } from '@/lib/server/graphql/middleware/jwt-auth-middleware';
+
+import { SetlistItem } from '../types/SetlistItem';
 
 interface Context {
   prisma: PrismaClient;

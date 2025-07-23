@@ -1,6 +1,23 @@
 'use client';
 
-import React from 'react';
+import {
+  Visibility,
+  Share,
+  Download,
+  PersonAdd,
+  Lock,
+  Public,
+  Edit,
+  LibraryMusic,
+  PlaylistAdd,
+  Home,
+  Close,
+  Check,
+  AccountCircle,
+  Palette,
+  FileCopy,
+  PersonOff,
+} from '@mui/icons-material';
 import {
   Container,
   Typography,
@@ -21,26 +38,10 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
-import {
-  Visibility,
-  Share,
-  Download,
-  PersonAdd,
-  Lock,
-  Public,
-  Edit,
-  LibraryMusic,
-  PlaylistAdd,
-  Home,
-  Close,
-  Check,
-  AccountCircle,
-  Palette,
-  FileCopy,
-  PersonOff,
-} from '@mui/icons-material';
-import { useI18n } from '@/hooks/useI18n';
+import React from 'react';
+
 import { StepIcon } from '@/components/common/ui/StepIcon';
+import { useI18n } from '@/hooks/useI18n';
 
 export default function GuidePage() {
   const { messages } = useI18n();

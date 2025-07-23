@@ -1,5 +1,5 @@
-import { MetadataRoute } from 'next';
 import { PrismaClient } from '@prisma/client';
+import { MetadataRoute } from 'next';
 
 const prisma = new PrismaClient();
 

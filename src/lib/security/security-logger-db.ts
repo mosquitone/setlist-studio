@@ -1,6 +1,9 @@
 // Vercel互換性のためのデータベースベースセキュリティログ
 
 import { PrismaClient } from '@prisma/client';
+
+import { Timestamp } from '@/types/common';
+
 import {
   sanitizeForLog,
   sanitizeEmailForLog,
@@ -10,7 +13,6 @@ import {
   sanitizeObjectForLog,
   formatSecurityLog,
 } from './log-sanitizer';
-import { Timestamp } from '@/types/common';
 
 export enum SecurityEventType {
   // 認証関連

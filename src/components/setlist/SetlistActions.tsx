@@ -1,6 +1,14 @@
 'use client';
 
-import React from 'react';
+import {
+  Edit as EditIcon,
+  Download as DownloadIcon,
+  Share as ShareIcon,
+  ContentCopy as DuplicateIcon,
+  ExpandMore as ExpandMoreIcon,
+  Public as PublicIcon,
+  Lock as LockIcon,
+} from '@mui/icons-material';
 import {
   Box,
   FormControl,
@@ -11,18 +19,11 @@ import {
   useTheme,
   useMediaQuery,
 } from '@mui/material';
+import React from 'react';
+
 import { Button } from '@/components/common/ui/Button';
-import {
-  Edit as EditIcon,
-  Download as DownloadIcon,
-  Share as ShareIcon,
-  ContentCopy as DuplicateIcon,
-  ExpandMore as ExpandMoreIcon,
-  Public as PublicIcon,
-  Lock as LockIcon,
-} from '@mui/icons-material';
-import { Theme } from '@/types/common';
 import { useI18n } from '@/components/providers/I18nProvider';
+import { Theme } from '@/types/common';
 
 interface SetlistActionsProps {
   onEdit: () => void;

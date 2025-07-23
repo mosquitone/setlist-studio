@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { Container, CircularProgress, Typography, Alert } from '@mui/material';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useI18n } from '@/hooks/useI18n';
 

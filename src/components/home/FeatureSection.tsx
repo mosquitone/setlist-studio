@@ -1,11 +1,12 @@
 'use client';
 
-import { Box, Typography, Card, CardActionArea, CardContent } from '@mui/material';
 import {
   LibraryMusic as LibraryMusicIcon,
   PlaylistPlay as PlaylistPlayIcon,
 } from '@mui/icons-material';
+import { Box, Typography, Card, CardActionArea, CardContent } from '@mui/material';
 import Link from 'next/link';
+
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useI18n } from '@/hooks/useI18n';
 export function FeatureSection() {

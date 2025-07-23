@@ -1,15 +1,16 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { Suspense } from 'react';
-import MUIProvider from '@/components/providers/MUIProvider';
-import ApolloProviderWrapper from '@/components/providers/ApolloProvider';
-import CSRFProvider from '@/components/providers/CSRFProvider';
-import { AuthProvider } from '@/components/providers/AuthProvider';
-import { I18nProvider } from '@/components/providers/I18nProvider';
-import NextAuthProvider from '@/components/providers/NextAuthProvider';
-import Header from '@/components/common/layout/Header';
+
 import Footer from '@/components/common/layout/Footer';
+import Header from '@/components/common/layout/Header';
 import LoadingFallback from '@/components/common/ui/LoadingFallback';
+import ApolloProviderWrapper from '@/components/providers/ApolloProvider';
+import { AuthProvider } from '@/components/providers/AuthProvider';
+import CSRFProvider from '@/components/providers/CSRFProvider';
+import { I18nProvider } from '@/components/providers/I18nProvider';
+import MUIProvider from '@/components/providers/MUIProvider';
+import NextAuthProvider from '@/components/providers/NextAuthProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 

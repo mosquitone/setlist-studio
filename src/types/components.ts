@@ -1,5 +1,7 @@
 // コンポーネント専用型定義
 
+import { Language } from '@/lib/i18n/messages';
+
 import { Theme, EntityId } from './common';
 import { SetlistItem } from './entities';
 
@@ -21,6 +23,7 @@ export interface SetlistData {
 export interface SetlistThemeProps {
   data: SetlistData;
   className?: string;
+  lang?: Language;
 }
 
 // フォーム用セットリストアイテム（簡略版）

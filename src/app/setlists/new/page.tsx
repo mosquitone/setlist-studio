@@ -1,14 +1,15 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
 import { useMutation, useQuery } from '@apollo/client';
-import { CREATE_SETLIST, GET_SETLIST, GET_SETLISTS } from '@/lib/server/graphql/apollo-operations';
 import { useRouter, useSearchParams } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
+
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import SetlistForm from '@/components/forms/SetlistForm';
+import { useI18n } from '@/hooks/useI18n';
+import { CREATE_SETLIST, GET_SETLIST, GET_SETLISTS } from '@/lib/server/graphql/apollo-operations';
 import { SetlistFormValues } from '@/types/components';
 import { GetSetlistResponse, SetlistItem } from '@/types/graphql';
-import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
-import { useI18n } from '@/hooks/useI18n';
 
 export default function NewSetlistPage() {
   const router = useRouter();

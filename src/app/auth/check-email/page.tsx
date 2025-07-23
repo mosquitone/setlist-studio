@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+
 import CheckEmailClient from './CheckEmailClient';
 
 export const metadata: Metadata = {

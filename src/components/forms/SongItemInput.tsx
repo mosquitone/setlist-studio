@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import { Delete as DeleteIcon, DragHandle as DragHandleIcon } from '@mui/icons-material';
 import {
   Paper,
   TextField,
@@ -12,10 +12,11 @@ import {
   useTheme,
   useMediaQuery,
 } from '@mui/material';
-import { Delete as DeleteIcon, DragHandle as DragHandleIcon } from '@mui/icons-material';
 import { FormikProps } from 'formik';
-import { SetlistFormValues, SetlistFormItem } from '@/types/components';
+import React from 'react';
+
 import { useI18n } from '@/hooks/useI18n';
+import { SetlistFormValues, SetlistFormItem } from '@/types/components';
 
 // 後方互換性のため型エイリアス
 type SetlistItem = SetlistFormItem;

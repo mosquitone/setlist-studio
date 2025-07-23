@@ -1,7 +1,21 @@
-import { Resolver, Mutation, Query, Arg, Ctx, UseMiddleware } from 'type-graphql';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { Resolver, Mutation, Query, Arg, Ctx, UseMiddleware } from 'type-graphql';
+
+import { I18nContext } from '../../../i18n/context';
+import { createEmailRateLimit } from '../../../security/email-rate-limit';
+import {
+  logAuthSuccessDB,
+  logAuthFailureDB,
+  SecurityEventType,
+  SecurityEventSeverity,
+  logSecurityEventDB,
+} from '../../../security/security-logger-db';
+import { logSimpleAudit } from '../../../security/simple-audit-logger';
+import { DatabaseThreatDetection } from '../../../security/threat-detection-db';
+import { emailService } from '../../email/emailService';
+import { AuthMiddleware } from '../middleware/jwt-auth-middleware';
 import {
   AuthPayload,
   RegisterInput,
@@ -18,19 +32,8 @@ import {
   ChangePasswordResponse,
   PasswordResetTokenInfo,
 } from '../types/Auth';
-import {
-  logAuthSuccessDB,
-  logAuthFailureDB,
-  SecurityEventType,
-  SecurityEventSeverity,
-  logSecurityEventDB,
-} from '../../../security/security-logger-db';
-import { DatabaseThreatDetection } from '../../../security/threat-detection-db';
-import { logSimpleAudit } from '../../../security/simple-audit-logger';
-import { emailService } from '../../email/emailService';
-import { createEmailRateLimit } from '../../../security/email-rate-limit';
-import { AuthMiddleware } from '../middleware/jwt-auth-middleware';
-import { I18nContext } from '../../../i18n/context';
+
+import { EmailHistoryResolver } from './EmailHistoryResolver';
 
 interface Context {
   prisma: PrismaClient;
@@ -48,6 +51,7 @@ interface Context {
       'x-real-ip'?: string;
     };
   };
+  request?: Request;
   i18n?: I18nContext;
 }
 
@@ -109,6 +113,7 @@ export class AuthResolver {
         email: input.email,
         username: input.username,
         password: hashedPassword,
+        authProvider: 'email',
         emailVerificationToken: verificationToken,
         emailVerificationExpires: verificationExpires,
       },
@@ -590,25 +595,32 @@ export class AuthResolver {
       throw new Error(ctx.i18n?.messages.auth.userNotFound || 'ユーザーが見つかりません');
     }
 
-    // 現在のパスワードを確認
-    const isValidPassword = await bcrypt.compare(input.currentPassword, user.password);
-    if (!isValidPassword) {
-      await logSecurityEventDB(ctx.prisma, {
-        type: SecurityEventType.EMAIL_CHANGE_FAILURE,
-        severity: SecurityEventSeverity.MEDIUM,
-        userId: user.id,
-        ipAddress: getClientIP(ctx),
-        userAgent: ctx.req?.headers['user-agent'],
-        details: {
-          email: user.email,
-          newEmail: input.newEmail,
-          reason: 'invalid_current_password',
-        },
-      });
+    // 現在のパスワードを確認（Google認証ユーザーはスキップ）
+    if (user.authProvider !== 'google') {
+      if (!input.currentPassword) {
+        throw new Error(
+          ctx.i18n?.messages.auth.currentPasswordIncorrect || '現在のパスワードが正しくありません',
+        );
+      }
+      const isValidPassword = await bcrypt.compare(input.currentPassword, user.password);
+      if (!isValidPassword) {
+        await logSecurityEventDB(ctx.prisma, {
+          type: SecurityEventType.EMAIL_CHANGE_FAILURE,
+          severity: SecurityEventSeverity.MEDIUM,
+          userId: user.id,
+          ipAddress: getClientIP(ctx),
+          userAgent: ctx.req?.headers['user-agent'],
+          details: {
+            email: user.email,
+            newEmail: input.newEmail,
+            reason: 'invalid_current_password',
+          },
+        });
 
-      throw new Error(
-        ctx.i18n?.messages.auth.currentPasswordIncorrect || '現在のパスワードが正しくありません',
-      );
+        throw new Error(
+          ctx.i18n?.messages.auth.currentPasswordIncorrect || '現在のパスワードが正しくありません',
+        );
+      }
     }
 
     // 新しいメールアドレスが既に使用されているかチェック
@@ -646,6 +658,12 @@ export class AuthResolver {
     // メールアドレス変更トークンを生成
     const { token, expires } = emailService.generateEmailChangeToken();
 
+    // Google認証ユーザーの場合は新しいパスワードもハッシュ化して保存
+    let pendingPassword: string | undefined;
+    if (user.authProvider === 'google' && input.newPassword) {
+      pendingPassword = await bcrypt.hash(input.newPassword, 12);
+    }
+
     // ユーザー情報を更新（pendingEmailに新しいメールアドレスを設定）
     await ctx.prisma.user.update({
       where: { id: user.id },
@@ -653,6 +671,7 @@ export class AuthResolver {
         pendingEmail: input.newEmail,
         emailChangeToken: token,
         emailChangeExpires: expires,
+        pendingPassword,
       },
     });
 
@@ -722,17 +741,38 @@ export class AuthResolver {
       );
     }
 
-    // メールアドレスを変更
+    // メールアドレスを変更（pendingPasswordがある場合はパスワードも更新）
+    const updateData: Prisma.UserUpdateInput = {
+      email: user.pendingEmail,
+      pendingEmail: null,
+      emailChangeToken: null,
+      emailChangeExpires: null,
+      emailVerified: true,
+      authProvider: 'email', // メールアドレス変更後はemailユーザーとして扱う
+    };
+
+    if (user.pendingPassword) {
+      updateData.password = user.pendingPassword;
+      updateData.pendingPassword = null;
+    }
+
+    const oldEmail = user.email;
+    const newEmail = user.pendingEmail;
+
     await ctx.prisma.user.update({
       where: { id: user.id },
-      data: {
-        email: user.pendingEmail,
-        pendingEmail: null,
-        emailChangeToken: null,
-        emailChangeExpires: null,
-        emailVerified: true,
-      },
+      data: updateData,
     });
+
+    // メールアドレス変更履歴を記録
+    await EmailHistoryResolver.recordEmailChange(
+      ctx,
+      user.id,
+      oldEmail,
+      newEmail,
+      'verification', // 確認メール経由での変更
+      updateData.authProvider as string,
+    );
 
     await logSecurityEventDB(ctx.prisma, {
       type: SecurityEventType.EMAIL_CHANGE_SUCCESS,
@@ -741,8 +781,8 @@ export class AuthResolver {
       ipAddress: getClientIP(ctx),
       userAgent: ctx.req?.headers['user-agent'],
       details: {
-        oldEmail: user.email,
-        newEmail: user.pendingEmail,
+        oldEmail,
+        newEmail,
       },
     });
 
@@ -859,6 +899,26 @@ export class AuthResolver {
 
     if (!user) {
       throw new Error(ctx.i18n?.messages.auth.userNotFound || 'ユーザーが見つかりません');
+    }
+
+    // Google認証ユーザーはパスワード変更不可
+    if (user.authProvider === 'google') {
+      await logSecurityEventDB(ctx.prisma, {
+        type: SecurityEventType.PASSWORD_CHANGE_FAILURE,
+        severity: SecurityEventSeverity.MEDIUM,
+        userId: user.id,
+        ipAddress: getClientIP(ctx),
+        userAgent: ctx.req?.headers['user-agent'],
+        details: {
+          email: user.email,
+          reason: 'google_auth_user_password_change_denied',
+        },
+      });
+
+      throw new Error(
+        ctx.i18n?.messages.auth.googleUserPasswordChangeNotAllowed ||
+          'Google認証ユーザーはパスワード変更できません',
+      );
     }
 
     // 現在のパスワードを確認

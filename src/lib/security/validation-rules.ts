@@ -40,6 +40,7 @@ export const ValidationRules = {
     maxLength: 128,
     // パスワードマネージャー互換性：特殊文字不要
     pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/,
+    // @deprecated Use messages.auth.passwordRequirements for i18n support
     message: 'パスワードは8文字以上で、大文字・小文字・数字を含む必要があります',
   },
 

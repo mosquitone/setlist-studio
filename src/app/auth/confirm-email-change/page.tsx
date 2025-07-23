@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+
 import ConfirmEmailChangeClient from './ConfirmEmailChangeClient';
 
 export const metadata: Metadata = {

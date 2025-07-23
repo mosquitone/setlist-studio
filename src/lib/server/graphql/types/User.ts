@@ -11,12 +11,15 @@ export class User {
   @Field(() => String)
   username!: string;
 
+  @Field(() => String)
+  authProvider!: string;
+
   @Field(() => Date)
   createdAt!: Date;
 
   @Field(() => Date)
   updatedAt!: Date;
 
-  // Note: Song and Setlist relations removed to avoid circular dependencies
+  // Note: Song, Setlist, and EmailHistory relations removed to avoid circular dependencies
   // These would be resolved through GraphQL resolvers if needed
 }

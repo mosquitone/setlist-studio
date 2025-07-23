@@ -1,9 +1,10 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useMutation } from '@apollo/client';
-import { DELETE_SETLIST } from '@/lib/server/graphql/apollo-operations';
+import { useRouter } from 'next/navigation';
+
 import { useI18n } from '@/hooks/useI18n';
+import { DELETE_SETLIST } from '@/lib/server/graphql/apollo-operations';
 
 interface UseSetlistActionsProps {
   setlistId: string;

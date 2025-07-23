@@ -1,6 +1,7 @@
 'use client';
 
 import { Box, Stack } from '@mui/material';
+
 import { AuthLink } from '@/components/common/auth/LoginLink';
 
 export function PrimaryAuthSection() {

@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useMutation } from '@apollo/client';
+import { PersonAdd as PersonAddIcon, Visibility, VisibilityOff } from '@mui/icons-material';
 import {
   Container,
   Paper,
@@ -12,18 +13,18 @@ import {
   InputAdornment,
   FormControlLabel,
   Checkbox,
+  Divider,
 } from '@mui/material';
-import { Button } from '@/components/common/ui/Button';
-import { PersonAdd as PersonAddIcon, Visibility, VisibilityOff } from '@mui/icons-material';
-import { useMutation } from '@apollo/client';
-import { REGISTER } from '@/lib/server/graphql/apollo-operations';
-import { validateField, ValidationRules } from '@/lib/security/validation-rules';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useI18n } from '@/hooks/useI18n';
-import { useAuth } from '@/components/providers/AuthProvider';
+import { useState } from 'react';
+
 import GoogleAuthButton from '@/components/auth/GoogleAuthButton';
-import { Divider } from '@mui/material';
+import { Button } from '@/components/common/ui/Button';
+import { useAuth } from '@/components/providers/AuthProvider';
+import { useI18n } from '@/hooks/useI18n';
+import { validateField, ValidationRules } from '@/lib/security/validation-rules';
+import { REGISTER } from '@/lib/server/graphql/apollo-operations';
 
 export default function RegisterClient() {
   const { messages } = useI18n();
@@ -141,10 +142,10 @@ export default function RegisterClient() {
               margin="normal"
               required
               autoComplete="new-password"
-              helperText={ValidationRules.password.message}
+              helperText={messages.auth.passwordRequirements}
               inputProps={{
                 pattern: ValidationRules.password.pattern.source,
-                title: ValidationRules.password.message,
+                title: messages.auth.passwordRequirements,
                 minLength: ValidationRules.password.minLength,
                 maxLength: ValidationRules.password.maxLength,
               }}
@@ -215,9 +216,9 @@ export default function RegisterClient() {
             </Button>
           </Box>
 
-          <Divider sx={{ my: 2 }}>
+          <Divider sx={{ my: 2, '&::before, &::after': { borderTopWidth: 2 } }}>
             <Typography variant="body2" color="text.secondary">
-              または
+              {messages.common.or}
             </Typography>
           </Divider>
 
