@@ -168,3 +168,7 @@ export interface UpdateUserData {
 export interface ToggleSetlistVisibilityData {
   toggleSetlistVisibility: Setlist;
 }
+
+export interface DeleteAccountData {
+  deleteAccount: boolean;
+}

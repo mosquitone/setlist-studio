@@ -167,6 +167,17 @@ export interface AuthMessages {
   googleEmailChangeSuccess: string;
   emailNotVerified: string;
   registrationSuccessEmailVerification: string;
+
+  // アカウント削除
+  deleteAccount: string;
+  deleteAccountTitle: string;
+  deleteAccountDescription: string;
+  deleteAccountWarning: string;
+  deleteAccountConfirm: string;
+  deleteAccountCancel: string;
+  deleteAccountSuccess: string;
+  typeDeleteToConfirm: string;
+  deleteToConfirm: string;
 }
 
 // 日本語メッセージ
@@ -334,6 +345,18 @@ export const authJa: AuthMessages = {
     'メールアドレスが認証されていません。メールに送信された認証リンクをクリックしてアカウントを有効化してください。',
   registrationSuccessEmailVerification:
     'アカウントが作成されました。メールアドレスに送信された認証リンクをクリックしてアカウントを有効化してください。',
+
+  // アカウント削除
+  deleteAccount: 'アカウント削除',
+  deleteAccountTitle: 'アカウント削除の確認',
+  deleteAccountDescription:
+    'アカウントを削除すると、すべてのデータ（セットリスト、楽曲）が完全に削除されます。',
+  deleteAccountWarning: 'この操作は取り消せません。本当にアカウントを削除しますか？',
+  deleteAccountConfirm: '削除する',
+  deleteAccountCancel: 'キャンセル',
+  deleteAccountSuccess: 'アカウントが削除されました',
+  typeDeleteToConfirm: '削除を確定するには「削除」と入力してください',
+  deleteToConfirm: '削除',
 };
 
 // 英語メッセージ
@@ -509,4 +532,17 @@ export const authEn: AuthMessages = {
     'Email address is not verified. Please click the verification link sent to your email to activate your account.',
   registrationSuccessEmailVerification:
     'Account has been created. Please click the verification link sent to your email to activate your account.',
+
+  // Account deletion
+  deleteAccount: 'Delete Account',
+  deleteAccountTitle: 'Confirm Account Deletion',
+  deleteAccountDescription:
+    'Deleting your account will permanently remove all your data (setlists, songs).',
+  deleteAccountWarning:
+    'This action cannot be undone. Are you sure you want to delete your account?',
+  deleteAccountConfirm: 'Delete',
+  deleteAccountCancel: 'Cancel',
+  deleteAccountSuccess: 'Account has been deleted',
+  typeDeleteToConfirm: 'Type "DELETE" to confirm deletion',
+  deleteToConfirm: 'DELETE',
 };

@@ -1,11 +1,11 @@
 'use client';
 
+import DeleteIcon from '@mui/icons-material/Delete';
 import LogoutIcon from '@mui/icons-material/Logout';
 import PersonIcon from '@mui/icons-material/Person';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
@@ -84,6 +84,26 @@ export function UserMenu({ onAuthClick }: UserMenuProps) {
           <Link href="/profile" underline="none" color="inherit">
             {messages.navigation.profile}
           </Link>
+        </MenuItem>
+        <Divider />
+        <MenuItem
+          onClick={() => {
+            handleUserMenuClose();
+            window.location.href = '/profile#delete-account';
+          }}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            color: 'error.main',
+            '&:hover': {
+              backgroundColor: 'error.light',
+              color: 'error.dark',
+            },
+          }}
+        >
+          <DeleteIcon fontSize="small" />
+          {messages.auth.deleteAccount}
         </MenuItem>
         <Divider />
         <MenuItem

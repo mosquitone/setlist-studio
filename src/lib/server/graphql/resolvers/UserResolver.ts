@@ -45,4 +45,19 @@ export class UserResolver {
 
     return user;
   }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(AuthMiddleware)
+  async deleteAccount(@Ctx() ctx: Context): Promise<boolean> {
+    if (!ctx.userId) {
+      throw new Error(ctx.i18n?.messages.errors.authenticationRequired || '認証が必要です');
+    }
+
+    // Prismaのカスケード削除により関連データ（setlists, songs, emailHistories等）も自動削除される
+    await ctx.prisma.user.delete({
+      where: { id: ctx.userId },
+    });
+
+    return true;
+  }
 }

@@ -3,6 +3,7 @@
 import { useMutation, gql } from '@apollo/client';
 import {
   CalendarToday as CalendarTodayIcon,
+  Delete as DeleteIcon,
   Email as EmailIcon,
   Lock as LockIcon,
   Person as PersonIcon,
@@ -15,6 +16,11 @@ import {
   Avatar,
   Box,
   Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Divider,
   IconButton,
   InputAdornment,
@@ -35,7 +41,12 @@ import { apolloClient } from '@/lib/client/apollo-client';
 import { PASSWORD_POLICY } from '@/lib/constants/auth';
 import { formatDate } from '@/lib/i18n/date-format';
 import { UPDATE_USER_MUTATION, GET_ME_QUERY } from '@/lib/server/graphql/apollo-operations';
-import type { UpdateUserData, ChangePasswordData, RequestEmailChangeData } from '@/types/graphql';
+import type {
+  UpdateUserData,
+  ChangePasswordData,
+  RequestEmailChangeData,
+  DeleteAccountData,
+} from '@/types/graphql';
 
 const CHANGE_PASSWORD_MUTATION = gql`
   mutation ChangePassword($input: ChangePasswordInput!) {
@@ -52,6 +63,12 @@ const CHANGE_EMAIL_MUTATION = gql`
       success
       message
     }
+  }
+`;
+
+const DELETE_ACCOUNT_MUTATION = gql`
+  mutation DeleteAccount {
+    deleteAccount
   }
 `;
 
@@ -82,6 +99,10 @@ function ProfileContent() {
   const [showNewPasswordForEmailAuth, setShowNewPasswordForEmailAuth] = useState(false);
   const [showConfirmNewPasswordForEmailAuth, setShowConfirmNewPasswordForEmailAuth] =
     useState(false);
+
+  // アカウント削除用の状態
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
 
   const [updateUser, { loading: updateLoading }] = useMutation(UPDATE_USER_MUTATION, {
     onCompleted: (data: UpdateUserData) => {
@@ -147,6 +168,21 @@ function ProfileContent() {
   });
 
   const [googleEmailChangeLoading, setGoogleEmailChangeLoading] = useState(false);
+
+  const [deleteAccount, { loading: deleteAccountLoading }] = useMutation(DELETE_ACCOUNT_MUTATION, {
+    onCompleted: (data: DeleteAccountData) => {
+      if (data.deleteAccount) {
+        showSuccess(messages.auth.deleteAccountSuccess);
+        // ページをリロードしてログアウト状態にする
+        window.location.href = '/';
+      }
+    },
+    onError: (error) => {
+      showError(error.message);
+      setDeleteDialogOpen(false);
+      setDeleteConfirmText('');
+    },
+  });
 
   useEffect(() => {
     if (user) {
@@ -367,6 +403,27 @@ function ProfileContent() {
     } finally {
       setGoogleEmailChangeLoading(false);
     }
+  };
+
+  const handleDeleteAccount = async () => {
+    // 確認テキストの検証
+    const confirmText = messages.auth.deleteToConfirm;
+    if (deleteConfirmText !== confirmText) {
+      showError(messages.auth.typeDeleteToConfirm);
+      return;
+    }
+
+    await deleteAccount();
+  };
+
+  const handleOpenDeleteDialog = () => {
+    setDeleteDialogOpen(true);
+    setDeleteConfirmText('');
+  };
+
+  const handleCloseDeleteDialog = () => {
+    setDeleteDialogOpen(false);
+    setDeleteConfirmText('');
   };
 
   // ユーザー情報が取得できない場合の表示
@@ -854,11 +911,102 @@ function ProfileContent() {
           </Box>
         )}
 
+        {/* 危険な操作セクション */}
+        <Divider sx={{ mb: 3 }} />
+        <Box sx={{ mb: 3 }}>
+          <Typography
+            variant="h6"
+            color="error"
+            sx={{ mb: 2, display: 'flex', alignItems: 'center' }}
+          >
+            <DeleteIcon sx={{ mr: 1 }} />
+            {messages.auth.deleteAccount}
+          </Typography>
+          <Alert severity="warning" sx={{ mb: 2 }}>
+            {messages.auth.deleteAccountDescription}
+          </Alert>
+          <Button
+            variant="outlined"
+            color="error"
+            startIcon={<DeleteIcon />}
+            onClick={handleOpenDeleteDialog}
+            sx={{
+              borderColor: 'error.main',
+              minWidth: { xs: 'auto', sm: 64 },
+              px: { xs: 1.5, sm: 2 },
+              fontSize: { xs: '0.75rem', sm: '0.875rem' },
+              '&:hover': {
+                borderColor: 'error.dark',
+                backgroundColor: 'error.main',
+                color: 'white',
+              },
+            }}
+          >
+            {messages.auth.deleteAccount}
+          </Button>
+        </Box>
+
         <Box sx={{ mt: 4 }}>
           <Typography variant="body2" color="text.secondary" align="center">
             {messages.auth.accountId}: {currentUser?.id}
           </Typography>
         </Box>
+
+        {/* アカウント削除確認ダイアログ */}
+        <Dialog open={deleteDialogOpen} onClose={handleCloseDeleteDialog} maxWidth="sm" fullWidth>
+          <DialogTitle color="error">{messages.auth.deleteAccountTitle}</DialogTitle>
+          <DialogContent>
+            <DialogContentText sx={{ mb: 2 }}>
+              {messages.auth.deleteAccountDescription}
+            </DialogContentText>
+            <DialogContentText sx={{ mb: 2, fontWeight: 'bold' }}>
+              {messages.auth.deleteAccountWarning}
+            </DialogContentText>
+            <TextField
+              fullWidth
+              label={messages.auth.typeDeleteToConfirm}
+              value={deleteConfirmText}
+              onChange={(e) => setDeleteConfirmText(e.target.value)}
+              helperText={`${messages.auth.typeDeleteToConfirm}: "${messages.auth.deleteToConfirm}"`}
+              sx={{ mt: 2 }}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={handleCloseDeleteDialog}
+              disabled={deleteAccountLoading}
+              variant="outlined"
+              sx={{
+                minWidth: { xs: 'auto', sm: 64 },
+                px: { xs: 1.5, sm: 2 },
+                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+              }}
+            >
+              {messages.auth.deleteAccountCancel}
+            </Button>
+            <Button
+              onClick={handleDeleteAccount}
+              color="error"
+              variant="contained"
+              disabled={deleteAccountLoading || deleteConfirmText !== messages.auth.deleteToConfirm}
+              sx={{
+                minWidth: { xs: 'auto', sm: 64 },
+                px: { xs: 1.5, sm: 2 },
+                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                backgroundColor: 'error.main',
+                '&:hover': {
+                  backgroundColor: 'error.dark',
+                },
+                '&:disabled': {
+                  backgroundColor: 'rgba(211, 47, 47, 0.3)',
+                  color: 'rgba(255, 255, 255, 0.5)',
+                },
+              }}
+            >
+              {deleteAccountLoading ? messages.common.loading : messages.auth.deleteAccountConfirm}
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Paper>
     </Container>
   );
