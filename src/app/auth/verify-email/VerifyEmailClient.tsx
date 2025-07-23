@@ -2,12 +2,13 @@
 
 import { useMutation, gql } from '@apollo/client';
 import { VerifiedUser as VerifiedUserIcon, ErrorOutline as ErrorIcon } from '@mui/icons-material';
-import { Container, Paper, Typography, Box, Alert, CircularProgress } from '@mui/material';
+import { Container, Paper, Typography, Box, CircularProgress } from '@mui/material';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
 import { Button } from '@/components/common/ui/Button';
+import { useSnackbar } from '@/components/providers/SnackbarProvider';
 import { useI18n } from '@/hooks/useI18n';
 
 const VERIFY_EMAIL = gql`
@@ -30,33 +31,31 @@ const RESEND_VERIFICATION_EMAIL = gql`
 
 export default function VerifyEmailClient() {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
-  const [message, setMessage] = useState('');
   const [email, setEmail] = useState('');
   const [canResend, setCanResend] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const { messages } = useI18n();
+  const { showError, showSuccess } = useSnackbar();
 
   const [verifyEmail] = useMutation(VERIFY_EMAIL, {
     onCompleted: (data) => {
       if (data.verifyEmail.success) {
         setStatus('success');
-        setMessage(data.verifyEmail.message);
+        showSuccess(data.verifyEmail.message);
         // 3秒後にログインページにリダイレクト
         setTimeout(() => {
-          router.push(
-            `/login?message=${encodeURIComponent(messages.auth.emailVerificationSuccessDescription)}`,
-          );
+          router.push('/login');
         }, 3000);
       } else {
         setStatus('error');
-        setMessage(data.verifyEmail.message || messages.auth.emailVerificationFailedDefault);
+        showError(data.verifyEmail.message || messages.auth.emailVerificationFailedDefault);
         setCanResend(true);
       }
     },
     onError: (error) => {
       setStatus('error');
-      setMessage(error.message);
+      showError(error.message);
       setCanResend(true);
     },
   });
@@ -66,12 +65,14 @@ export default function VerifyEmailClient() {
     {
       onCompleted: (data) => {
         if (data.resendVerificationEmail.success) {
-          setMessage(data.resendVerificationEmail.message);
+          showSuccess(data.resendVerificationEmail.message);
           setCanResend(false);
+        } else {
+          showError(data.resendVerificationEmail.message || messages.common.error);
         }
       },
       onError: (error) => {
-        setMessage(error.message);
+        showError(error.message);
       },
     },
   );
@@ -92,10 +93,10 @@ export default function VerifyEmailClient() {
       });
     } else {
       setStatus('error');
-      setMessage(messages.auth.invalidVerificationLink);
+      showError(messages.auth.invalidVerificationLink);
       setCanResend(true);
     }
-  }, [searchParams, verifyEmail, messages.auth.invalidVerificationLink]);
+  }, [searchParams, verifyEmail, messages.auth.invalidVerificationLink, showError]);
 
   const handleResendEmail = () => {
     if (email) {
@@ -127,17 +128,6 @@ export default function VerifyEmailClient() {
     }
   };
 
-  const getAlertSeverity = () => {
-    switch (status) {
-      case 'success':
-        return 'success';
-      case 'error':
-        return 'error';
-      default:
-        return 'info';
-    }
-  };
-
   return (
     <Container maxWidth="sm">
       <Box sx={{ mt: 4, mb: 4 }}>
@@ -154,15 +144,12 @@ export default function VerifyEmailClient() {
             </Typography>
           </Box>
 
-          {message && (
-            <Alert severity={getAlertSeverity()} sx={{ mb: 3 }}>
-              {message}
-              {status === 'success' && (
-                <Typography variant="body2" sx={{ mt: 1 }}>
-                  {messages.auth.redirectingToLogin}
-                </Typography>
-              )}
-            </Alert>
+          {status === 'success' && (
+            <Box sx={{ textAlign: 'center', mb: 3 }}>
+              <Typography variant="body2" sx={{ color: 'success.main' }}>
+                {messages.auth.redirectingToLogin}
+              </Typography>
+            </Box>
           )}
 
           {status === 'error' && canResend && email && (

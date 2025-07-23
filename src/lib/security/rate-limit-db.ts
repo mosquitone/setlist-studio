@@ -199,11 +199,11 @@ export function createAuthRateLimit(prisma: PrismaClient) {
 
 export function createApiRateLimit(prisma: PrismaClient) {
   // 攻撃防止重視：正常利用には十分、大量攻撃は確実にブロック
-  const isProduction = process.env.NODE_ENV === 'production';
+  const isDevelopment = process.env.NODE_ENV === 'development';
 
   return createDatabaseRateLimit(prisma, {
-    windowMs: isProduction ? 5 * 60 * 1000 : 60 * 1000, // 本番: 5分, 開発: 1分
-    maxRequests: isProduction ? 200 : 60, // 本番: 5分に200回, 開発: 60回
+    windowMs: isDevelopment ? 5 * 60 * 1000 : 5 * 60 * 1000, // 開発・本番: 5分
+    maxRequests: isDevelopment ? 500 : 200, // 開発: 5分に500回, 本番: 5分に200回
     message: 'Request limit exceeded. Please try again later.',
   });
 }

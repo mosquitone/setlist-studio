@@ -8,15 +8,19 @@ import React from 'react';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import SetlistForm from '@/components/forms/SetlistForm';
 import { useSnackbar } from '@/components/providers/SnackbarProvider';
-import { GET_SETLIST, UPDATE_SETLIST } from '@/lib/server/graphql/apollo-operations';
+import { useI18n } from '@/hooks/useI18n';
+import { GET_SETLIST, UPDATE_SETLIST, GET_SONGS } from '@/lib/server/graphql/apollo-operations';
 import { formatDateForInput } from '@/lib/shared/dateUtils';
+import { generateNewSongNotification } from '@/lib/shared/notificationHelpers';
 import { THEMES } from '@/types/common';
 import { SetlistFormValues } from '@/types/components';
+import { UpdateSetlistData } from '@/types/graphql';
 
 export default function EditSetlistPage() {
   const params = useParams();
   const router = useRouter();
   const { showError, showSuccess } = useSnackbar();
+  const { messages } = useI18n();
   const setlistId = params.id as string;
 
   const {
@@ -28,15 +32,29 @@ export default function EditSetlistPage() {
     skip: !setlistId,
   });
 
-  const [updateSetlist, { loading: updateLoading }] = useMutation(UPDATE_SETLIST, {
-    onCompleted: () => {
-      showSuccess('セットリストが更新されました');
-      router.push(`/setlists/${setlistId}`);
+  const [updateSetlist, { loading: updateLoading }] = useMutation<UpdateSetlistData>(
+    UPDATE_SETLIST,
+    {
+      refetchQueries: [{ query: GET_SONGS }],
+      onCompleted: (data: UpdateSetlistData) => {
+        showSuccess('セットリストが更新されました');
+
+        // 新規楽曲が登録された場合の通知
+        if (data.updateSetlist.newSongs.count > 0) {
+          const notificationMessage = generateNewSongNotification(
+            data.updateSetlist.newSongs,
+            messages,
+          );
+          showSuccess(notificationMessage);
+        }
+
+        router.push(`/setlists/${setlistId}`);
+      },
+      onError: (error) => {
+        showError(error.message);
+      },
     },
-    onError: (error) => {
-      showError(error.message);
-    },
-  });
+  );
 
   if (queryLoading) {
     return (

@@ -18,6 +18,7 @@ import React, { useState } from 'react';
 import { SetlistProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { Button } from '@/components/common/ui/Button';
 import { useAuth } from '@/components/providers/AuthProvider';
+import { useSnackbar } from '@/components/providers/SnackbarProvider';
 import { ImageGenerator } from '@/components/setlist/ImageGenerator';
 import { SetlistActions } from '@/components/setlist/SetlistActions';
 import { SetlistPreview } from '@/components/setlist/SetlistPreview';
@@ -32,6 +33,7 @@ export default function SetlistDetailPage() {
   const params = useParams();
   const setlistId = params.id as string;
   const { messages } = useI18n();
+  const { showError, showSuccess: showSnackbarSuccess } = useSnackbar();
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedTheme, setSelectedTheme] = useState<Theme | null>(null);
@@ -46,7 +48,21 @@ export default function SetlistDetailPage() {
     skip: !setlistId,
   });
 
-  const [toggleVisibility] = useMutation(TOGGLE_SETLIST_VISIBILITY);
+  const [toggleVisibility] = useMutation(TOGGLE_SETLIST_VISIBILITY, {
+    onCompleted: (data) => {
+      const isNowPublic = data?.toggleSetlistVisibility?.isPublic;
+      if (isNowPublic) {
+        showSnackbarSuccess(messages.notifications.setlistMadePublic);
+      } else {
+        showSnackbarSuccess(messages.notifications.setlistMadePrivate);
+      }
+      // Force page reload to refresh data with correct authentication context
+      setTimeout(() => window.location.reload(), 1000);
+    },
+    onError: (error) => {
+      showError(error.message);
+    },
+  });
 
   const { handleEdit, handleDelete, handleShare, handleDuplicate, deleteLoading } =
     useSetlistActions({ setlistId, setlist: data?.setlist });
@@ -58,12 +74,9 @@ export default function SetlistDetailPage() {
   const handleToggleVisibility = async () => {
     try {
       await toggleVisibility({ variables: { id: setlistId } });
-      // Force page reload to refresh data with correct authentication context
-      window.location.reload();
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Failed to toggle visibility:', error);
-      }
+      // エラーは onError で処理される
+      console.error('Failed to toggle visibility:', error);
     }
   };
 
@@ -78,6 +91,7 @@ export default function SetlistDetailPage() {
     handleDebugToggle,
   } = useImageGeneration({
     onSuccess: () => {
+      showSnackbarSuccess(messages.setlistDetail.successMessage);
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 3000);
     },

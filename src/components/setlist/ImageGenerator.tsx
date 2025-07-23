@@ -175,10 +175,10 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(imageURL);
-      showSuccess('Setlist Generated !');
+      showSuccess(messages.setlistDetail.successMessage);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedTheme, data.artistName, showSuccess]);
+  }, [selectedTheme, data.artistName, showSuccess, messages.setlistDetail.successMessage]);
 
   React.useEffect(() => {
     if (onDownloadReady) {

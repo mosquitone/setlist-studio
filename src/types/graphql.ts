@@ -49,6 +49,30 @@ export interface GetSetlistsResponse {
   setlists: Setlist[];
 }
 
+export interface NewSongInfo {
+  count: number;
+  titles: string[];
+}
+
+export interface CreateSetlistResult {
+  setlist: Setlist;
+  newSongs: NewSongInfo;
+}
+
+export interface UpdateSetlistResult {
+  setlist: Setlist;
+  newSongs: NewSongInfo;
+}
+
+// GraphQL mutation response types
+export interface CreateSetlistData {
+  createSetlist: CreateSetlistResult;
+}
+
+export interface UpdateSetlistData {
+  updateSetlist: UpdateSetlistResult;
+}
+
 export interface GetSongsResponse {
   songs: Song[];
 }

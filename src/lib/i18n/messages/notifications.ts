@@ -11,6 +11,9 @@ export interface NotificationMessages {
   songAdded: string;
   songUpdated: string;
   songDeleted: string;
+  songsDeleted: string;
+  newSongRegistered: string;
+  newSongsRegistered: string;
   imageGenerated: string;
   copied: string;
   saved: string;
@@ -26,10 +29,13 @@ export const notificationsJa: NotificationMessages = {
   setlistCreated: 'セットリストが作成されました',
   setlistUpdated: 'セットリストが更新されました',
   setlistDeleted: 'セットリストが削除されました',
-  songCreated: '楽曲が作成されました',
+  songCreated: 'を作成しました',
   songAdded: '楽曲が追加されました',
-  songUpdated: '楽曲が更新されました',
-  songDeleted: '楽曲が削除されました',
+  songUpdated: 'を更新しました',
+  songDeleted: 'を削除しました',
+  songsDeleted: '曲を削除しました',
+  newSongRegistered: 'が新しく楽曲ライブラリに登録されました',
+  newSongsRegistered: 'が新しく楽曲ライブラリに登録されました',
   imageGenerated: '画像が生成されました',
   copied: 'コピーされました',
   saved: '保存されました',
@@ -45,10 +51,13 @@ export const notificationsEn: NotificationMessages = {
   setlistCreated: 'Setlist created',
   setlistUpdated: 'Setlist updated',
   setlistDeleted: 'Setlist deleted',
-  songCreated: 'Song created',
+  songCreated: ' has been created',
   songAdded: 'Song added',
-  songUpdated: 'Song updated',
-  songDeleted: 'Song deleted',
+  songUpdated: ' has been updated',
+  songDeleted: ' has been deleted',
+  songsDeleted: ' songs have been deleted',
+  newSongRegistered: ' newly registered to song library',
+  newSongsRegistered: ' songs newly registered to song library',
   imageGenerated: 'Image generated',
   copied: 'Copied',
   saved: 'Saved',

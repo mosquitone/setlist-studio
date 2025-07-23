@@ -11,6 +11,7 @@ import {
   Field,
   Int,
   ID,
+  ObjectType,
 } from 'type-graphql';
 
 import { AuthMiddleware } from '@/lib/server/graphql/middleware/jwt-auth-middleware';
@@ -68,6 +69,24 @@ export class UpdateSongInput extends BaseSongInput {
   @IsOptional()
   @IsString()
   title?: string; // 更新時は任意
+}
+
+@ObjectType()
+export class DeleteSongResult {
+  @Field(() => Song)
+  deletedSong: Song;
+
+  @Field(() => Boolean)
+  success: boolean;
+}
+
+@ObjectType()
+export class DeleteMultipleSongsResult {
+  @Field(() => Int)
+  deletedCount: number;
+
+  @Field(() => Boolean)
+  success: boolean;
 }
 
 @Resolver(() => Song)
@@ -153,9 +172,12 @@ export class SongResolver {
     }) as Promise<Song>;
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => DeleteSongResult)
   @UseMiddleware(AuthMiddleware)
-  async deleteSong(@Arg('id', () => ID) id: string, @Ctx() ctx: Context): Promise<boolean> {
+  async deleteSong(
+    @Arg('id', () => ID) id: string,
+    @Ctx() ctx: Context,
+  ): Promise<DeleteSongResult> {
     const song = await ctx.prisma.song.findFirst({
       where: { id, userId: ctx.userId },
     });
@@ -168,15 +190,18 @@ export class SongResolver {
       where: { id },
     });
 
-    return true;
+    return {
+      deletedSong: song as Song,
+      success: true,
+    };
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => DeleteMultipleSongsResult)
   @UseMiddleware(AuthMiddleware)
   async deleteMultipleSongs(
     @Arg('ids', () => [ID]) ids: string[],
     @Ctx() ctx: Context,
-  ): Promise<boolean> {
+  ): Promise<DeleteMultipleSongsResult> {
     // ユーザーが所有する楽曲のみを削除対象とする
     const songsToDelete = await ctx.prisma.song.findMany({
       where: {
@@ -194,13 +219,16 @@ export class SongResolver {
 
     const songIdsToDelete = songsToDelete.map((song) => song.id);
 
-    await ctx.prisma.song.deleteMany({
+    const result = await ctx.prisma.song.deleteMany({
       where: {
         id: { in: songIdsToDelete },
         userId: ctx.userId,
       },
     });
 
-    return true;
+    return {
+      deletedCount: result.count,
+      success: true,
+    };
   }
 }

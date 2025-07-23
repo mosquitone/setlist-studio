@@ -13,6 +13,7 @@ import { useSnackbar } from '@/components/providers/SnackbarProvider';
 import { useI18n } from '@/hooks/useI18n';
 import { Messages } from '@/lib/i18n/messages';
 import { CREATE_SONG } from '@/lib/server/graphql/apollo-operations';
+import { Song } from '@/types/graphql';
 
 interface SongFormValues {
   title: string;
@@ -20,6 +21,11 @@ interface SongFormValues {
   key: string;
   tempo: string;
   notes: string;
+}
+
+// GraphQL mutation response type
+interface CreateSongData {
+  createSong: Song;
 }
 
 const getValidationSchema = (messages: Messages) =>
@@ -43,10 +49,10 @@ export default function NewSongPage() {
   const { messages } = useI18n();
   const router = useRouter();
   const { showError, showSuccess } = useSnackbar();
-  const [createSong, { loading }] = useMutation(CREATE_SONG, {
-    onCompleted: (data) => {
-      if (data?.createSong?.id) {
-        showSuccess(messages.songs.newSong.success || '楽曲が作成されました');
+  const [createSong, { loading }] = useMutation<CreateSongData>(CREATE_SONG, {
+    onCompleted: (data: CreateSongData) => {
+      if (data.createSong) {
+        showSuccess(`「${data.createSong.title}」${messages.notifications.songCreated}`);
         router.push('/songs');
       }
     },

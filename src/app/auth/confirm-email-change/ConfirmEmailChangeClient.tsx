@@ -2,11 +2,12 @@
 
 import { useMutation, gql } from '@apollo/client';
 import { Email as EmailIcon, ErrorOutline as ErrorIcon } from '@mui/icons-material';
-import { Container, Paper, Typography, Box, Alert, CircularProgress } from '@mui/material';
+import { Container, Paper, Typography, Box, CircularProgress } from '@mui/material';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
+import { useSnackbar } from '@/components/providers/SnackbarProvider';
 import { useI18n } from '@/hooks/useI18n';
 
 const CONFIRM_EMAIL_CHANGE = gql`
@@ -20,28 +21,28 @@ const CONFIRM_EMAIL_CHANGE = gql`
 
 export default function ConfirmEmailChangeClient() {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
-  const [message, setMessage] = useState('');
   const router = useRouter();
   const searchParams = useSearchParams();
   const { messages } = useI18n();
+  const { showError, showSuccess } = useSnackbar();
 
   const [confirmEmailChange] = useMutation(CONFIRM_EMAIL_CHANGE, {
     onCompleted: (data) => {
       if (data.confirmEmailChange.success) {
         setStatus('success');
-        setMessage(data.confirmEmailChange.message);
+        showSuccess(data.confirmEmailChange.message);
         // 3秒後にプロフィールページにリダイレクト
         setTimeout(() => {
-          router.push(`/profile?message=${encodeURIComponent(messages.auth.emailChangeSuccess)}`);
+          router.push('/profile');
         }, 3000);
       } else {
         setStatus('error');
-        setMessage(data.confirmEmailChange.message || messages.auth.emailChangeFailedDefault);
+        showError(data.confirmEmailChange.message || messages.auth.emailChangeFailedDefault);
       }
     },
     onError: (error) => {
       setStatus('error');
-      setMessage(error.message);
+      showError(error.message);
     },
   });
 
@@ -56,9 +57,9 @@ export default function ConfirmEmailChangeClient() {
       });
     } else {
       setStatus('error');
-      setMessage(messages.auth.invalidChangeLink);
+      showError(messages.auth.invalidChangeLink);
     }
-  }, [searchParams, confirmEmailChange, messages.auth.invalidChangeLink]);
+  }, [searchParams, confirmEmailChange, messages.auth.invalidChangeLink, showError]);
 
   const renderIcon = () => {
     switch (status) {
@@ -82,17 +83,6 @@ export default function ConfirmEmailChangeClient() {
     }
   };
 
-  const getAlertSeverity = () => {
-    switch (status) {
-      case 'success':
-        return 'success';
-      case 'error':
-        return 'error';
-      default:
-        return 'info';
-    }
-  };
-
   return (
     <Container maxWidth="sm">
       <Box sx={{ mt: 4, mb: 4 }}>
@@ -109,15 +99,12 @@ export default function ConfirmEmailChangeClient() {
             </Typography>
           </Box>
 
-          {message && (
-            <Alert severity={getAlertSeverity()} sx={{ mb: 3 }}>
-              {message}
-              {status === 'success' && (
-                <Typography variant="body2" sx={{ mt: 1 }}>
-                  {messages.auth.redirectingToProfile}
-                </Typography>
-              )}
-            </Alert>
+          {status === 'success' && (
+            <Box sx={{ textAlign: 'center', mb: 3 }}>
+              <Typography variant="body2" sx={{ color: 'success.main' }}>
+                {messages.auth.redirectingToProfile}
+              </Typography>
+            </Box>
           )}
 
           <Box textAlign="center">

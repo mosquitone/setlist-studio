@@ -3,6 +3,7 @@
 import { useMutation } from '@apollo/client';
 import { useRouter } from 'next/navigation';
 
+import { useSnackbar } from '@/components/providers/SnackbarProvider';
 import { useI18n } from '@/hooks/useI18n';
 import { DELETE_SETLIST } from '@/lib/server/graphql/apollo-operations';
 
@@ -18,9 +19,16 @@ interface UseSetlistActionsProps {
 export function useSetlistActions({ setlistId, setlist }: UseSetlistActionsProps) {
   const router = useRouter();
   const { messages } = useI18n();
+  const { showSuccess, showError } = useSnackbar();
   const [deleteSetlist, { loading: deleteLoading }] = useMutation(DELETE_SETLIST, {
     onCompleted: () => {
+      showSuccess(
+        `「${setlist?.title || 'セットリスト'}」${messages.notifications.setlistDeleted}`,
+      );
       router.push('/');
+    },
+    onError: (error) => {
+      showError(error.message);
     },
   });
 
@@ -31,8 +39,9 @@ export function useSetlistActions({ setlistId, setlist }: UseSetlistActionsProps
   const handleDelete = async () => {
     try {
       await deleteSetlist({ variables: { id: setlistId } });
-    } catch {
-      // Handle error silently or show user notification
+    } catch (error) {
+      // エラーは onError で処理されるため、ここでは再スローしない
+      console.error('Failed to delete setlist:', error);
     }
   };
 
@@ -48,7 +57,7 @@ export function useSetlistActions({ setlistId, setlist }: UseSetlistActionsProps
       // Fallback to clipboard
       try {
         await navigator.clipboard.writeText(url);
-        alert(messages.errors.urlCopiedToClipboard);
+        showSuccess(messages.errors.urlCopiedToClipboard);
       } catch {
         // Handle clipboard/sharing error silently
       }

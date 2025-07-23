@@ -12,6 +12,7 @@ import {
   Int,
   FieldResolver,
   Root,
+  ObjectType,
 } from 'type-graphql';
 
 import { AuthMiddleware } from '@/lib/server/graphql/middleware/jwt-auth-middleware';
@@ -91,6 +92,33 @@ export class UpdateSetlistInput extends BaseSetlistInput {
 
   @Field(() => Boolean, { nullable: true })
   isPublic?: boolean; // 更新時は任意
+}
+
+@ObjectType()
+export class NewSongInfo {
+  @Field(() => Int)
+  count: number;
+
+  @Field(() => [String])
+  titles: string[];
+}
+
+@ObjectType()
+export class CreateSetlistResult {
+  @Field(() => Setlist)
+  setlist: Setlist;
+
+  @Field(() => NewSongInfo)
+  newSongs: NewSongInfo;
+}
+
+@ObjectType()
+export class UpdateSetlistResult {
+  @Field(() => Setlist)
+  setlist: Setlist;
+
+  @Field(() => NewSongInfo)
+  newSongs: NewSongInfo;
 }
 
 @Resolver(() => Setlist)
@@ -202,14 +230,14 @@ export class SetlistResolver {
    * 新しいセットリストを作成
    * @param input - セットリスト作成用の入力データ
    * @param ctx - GraphQLコンテキスト（認証済みユーザー情報含む）
-   * @returns 作成されたセットリストデータ
+   * @returns 作成されたセットリストデータと新規楽曲情報
    */
-  @Mutation(() => Setlist)
+  @Mutation(() => CreateSetlistResult)
   @UseMiddleware(AuthMiddleware)
   async createSetlist(
     @Arg('input', () => CreateSetlistInput) input: CreateSetlistInput,
     @Ctx() ctx: Context,
-  ): Promise<Setlist> {
+  ): Promise<CreateSetlistResult> {
     const { items, ...setlistData } = input;
 
     // セットリスト名が空の場合、自動でナンバリング
@@ -218,10 +246,11 @@ export class SetlistResolver {
       title = await this.generateSetlistTitle(ctx);
     }
 
-    // セットリストの楽曲から未登録楽曲を自動登録
-    if (items && items.length > 0) {
-      await this.ensureSongsExist(items, input.artistName, ctx);
-    }
+    // セットリストの楽曲から未登録楽曲を自動登録し、新規楽曲情報を取得
+    const newSongs =
+      items && items.length > 0
+        ? await this.ensureSongsExist(items, input.artistName, ctx)
+        : { count: 0, titles: [] };
 
     const setlist = await ctx.prisma.setlist.create({
       data: {
@@ -245,7 +274,10 @@ export class SetlistResolver {
       },
     });
 
-    return setlist as Setlist;
+    return {
+      setlist: setlist as Setlist,
+      newSongs,
+    };
   }
 
   /**
@@ -290,42 +322,60 @@ export class SetlistResolver {
   }
 
   /**
-   * 楽曲リストから未登録楽曲を楽曲管理テーブルに自動登録
+   * 楽曲リストから未登録楽曲を楽曲管理テーブルに自動登録し、新規楽曲情報を返す
    * @param items - セットリストの楽曲リスト
    * @param artistName - アーティスト名
    * @param ctx - GraphQLコンテキスト
+   * @returns 新規登録楽曲の情報
    */
   private async ensureSongsExist(
     items: CreateSetlistItemForSetlistInput[],
     artistName: string,
     ctx: Context,
-  ): Promise<void> {
+  ): Promise<NewSongInfo> {
+    // 空のタイトルをフィルタリング
+    const validItems = items.filter((item) => item.title.trim() !== '');
+
+    if (validItems.length === 0) {
+      return { count: 0, titles: [] };
+    }
+
     // 現在のユーザーの楽曲一覧を取得
     const existingSongs = await ctx.prisma.song.findMany({
       where: {
         userId: ctx.userId,
-        title: { in: items.map((item) => item.title) },
+        title: { in: validItems.map((item) => item.title.trim()) },
       },
       select: { title: true },
     });
 
     const existingSongTitles = new Set(existingSongs.map((song) => song.title));
 
-    // 未登録楽曲を抽出
-    const newSongs = items.filter((item) => !existingSongTitles.has(item.title));
+    // 未登録楽曲を抽出（重複を除去）
+    const newSongTitles = Array.from(
+      new Set(
+        validItems
+          .map((item) => item.title.trim())
+          .filter((title) => !existingSongTitles.has(title)),
+      ),
+    );
 
     // 未登録楽曲を一括登録
-    if (newSongs.length > 0) {
+    if (newSongTitles.length > 0) {
       await ctx.prisma.song.createMany({
-        data: newSongs.map((item) => ({
-          title: item.title,
+        data: newSongTitles.map((title) => ({
+          title,
           artist: artistName,
-          notes: item.note || null,
           userId: ctx.userId!,
         })),
         skipDuplicates: true, // 重複を防ぐ
       });
     }
+
+    return {
+      count: newSongTitles.length,
+      titles: newSongTitles,
+    };
   }
 
   @Mutation(() => Boolean)
@@ -350,13 +400,13 @@ export class SetlistResolver {
     return true;
   }
 
-  @Mutation(() => Setlist)
+  @Mutation(() => UpdateSetlistResult)
   @UseMiddleware(AuthMiddleware)
   async updateSetlist(
     @Arg('id', () => ID) id: string,
     @Arg('input', () => UpdateSetlistInput) input: UpdateSetlistInput,
     @Ctx() ctx: Context,
-  ): Promise<Setlist> {
+  ): Promise<UpdateSetlistResult> {
     const setlist = await ctx.prisma.setlist.findFirst({
       where: { id, userId: ctx.userId },
     });
@@ -367,11 +417,15 @@ export class SetlistResolver {
 
     const { items, ...setlistData } = input;
 
-    // セットリストの楽曲から未登録楽曲を自動登録
-    if (items && items.length > 0) {
-      const artistName = input.artistName || setlist.artistName || 'Unknown';
-      await this.ensureSongsExist(items, artistName, ctx);
-    }
+    // セットリストの楽曲から未登録楽曲を自動登録し、新規楽曲情報を取得
+    const newSongs =
+      items && items.length > 0
+        ? await this.ensureSongsExist(
+            items,
+            input.artistName || setlist.artistName || 'Unknown',
+            ctx,
+          )
+        : { count: 0, titles: [] };
 
     // Update setlist and handle items
     const updatedSetlist = await ctx.prisma.setlist.update({
@@ -396,7 +450,10 @@ export class SetlistResolver {
       },
     });
 
-    return updatedSetlist as Setlist;
+    return {
+      setlist: updatedSetlist as Setlist,
+      newSongs,
+    };
   }
 
   @Mutation(() => Boolean)

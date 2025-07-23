@@ -1,6 +1,8 @@
 import { useMutation } from '@apollo/client';
 import { useState } from 'react';
 
+import { useSnackbar } from '@/components/providers/SnackbarProvider';
+import { useI18n } from '@/hooks/useI18n';
 import {
   DELETE_SONG,
   DELETE_MULTIPLE_SONGS,
@@ -8,27 +10,40 @@ import {
 } from '@/lib/server/graphql/apollo-operations';
 import { Song } from '@/types/graphql';
 
+// GraphQL mutation response types
+interface DeleteSongData {
+  deleteSong: {
+    deletedSong: {
+      id: string;
+      title: string;
+    };
+    success: boolean;
+  };
+}
+
+interface DeleteMultipleSongsData {
+  deleteMultipleSongs: {
+    deletedCount: number;
+    success: boolean;
+  };
+}
+
 /**
  * 楽曲削除機能（単体・一括削除）を提供するカスタムフック
  *
  * このフックは楽曲の単体削除および複数削除の機能を提供します。
  * 削除確認ダイアログの状態管理、GraphQLミューテーションを使用した削除処理、
- * 削除後の楽曲一覧の自動再取得を行います。
+ * 削除後の楽曲一覧の自動再取得、およびスナックバー通知を行います。
  *
- * @param {Function} [onMultipleDeleteComplete] - 一括削除完了時のコールバック関数
+ * ## 主要機能
+ * - 単体削除：APIレスポンスから楽曲タイトルを取得してスナックバー表示
+ * - 一括削除：削除件数をスナックバーで通知
+ * - TypeScript完全対応：GraphQL型安全性を保証
+ * - 状態最適化：必要最小限のデータ（id, title）のみ保存
  *
- * @returns {Object} フックの戻り値
- * @returns {Song | null} returns.songToDelete - 削除対象の楽曲オブジェクト
- * @returns {boolean} returns.isDeleteDialogOpen - 単体削除確認ダイアログの開閉状態
- * @returns {boolean} returns.isMultipleDeleteDialogOpen - 一括削除確認ダイアログの開閉状態
- * @returns {boolean} returns.deleteLoading - 単体削除処理中のローディング状態
- * @returns {boolean} returns.deleteMultipleLoading - 一括削除処理中のローディング状態
- * @returns {Function} returns.handleDeleteClick - 単体削除確認ダイアログを開く関数
- * @returns {Function} returns.handleDeleteConfirm - 単体削除を実行する関数
- * @returns {Function} returns.handleDeleteCancel - 単体削除をキャンセルする関数
- * @returns {Function} returns.handleDeleteSelectedClick - 一括削除確認ダイアログを開く関数
- * @returns {Function} returns.handleDeleteSelectedConfirm - 一括削除を実行する関数
- * @returns {Function} returns.handleDeleteSelectedCancel - 一括削除をキャンセルする関数
+ * @param onMultipleDeleteComplete - 一括削除完了時のコールバック関数（オプション）
+ *
+ * @returns フックの戻り値オブジェクト
  *
  * @example
  * ```tsx
@@ -54,39 +69,66 @@ import { Song } from '@/types/graphql';
  *   削除
  * </button>
  *
- * // 一括削除ボタン
- * <button onClick={() => handleDeleteSelectedClick(selectedSongs)}>
- *   選択した楽曲を削除
- * </button>
+ * // 削除確認モーダル
+ * <SingleDeleteModal
+ *   open={isDeleteDialogOpen}
+ *   itemName={songToDelete?.title || ''}
+ *   onConfirm={handleDeleteConfirm}
+ *   onClose={handleDeleteCancel}
+ *   loading={deleteLoading}
+ * />
  * ```
  */
+interface SongToDelete {
+  id: string;
+  title: string;
+}
+
 export function useSongDelete(onMultipleDeleteComplete?: () => void) {
-  const [songToDelete, setSongToDelete] = useState<Song | null>(null);
+  const { messages } = useI18n();
+  const { showSuccess, showError } = useSnackbar();
+  const [songToDelete, setSongToDelete] = useState<SongToDelete | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isMultipleDeleteDialogOpen, setIsMultipleDeleteDialogOpen] = useState(false);
 
-  const [deleteSong, { loading: deleteLoading }] = useMutation(DELETE_SONG, {
+  const [deleteSong, { loading: deleteLoading }] = useMutation<DeleteSongData>(DELETE_SONG, {
     refetchQueries: [{ query: GET_SONGS }],
-    onCompleted: () => {
+    onCompleted: (data: DeleteSongData) => {
       setIsDeleteDialogOpen(false);
       setSongToDelete(null);
+
+      if (data.deleteSong.success && data.deleteSong.deletedSong) {
+        showSuccess(
+          `「${data.deleteSong.deletedSong.title}」${messages.notifications.songDeleted}`,
+        );
+      }
+    },
+    onError: (error) => {
+      showError(error.message);
     },
   });
 
-  const [deleteMultipleSongs, { loading: deleteMultipleLoading }] = useMutation(
-    DELETE_MULTIPLE_SONGS,
-    {
+  const [deleteMultipleSongs, { loading: deleteMultipleLoading }] =
+    useMutation<DeleteMultipleSongsData>(DELETE_MULTIPLE_SONGS, {
       refetchQueries: [{ query: GET_SONGS }],
-      onCompleted: () => {
+      onCompleted: (data: DeleteMultipleSongsData) => {
         setIsMultipleDeleteDialogOpen(false);
         onMultipleDeleteComplete?.();
+
+        if (data.deleteMultipleSongs.success) {
+          showSuccess(
+            `${data.deleteMultipleSongs.deletedCount}${messages.notifications.songsDeleted}`,
+          );
+        }
       },
-    },
-  );
+      onError: (error) => {
+        showError(error.message);
+      },
+    });
 
   // 単体削除
   const handleDeleteClick = (song: Song) => {
-    setSongToDelete(song);
+    setSongToDelete({ id: song.id, title: song.title });
     setIsDeleteDialogOpen(true);
   };
 
@@ -97,7 +139,7 @@ export function useSongDelete(onMultipleDeleteComplete?: () => void) {
       await deleteSong({ variables: { id: songToDelete.id } });
     } catch (error) {
       console.error('Failed to delete song:', error);
-      throw error;
+      // エラーは onError で処理されるため、ここでは再スローしない
     }
   };
 
@@ -123,7 +165,7 @@ export function useSongDelete(onMultipleDeleteComplete?: () => void) {
       });
     } catch (error) {
       console.error('Failed to delete songs:', error);
-      throw error;
+      // エラーは onError で処理されるため、ここでは再スローしない
     }
   };
 

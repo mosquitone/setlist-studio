@@ -81,7 +81,7 @@ export interface SetlistMessages {
 // 日本語版
 export const setlistsJa: SetlistMessages = {
   detail: {
-    successMessage: 'セットリストが正常に生成されました！',
+    successMessage: 'セットリスト画像をダウンロードしました！',
     actions: {
       download: 'ダウンロード',
       share: '共有',
@@ -155,7 +155,7 @@ export const setlistsJa: SetlistMessages = {
 // 英語版
 export const setlistsEn: SetlistMessages = {
   detail: {
-    successMessage: 'Setlist generated successfully!',
+    successMessage: 'Setlist image downloaded successfully!',
     actions: {
       download: 'Download',
       share: 'Share',

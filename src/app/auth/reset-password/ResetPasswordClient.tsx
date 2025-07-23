@@ -8,7 +8,6 @@ import {
   TextField,
   Typography,
   Box,
-  Alert,
   IconButton,
   InputAdornment,
 } from '@mui/material';
@@ -17,6 +16,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
 import { Button } from '@/components/common/ui/Button';
+import { useSnackbar } from '@/components/providers/SnackbarProvider';
 import { useI18n } from '@/hooks/useI18n';
 
 const RESET_PASSWORD = gql`
@@ -41,12 +41,11 @@ export default function ResetPasswordClient() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
   const [token, setToken] = useState('');
   const router = useRouter();
   const searchParams = useSearchParams();
   const { messages } = useI18n();
+  const { showError, showSuccess } = useSnackbar();
 
   // トークン情報を取得
   const { data: tokenInfo } = useQuery(GET_RESET_TOKEN_INFO, {
@@ -59,42 +58,37 @@ export default function ResetPasswordClient() {
     if (tokenParam) {
       setToken(tokenParam);
     } else {
-      setError(messages.auth.invalidResetToken);
+      showError(messages.auth.invalidResetToken);
     }
-  }, [searchParams, messages.auth.invalidResetToken]);
+  }, [searchParams, messages.auth.invalidResetToken, showError]);
 
   const [resetPassword, { loading }] = useMutation(RESET_PASSWORD, {
     onCompleted: (data) => {
       if (data.resetPassword.success) {
-        setSuccessMessage(data.resetPassword.message);
-        setError('');
+        showSuccess(data.resetPassword.message);
         // 3秒後にログインページにリダイレクト
         setTimeout(() => {
-          router.push(`/login?message=${encodeURIComponent(messages.auth.passwordResetSuccess)}`);
+          router.push('/login');
         }, 3000);
       } else {
-        setError(data.resetPassword.message || messages.auth.serverError);
-        setSuccessMessage('');
+        showError(data.resetPassword.message || messages.auth.serverError);
       }
     },
     onError: (error) => {
-      setError(error.message);
-      setSuccessMessage('');
+      showError(error.message);
     },
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setSuccessMessage('');
 
     if (newPassword !== confirmPassword) {
-      setError(messages.validation.passwordsDoNotMatch);
+      showError(messages.validation.passwordsDoNotMatch);
       return;
     }
 
     if (!token) {
-      setError(messages.auth.invalidResetToken);
+      showError(messages.auth.invalidResetToken);
       return;
     }
 
@@ -128,67 +122,49 @@ export default function ResetPasswordClient() {
               )}
           </Box>
 
-          {successMessage && (
-            <Alert severity="success" sx={{ mb: 3 }}>
-              {successMessage}
-              <br />
-              <Typography variant="body2" sx={{ mt: 1 }}>
-                {messages.auth.redirectingToLogin}
-              </Typography>
-            </Alert>
-          )}
-
-          {error && (
-            <Alert severity="error" sx={{ mb: 3 }}>
-              {error}
-            </Alert>
-          )}
-
-          {!successMessage && (
-            <Box component="form" onSubmit={handleSubmit}>
-              <TextField
-                fullWidth
-                label={messages.auth.newPassword}
-                type={showPassword ? 'text' : 'password'}
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                margin="normal"
-                required
-                autoComplete="new-password"
-                helperText={messages.auth.passwordRequirements}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-              <TextField
-                fullWidth
-                label={messages.auth.confirmPassword}
-                type={showPassword ? 'text' : 'password'}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                margin="normal"
-                required
-                autoComplete="new-password"
-                helperText={messages.auth.confirmPasswordHelper}
-                error={confirmPassword !== '' && newPassword !== confirmPassword}
-              />
-              <Button
-                type="submit"
-                fullWidth
-                size="large"
-                disabled={loading || !token}
-                sx={{ mt: 3, mb: 2, py: 1.5 }}
-              >
-                {loading ? messages.common.loading : messages.auth.resetPassword}
-              </Button>
-            </Box>
-          )}
+          <Box component="form" onSubmit={handleSubmit}>
+            <TextField
+              fullWidth
+              label={messages.auth.newPassword}
+              type={showPassword ? 'text' : 'password'}
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              margin="normal"
+              required
+              autoComplete="new-password"
+              helperText={messages.auth.passwordRequirements}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <TextField
+              fullWidth
+              label={messages.auth.confirmPassword}
+              type={showPassword ? 'text' : 'password'}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              margin="normal"
+              required
+              autoComplete="new-password"
+              helperText={messages.auth.confirmPasswordHelper}
+              error={confirmPassword !== '' && newPassword !== confirmPassword}
+            />
+            <Button
+              type="submit"
+              fullWidth
+              size="large"
+              disabled={loading || !token}
+              sx={{ mt: 3, mb: 2, py: 1.5 }}
+            >
+              {loading ? messages.common.loading : messages.auth.resetPassword}
+            </Button>
+          </Box>
 
           <Box textAlign="center">
             <Typography variant="body2">

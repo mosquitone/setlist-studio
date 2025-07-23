@@ -1,8 +1,15 @@
 import { useMutation } from '@apollo/client';
 import { useState } from 'react';
 
+import { useSnackbar } from '@/components/providers/SnackbarProvider';
+import { useI18n } from '@/hooks/useI18n';
 import { UPDATE_SONG, GET_SONGS } from '@/lib/server/graphql/apollo-operations';
 import { Song } from '@/types/graphql';
+
+// GraphQL mutation response type
+interface UpdateSongData {
+  updateSong: Song;
+}
 
 /**
  * 楽曲編集機能を提供するカスタムフック
@@ -46,11 +53,22 @@ import { Song } from '@/types/graphql';
  * ```
  */
 export function useSongEdit() {
+  const { messages } = useI18n();
+  const { showSuccess, showError } = useSnackbar();
   const [selectedSong, setSelectedSong] = useState<Song | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
-  const [updateSong, { loading: updateLoading }] = useMutation(UPDATE_SONG, {
+  const [updateSong, { loading: updateLoading }] = useMutation<UpdateSongData>(UPDATE_SONG, {
     refetchQueries: [{ query: GET_SONGS }],
+    onCompleted: (data: UpdateSongData) => {
+      if (data.updateSong) {
+        showSuccess(`「${data.updateSong.title}」${messages.notifications.songUpdated}`);
+        closeEditDialog();
+      }
+    },
+    onError: (error) => {
+      showError(error.message);
+    },
   });
 
   const handleEditSong = (song: Song) => {

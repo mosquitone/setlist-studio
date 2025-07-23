@@ -112,13 +112,22 @@ export const UPDATE_SONG = gql`
 
 export const DELETE_SONG = gql`
   mutation DeleteSong($id: ID!) {
-    deleteSong(id: $id)
+    deleteSong(id: $id) {
+      deletedSong {
+        id
+        title
+      }
+      success
+    }
   }
 `;
 
 export const DELETE_MULTIPLE_SONGS = gql`
   mutation DeleteMultipleSongs($ids: [ID!]!) {
-    deleteMultipleSongs(ids: $ids)
+    deleteMultipleSongs(ids: $ids) {
+      deletedCount
+      success
+    }
   }
 `;
 
@@ -172,7 +181,13 @@ export const GET_SETLIST = gql`
 export const CREATE_SETLIST = gql`
   mutation CreateSetlist($input: CreateSetlistInput!) {
     createSetlist(input: $input) {
-      ...SetlistFields
+      setlist {
+        ...SetlistFields
+      }
+      newSongs {
+        count
+        titles
+      }
     }
   }
   ${SETLIST_FIELDS}
@@ -181,7 +196,13 @@ export const CREATE_SETLIST = gql`
 export const UPDATE_SETLIST = gql`
   mutation UpdateSetlist($id: ID!, $input: UpdateSetlistInput!) {
     updateSetlist(id: $id, input: $input) {
-      ...SetlistFields
+      setlist {
+        ...SetlistFields
+      }
+      newSongs {
+        count
+        titles
+      }
     }
   }
   ${SETLIST_FIELDS}

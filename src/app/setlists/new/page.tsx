@@ -8,10 +8,16 @@ import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import SetlistForm from '@/components/forms/SetlistForm';
 import { useSnackbar } from '@/components/providers/SnackbarProvider';
 import { useI18n } from '@/hooks/useI18n';
-import { CREATE_SETLIST, GET_SETLIST, GET_SETLISTS } from '@/lib/server/graphql/apollo-operations';
+import {
+  CREATE_SETLIST,
+  GET_SETLIST,
+  GET_SETLISTS,
+  GET_SONGS,
+} from '@/lib/server/graphql/apollo-operations';
+import { generateNewSongNotification } from '@/lib/shared/notificationHelpers';
 import { THEMES } from '@/types/common';
 import { SetlistFormValues } from '@/types/components';
-import { GetSetlistResponse, SetlistItem } from '@/types/graphql';
+import { GetSetlistResponse, SetlistItem, CreateSetlistData } from '@/types/graphql';
 
 export default function NewSetlistPage() {
   const router = useRouter();
@@ -31,12 +37,22 @@ export default function NewSetlistPage() {
     items: [{ title: '', note: '' }],
   });
 
-  const [createSetlist, { loading }] = useMutation(CREATE_SETLIST, {
-    refetchQueries: [{ query: GET_SETLISTS }],
+  const [createSetlist, { loading }] = useMutation<CreateSetlistData>(CREATE_SETLIST, {
+    refetchQueries: [{ query: GET_SETLISTS }, { query: GET_SONGS }],
     awaitRefetchQueries: true,
-    onCompleted: (data) => {
+    onCompleted: (data: CreateSetlistData) => {
       showSuccess(messages.setlistForm.buttons.createSuccess || 'セットリストが作成されました');
-      router.push(`/setlists/${data.createSetlist.id}`);
+
+      // 新規楽曲が登録された場合の通知
+      if (data.createSetlist.newSongs.count > 0) {
+        const notificationMessage = generateNewSongNotification(
+          data.createSetlist.newSongs,
+          messages,
+        );
+        showSuccess(notificationMessage);
+      }
+
+      router.push(`/setlists/${data.createSetlist.setlist.id}`);
     },
     onError: (error) => {
       showError(error.message);
