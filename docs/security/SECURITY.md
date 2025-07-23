@@ -12,11 +12,15 @@
 - **HttpOnly Cookie認証**: XSS攻撃を防ぐセキュアなトークン管理
 - **JWTトークン検証**: 改ざん防止のためのデジタル署名
 - **自動移行**: localStorage → HttpOnly Cookie自動移行
+- **Google OAuth重複防止**: 既存メール認証ユーザーとGoogle認証の重複登録防止機能
+- **認証プロバイダー管理**: email/google認証方法の追跡と移行機能
 - **アクセス制御**: プライベート/パブリックセットリストの厳格なアクセス制御
 
 ### セキュリティモニタリング・ログ
 - **データベースベースセキュリティログ**: Vercel Functions互換の永続ログシステム
 - **脅威検出エンジン**: ブルートフォースと認証情報詰込み攻撃の検出
+- **OAuth認証ログ**: Google認証の成功・失敗・新規ユーザー作成イベントの詳細記録
+- **重複アカウント検知**: メール認証とGoogle認証間の重複登録試行の監視
 - **リアルタイムセキュリティイベント**: 不正アクセス試行の即座記録と解析
 - **自動クリーンアップ**: Vercelクロン経由での古いセキュリティデータ自動削除
 
@@ -172,11 +176,30 @@ const isValid = timingSafeEqual(
 - セキュリティログ: Vercelクロン経由の定期削除
 - 無効Cookie消去: 認証失敗時の自動実行
 
+## OAuth認証エラーハンドリング
+
+### Google認証エラータイプ
+- **email_account_exists**: 既存メール認証ユーザーがGoogle認証を試行
+- **google_account_exists**: 異なるGoogleアカウントでの認証試行
+- **auth_failed**: Cookie設定失敗またはトークン生成エラー
+- **server_error**: システムエラーまたは予期しない例外
+
+### セキュリティイベント記録
+- **重複検出**: SecurityEventSeverity.MEDIUM（メール認証）/ HIGH（Google認証）
+- **認証成功**: SecurityEventSeverity.LOW + 新規/既存ユーザー識別
+- **システムエラー**: SecurityEventSeverity.HIGH + 詳細エラー情報
+
+### エラー処理フロー
+1. **重複アカウント検出時**: `/login?error=email_account_exists&email=xxx`にリダイレクト
+2. **認証失敗時**: 適切なエラーメッセージ表示 + セキュリティログ記録
+3. **Cookie設定失敗時**: `auth_failed`エラーでログイン画面に戻る
+4. **システムエラー時**: `server_error`エラー + HIGH優先度ログ記録
+
 ### 6. 開発環境 vs 本番環境設定
 
 **開発環境**:
 - Cookie Secure: false（HTTP許可）
-- レート制限: 実質無制限（認証1000回/5分、API60回/分）
+- レート制限: 認証50回/時間、API200回/5分（本番環境と同一設定）
 - 詳細ログ: 有効
 
 **本番環境**:

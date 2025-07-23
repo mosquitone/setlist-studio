@@ -22,6 +22,11 @@ async function handleExistingAccountDetection(
   authProvider: AuthProvider,
   existingUserId?: string,
 ) {
+  // 認証プロバイダーの妥当性チェック
+  if (authProvider !== AUTH_PROVIDERS.EMAIL && authProvider !== AUTH_PROVIDERS.GOOGLE) {
+    throw new Error(`Unknown auth provider in conflict detection: ${authProvider}`);
+  }
+
   const isEmailProvider = authProvider === AUTH_PROVIDERS.EMAIL;
 
   await logSecurityEventDB(prisma, {
@@ -44,96 +49,197 @@ async function handleExistingAccountDetection(
   );
 }
 
+// セッション検証とセキュリティログ
+async function validateGoogleSession(req: NextRequest) {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user?.email) {
+    await logSecurityEventDB(prisma, {
+      type: SecurityEventType.OAUTH_LOGIN_FAILURE,
+      severity: SecurityEventSeverity.MEDIUM,
+      ipAddress: getSecureClientIP(req),
+      userAgent: req.headers.get('user-agent') || undefined,
+      resource: req.url,
+      details: {
+        provider: 'google',
+        reason: 'no_session_or_email',
+        endpoint: req.url,
+      },
+    });
+
+    return { session: null, error: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) };
+  }
+
+  return { session, error: null };
+}
+
+// 新規Googleユーザー作成
+async function createNewGoogleUser(req: NextRequest, email: string, name?: string | null) {
+  const username = await generateSafeUsername(name, email);
+
+  const user = await prisma.user.create({
+    data: {
+      email,
+      username,
+      password: '', // Google認証なのでパスワードは空
+      authProvider: AUTH_PROVIDERS.GOOGLE,
+      emailVerified: true,
+    },
+  });
+
+  // 新規ユーザー作成ログ
+  await logSecurityEventDB(prisma, {
+    type: SecurityEventType.OAUTH_USER_CREATED,
+    severity: SecurityEventSeverity.LOW,
+    ipAddress: getSecureClientIP(req),
+    userAgent: req.headers.get('user-agent') || undefined,
+    resource: req.url,
+    userId: user.id,
+    details: {
+      provider: 'google',
+      email: user.email,
+      username: user.username,
+    },
+  });
+
+  return user;
+}
+
+// 既存ユーザーの認証プロバイダー検証
+async function validateExistingUser(
+  req: NextRequest,
+  user: { id: string; email: string; authProvider: string },
+) {
+  if (user.authProvider === AUTH_PROVIDERS.GOOGLE) {
+    // 同じGoogleアカウントでの再ログインは許可
+    return { isValid: true, error: null };
+  }
+
+  if (user.authProvider === AUTH_PROVIDERS.EMAIL) {
+    // メール認証ユーザーがGoogle認証を試行した場合は重複エラー
+    const error = await handleExistingAccountDetection(
+      req,
+      user.email,
+      user.authProvider as AuthProvider,
+      undefined,
+    );
+    return { isValid: false, error };
+  }
+
+  // 未知の認証プロバイダーの場合はシステムエラー
+  throw new Error(`Unknown auth provider: ${user.authProvider}`);
+}
+
+// ユーザー検索・作成のメイン処理
+async function findOrCreateGoogleUser(req: NextRequest, email: string, name?: string | null) {
+  const user = await prisma.user.findUnique({
+    where: { email },
+  });
+
+  if (!user) {
+    // 新規ユーザー作成
+    const newUser = await createNewGoogleUser(req, email, name);
+    return { user: newUser, isNew: true };
+  }
+
+  // 既存ユーザーの検証
+  const validation = await validateExistingUser(req, user);
+  if (!validation.isValid) {
+    return { user: null, isNew: false, error: validation.error };
+  }
+
+  return { user, isNew: false };
+}
+
+// JWTトークン生成
+function generateAuthToken(user: { id: string; email: string; username: string }) {
+  return jwt.sign(
+    {
+      userId: user.id,
+      email: user.email,
+      username: user.username,
+    },
+    process.env.JWT_SECRET!,
+    { expiresIn: '30d' },
+  );
+}
+
+// Cookie設定処理
+async function setAuthCookie(req: NextRequest, token: string) {
+  const authResponse = await fetch(`${req.nextUrl.origin}/api/auth`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ token }),
+  });
+
+  return authResponse;
+}
+
+// 成功時のリダイレクト処理
+function handleSuccessRedirect(req: NextRequest, authResponse: Response) {
+  const cookieHeader = req.headers.get('cookie') || '';
+  const cookies = cookieHeader.split(';').map((c) => c.trim());
+  const profileContext = cookies.some((cookie) => cookie === 'profile-auth-context=true');
+
+  const redirectUrl = profileContext ? `${req.nextUrl.origin}/profile` : `${req.nextUrl.origin}/`;
+
+  const redirectResponse = NextResponse.redirect(redirectUrl);
+
+  // プロフィールコンテキストCookieをクリア
+  if (profileContext) {
+    redirectResponse.cookies.set('profile-auth-context', '', {
+      path: '/',
+      maxAge: 0,
+    });
+  }
+
+  // Cookieを転送
+  const setCookieHeader = authResponse.headers.get('set-cookie');
+  if (setCookieHeader) {
+    redirectResponse.headers.set('set-cookie', setCookieHeader);
+  }
+
+  return redirectResponse;
+}
+
+// メイン処理関数（リファクタリング後）
 async function handleGoogleSync(req: NextRequest) {
   try {
-    // NextAuthセッションを確認
-    const session = await getServerSession(authOptions);
-
-    if (!session?.user?.email) {
-      // OAuth認証失敗をログに記録
-      await logSecurityEventDB(prisma, {
-        type: SecurityEventType.OAUTH_LOGIN_FAILURE,
-        severity: SecurityEventSeverity.MEDIUM,
-        ipAddress: getSecureClientIP(req),
-        userAgent: req.headers.get('user-agent') || undefined,
-        resource: req.url,
-        details: {
-          provider: 'google',
-          reason: 'no_session_or_email',
-          endpoint: req.url,
-        },
-      });
-
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    // 1. セッション検証
+    const sessionValidation = await validateGoogleSession(req);
+    if (!sessionValidation.session) {
+      return sessionValidation.error;
     }
 
-    // ユーザーを取得または作成
-    let user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-    });
+    const { session } = sessionValidation;
+    const { email, name } = session.user!;
 
+    // Googleセッションでemailが提供されているかチェック
+    if (!email) {
+      throw new Error('Email not provided by Google OAuth');
+    }
+
+    // 2. ユーザー検索・作成
+    const userResult = await findOrCreateGoogleUser(req, email, name);
+    if (userResult.error) {
+      return userResult.error;
+    }
+
+    const { user, isNew } = userResult;
     if (!user) {
-      // 改善されたユーザー名生成（日本語名対応 + 重複処理）
-      const username = await generateSafeUsername(session.user.name, session.user.email);
-
-      // 新規ユーザーの場合は作成
-      user = await prisma.user.create({
-        data: {
-          email: session.user.email,
-          username,
-          password: '', // Google認証なのでパスワードは空
-          authProvider: AUTH_PROVIDERS.GOOGLE,
-          emailVerified: true,
-        },
-      });
-
-      // 新規OAuth ユーザー作成をログに記録
-      await logSecurityEventDB(prisma, {
-        type: SecurityEventType.OAUTH_USER_CREATED,
-        severity: SecurityEventSeverity.LOW,
-        ipAddress: getSecureClientIP(req),
-        userAgent: req.headers.get('user-agent') || undefined,
-        resource: req.url,
-        userId: user.id,
-        details: {
-          provider: 'google',
-          email: user.email,
-          username: user.username,
-        },
-      });
-    } else {
-      // 既存アカウント（メール認証またはGoogle認証）が存在する場合
-      // 重複登録を防止し、適切なログインを促す
-      return await handleExistingAccountDetection(
-        req,
-        session.user.email,
-        user.authProvider as AuthProvider,
-        user.authProvider === AUTH_PROVIDERS.GOOGLE ? user.id : undefined,
-      );
+      throw new Error('User creation failed');
     }
 
-    // JWTトークンを生成（既存のシステムと同じ形式）
-    const token = jwt.sign(
-      {
-        userId: user.id,
-        email: user.email,
-        username: user.username,
-      },
-      process.env.JWT_SECRET!,
-      { expiresIn: '30d' },
-    );
+    // 3. トークン生成
+    const token = generateAuthToken(user);
 
-    // 既存のauth APIを使ってCookieを設定
-    const authResponse = await fetch(`${req.nextUrl.origin}/api/auth`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ token }),
-    });
+    // 4. Cookie設定
+    const authResponse = await setAuthCookie(req, token);
 
     if (authResponse.ok) {
-      // OAuth認証成功をログに記録
+      // 5. 成功ログ記録
       await logSecurityEventDB(prisma, {
         type: SecurityEventType.OAUTH_LOGIN_SUCCESS,
         severity: SecurityEventSeverity.LOW,
@@ -144,60 +250,36 @@ async function handleGoogleSync(req: NextRequest) {
         details: {
           provider: 'google',
           email: user.email,
+          loginType: isNew ? 'new_user' : 'returning_user',
         },
       });
 
-      // セッションストレージまたはクエリパラメータから元のページを取得
-      // プロフィール画面からの認証かどうかを判定
-      const cookieHeader = req.headers.get('cookie') || '';
-      const profileContext = cookieHeader.includes('profile-auth-context=true');
-
-      const redirectUrl = profileContext
-        ? `${req.nextUrl.origin}/profile`
-        : `${req.nextUrl.origin}/`;
-
-      const redirectResponse = NextResponse.redirect(redirectUrl);
-
-      // プロフィールコンテキストCookieをクリア
-      if (profileContext) {
-        redirectResponse.cookies.set('profile-auth-context', '', {
-          path: '/',
-          maxAge: 0, // 即座に削除
-        });
-      }
-
-      // Cookieを転送
-      const setCookieHeader = authResponse.headers.get('set-cookie');
-      if (setCookieHeader) {
-        redirectResponse.headers.set('set-cookie', setCookieHeader);
-      }
-
-      return redirectResponse;
-    } else {
-      // エラーログ（本番環境でも記録、ただし詳細は控える）
-      console.error('Failed to set auth cookie');
-
-      // Cookie設定失敗をログに記録
-      await logSecurityEventDB(prisma, {
-        type: SecurityEventType.OAUTH_LOGIN_FAILURE,
-        severity: SecurityEventSeverity.MEDIUM,
-        ipAddress: getSecureClientIP(req),
-        userAgent: req.headers.get('user-agent') || undefined,
-        resource: req.url,
-        userId: user.id,
-        details: {
-          provider: 'google',
-          reason: 'cookie_setting_failed',
-          email: user.email,
-        },
-      });
-
-      return NextResponse.redirect(`${req.nextUrl.origin}/login?error=auth_failed`);
+      // 6. リダイレクト処理
+      return handleSuccessRedirect(req, authResponse);
     }
+
+    // Cookie設定失敗
+    console.error('Failed to set auth cookie');
+
+    await logSecurityEventDB(prisma, {
+      type: SecurityEventType.OAUTH_LOGIN_FAILURE,
+      severity: SecurityEventSeverity.MEDIUM,
+      ipAddress: getSecureClientIP(req),
+      userAgent: req.headers.get('user-agent') || undefined,
+      resource: req.url,
+      userId: user.id,
+      details: {
+        provider: 'google',
+        reason: 'cookie_setting_failed',
+        email: user.email,
+      },
+    });
+
+    return NextResponse.redirect(`${req.nextUrl.origin}/login?error=auth_failed`);
   } catch (error) {
     console.error('Google OAuth sync error occurred');
 
-    // システムエラーをログに記録
+    // システムエラーログ
     try {
       await logSecurityEventDB(prisma, {
         type: SecurityEventType.OAUTH_LOGIN_FAILURE,
