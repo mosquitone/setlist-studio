@@ -71,6 +71,25 @@ async function handleGoogleSync(req: NextRequest) {
           username: user.username,
         },
       });
+    } else if (user.authProvider === 'email') {
+      // 既存のメール認証ユーザーが Google 認証でログインしようとした場合
+      // アカウントが既に存在することをユーザーに通知し、メール認証でのログインを促す
+      await logSecurityEventDB(prisma, {
+        type: SecurityEventType.OAUTH_LOGIN_FAILURE,
+        severity: SecurityEventSeverity.MEDIUM,
+        ipAddress: getSecureClientIP(req),
+        userAgent: req.headers.get('user-agent') || undefined,
+        resource: req.url,
+        details: {
+          provider: 'google',
+          reason: 'email_account_exists',
+          email: session.user.email,
+        },
+      });
+
+      return NextResponse.redirect(
+        `${req.nextUrl.origin}/login?error=email_account_exists&email=${encodeURIComponent(session.user.email)}`,
+      );
     }
 
     // JWTトークンを生成（既存のシステムと同じ形式）

@@ -13,8 +13,8 @@ import {
   Divider,
 } from '@mui/material';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
 
 import GoogleAuthButton from '@/components/auth/GoogleAuthButton';
 import { Button } from '@/components/common/ui/Button';
@@ -28,9 +28,25 @@ export default function LoginClient() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { login: authLogin } = useAuth();
   const { messages } = useI18n();
   const { showError } = useSnackbar();
+
+  // URLパラメータからエラーメッセージを取得して表示
+  useEffect(() => {
+    const error = searchParams.get('error');
+    const emailParam = searchParams.get('email');
+
+    if (error === 'email_account_exists' && emailParam) {
+      showError(messages.errors.emailAccountExists.replace('{email}', emailParam));
+      setEmail(emailParam); // メールアドレスを入力欄に自動入力
+    } else if (error === 'auth_failed') {
+      showError(messages.errors.googleAuthFailed);
+    } else if (error === 'server_error') {
+      showError(messages.errors.serverError);
+    }
+  }, [searchParams, showError, messages]);
 
   const [loginMutation, { loading }] = useMutation(LOGIN, {
     onCompleted: async (data) => {

@@ -27,6 +27,9 @@ export interface ErrorMessages {
   csrfValidationFailed: string;
   inputTooLong: string;
   urlCopiedToClipboard: string;
+  // Google OAuth エラー
+  emailAccountExists: string;
+  googleAuthFailed: string;
 }
 
 // 日本語版
@@ -56,6 +59,10 @@ export const errorsJa: ErrorMessages = {
   csrfValidationFailed: 'CSRFトークンの検証に失敗しました',
   inputTooLong: '入力が長すぎます。{maxLength}文字以下にしてください',
   urlCopiedToClipboard: 'URLをクリップボードにコピーしました',
+  // Google OAuth エラー
+  emailAccountExists:
+    'このメールアドレス（{email}）は既にメール認証で登録されています。パスワードでログインしてください。',
+  googleAuthFailed: 'Google認証に失敗しました。再度お試しください。',
 };
 
 // 英語版
@@ -83,4 +90,8 @@ export const errorsEn: ErrorMessages = {
   csrfValidationFailed: 'CSRF token validation failed',
   inputTooLong: 'Input is too long. Please keep it under {maxLength} characters',
   urlCopiedToClipboard: 'URL copied to clipboard',
+  // Google OAuth エラー
+  emailAccountExists:
+    'This email address ({email}) is already registered with email authentication. Please login with your password.',
+  googleAuthFailed: 'Google authentication failed. Please try again.',
 };
