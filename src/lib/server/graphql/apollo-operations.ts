@@ -210,7 +210,13 @@ export const UPDATE_SETLIST = gql`
 
 export const DELETE_SETLIST = gql`
   mutation DeleteSetlist($id: ID!) {
-    deleteSetlist(id: $id)
+    deleteSetlist(id: $id) {
+      deletedSetlist {
+        id
+        title
+      }
+      success
+    }
   }
 `;
 

@@ -28,6 +28,7 @@ import { useState } from 'react';
 
 import { SingleDeleteModal } from '@/components/common/SingleDeleteModal';
 import { Button } from '@/components/common/ui/Button';
+import { useSnackbar } from '@/components/providers/SnackbarProvider';
 import { useI18n } from '@/hooks/useI18n';
 import { DELETE_SETLIST, GET_SETLISTS } from '@/lib/server/graphql/apollo-operations';
 import { THEMES } from '@/types/common';
@@ -41,14 +42,23 @@ interface SetlistDashboardProps {
 
 export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashboardProps) {
   const { messages, lang } = useI18n();
+  const { showSuccess, showError } = useSnackbar();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [setlistToDelete, setSetlistToDelete] = useState<Setlist | null>(null);
 
   const [deleteSetlist, { loading: deleteLoading }] = useMutation(DELETE_SETLIST, {
     refetchQueries: [{ query: GET_SETLISTS }],
-    onCompleted: () => {
+    onCompleted: (data) => {
       setDeleteDialogOpen(false);
+      if (data.deleteSetlist.success && data.deleteSetlist.deletedSetlist) {
+        showSuccess(
+          `「${data.deleteSetlist.deletedSetlist.title}」${messages.notifications.setlistDeleted}`,
+        );
+      }
       setSetlistToDelete(null);
+    },
+    onError: (error) => {
+      showError(error.message);
     },
   });
 

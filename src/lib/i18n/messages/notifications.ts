@@ -28,7 +28,7 @@ export interface NotificationMessages {
 export const notificationsJa: NotificationMessages = {
   setlistCreated: 'セットリストが作成されました',
   setlistUpdated: 'セットリストが更新されました',
-  setlistDeleted: 'セットリストが削除されました',
+  setlistDeleted: 'を削除しました',
   songCreated: 'を作成しました',
   songAdded: '楽曲が追加されました',
   songUpdated: 'を更新しました',
@@ -50,7 +50,7 @@ export const notificationsJa: NotificationMessages = {
 export const notificationsEn: NotificationMessages = {
   setlistCreated: 'Setlist created',
   setlistUpdated: 'Setlist updated',
-  setlistDeleted: 'Setlist deleted',
+  setlistDeleted: ' has been deleted',
   songCreated: ' has been created',
   songAdded: 'Song added',
   songUpdated: ' has been updated',

@@ -121,6 +121,15 @@ export class UpdateSetlistResult {
   newSongs: NewSongInfo;
 }
 
+@ObjectType()
+export class DeleteSetlistResult {
+  @Field(() => Setlist)
+  deletedSetlist: Setlist;
+
+  @Field(() => Boolean)
+  success: boolean;
+}
+
 @Resolver(() => Setlist)
 export class SetlistResolver {
   /**
@@ -456,9 +465,12 @@ export class SetlistResolver {
     };
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => DeleteSetlistResult)
   @UseMiddleware(AuthMiddleware)
-  async deleteSetlist(@Arg('id', () => ID) id: string, @Ctx() ctx: Context): Promise<boolean> {
+  async deleteSetlist(
+    @Arg('id', () => ID) id: string,
+    @Ctx() ctx: Context,
+  ): Promise<DeleteSetlistResult> {
     const setlist = await ctx.prisma.setlist.findFirst({
       where: { id, userId: ctx.userId },
     });
@@ -471,7 +483,10 @@ export class SetlistResolver {
       where: { id },
     });
 
-    return true;
+    return {
+      deletedSetlist: setlist as Setlist,
+      success: true,
+    };
   }
 
   // Field resolver for items relation - N+1問題を避けるため、既にロードされたデータを返す
