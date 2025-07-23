@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import Script from 'next/script';
 import { Suspense } from 'react';
 
 import Footer from '@/components/common/layout/Footer';
@@ -12,6 +13,7 @@ import { I18nProvider } from '@/components/providers/I18nProvider';
 import MUIProvider from '@/components/providers/MUIProvider';
 import NextAuthProvider from '@/components/providers/NextAuthProvider';
 import { SnackbarProvider } from '@/components/providers/SnackbarProvider';
+import { getOrganizationSchema, getWebSiteSchema } from '@/lib/metadata/pageSchemas';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -82,45 +84,23 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'SoftwareApplication',
-    name: 'Setlist Studio',
-    description:
-      'ステージで利用できるアーティスト向けのセットリスト作成アプリです。エクセルや手書きの時代はもう終わりです。楽曲管理から高品質なセットリスト生成まで。',
-    applicationCategory: 'MusicApplication',
-    operatingSystem: 'Web',
-    offers: {
-      '@type': 'Offer',
-      price: '0',
-      priceCurrency: 'JPY',
-    },
-    author: {
-      '@type': 'Organization',
-      name: 'mosquitone',
-    },
-    url: 'https://setlist-studio.vercel.app',
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '4.8',
-      ratingCount: '125',
-    },
-    featureList: [
-      'セットリスト作成・編集',
-      '楽曲管理',
-      'プロフェッショナルな画像生成',
-      'QRコード統合',
-      'テーマ選択',
-      'セットリスト共有',
-    ],
-  };
+  const organizationSchema = getOrganizationSchema();
+  const websiteSchema = getWebSiteSchema();
 
   return (
     <html lang="ja">
       <head>
-        <script
+        <Script
+          id="organization-jsonld"
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
+        <Script
+          id="website-jsonld"
+          type="application/ld+json"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
       </head>
       <body className={inter.className}>
