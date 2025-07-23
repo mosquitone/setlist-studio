@@ -14,7 +14,7 @@ import { footerJa, footerEn } from './messages/footer';
 import { metadataJa, metadataEn } from './messages/metadata';
 import { navigationJa, navigationEn } from './messages/navigation';
 import { notificationsJa, notificationsEn } from './messages/notifications';
-import { pagesMessages } from './messages/pages';
+import { pagesJa, pagesEn } from './messages/pages';
 import { setlistsJa, setlistsEn } from './messages/setlists';
 import { songsJa, songsEn } from './messages/songs';
 import { validationJa, validationEn } from './messages/validation';
@@ -52,7 +52,8 @@ export function detectLanguage(acceptLanguage?: string): Language {
 const jaMessages: Messages = {
   auth: authJa,
   common: commonJa,
-  pages: pagesMessages.ja.pages,
+  pages: pagesJa,
+  setlists: setlistsJa,
   errors: errorsJa,
   features: featuresJa,
   notifications: notificationsJa,
@@ -70,7 +71,8 @@ const jaMessages: Messages = {
 const enMessages: Messages = {
   auth: authEn,
   common: commonEn,
-  pages: pagesMessages.en.pages,
+  pages: pagesEn,
+  setlists: setlistsEn,
   errors: errorsEn,
   features: featuresEn,
   notifications: notificationsEn,

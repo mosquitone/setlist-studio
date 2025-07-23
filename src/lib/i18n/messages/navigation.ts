@@ -3,6 +3,18 @@
  * メニューナビゲーション関連のメッセージ
  */
 
+export interface NavigationMessages {
+  home: string;
+  songs: string;
+  profile: string;
+  guide: string;
+  privacy: string;
+  terms: string;
+  newSetlist: string;
+  logout: string;
+  loading: string;
+}
+
 export const navigationJa = {
   home: 'ホーム',
   songs: '楽曲管理',

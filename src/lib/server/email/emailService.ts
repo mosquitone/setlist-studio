@@ -247,6 +247,7 @@ export class EmailService {
    * メールアドレス変更確認メールを送信
    */
   public async sendEmailChangeConfirmation(
+    oldEmail: string,
     newEmail: string,
     username: string,
     token: string,
@@ -254,7 +255,7 @@ export class EmailService {
   ): Promise<boolean> {
     const confirmUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/auth/confirm-email-change?token=${token}`;
     const messages = getMessages(lang || 'ja');
-    const emailBody = messages.emails.emailChangeBody(username, confirmUrl);
+    const emailBody = messages.emails.emailChangeBody(username, oldEmail, newEmail, confirmUrl);
 
     const html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -283,7 +284,8 @@ export class EmailService {
     lang?: Language,
   ): Promise<boolean> {
     const messages = getMessages(lang || 'ja');
-    const emailBody = messages.emails.passwordResetSuccessBody(username);
+    const loginUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/login`;
+    const emailBody = messages.emails.passwordResetSuccessBody(username, loginUrl);
 
     const html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -369,14 +371,15 @@ export class EmailService {
    * 詳細な結果を返すメールアドレス変更確認メール送信
    */
   public async sendEmailChangeEmailWithDetails(
-    email: string,
+    oldEmail: string,
+    newEmail: string,
     username: string,
     token: string,
     lang?: Language,
   ): Promise<EmailResult> {
     const confirmUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/auth/confirm-email-change?token=${token}`;
     const messages = getMessages(lang || 'ja');
-    const emailBody = messages.emails.emailChangeBody(username, confirmUrl);
+    const emailBody = messages.emails.emailChangeBody(username, oldEmail, newEmail, confirmUrl);
 
     const html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -388,7 +391,7 @@ export class EmailService {
     return this.sendEmailWithDetails(
       {
         from: this.fromEmail,
-        to: email,
+        to: newEmail,
         subject: `Setlist Studio - ${messages.emails.emailChangeSubject}`,
         html,
       },
@@ -406,17 +409,7 @@ export class EmailService {
     lang?: Language,
   ): Promise<EmailResult> {
     const messages = getMessages(lang || 'ja');
-    const emailBody = `${messages.auth.profile}の${username}様
-
-お客様のアカウントのメールアドレスが変更されました。
-
-変更前: ${oldEmail}
-変更後: ${newEmail}
-
-この変更を行っていない場合は、直ちにサポートにお問い合わせください。
-
---
-Setlist Studio チーム`;
+    const emailBody = messages.emails.emailChangeNotificationBody(username, oldEmail, newEmail);
 
     const html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -429,7 +422,7 @@ Setlist Studio チーム`;
       {
         from: this.fromEmail,
         to: oldEmail,
-        subject: `Setlist Studio - メールアドレス変更通知`,
+        subject: `Setlist Studio - ${messages.emails.emailChangeNotificationSubject}`,
         html,
       },
       'notification',
@@ -445,16 +438,7 @@ Setlist Studio チーム`;
     lang?: Language,
   ): Promise<EmailResult> {
     const messages = getMessages(lang || 'ja');
-    const emailBody = `${messages.auth.profile}の${username}様
-
-メールアドレスの変更が正常に完了しました。
-
-新しいメールアドレス: ${newEmail}
-
-今後はこのメールアドレスでログインしてください。
-
---
-Setlist Studio チーム`;
+    const emailBody = messages.emails.emailChangeSuccessBody(username, newEmail);
 
     const html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -467,7 +451,7 @@ Setlist Studio チーム`;
       {
         from: this.fromEmail,
         to: newEmail,
-        subject: `Setlist Studio - メールアドレス変更完了`,
+        subject: `Setlist Studio - ${messages.emails.emailChangeSuccessSubject}`,
         html,
       },
       'notification',

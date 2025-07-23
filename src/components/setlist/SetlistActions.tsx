@@ -213,6 +213,26 @@ export const SetlistActions = React.memo(function SetlistActions({
                 displayEmpty
                 IconComponent={ExpandMoreIcon}
                 sx={{ minWidth: 120 }}
+                inputProps={{
+                  'aria-label': messages.common.theme,
+                }}
+                MenuProps={{
+                  anchorOrigin: {
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                  },
+                  transformOrigin: {
+                    vertical: 'top',
+                    horizontal: 'left',
+                  },
+                  slotProps: {
+                    paper: {
+                      sx: {
+                        mt: 1,
+                      },
+                    },
+                  },
+                }}
                 renderValue={(value) => {
                   if (value === 'black')
                     return `${messages.common.theme}: ${messages.common.basicBlack}`;
@@ -221,8 +241,8 @@ export const SetlistActions = React.memo(function SetlistActions({
                   return `${messages.common.theme}: ${messages.common.basicBlack}`;
                 }}
               >
-                <MenuItem value="black">{messages.common.basicBlack}</MenuItem>
-                <MenuItem value="white">{messages.common.basicWhite}</MenuItem>
+                <MenuItem value="black" role="option">{messages.common.basicBlack}</MenuItem>
+                <MenuItem value="white" role="option">{messages.common.basicWhite}</MenuItem>
               </Select>
             </FormControl>
           )}
@@ -330,6 +350,26 @@ export const SetlistActions = React.memo(function SetlistActions({
               displayEmpty
               IconComponent={ExpandMoreIcon}
               sx={{ minWidth: 140 }}
+              inputProps={{
+                'aria-label': messages.common.theme,
+              }}
+              MenuProps={{
+                anchorOrigin: {
+                  vertical: 'bottom',
+                  horizontal: 'left',
+                },
+                transformOrigin: {
+                  vertical: 'top',
+                  horizontal: 'left',
+                },
+                slotProps: {
+                  paper: {
+                    sx: {
+                      mt: 1,
+                    },
+                  },
+                },
+              }}
               renderValue={(value) => {
                 if (value === 'black')
                   return `${messages.common.theme}: ${messages.common.basicBlack}`;
@@ -338,8 +378,8 @@ export const SetlistActions = React.memo(function SetlistActions({
                 return `${messages.common.theme}: ${messages.common.basicBlack}`;
               }}
             >
-              <MenuItem value="black">{messages.common.basicBlack}</MenuItem>
-              <MenuItem value="white">{messages.common.basicWhite}</MenuItem>
+              <MenuItem value="black" role="option">{messages.common.basicBlack}</MenuItem>
+              <MenuItem value="white" role="option">{messages.common.basicWhite}</MenuItem>
             </Select>
           </FormControl>
         )}

@@ -3,6 +3,15 @@
  * 確認メッセージ関連
  */
 
+export interface ConfirmationMessages {
+  deleteSetlist: string;
+  deleteSong: string;
+  logout: string;
+  unsavedChanges: string;
+  makePublic: string;
+  makePrivate: string;
+}
+
 export const confirmationsJa = {
   deleteSetlist: 'このセットリストを削除してもよろしいですか？',
   deleteSong: 'この楽曲を削除してもよろしいですか？',

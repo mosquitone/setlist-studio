@@ -23,7 +23,7 @@ import { footerJa, footerEn } from './messages/footer';
 import { metadataJa, metadataEn } from './messages/metadata';
 import { navigationJa, navigationEn } from './messages/navigation';
 import { notificationsJa, notificationsEn } from './messages/notifications';
-import { pagesMessages } from './messages/pages';
+import { pagesJa, pagesEn } from './messages/pages';
 import { setlistsJa, setlistsEn } from './messages/setlists';
 import { songsJa, songsEn } from './messages/songs';
 import { validationJa, validationEn } from './messages/validation';
@@ -33,11 +33,12 @@ import type { Messages } from './types';
 export const jaMessages: Messages = {
   auth: authJa,
   common: commonJa,
-  pages: pagesMessages.ja.pages,
+  pages: pagesJa,
   errors: errorsJa,
   features: featuresJa,
   notifications: notificationsJa,
   validation: validationJa,
+  setlists: setlistsJa,
   setlistDetail: setlistsJa.detail,
   setlistForm: setlistsJa.form,
   songs: songsJa,
@@ -52,11 +53,12 @@ export const jaMessages: Messages = {
 export const enMessages: Messages = {
   auth: authEn,
   common: commonEn,
-  pages: pagesMessages.en.pages,
+  pages: pagesEn,
   errors: errorsEn,
   features: featuresEn,
   notifications: notificationsEn,
   validation: validationEn,
+  setlists: setlistsEn,
   setlistDetail: setlistsEn.detail,
   setlistForm: setlistsEn.form,
   songs: songsEn,
@@ -76,7 +78,8 @@ export {
   authEn,
   commonJa,
   commonEn,
-  pagesMessages,
+  pagesJa,
+  pagesEn,
   errorsJa,
   errorsEn,
   featuresJa,

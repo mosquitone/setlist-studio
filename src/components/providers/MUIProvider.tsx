@@ -64,6 +64,42 @@ const theme = createTheme({
         },
       },
     },
+    // アクセシビリティの問題を修正
+    MuiPopover: {
+      defaultProps: {
+        // ポップオーバーのアクセシビリティ改善
+        disablePortal: false,
+        disableScrollLock: true,
+        // ポータルではなく通常のDOMツリーに配置することで aria-hidden の問題を回避
+        container: undefined,
+      },
+    },
+    MuiMenu: {
+      defaultProps: {
+        // メニューのアクセシビリティ向上
+        disablePortal: false,
+        keepMounted: false,
+        disableScrollLock: true,
+      },
+    },
+    MuiModal: {
+      defaultProps: {
+        // モーダルのアクセシビリティ改善
+        disablePortal: false,
+        keepMounted: false,
+      },
+    },
+    MuiBackdrop: {
+      styleOverrides: {
+        root: {
+          // バックドロップのアクセシビリティ改善
+          '&[aria-hidden="true"]': {
+            // inert属性でフォーカス管理を改善
+            pointerEvents: 'auto',
+          },
+        },
+      },
+    },
   },
 });
 

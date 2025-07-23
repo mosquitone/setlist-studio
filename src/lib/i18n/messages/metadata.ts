@@ -3,6 +3,26 @@
  * メタデータ・SEO関連のメッセージ
  */
 
+export interface MetadataMessages {
+  siteTitle: string;
+  siteDescription: string;
+  loginTitle: string;
+  loginDescription: string;
+  registerTitle: string;
+  registerDescription: string;
+  verifyEmailTitle: string;
+  verifyEmailDescription: string;
+  forgotPasswordTitle: string;
+  forgotPasswordDescription: string;
+  resetPasswordTitle: string;
+  resetPasswordDescription: string;
+  checkEmailTitle: string;
+  checkEmailDescription: string;
+  confirmEmailChangeTitle: string;
+  confirmEmailChangeDescription: string;
+  keywords: string[];
+}
+
 export const metadataJa = {
   siteTitle: 'Setlist Studio - バンド向けセットリスト管理ツール',
   siteDescription:

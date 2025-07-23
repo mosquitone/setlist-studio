@@ -36,7 +36,18 @@ export function UserMenu({ onAuthClick }: UserMenuProps) {
   return (
     <>
       <Box
+        id="user-menu-button"
         onClick={handleUserMenuOpen}
+        role="button"
+        tabIndex={0}
+        aria-haspopup="true"
+        aria-expanded={Boolean(anchorEl)}
+        aria-controls={Boolean(anchorEl) ? 'user-menu' : undefined}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            handleUserMenuOpen(event as any);
+          }
+        }}
         sx={{
           display: 'flex',
           alignItems: 'center',
@@ -46,6 +57,10 @@ export function UserMenu({ onAuthClick }: UserMenuProps) {
           borderRadius: 1,
           '&:hover': {
             backgroundColor: 'rgba(255, 255, 255, 0.1)',
+          },
+          '&:focus': {
+            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+            outline: '2px solid rgba(255, 255, 255, 0.3)',
           },
         }}
       >
@@ -63,6 +78,7 @@ export function UserMenu({ onAuthClick }: UserMenuProps) {
         </Typography>
       </Box>
       <Menu
+        id="user-menu"
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleUserMenuClose}
@@ -74,9 +90,25 @@ export function UserMenu({ onAuthClick }: UserMenuProps) {
           vertical: 'top',
           horizontal: 'right',
         }}
+        MenuListProps={{
+          'aria-labelledby': 'user-menu-button',
+          role: 'menu',
+        }}
+        slotProps={{
+          paper: {
+            elevation: 3,
+            sx: {
+              mt: 1,
+              '& .MuiMenuItem-root': {
+                minHeight: 36,
+              },
+            },
+          },
+        }}
       >
         <MenuItem
           onClick={handleUserMenuClose}
+          role="menuitem"
           sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
         >
           <PersonIcon fontSize="small" />
@@ -90,6 +122,7 @@ export function UserMenu({ onAuthClick }: UserMenuProps) {
             handleUserMenuClose();
             onAuthClick();
           }}
+          role="menuitem"
           sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
         >
           <LogoutIcon fontSize="small" />

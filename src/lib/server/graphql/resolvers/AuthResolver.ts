@@ -687,6 +687,7 @@ export class AuthResolver {
 
     // 新しいメールアドレスに確認メールを送信
     const emailResult = await emailService.sendEmailChangeEmailWithDetails(
+      user.email,
       input.newEmail,
       user.username,
       token,
