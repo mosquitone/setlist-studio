@@ -241,8 +241,12 @@ export const SetlistActions = React.memo(function SetlistActions({
                   return `${messages.common.theme}: ${messages.common.basicBlack}`;
                 }}
               >
-                <MenuItem value="black" role="option">{messages.common.basicBlack}</MenuItem>
-                <MenuItem value="white" role="option">{messages.common.basicWhite}</MenuItem>
+                <MenuItem value="black" role="option">
+                  {messages.common.basicBlack}
+                </MenuItem>
+                <MenuItem value="white" role="option">
+                  {messages.common.basicWhite}
+                </MenuItem>
               </Select>
             </FormControl>
           )}
@@ -378,8 +382,12 @@ export const SetlistActions = React.memo(function SetlistActions({
                 return `${messages.common.theme}: ${messages.common.basicBlack}`;
               }}
             >
-              <MenuItem value="black" role="option">{messages.common.basicBlack}</MenuItem>
-              <MenuItem value="white" role="option">{messages.common.basicWhite}</MenuItem>
+              <MenuItem value="black" role="option">
+                {messages.common.basicBlack}
+              </MenuItem>
+              <MenuItem value="white" role="option">
+                {messages.common.basicWhite}
+              </MenuItem>
             </Select>
           </FormControl>
         )}

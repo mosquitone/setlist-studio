@@ -42,23 +42,30 @@ async function generateSchema() {
     const escapedSchemaSDL = schemaSDL.replace(/`/g, '\\`').replace(/\${/g, '\\${');
     const tsContent = `// Auto-generated GraphQL schema
 // Do not modify this file directly
-import { buildSchemaSync } from 'type-graphql';
 import { GraphQLSchema } from 'graphql';
+import { buildSchemaSync } from 'type-graphql';
 
 // Import resolvers
-import { SetlistResolver } from './resolvers/SetlistResolver';
-import { SetlistItemResolver } from './resolvers/SetlistItemResolver';
-import { SongResolver } from './resolvers/SongResolver';
 import { AuthResolver } from './resolvers/AuthResolver';
-import { UserResolver } from './resolvers/UserResolver';
 import { EmailHistoryResolver } from './resolvers/EmailHistoryResolver';
+import { SetlistItemResolver } from './resolvers/SetlistItemResolver';
+import { SetlistResolver } from './resolvers/SetlistResolver';
+import { SongResolver } from './resolvers/SongResolver';
+import { UserResolver } from './resolvers/UserResolver';
 
 let cachedSchema: GraphQLSchema | null = null;
 
 export function getPreBuiltSchema(): GraphQLSchema {
   if (!cachedSchema) {
     cachedSchema = buildSchemaSync({
-      resolvers: [SetlistResolver, SetlistItemResolver, SongResolver, AuthResolver, UserResolver, EmailHistoryResolver],
+      resolvers: [
+        SetlistResolver,
+        SetlistItemResolver,
+        SongResolver,
+        AuthResolver,
+        UserResolver,
+        EmailHistoryResolver,
+      ],
       validate: false,
       authChecker: undefined,
     });
