@@ -153,7 +153,6 @@ model EmailHistory {
   userAgent        String?
   authProvider     String?   // 変更時の認証プロバイダー
   lastUsedAt       DateTime? // 最後にこのメールアドレスが使用された日時
-  cooldownUntil    DateTime? // クールダウン期間（再変更制限）
   verificationSent Boolean   @default(false) // 所有権確認メール送信済みフラグ
   user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -161,6 +160,5 @@ model EmailHistory {
   @@index([oldEmail])
   @@index([newEmail])
   @@index([changedAt])
-  @@index([cooldownUntil])
   @@map("email_histories")
 }

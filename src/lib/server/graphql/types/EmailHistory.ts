@@ -32,9 +32,6 @@ export class EmailHistory {
   @Field(() => Date, { nullable: true })
   lastUsedAt?: Date;
 
-  @Field(() => Date, { nullable: true })
-  cooldownUntil?: Date;
-
   @Field(() => Boolean)
   verificationSent!: boolean;
 }
@@ -52,16 +49,4 @@ export class EmailHistoryInput {
 
   @Field(() => String, { nullable: true })
   authProvider?: string;
-}
-
-@ObjectType()
-export class EmailOwnershipVerificationResponse {
-  @Field(() => Boolean)
-  success!: boolean;
-
-  @Field(() => String)
-  message!: string;
-
-  @Field(() => Boolean, { nullable: true })
-  verificationRequired?: boolean;
 }

@@ -28,11 +28,6 @@ export interface AuthMessages {
   // メールアドレス履歴・所有権確認
   emailHistory: string;
   emailOwnershipVerification: string;
-  emailOwnershipVerificationSent: string;
-  emailOwnershipVerificationFailed: string;
-  noEmailHistoryFound: string;
-  emailCurrentlySame: string;
-  emailInUseByOther: string;
   emailCooldownActive: string;
   verifyOwnershipFirst: string;
   emailOwnershipVerified: string;
@@ -207,11 +202,6 @@ export const authJa: AuthMessages = {
   // メールアドレス履歴・所有権確認
   emailHistory: 'メールアドレス変更履歴',
   emailOwnershipVerification: 'メールアドレス所有権確認',
-  emailOwnershipVerificationSent: 'メールアドレスの所有権確認メールを送信しました',
-  emailOwnershipVerificationFailed: 'メール送信に失敗しました',
-  noEmailHistoryFound: 'このメールアドレスの使用履歴が見つかりません',
-  emailCurrentlySame: '現在のメールアドレスと同じです',
-  emailInUseByOther: 'このメールアドレスは現在他のユーザーが使用中です',
   emailCooldownActive: 'このメールアドレスは一定期間変更できません',
   verifyOwnershipFirst: 'メールアドレスの所有権を確認してください',
   emailOwnershipVerified: 'メールアドレスの所有権が確認されました',
@@ -386,11 +376,6 @@ export const authEn: AuthMessages = {
   // Email history & ownership verification
   emailHistory: 'Email Change History',
   emailOwnershipVerification: 'Email Ownership Verification',
-  emailOwnershipVerificationSent: 'Email ownership verification has been sent',
-  emailOwnershipVerificationFailed: 'Failed to send email',
-  noEmailHistoryFound: 'No usage history found for this email address',
-  emailCurrentlySame: 'Same as current email address',
-  emailInUseByOther: 'This email address is currently in use by another user',
   emailCooldownActive: 'This email address cannot be changed for a certain period',
   verifyOwnershipFirst: 'Please verify email address ownership first',
   emailOwnershipVerified: 'Email address ownership verified',

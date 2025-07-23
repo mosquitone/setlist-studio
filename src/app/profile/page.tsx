@@ -41,6 +41,7 @@ import { apolloClient } from '@/lib/client/apollo-client';
 import { PASSWORD_POLICY } from '@/lib/constants/auth';
 import { formatDate } from '@/lib/i18n/date-format';
 import { UPDATE_USER_MUTATION, GET_ME_QUERY } from '@/lib/server/graphql/apollo-operations';
+import { AUTH_PROVIDERS } from '@/types/common';
 import type {
   UpdateUserData,
   ChangePasswordData,
@@ -93,7 +94,7 @@ function ProfileContent() {
   const [newEmail, setNewEmail] = useState('');
   const [emailChangePassword, setEmailChangePassword] = useState('');
   const [showEmailChangePassword, setShowEmailChangePassword] = useState(false);
-  // Google認証ユーザー用パスワード設定
+  // メール認証への切り替え用
   const [newPasswordForEmailAuth, setNewPasswordForEmailAuth] = useState('');
   const [confirmNewPasswordForEmailAuth, setConfirmNewPasswordForEmailAuth] = useState('');
   const [showNewPasswordForEmailAuth, setShowNewPasswordForEmailAuth] = useState(false);
@@ -190,6 +191,26 @@ function ProfileContent() {
     }
   }, [user]);
 
+  // URLパラメータから成功・エラーメッセージを取得
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const success = params.get('success');
+    const error = params.get('error');
+    const message = params.get('message');
+
+    if (success === 'email_changed' && message) {
+      showSuccess(decodeURIComponent(message));
+      // ユーザー情報を再取得して最新の情報を表示
+      refreshUser();
+      // URLからパラメータを削除
+      window.history.replaceState({}, document.title, '/profile');
+    } else if (error && message) {
+      showError(decodeURIComponent(message));
+      // URLからパラメータを削除
+      window.history.replaceState({}, document.title, '/profile');
+    }
+  }, [showSuccess, showError, refreshUser]);
+
   const handleUpdateProfile = async () => {
     if (!username.trim()) {
       showError(messages.validation.required);
@@ -257,7 +278,7 @@ function ProfileContent() {
     }
 
     // Google認証ユーザーの場合はパスワード設定が必要
-    if (currentUser?.authProvider === 'google') {
+    if (currentUser?.authProvider === AUTH_PROVIDERS.GOOGLE) {
       if (!newPasswordForEmailAuth || !confirmNewPasswordForEmailAuth) {
         showError(messages.validation.required);
         return;
@@ -293,7 +314,7 @@ function ProfileContent() {
       newEmail: newEmail.trim(),
     };
 
-    if (currentUser?.authProvider === 'google') {
+    if (currentUser?.authProvider === AUTH_PROVIDERS.GOOGLE) {
       // Google認証ユーザーは新しいパスワードを設定
       inputData.newPassword = newPasswordForEmailAuth;
     } else {
@@ -312,38 +333,12 @@ function ProfileContent() {
     setIsChangingEmail(false);
     setNewEmail('');
     setEmailChangePassword('');
-    // Google認証ユーザー用パスワードフィールドもリセット
-    setNewPasswordForEmailAuth('');
-    setConfirmNewPasswordForEmailAuth('');
   };
 
   const handleGoogleEmailChange = async () => {
     setGoogleEmailChangeLoading(true);
 
     try {
-      // パスワード設定の場合のバリデーション（オプション）
-      if (newPasswordForEmailAuth || confirmNewPasswordForEmailAuth) {
-        if (!newPasswordForEmailAuth || !confirmNewPasswordForEmailAuth) {
-          showError(messages.validation.required);
-          return;
-        }
-
-        if (newPasswordForEmailAuth !== confirmNewPasswordForEmailAuth) {
-          showError(messages.validation.passwordsDoNotMatch);
-          return;
-        }
-
-        if (newPasswordForEmailAuth.length < PASSWORD_POLICY.MIN_LENGTH) {
-          showError(messages.validation.passwordTooShort);
-          return;
-        }
-
-        if (!PASSWORD_POLICY.REGEX.test(newPasswordForEmailAuth)) {
-          showError(messages.validation.passwordTooShort);
-          return;
-        }
-      }
-
       // 現在のユーザーIDを保存（セッション切り替え前に）
       const currentUserId = currentUser?.id;
       if (!currentUserId) {
@@ -353,9 +348,11 @@ function ProfileContent() {
 
       // プロフィールページからの認証であることを示すCookieを設定
       document.cookie = 'profile-auth-context=true; path=/; max-age=300'; // 5分間有効
+      // 現在のユーザーIDをCookieに保存（メール変更処理用）
+      document.cookie = `current-user-id=${currentUser.id}; path=/; max-age=300`; // 5分間有効
 
       // NextAuthのGoogle認証を使用（アカウント選択を強制）
-      const result = await signIn('google', {
+      const result = await signIn(AUTH_PROVIDERS.GOOGLE, {
         redirect: false,
         callbackUrl: '/profile',
         // Googleのアカウント選択画面を強制表示
@@ -369,34 +366,10 @@ function ProfileContent() {
       }
 
       if (result?.ok) {
-        // 認証成功後、Googleアカウント切り替えAPIを呼び出し
-        const response = await fetch('/api/auth/google-account-switch', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            currentUserId, // 元のユーザーIDを送信
-            transferData: true, // データ移行フラグ
-            newPassword: newPasswordForEmailAuth || undefined,
-          }),
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-          showSuccess(data.message);
-          setIsChangingEmail(false);
-          setNewEmail('');
-          setEmailChangePassword('');
-          setNewPasswordForEmailAuth('');
-          setConfirmNewPasswordForEmailAuth('');
-
-          // ユーザー情報を再取得して表示を更新
-          await refreshUser();
-        } else {
-          showError(data.message);
-        }
+        // google-syncが自動的にメールアドレス変更を処理
+        // リダイレクトが発生してプロフィールページに戻ってくる
+        // google-syncエンドポイントが成功メッセージ付きでリダイレクトする
+        // リダイレクト後はURLパラメータで処理される
       }
     } catch {
       showError('Google認証でエラーが発生しました。再度お試しください。');
@@ -588,7 +561,7 @@ function ProfileContent() {
                 )}
                 {isChangingEmail && (
                   <Box sx={{ mt: 2 }}>
-                    {currentUser?.authProvider === 'google' && (
+                    {currentUser?.authProvider === AUTH_PROVIDERS.GOOGLE && (
                       <Alert severity="info" sx={{ mb: 2 }}>
                         {messages.auth.googleUserEmailChangeNote}
                       </Alert>
@@ -602,7 +575,7 @@ function ProfileContent() {
                       size="small"
                       sx={{ mb: 1 }}
                     />
-                    {currentUser?.authProvider !== 'google' && (
+                    {currentUser?.authProvider !== AUTH_PROVIDERS.GOOGLE && (
                       <TextField
                         fullWidth
                         label={messages.auth.currentPassword}
@@ -626,7 +599,7 @@ function ProfileContent() {
                         }}
                       />
                     )}
-                    {currentUser?.authProvider === 'google' && (
+                    {currentUser?.authProvider === AUTH_PROVIDERS.GOOGLE && (
                       <>
                         <TextField
                           fullWidth
@@ -751,7 +724,7 @@ function ProfileContent() {
                 {messages.auth.authProvider}
               </Typography>
               <Typography variant="body1">
-                {currentUser?.authProvider === 'google'
+                {currentUser?.authProvider === AUTH_PROVIDERS.GOOGLE
                   ? messages.auth.authProviderGoogle
                   : messages.auth.authProviderEmail}
               </Typography>
@@ -776,7 +749,7 @@ function ProfileContent() {
         <Divider sx={{ mb: 3 }} />
 
         {/* パスワード変更セクション - Google認証ユーザーは非表示 */}
-        {currentUser?.authProvider !== 'google' && (
+        {currentUser?.authProvider !== AUTH_PROVIDERS.GOOGLE && (
           <Box sx={{ mb: 3 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
               <LockIcon sx={{ mr: 2, color: 'text.secondary' }} />

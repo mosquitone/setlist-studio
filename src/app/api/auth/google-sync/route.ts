@@ -10,8 +10,9 @@ import {
   SecurityEventType,
   SecurityEventSeverity,
 } from '@/lib/security/security-logger-db';
-import { getSecureClientIP } from '@/lib/security/security-utils';
+import { getSecureClientIP, hashIP } from '@/lib/security/security-utils';
 import { generateSafeUsername } from '@/lib/server/auth/username-generator';
+import { emailService } from '@/lib/server/email/emailService';
 import { prisma } from '@/lib/server/prisma';
 import { AuthProvider, AUTH_PROVIDERS } from '@/types/common';
 
@@ -177,13 +178,109 @@ async function setAuthCookie(req: NextRequest, token: string) {
   return authResponse;
 }
 
+// メールアドレス変更処理
+async function handleEmailChange(req: NextRequest, currentUserId: string, newEmail: string) {
+  // 現在のユーザーを取得
+  const currentUser = await prisma.user.findUnique({
+    where: { id: currentUserId },
+  });
+
+  if (!currentUser) {
+    throw new Error('Current user not found');
+  }
+
+  // 同じメールアドレスの場合はエラー
+  if (currentUser.email === newEmail) {
+    return {
+      success: false,
+      error: NextResponse.redirect(
+        `${req.nextUrl.origin}/profile?error=same_email&message=${encodeURIComponent('現在のメールアドレスと同じです')}`,
+      ),
+    };
+  }
+
+  // 他のユーザーが使用中かチェック
+  const existingUser = await prisma.user.findUnique({
+    where: { email: newEmail },
+  });
+
+  if (existingUser && existingUser.id !== currentUserId) {
+    return {
+      success: false,
+      error: NextResponse.redirect(
+        `${req.nextUrl.origin}/profile?error=email_in_use&message=${encodeURIComponent('このメールアドレスは既に使用されています')}`,
+      ),
+    };
+  }
+
+  // メールアドレスを更新（認証方法もGoogleに戻す）
+  const updatedUser = await prisma.user.update({
+    where: { id: currentUserId },
+    data: {
+      email: newEmail,
+      emailVerified: true, // Google認証により検証済み
+      authProvider: AUTH_PROVIDERS.GOOGLE, // Google認証に戻す
+    },
+  });
+
+  // メールアドレス変更履歴を記録
+  const userAgent = req.headers.get('user-agent') || '';
+  const clientIP = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
+
+  await prisma.emailHistory.create({
+    data: {
+      userId: currentUserId,
+      oldEmail: currentUser.email,
+      newEmail: newEmail,
+      changeMethod: 'google_oauth',
+      ipAddress: clientIP,
+      userAgent,
+      authProvider: updatedUser.authProvider,
+      verificationSent: false,
+    },
+  });
+
+  // 通知メール送信
+  await emailService.sendEmailChangeNotificationEmail(
+    currentUser.email,
+    currentUser.username || 'ユーザー',
+    newEmail,
+  );
+  await emailService.sendEmailChangeSuccessEmail(newEmail, currentUser.username || 'ユーザー');
+
+  // セキュリティログ記録
+  await logSecurityEventDB(prisma, {
+    type: SecurityEventType.EMAIL_CHANGE_SUCCESS,
+    severity: SecurityEventSeverity.LOW,
+    userId: currentUserId,
+    ipAddress: hashIP(clientIP),
+    details: {
+      oldEmail: currentUser.email,
+      newEmail: newEmail,
+      method: 'google_oauth_profile',
+      authProvider: updatedUser.authProvider,
+    },
+  });
+
+  return { success: true, user: updatedUser };
+}
+
 // 成功時のリダイレクト処理
-function handleSuccessRedirect(req: NextRequest, authResponse: Response) {
+function handleSuccessRedirect(
+  req: NextRequest,
+  authResponse: Response,
+  isEmailChange: boolean = false,
+) {
   const cookieHeader = req.headers.get('cookie') || '';
   const cookies = cookieHeader.split(';').map((c) => c.trim());
   const profileContext = cookies.some((cookie) => cookie === 'profile-auth-context=true');
 
-  const redirectUrl = profileContext ? `${req.nextUrl.origin}/profile` : `${req.nextUrl.origin}/`;
+  let redirectUrl = profileContext ? `${req.nextUrl.origin}/profile` : `${req.nextUrl.origin}/`;
+
+  // メールアドレス変更の場合は成功メッセージを追加
+  if (isEmailChange) {
+    redirectUrl = `${req.nextUrl.origin}/profile?success=email_changed&message=${encodeURIComponent('Google認証によりメールアドレスが正常に変更されました')}`;
+  }
 
   const redirectResponse = NextResponse.redirect(redirectUrl);
 
@@ -221,18 +318,45 @@ async function handleGoogleSync(req: NextRequest) {
       throw new Error('Email not provided by Google OAuth');
     }
 
-    // 2. ユーザー検索・作成
-    const userResult = await findOrCreateGoogleUser(req, email, name);
-    if (userResult.error) {
-      return userResult.error;
-    }
+    // プロフィールからのメールアドレス変更コンテキストをチェック
+    const cookieHeader = req.headers.get('cookie') || '';
+    const cookies = cookieHeader.split(';').map((c) => c.trim());
+    const profileContext = cookies.some((cookie) => cookie === 'profile-auth-context=true');
 
-    const { user, isNew } = userResult;
-    if (!user) {
-      throw new Error('User creation failed');
+    // current-user-id Cookieから現在のユーザーIDを取得
+    const currentUserIdCookie = cookies.find((cookie) => cookie.startsWith('current-user-id='));
+    const currentUserId = currentUserIdCookie?.split('=')[1];
+
+    let user;
+    let isNew = false;
+    let isEmailChange = false;
+
+    // メールアドレス変更コンテキストの場合
+    if (profileContext && currentUserId) {
+      const emailChangeResult = await handleEmailChange(req, currentUserId, email);
+      if (!emailChangeResult.success) {
+        return emailChangeResult.error;
+      }
+      user = emailChangeResult.user;
+      isEmailChange = true;
+    } else {
+      // 2. 通常のユーザー検索・作成
+      const userResult = await findOrCreateGoogleUser(req, email, name);
+      if (userResult.error) {
+        return userResult.error;
+      }
+
+      user = userResult.user;
+      isNew = userResult.isNew;
+      if (!user) {
+        throw new Error('User creation failed');
+      }
     }
 
     // 3. トークン生成
+    if (!user) {
+      throw new Error('User not found after operation');
+    }
     const token = generateAuthToken(user);
 
     // 4. Cookie設定
@@ -250,12 +374,20 @@ async function handleGoogleSync(req: NextRequest) {
         details: {
           provider: 'google',
           email: user.email,
-          loginType: isNew ? 'new_user' : 'returning_user',
+          loginType: isEmailChange ? 'email_change' : isNew ? 'new_user' : 'returning_user',
         },
       });
 
       // 6. リダイレクト処理
-      return handleSuccessRedirect(req, authResponse);
+      // current-user-id Cookieをクリア（メール変更の場合）
+      const response = handleSuccessRedirect(req, authResponse, isEmailChange);
+      if (isEmailChange) {
+        response.cookies.set('current-user-id', '', {
+          path: '/',
+          maxAge: 0,
+        });
+      }
+      return response;
     }
 
     // Cookie設定失敗

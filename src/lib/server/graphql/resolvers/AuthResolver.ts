@@ -759,7 +759,7 @@ export class AuthResolver {
       emailChangeToken: null,
       emailChangeExpires: null,
       emailVerified: true,
-      authProvider: 'email', // メールアドレス変更後はemailユーザーとして扱う
+      authProvider: AUTH_PROVIDERS.EMAIL, // メールアドレス変更後はemailユーザーとして扱う
     };
 
     if (user.pendingPassword) {
