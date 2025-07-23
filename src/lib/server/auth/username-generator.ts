@@ -1,5 +1,3 @@
-import { prisma } from '@/lib/server/prisma';
-
 /**
  * 日本語名を含むGoogle OAuth認証用のセーフなユーザー名生成機能
  *
@@ -7,7 +5,7 @@ import { prisma } from '@/lib/server/prisma';
  * - 日本語（ひらがな、カタカナ、漢字）を保持
  * - 読み取り可能な文字を優先してdisplayNameを使用
  * - フォールバックでemail prefixを使用
- * - 重複を自動的に数字サフィックスで解決
+ * - 重複を許可（数字サフィックスなし）
  * - 長さ制限（20文字）でトランケート
  */
 
@@ -30,16 +28,6 @@ function hasReadableCharacters(str: string): boolean {
 function sanitizeUsername(str: string): string {
   // 制御文字（\x00-\x1F, \x7F）とヌル文字を除去、前後の空白をトリム
   return str.replace(/[\x00-\x1F\x7F]/g, '').trim();
-}
-
-/**
- * データベースでユーザー名の存在をチェック
- */
-async function usernameExists(username: string): Promise<boolean> {
-  const existingUser = await prisma.user.findFirst({
-    where: { username },
-  });
-  return existingUser !== null;
 }
 
 /**
@@ -74,31 +62,8 @@ export async function generateSafeUsername(
     baseUsername = email.split('@')[0].substring(0, 20);
   }
 
-  // Step 4: 重複チェックと番号サフィックスでの解決
-  let finalUsername = baseUsername;
-  let counter = 1;
-
-  // ユニークになるまで番号を追加
-  while (await usernameExists(finalUsername)) {
-    const suffix = `_${counter}`;
-    const maxBaseLength = 20 - suffix.length; // サフィックス分のスペースを確保
-
-    if (maxBaseLength > 0) {
-      finalUsername = baseUsername.substring(0, maxBaseLength) + suffix;
-    } else {
-      // ベース名が短すぎる場合の緊急フォールバック
-      finalUsername = `user_${counter}`;
-    }
-    counter++;
-
-    // 無限ループ防止（実用上99999で十分）
-    if (counter > 99999) {
-      finalUsername = `user_${Date.now()}`;
-      break;
-    }
-  }
-
-  return finalUsername;
+  // Step 4: 重複チェックを削除（重複を許可するため）
+  return baseUsername;
 }
 
 /**
@@ -108,5 +73,5 @@ export async function generateSafeUsername(
  * - 田中太郎 → "田中太郎" (日本語保持)
  * - John Smith → "John Smith" (英語保持)
  * - "" → "user123" (emailプレフィックス)
- * - 既存ユーザー名 → "田中太郎_1", "田中太郎_2" (重複解決)
+ * - 既存ユーザー名 → "田中太郎" (重複許可)
  */
