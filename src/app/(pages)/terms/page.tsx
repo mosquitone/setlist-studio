@@ -37,11 +37,31 @@ const TermsPage: React.FC = () => {
           第2条（利用登録）
         </Typography>
         <Typography variant="body2" paragraph>
-          1.
-          本サービスにおいては、登録希望者が本規約に同意の上、当方の定める方法によって利用登録を申請し、当方がこれを承認することによって、利用登録が完了するものとします。
+          1. 本サービスでは、以下の方法による利用登録が可能です：
         </Typography>
+        <List dense sx={{ pl: 2 }}>
+          <ListItem>
+            <ListItemText
+              primary="（1）メールアドレス認証：メールアドレス、ユーザー名、パスワードによる登録と認証完了"
+              primaryTypographyProps={{ variant: 'body2' }}
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemText
+              primary="（2）Google OAuth認証：Googleアカウントを使用した認証（即座利用可能）"
+              primaryTypographyProps={{ variant: 'body2' }}
+            />
+          </ListItem>
+        </List>
         <Typography variant="body2" paragraph>
           2.
+          メールアドレスによる登録の場合、メール認証完了まですべての機能利用ができません。認証メールに記載されたリンクをクリックして認証を完了してください。
+        </Typography>
+        <Typography variant="body2" paragraph>
+          3. 当方がこれを承認することによって、利用登録が完了するものとします。
+        </Typography>
+        <Typography variant="body2" paragraph>
+          4.
           当方は、利用登録の申請者に以下の事由があると判断した場合、利用登録の申請を承認しないことがあり、その理由については一切の開示義務を負わないものとします。
         </Typography>
         <List dense sx={{ pl: 2 }}>
@@ -66,7 +86,14 @@ const TermsPage: React.FC = () => {
         </List>
 
         <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
-          第3条（ユーザーIDおよびパスワードの管理）
+          第3条（サービス料金）
+        </Typography>
+        <Typography variant="body2" paragraph>
+          本サービスは完全無料で提供されます。ユーザーは、セットリスト作成、楽曲管理、画像生成、共有機能等、すべての機能を無料で利用できます。
+        </Typography>
+
+        <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
+          第4条（ユーザーIDおよびパスワードの管理）
         </Typography>
         <Typography variant="body2" paragraph>
           1.
@@ -78,7 +105,7 @@ const TermsPage: React.FC = () => {
         </Typography>
 
         <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
-          第4条（禁止事項）
+          第5条（禁止事項）
         </Typography>
         <Typography variant="body2" paragraph>
           ユーザーは、本サービスの利用にあたり、以下の行為をしてはなりません。
@@ -134,14 +161,62 @@ const TermsPage: React.FC = () => {
           </ListItem>
           <ListItem>
             <ListItemText
-              primary="（9）その他、当方が不適切と判断する行為"
+              primary="（9）自動化ツール、ボット、スクレイピング等による過度なアクセスやデータ収集"
+              primaryTypographyProps={{ variant: 'body2' }}
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemText
+              primary="（10）レート制限を回避する行為や、システムに過度な負荷をかける行為"
+              primaryTypographyProps={{ variant: 'body2' }}
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemText
+              primary="（11）複数アカウントを作成してサービスの制限を回避する行為"
+              primaryTypographyProps={{ variant: 'body2' }}
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemText
+              primary="（12）その他、当方が不適切と判断する行為"
               primaryTypographyProps={{ variant: 'body2' }}
             />
           </ListItem>
         </List>
 
         <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
-          第5条（本サービスの提供の停止等）
+          第6条（セキュリティ制限・利用制限）
+        </Typography>
+        <Typography variant="body2" paragraph>
+          1. 当方は、サービスの安全性と品質を保つため、以下のセキュリティ制限を実施します：
+        </Typography>
+        <List dense sx={{ pl: 2 }}>
+          <ListItem>
+            <ListItemText
+              primary="（1）レート制限：過度なアクセスに対する一時的な利用制限"
+              primaryTypographyProps={{ variant: 'body2' }}
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemText
+              primary="（2）ブルートフォース攻撃検知：複数回の認証失敗に対するアカウント・IP制限"
+              primaryTypographyProps={{ variant: 'body2' }}
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemText
+              primary="（3）異常アクセス検知：不正アクセスパターンの検出と自動遮断"
+              primaryTypographyProps={{ variant: 'body2' }}
+            />
+          </ListItem>
+        </List>
+        <Typography variant="body2" paragraph>
+          2. これらの制限は自動的に実行され、正常な利用が確認された場合は自動的に解除されます。
+        </Typography>
+
+        <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
+          第7条（本サービスの提供の停止等）
         </Typography>
         <Typography variant="body2" paragraph>
           1.
@@ -168,14 +243,35 @@ const TermsPage: React.FC = () => {
           </ListItem>
           <ListItem>
             <ListItemText
-              primary="（4）その他、当方が本サービスの提供が困難と判断した場合"
+              primary="（4）セキュリティ上の脅威や攻撃が検出された場合"
+              primaryTypographyProps={{ variant: 'body2' }}
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemText
+              primary="（5）その他、当方が本サービスの提供が困難と判断した場合"
               primaryTypographyProps={{ variant: 'body2' }}
             />
           </ListItem>
         </List>
 
         <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
-          第6条（著作権）
+          第8条（コンテンツの公開・共有）
+        </Typography>
+        <Typography variant="body2" paragraph>
+          1.
+          ユーザーは、作成したセットリストを「公開」設定にすることで、他のユーザーや一般の方々とセットリストを共有することができます。
+        </Typography>
+        <Typography variant="body2" paragraph>
+          2.
+          公開されたセットリストは、専用URLを通じて誰でもアクセス可能となり、QRコード付きの画像として生成・共有することができます。
+        </Typography>
+        <Typography variant="body2" paragraph>
+          3. ユーザーは、いつでも公開設定を変更し、セットリストを非公開にすることができます。
+        </Typography>
+
+        <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
+          第9条（著作権）
         </Typography>
         <Typography variant="body2" paragraph>
           1.
@@ -183,11 +279,26 @@ const TermsPage: React.FC = () => {
         </Typography>
         <Typography variant="body2" paragraph>
           2.
-          ユーザーは、本サービスを利用して作成したコンテンツについて、当方に対し、世界的、非独占的、無償、サブライセンス可能かつ譲渡可能な使用、複製、配布、派生著作物の作成、表示および実行に関するライセンスを付与します。
+          ユーザーは、本サービスを利用して作成したコンテンツについて、当方に対し、世界的、非独占的、無償、サブライセンス可能かつ譲渡可能な使用、複製、配布、派生著作物の作成、表示および実行に関するライセンスを付与します。ただし、このライセンスはサービス提供に必要な範囲に限定されます。
         </Typography>
 
         <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
-          第7条（免責事項）
+          第10条（アカウント削除・データ削除）
+        </Typography>
+        <Typography variant="body2" paragraph>
+          1. ユーザーは、いつでもアカウントを削除することができます。
+        </Typography>
+        <Typography variant="body2" paragraph>
+          2.
+          アカウント削除を実行すると、関連するすべてのデータ（楽曲データ、セットリストデータ、メール履歴、セキュリティログ等を含む）が完全に削除され、復元することはできません。
+        </Typography>
+        <Typography variant="body2" paragraph>
+          3.
+          削除されたアカウントのメールアドレスは、削除後にあらためて利用登録に使用することができます。
+        </Typography>
+
+        <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
+          第11条（免責事項）
         </Typography>
         <Typography variant="body2" paragraph>
           1.
@@ -199,14 +310,14 @@ const TermsPage: React.FC = () => {
         </Typography>
 
         <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
-          第8条（サービス内容の変更等）
+          第12条（サービス内容の変更等）
         </Typography>
         <Typography variant="body2" paragraph>
           当方は、ユーザーへの事前の告知をもって、本サービスの内容を変更、追加または廃止することがあり、ユーザーはこれを承諾するものとします。
         </Typography>
 
         <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
-          第9条（利用規約の変更）
+          第13条（利用規約の変更）
         </Typography>
         <Typography variant="body2" paragraph>
           1.
@@ -228,28 +339,28 @@ const TermsPage: React.FC = () => {
         </List>
 
         <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
-          第10条（個人情報の取扱い）
+          第14条（個人情報の取扱い）
         </Typography>
         <Typography variant="body2" paragraph>
           当方は、本サービスの利用によって取得する個人情報については、当方「プライバシーポリシー」に従い適切に取り扱うものとします。
         </Typography>
 
         <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
-          第11条（通知または連絡）
+          第15条（通知または連絡）
         </Typography>
         <Typography variant="body2" paragraph>
           ユーザーと当方との間の通知または連絡は、当方の定める方法によって行うものとします。
         </Typography>
 
         <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
-          第12条（権利義務の譲渡の禁止）
+          第16条（権利義務の譲渡の禁止）
         </Typography>
         <Typography variant="body2" paragraph>
           ユーザーは、当方の書面による事前の承諾なく、利用契約上の地位または本規約に基づく権利もしくは義務を第三者に譲渡し、または担保に供することはできません。
         </Typography>
 
         <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
-          第13条（準拠法・裁判管轄）
+          第17条（準拠法・裁判管轄）
         </Typography>
         <Typography variant="body2" paragraph>
           1. 本規約の解釈にあたっては、日本法を準拠法とします。

@@ -37,8 +37,40 @@ const PrivacyPage: React.FC = () => {
           第2条（個人情報の収集方法）
         </Typography>
         <Typography variant="body2" paragraph>
-          当方は、ユーザーが利用登録をする際にメールアドレス、ユーザー名、パスワードなどの個人情報をお尋ねすることがあります。また、ユーザーがサービスを利用される際に、楽曲情報、セットリスト情報などのコンテンツデータを収集することがあります。
+          当方は、以下の方法で個人情報を収集します：
         </Typography>
+        <List dense sx={{ pl: 2 }}>
+          <ListItem>
+            <ListItemText
+              primary="1. 利用登録時：メールアドレス、ユーザー名、パスワード"
+              primaryTypographyProps={{ variant: 'body2' }}
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemText
+              primary="2. Google OAuth認証時：メールアドレス、表示名、プロフィール画像URL、認証プロバイダー情報"
+              primaryTypographyProps={{ variant: 'body2' }}
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemText
+              primary="3. サービス利用時：楽曲情報、セットリスト情報などのコンテンツデータ"
+              primaryTypographyProps={{ variant: 'body2' }}
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemText
+              primary="4. セキュリティ目的：IPアドレス（匿名化して保存）、User-Agent、アクセスログ、認証試行ログ"
+              primaryTypographyProps={{ variant: 'body2' }}
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemText
+              primary="5. アカウント管理：メールアドレス変更履歴、最終ログイン日時、認証状態"
+              primaryTypographyProps={{ variant: 'body2' }}
+            />
+          </ListItem>
+        </List>
 
         <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
           第3条（個人情報を収集・利用する目的）
@@ -85,7 +117,19 @@ const PrivacyPage: React.FC = () => {
           </ListItem>
           <ListItem>
             <ListItemText
-              primary="7. 上記の利用目的に付随する目的"
+              primary="7. セキュリティ保護：不正アクセス検知、ブルートフォース攻撃防止、脅威検出"
+              primaryTypographyProps={{ variant: 'body2' }}
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemText
+              primary="8. サービス改善：利用統計の分析（個人を特定しない形式）"
+              primaryTypographyProps={{ variant: 'body2' }}
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemText
+              primary="9. 上記の利用目的に付随する目的"
               primaryTypographyProps={{ variant: 'body2' }}
             />
           </ListItem>
@@ -104,7 +148,37 @@ const PrivacyPage: React.FC = () => {
         </Typography>
 
         <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
-          第5条（個人情報の第三者提供）
+          第5条（第三者サービスとの連携）
+        </Typography>
+        <Typography variant="body2" paragraph>
+          1. 当方は、サービス提供のため以下の第三者サービスと連携しています：
+        </Typography>
+        <List dense sx={{ pl: 2 }}>
+          <ListItem>
+            <ListItemText
+              primary="・Google OAuth：Google認証サービス（Google Inc.）"
+              primaryTypographyProps={{ variant: 'body2' }}
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemText
+              primary="・Resend：メール送信サービス（Resend, Inc.）- 認証メール、パスワードリセットメール等"
+              primaryTypographyProps={{ variant: 'body2' }}
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemText
+              primary="・Vercel：ホスティング・データベースサービス（Vercel Inc.）"
+              primaryTypographyProps={{ variant: 'body2' }}
+            />
+          </ListItem>
+        </List>
+        <Typography variant="body2" paragraph>
+          2. これらのサービスへのデータ提供は、サービス提供に必要な最小限の情報に限定されます。
+        </Typography>
+
+        <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
+          第6条（個人情報の第三者提供）
         </Typography>
         <Typography variant="body2" paragraph>
           1.
@@ -170,7 +244,7 @@ const PrivacyPage: React.FC = () => {
         </List>
 
         <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
-          第6条（個人情報の開示）
+          第7条（個人情報の開示）
         </Typography>
         <Typography variant="body2" paragraph>
           1.
@@ -202,7 +276,7 @@ const PrivacyPage: React.FC = () => {
         </Typography>
 
         <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
-          第7条（個人情報の訂正および削除）
+          第8条（個人情報の訂正および削除）
         </Typography>
         <Typography variant="body2" paragraph>
           1.
@@ -218,7 +292,7 @@ const PrivacyPage: React.FC = () => {
         </Typography>
 
         <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
-          第8条（個人情報の利用停止等）
+          第9条（個人情報の利用停止等）
         </Typography>
         <Typography variant="body2" paragraph>
           1.
@@ -234,7 +308,22 @@ const PrivacyPage: React.FC = () => {
         </Typography>
 
         <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
-          第9条（Cookieの使用）
+          第10条（IPアドレスの収集と匿名化）
+        </Typography>
+        <Typography variant="body2" paragraph>
+          1. 当方は、セキュリティ保護とサービス改善のため、ユーザーのIPアドレスを収集します。
+        </Typography>
+        <Typography variant="body2" paragraph>
+          2.
+          収集したIPアドレスは、SHA256ハッシュ化とソルト処理により不可逆的に匿名化して保存し、個人の特定はできません。
+        </Typography>
+        <Typography variant="body2" paragraph>
+          3.
+          IPアドレス情報は、不正アクセス検知、ブルートフォース攻撃防止、地域別統計分析（個人を特定しない形式）に利用されます。
+        </Typography>
+
+        <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
+          第11条（Cookieの使用）
         </Typography>
         <Typography variant="body2" paragraph>
           1. 当方のサービスは、一部Cookieを利用しています。
@@ -249,7 +338,43 @@ const PrivacyPage: React.FC = () => {
         </Typography>
 
         <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
-          第10条（セキュリティ）
+          第12条（セキュリティログ・監査ログ）
+        </Typography>
+        <Typography variant="body2" paragraph>
+          1. 当方は、セキュリティ保護とサービス品質向上のため、以下のログ情報を収集・保存します：
+        </Typography>
+        <List dense sx={{ pl: 2 }}>
+          <ListItem>
+            <ListItemText
+              primary="・セキュリティイベントログ：ログイン成功・失敗、アカウント作成等"
+              primaryTypographyProps={{ variant: 'body2' }}
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemText
+              primary="・脅威検出ログ：不正アクセス試行、異常な活動パターン"
+              primaryTypographyProps={{ variant: 'body2' }}
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemText
+              primary="・監査ログ：重要操作の実行記録（アカウント変更、データ削除等）"
+              primaryTypographyProps={{ variant: 'body2' }}
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemText
+              primary="・レート制限ログ：API利用頻度とアクセス制限の実行記録"
+              primaryTypographyProps={{ variant: 'body2' }}
+            />
+          </ListItem>
+        </List>
+        <Typography variant="body2" paragraph>
+          2. これらのログは、セキュリティ保護・システム改善・法的要求への対応に使用されます。
+        </Typography>
+
+        <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
+          第13条（セキュリティ）
         </Typography>
         <Typography variant="body2" paragraph>
           当方は、個人情報の紛失、破壊、改ざん及び漏洩などのリスクに対して、以下のセキュリティ対策を実施しています：
@@ -300,41 +425,62 @@ const PrivacyPage: React.FC = () => {
         </List>
 
         <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
-          第11条（データ保存・削除ポリシー）
+          第14条（データ保存・削除ポリシー）
         </Typography>
         <Typography variant="body2" paragraph>
           1. 当方は、ユーザーがサービスを利用される限り、個人情報を保存します。
         </Typography>
         <Typography variant="body2" paragraph>
-          2. 当方は、セキュリティ保護のため、以下のデータを定期的に自動削除します：
+          2. 当方は、プライバシー保護とシステム効率化のため、以下のデータを定期的に自動削除します：
         </Typography>
         <List dense sx={{ pl: 2 }}>
           <ListItem>
             <ListItemText
-              primary="・レート制限ログ（一定期間経過後）"
+              primary="・セキュリティイベントログ（90日後自動削除）"
               primaryTypographyProps={{ variant: 'body2' }}
             />
           </ListItem>
           <ListItem>
             <ListItemText
-              primary="・脅威検出ログ（一定期間経過後）"
+              primary="・脅威検出ログ（30日後自動削除）"
               primaryTypographyProps={{ variant: 'body2' }}
             />
           </ListItem>
           <ListItem>
             <ListItemText
-              primary="・セッショントークン（期限切れ後）"
+              primary="・レート制限ログ（期限切れ後即座削除）"
+              primaryTypographyProps={{ variant: 'body2' }}
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemText
+              primary="・認証トークン類（期限切れ後即座削除）"
+              primaryTypographyProps={{ variant: 'body2' }}
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemText
+              primary="・メール認証トークン（24時間後自動削除）"
+              primaryTypographyProps={{ variant: 'body2' }}
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemText
+              primary="・パスワードリセットトークン（1時間後自動削除）"
               primaryTypographyProps={{ variant: 'body2' }}
             />
           </ListItem>
         </List>
         <Typography variant="body2" paragraph>
-          3.
-          ユーザーは、アカウントを削除することで、関連する個人情報を簡単に削除することができます。
+          3. 自動削除処理は毎日午前2時に実行されます。
+        </Typography>
+        <Typography variant="body2" paragraph>
+          4.
+          ユーザーは、アカウントを削除することで、関連するすべての個人情報（楽曲データ、セットリストデータ、メール履歴等を含む）を完全に削除することができます。
         </Typography>
 
         <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
-          第12条（プライバシーポリシーの変更）
+          第15条（プライバシーポリシーの変更）
         </Typography>
         <Typography variant="body2" paragraph>
           1.
@@ -346,7 +492,7 @@ const PrivacyPage: React.FC = () => {
         </Typography>
 
         <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
-          第13条（お問い合わせ窓口）
+          第16条（お問い合わせ窓口）
         </Typography>
         <Typography variant="body2" paragraph>
           本ポリシーに関するお問い合わせは、本サービス内のお問い合わせフォームよりお願いいたします。
