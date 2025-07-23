@@ -42,13 +42,18 @@ export default function RegisterClient() {
   const [register, { loading }] = useMutation(REGISTER, {
     onCompleted: async (data) => {
       try {
-        // useAuthのloginメソッドを使用して認証状態を同期
-        const result = await login(data.register.token);
-        if (result.success) {
-          // 新規登録成功後はホーム画面へ遷移（認証状態が更新済み）
-          router.push('/');
+        // 新しいレスポンス形式：メール認証が必要
+        if (data.register.requiresEmailVerification) {
+          // メール認証画面に遷移
+          router.push(`/auth/check-email?email=${encodeURIComponent(data.register.email)}`);
         } else {
-          setError('認証の設定に失敗しました');
+          // 従来のトークンレスポンス（Google認証など）
+          const result = await login(data.register.token);
+          if (result.success) {
+            router.push('/');
+          } else {
+            setError('認証の設定に失敗しました');
+          }
         }
       } catch (error) {
         console.error('Auth login failed:', error);

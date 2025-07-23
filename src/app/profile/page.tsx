@@ -335,6 +335,9 @@ function ProfileContent() {
         return;
       }
 
+      // プロフィールページからの認証であることを示すCookieを設定
+      document.cookie = 'profile-auth-context=true; path=/; max-age=300'; // 5分間有効
+
       // NextAuthのGoogle認証を使用（アカウント選択を強制）
       const result = await signIn('google', {
         redirect: false,

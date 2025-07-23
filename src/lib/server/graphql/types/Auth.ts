@@ -20,6 +20,30 @@ export class AuthPayload {
   user!: User;
 }
 
+@ObjectType()
+export class RegistrationResponse {
+  @Field(() => Boolean)
+  success!: boolean;
+
+  @Field(() => String)
+  message!: string;
+
+  @Field(() => String)
+  email!: string;
+
+  @Field(() => Boolean)
+  requiresEmailVerification!: boolean;
+}
+
+@ObjectType()
+export class EmailVerificationStatusResponse {
+  @Field(() => Boolean)
+  isVerified!: boolean;
+
+  @Field(() => Boolean)
+  canLogin!: boolean;
+}
+
 @InputType()
 export class RegisterInput {
   @EmailField()

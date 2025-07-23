@@ -162,6 +162,8 @@ export interface Messages {
     invalidGoogleToken: string;
     emailMismatch: string;
     googleEmailChangeSuccess: string;
+    emailNotVerified: string;
+    registrationSuccessEmailVerification: string;
   };
 
   // エラーメッセージ
@@ -900,6 +902,10 @@ const jaMessages: Messages = {
     invalidGoogleToken: 'Google認証トークンが無効です。再度認証してください。',
     emailMismatch: 'リクエストされたメールアドレスがGoogle認証と一致しません。',
     googleEmailChangeSuccess: 'Google認証によりメールアドレスが正常に変更されました。',
+    emailNotVerified:
+      'メールアドレスが認証されていません。メールに送信された認証リンクをクリックしてアカウントを有効化してください。',
+    registrationSuccessEmailVerification:
+      'アカウントが作成されました。メールアドレスに送信された認証リンクをクリックしてアカウントを有効化してください。',
   },
   errors: {
     serverError: 'サーバーエラーが発生しました',
@@ -1725,6 +1731,10 @@ const enMessages: Messages = {
     emailMismatch: 'The requested email address does not match Google authentication.',
     googleEmailChangeSuccess:
       'Email address has been successfully changed using Google authentication.',
+    emailNotVerified:
+      'Email address is not verified. Please click the verification link sent to your email to activate your account.',
+    registrationSuccessEmailVerification:
+      'Account has been created. Please click the verification link sent to your email to activate your account.',
   },
   errors: {
     serverError: 'Server error occurred',

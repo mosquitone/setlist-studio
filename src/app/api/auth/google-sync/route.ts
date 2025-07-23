@@ -108,8 +108,24 @@ async function handleGoogleSync(req: NextRequest) {
         },
       });
 
-      // 認証成功、ホームページにリダイレクト
-      const redirectResponse = NextResponse.redirect(`${req.nextUrl.origin}/`);
+      // セッションストレージまたはクエリパラメータから元のページを取得
+      // プロフィール画面からの認証かどうかを判定
+      const cookieHeader = req.headers.get('cookie') || '';
+      const profileContext = cookieHeader.includes('profile-auth-context=true');
+
+      const redirectUrl = profileContext
+        ? `${req.nextUrl.origin}/profile`
+        : `${req.nextUrl.origin}/`;
+
+      const redirectResponse = NextResponse.redirect(redirectUrl);
+
+      // プロフィールコンテキストCookieをクリア
+      if (profileContext) {
+        redirectResponse.cookies.set('profile-auth-context', '', {
+          path: '/',
+          maxAge: 0, // 即座に削除
+        });
+      }
 
       // Cookieを転送
       const setCookieHeader = authResponse.headers.get('set-cookie');

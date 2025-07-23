@@ -91,7 +91,7 @@ const eslintConfig = [
         'error',
         {
           'prefer-inline': false,
-          'considerQueryString': true,
+          considerQueryString: true,
         },
       ],
     },

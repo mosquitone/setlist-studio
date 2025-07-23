@@ -1,6 +1,6 @@
 'use client';
 
-import { useMutation, gql } from '@apollo/client';
+import { useMutation, useQuery, gql } from '@apollo/client';
 import {
   Email as EmailIcon,
   CheckCircle as CheckCircleIcon,
@@ -35,6 +35,15 @@ const RESEND_VERIFICATION_EMAIL = gql`
   }
 `;
 
+const CHECK_EMAIL_VERIFICATION_STATUS = gql`
+  query CheckEmailVerificationStatus($email: String!) {
+    checkEmailVerificationStatus(email: $email) {
+      isVerified
+      canLogin
+    }
+  }
+`;
+
 export default function CheckEmailClient() {
   const { messages } = useI18n();
   const [email, setEmail] = useState('');
@@ -43,7 +52,20 @@ export default function CheckEmailClient() {
   const [resendCount, setResendCount] = useState(0);
   const [successMessage, setSuccessMessage] = useState('');
   const [error, setError] = useState('');
+  const [isVerified, setIsVerified] = useState(false);
   const searchParams = useSearchParams();
+
+  // 認証状態をポーリングでチェック
+  useQuery(CHECK_EMAIL_VERIFICATION_STATUS, {
+    variables: { email },
+    skip: !email, // emailが設定されるまでスキップ
+    pollInterval: 5000, // 5秒ごとにポーリング
+    onCompleted: (data) => {
+      if (data?.checkEmailVerificationStatus?.isVerified) {
+        setIsVerified(true);
+      }
+    },
+  });
 
   const [resendVerificationEmail, { loading: resendLoading }] = useMutation(
     RESEND_VERIFICATION_EMAIL,
@@ -117,12 +139,12 @@ export default function CheckEmailClient() {
     {
       label: messages.auth.emailVerificationPending,
       content: `${email} ${messages.auth.emailVerificationPendingDescription}`,
-      completed: false,
+      completed: isVerified,
     },
     {
       label: messages.auth.loginAvailable,
       content: messages.auth.loginAvailableDescription,
-      completed: false,
+      completed: isVerified,
     },
   ];
 
@@ -149,6 +171,23 @@ export default function CheckEmailClient() {
           {error && (
             <Alert severity="error" sx={{ mb: 3 }}>
               {error}
+            </Alert>
+          )}
+
+          {isVerified && (
+            <Alert severity="success" sx={{ mb: 3 }}>
+              <Typography variant="body2" sx={{ mb: 2 }}>
+                🎉 メール認証が完了しました！ログインできるようになりました。
+              </Typography>
+              <Button
+                component={Link}
+                href="/login"
+                variant="contained"
+                color="primary"
+                size="small"
+              >
+                ログインページへ
+              </Button>
             </Alert>
           )}
 

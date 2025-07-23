@@ -31,6 +31,8 @@ import {
   ChangePasswordInput,
   ChangePasswordResponse,
   PasswordResetTokenInfo,
+  RegistrationResponse,
+  EmailVerificationStatusResponse,
 } from '../types/Auth';
 
 import { EmailHistoryResolver } from './EmailHistoryResolver';
@@ -71,11 +73,11 @@ export class AuthResolver {
    * @param ctx - GraphQLコンテキスト
    * @returns 認証トークンとユーザー情報
    */
-  @Mutation(() => AuthPayload)
+  @Mutation(() => RegistrationResponse)
   async register(
     @Arg('input', () => RegisterInput) input: RegisterInput,
     @Ctx() ctx: Context,
-  ): Promise<AuthPayload> {
+  ): Promise<RegistrationResponse> {
     // メールアドレスの重複チェック
     const existingEmailUser = await ctx.prisma.user.findUnique({
       where: { email: input.email },
@@ -118,25 +120,6 @@ export class AuthResolver {
         emailVerificationExpires: verificationExpires,
       },
     });
-
-    const jwtSecret = process.env.JWT_SECRET;
-    if (!jwtSecret) {
-      throw new Error(
-        ctx.i18n?.messages.auth.serverError ||
-          'サーバーエラーが発生しました。しばらく時間をおいてから再度お試しください。',
-      );
-    }
-    const token = jwt.sign(
-      {
-        userId: user.id,
-        email: user.email,
-        username: user.username,
-      },
-      jwtSecret,
-      {
-        expiresIn: '2h',
-      },
-    );
 
     // メール送信とログ記録を非同期で実行（レスポンスを待たない）
     // 失敗してもユーザー登録は成功として扱う
@@ -195,9 +178,14 @@ export class AuthResolver {
       }
     });
 
+    // メール認証が必要な登録レスポンスを返す
     return {
-      token,
-      user,
+      success: true,
+      message:
+        ctx.i18n?.messages.auth.registrationSuccessEmailVerification ||
+        'アカウントが作成されました。メールアドレスに送信された認証リンクをクリックしてアカウントを有効化してください。',
+      email: user.email,
+      requiresEmailVerification: true,
     };
   }
 
@@ -253,6 +241,27 @@ export class AuthResolver {
       throw new Error(
         ctx.i18n?.messages.auth.invalidCredentials ||
           'メールアドレスまたはパスワードが正しくありません',
+      );
+    }
+
+    // メール認証チェック（メール認証プロバイダーのみ）
+    if (user.authProvider === 'email' && !user.emailVerified) {
+      // メール未認証ログインをログに記録
+      await logSecurityEventDB(ctx.prisma, {
+        type: SecurityEventType.LOGIN_FAILURE,
+        severity: SecurityEventSeverity.MEDIUM,
+        userId: user.id,
+        ipAddress: getClientIP(ctx),
+        userAgent: ctx.req?.headers['user-agent'],
+        details: {
+          email: user.email,
+          reason: 'email_not_verified',
+        },
+      });
+
+      throw new Error(
+        ctx.i18n?.messages.auth.emailNotVerified ||
+          'メールアドレスが認証されていません。メールに送信された認証リンクをクリックしてアカウントを有効化してください。',
       );
     }
 
@@ -1004,6 +1013,35 @@ export class AuthResolver {
     return {
       email: maskedEmail,
       isValid: true,
+    };
+  }
+
+  /**
+   * メール認証状態をチェック
+   */
+  @Query(() => EmailVerificationStatusResponse)
+  async checkEmailVerificationStatus(
+    @Arg('email', () => String) email: string,
+    @Ctx() ctx: Context,
+  ): Promise<EmailVerificationStatusResponse> {
+    const user = await ctx.prisma.user.findUnique({
+      where: { email },
+      select: {
+        emailVerified: true,
+        authProvider: true,
+      },
+    });
+
+    if (!user) {
+      return {
+        isVerified: false,
+        canLogin: false,
+      };
+    }
+
+    return {
+      isVerified: user.emailVerified,
+      canLogin: user.emailVerified || user.authProvider === 'google',
     };
   }
 }
