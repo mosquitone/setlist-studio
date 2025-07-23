@@ -25,7 +25,7 @@ import { useI18n } from '@/hooks/useI18n';
 import { useImageGeneration } from '@/hooks/useImageGeneration';
 import { useSetlistActions } from '@/hooks/useSetlistActions';
 import { GET_SETLIST, TOGGLE_SETLIST_VISIBILITY } from '@/lib/server/graphql/apollo-operations';
-import { Theme } from '@/types/common';
+import { Theme, THEMES } from '@/types/common';
 import { SetlistData } from '@/types/components';
 
 export default function SetlistDetailPage() {
@@ -88,12 +88,12 @@ export default function SetlistDetailPage() {
     if (data?.setlist && !themeInitialized) {
       if (
         data.setlist.theme &&
-        (data.setlist.theme === 'black' || data.setlist.theme === 'white')
+        (data.setlist.theme === THEMES.BLACK || data.setlist.theme === THEMES.WHITE)
       ) {
         setSelectedTheme(data.setlist.theme);
       } else {
         // Fallback to black if no theme is saved
-        setSelectedTheme('black');
+        setSelectedTheme(THEMES.BLACK);
       }
       setThemeInitialized(true);
     }

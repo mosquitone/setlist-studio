@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { Resolver, Mutation, Query, Arg, Ctx, UseMiddleware } from 'type-graphql';
 
+import { AUTH_PROVIDERS } from '../../../../types/common';
 import { I18nContext } from '../../../i18n/context';
 import { createEmailRateLimit } from '../../../security/email-rate-limit';
 import {
@@ -115,7 +116,7 @@ export class AuthResolver {
         email: input.email,
         username: input.username,
         password: hashedPassword,
-        authProvider: 'email',
+        authProvider: AUTH_PROVIDERS.EMAIL,
         emailVerificationToken: verificationToken,
         emailVerificationExpires: verificationExpires,
       },
@@ -245,7 +246,7 @@ export class AuthResolver {
     }
 
     // メール認証チェック（メール認証プロバイダーのみ）
-    if (user.authProvider === 'email' && !user.emailVerified) {
+    if (user.authProvider === AUTH_PROVIDERS.EMAIL && !user.emailVerified) {
       // メール未認証ログインをログに記録
       await logSecurityEventDB(ctx.prisma, {
         type: SecurityEventType.LOGIN_FAILURE,
@@ -605,7 +606,7 @@ export class AuthResolver {
     }
 
     // 現在のパスワードを確認（Google認証ユーザーはスキップ）
-    if (user.authProvider !== 'google') {
+    if (user.authProvider !== AUTH_PROVIDERS.GOOGLE) {
       if (!input.currentPassword) {
         throw new Error(
           ctx.i18n?.messages.auth.currentPasswordIncorrect || '現在のパスワードが正しくありません',
@@ -669,7 +670,7 @@ export class AuthResolver {
 
     // Google認証ユーザーの場合は新しいパスワードもハッシュ化して保存
     let pendingPassword: string | undefined;
-    if (user.authProvider === 'google' && input.newPassword) {
+    if (user.authProvider === AUTH_PROVIDERS.GOOGLE && input.newPassword) {
       pendingPassword = await bcrypt.hash(input.newPassword, 12);
     }
 
@@ -911,7 +912,7 @@ export class AuthResolver {
     }
 
     // Google認証ユーザーはパスワード変更不可
-    if (user.authProvider === 'google') {
+    if (user.authProvider === AUTH_PROVIDERS.GOOGLE) {
       await logSecurityEventDB(ctx.prisma, {
         type: SecurityEventType.PASSWORD_CHANGE_FAILURE,
         severity: SecurityEventSeverity.MEDIUM,
@@ -1041,7 +1042,7 @@ export class AuthResolver {
 
     return {
       isVerified: user.emailVerified,
-      canLogin: user.emailVerified || user.authProvider === 'google',
+      canLogin: user.emailVerified || user.authProvider === AUTH_PROVIDERS.GOOGLE,
     };
   }
 }

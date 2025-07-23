@@ -41,6 +41,8 @@ export default function LoginClient() {
     if (error === 'email_account_exists' && emailParam) {
       showError(messages.errors.emailAccountExists.replace('{email}', emailParam));
       setEmail(emailParam); // メールアドレスを入力欄に自動入力
+    } else if (error === 'google_account_exists' && emailParam) {
+      showError(messages.errors.googleAccountExists.replace('{email}', emailParam));
     } else if (error === 'auth_failed') {
       showError(messages.errors.googleAuthFailed);
     } else if (error === 'server_error') {

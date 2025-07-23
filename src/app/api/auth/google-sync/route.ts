@@ -13,6 +13,36 @@ import {
 import { getSecureClientIP } from '@/lib/security/security-utils';
 import { generateSafeUsername } from '@/lib/server/auth/username-generator';
 import { prisma } from '@/lib/server/prisma';
+import { AuthProvider, AUTH_PROVIDERS } from '@/types/common';
+
+// 既存アカウント検出時の共通処理
+async function handleExistingAccountDetection(
+  req: NextRequest,
+  email: string,
+  authProvider: AuthProvider,
+  existingUserId?: string,
+) {
+  const isEmailProvider = authProvider === AUTH_PROVIDERS.EMAIL;
+
+  await logSecurityEventDB(prisma, {
+    type: SecurityEventType.OAUTH_LOGIN_FAILURE,
+    severity: isEmailProvider ? SecurityEventSeverity.MEDIUM : SecurityEventSeverity.HIGH,
+    ipAddress: getSecureClientIP(req),
+    userAgent: req.headers.get('user-agent') || undefined,
+    resource: req.url,
+    details: {
+      provider: 'google',
+      reason: isEmailProvider ? 'email_account_exists' : 'google_account_switch_attempt',
+      email,
+      ...(existingUserId && { existingUserId }),
+    },
+  });
+
+  const errorType = isEmailProvider ? 'email_account_exists' : 'google_account_exists';
+  return NextResponse.redirect(
+    `${req.nextUrl.origin}/login?error=${errorType}&email=${encodeURIComponent(email)}`,
+  );
+}
 
 async function handleGoogleSync(req: NextRequest) {
   try {
@@ -52,7 +82,7 @@ async function handleGoogleSync(req: NextRequest) {
           email: session.user.email,
           username,
           password: '', // Google認証なのでパスワードは空
-          authProvider: 'google',
+          authProvider: AUTH_PROVIDERS.GOOGLE,
           emailVerified: true,
         },
       });
@@ -71,24 +101,14 @@ async function handleGoogleSync(req: NextRequest) {
           username: user.username,
         },
       });
-    } else if (user.authProvider === 'email') {
-      // 既存のメール認証ユーザーが Google 認証でログインしようとした場合
-      // アカウントが既に存在することをユーザーに通知し、メール認証でのログインを促す
-      await logSecurityEventDB(prisma, {
-        type: SecurityEventType.OAUTH_LOGIN_FAILURE,
-        severity: SecurityEventSeverity.MEDIUM,
-        ipAddress: getSecureClientIP(req),
-        userAgent: req.headers.get('user-agent') || undefined,
-        resource: req.url,
-        details: {
-          provider: 'google',
-          reason: 'email_account_exists',
-          email: session.user.email,
-        },
-      });
-
-      return NextResponse.redirect(
-        `${req.nextUrl.origin}/login?error=email_account_exists&email=${encodeURIComponent(session.user.email)}`,
+    } else {
+      // 既存アカウント（メール認証またはGoogle認証）が存在する場合
+      // 重複登録を防止し、適切なログインを促す
+      return await handleExistingAccountDetection(
+        req,
+        session.user.email,
+        user.authProvider as AuthProvider,
+        user.authProvider === AUTH_PROVIDERS.GOOGLE ? user.id : undefined,
       );
     }
 

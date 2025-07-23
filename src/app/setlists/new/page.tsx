@@ -9,6 +9,7 @@ import SetlistForm from '@/components/forms/SetlistForm';
 import { useSnackbar } from '@/components/providers/SnackbarProvider';
 import { useI18n } from '@/hooks/useI18n';
 import { CREATE_SETLIST, GET_SETLIST, GET_SETLISTS } from '@/lib/server/graphql/apollo-operations';
+import { THEMES } from '@/types/common';
 import { SetlistFormValues } from '@/types/components';
 import { GetSetlistResponse, SetlistItem } from '@/types/graphql';
 
@@ -26,7 +27,7 @@ export default function NewSetlistPage() {
     eventDate: '',
     openTime: '',
     startTime: '',
-    theme: 'black',
+    theme: THEMES.BLACK,
     items: [{ title: '', note: '' }],
   });
 
@@ -81,7 +82,7 @@ export default function NewSetlistPage() {
         eventDate: setlist.eventDate || '',
         openTime: setlist.openTime || '',
         startTime: setlist.startTime || '',
-        theme: setlist.theme || 'white',
+        theme: setlist.theme || THEMES.WHITE,
         items:
           setlist.items.length > 0
             ? [...setlist.items]

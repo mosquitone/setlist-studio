@@ -30,6 +30,7 @@ export interface ErrorMessages {
   // Google OAuth エラー
   emailAccountExists: string;
   googleAuthFailed: string;
+  googleAccountExists: string;
 }
 
 // 日本語版
@@ -63,6 +64,8 @@ export const errorsJa: ErrorMessages = {
   emailAccountExists:
     'このメールアドレス（{email}）は既にメール認証で登録されています。パスワードでログインしてください。',
   googleAuthFailed: 'Google認証に失敗しました。再度お試しください。',
+  googleAccountExists:
+    'このメールアドレス（{email}）は既に別のGoogleアカウントで登録されています。元のGoogleアカウントでログインしてください。',
 };
 
 // 英語版
@@ -94,4 +97,6 @@ export const errorsEn: ErrorMessages = {
   emailAccountExists:
     'This email address ({email}) is already registered with email authentication. Please login with your password.',
   googleAuthFailed: 'Google authentication failed. Please try again.',
+  googleAccountExists:
+    'This email address ({email}) is already registered with a different Google account. Please login with your original Google account.',
 };

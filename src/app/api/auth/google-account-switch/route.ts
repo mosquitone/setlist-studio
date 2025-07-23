@@ -13,6 +13,7 @@ import { hashIP } from '@/lib/security/security-utils';
 import { DatabaseThreatDetection, ThreatSeverity } from '@/lib/security/threat-detection-db';
 import { emailService } from '@/lib/server/email/emailService';
 import { prisma } from '@/lib/server/prisma';
+import { AUTH_PROVIDERS } from '@/types/common';
 
 // Threat detection instance
 const threatDetection = new DatabaseThreatDetection(prisma);
@@ -82,7 +83,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    if (!originalUser || originalUser.authProvider !== 'google') {
+    if (!originalUser || originalUser.authProvider !== AUTH_PROVIDERS.GOOGLE) {
       return NextResponse.json(
         { success: false, message: '元のGoogleアカウントが見つかりません。' },
         { status: 404 },
@@ -125,7 +126,7 @@ export async function POST(request: NextRequest) {
       } = {
         email: newGoogleEmail,
         emailVerified: true, // Google認証により検証済み
-        authProvider: newPassword ? 'email' : 'google',
+        authProvider: newPassword ? AUTH_PROVIDERS.EMAIL : AUTH_PROVIDERS.GOOGLE,
       };
 
       if (newPassword) {

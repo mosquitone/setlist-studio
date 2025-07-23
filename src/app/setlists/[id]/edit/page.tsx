@@ -10,6 +10,7 @@ import SetlistForm from '@/components/forms/SetlistForm';
 import { useSnackbar } from '@/components/providers/SnackbarProvider';
 import { GET_SETLIST, UPDATE_SETLIST } from '@/lib/server/graphql/apollo-operations';
 import { formatDateForInput } from '@/lib/shared/dateUtils';
+import { THEMES } from '@/types/common';
 import { SetlistFormValues } from '@/types/components';
 
 export default function EditSetlistPage() {
@@ -63,7 +64,7 @@ export default function EditSetlistPage() {
     eventDate: formatDateForInput(setlist.eventDate),
     openTime: setlist.openTime || '',
     startTime: setlist.startTime || '',
-    theme: setlist.theme || 'black',
+    theme: setlist.theme || THEMES.BLACK,
     items: [...setlist.items]
       .sort((a, b) => a.order - b.order)
       .map((item) => ({

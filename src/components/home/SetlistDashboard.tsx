@@ -30,6 +30,7 @@ import { SingleDeleteModal } from '@/components/common/SingleDeleteModal';
 import { Button } from '@/components/common/ui/Button';
 import { useI18n } from '@/hooks/useI18n';
 import { DELETE_SETLIST, GET_SETLISTS } from '@/lib/server/graphql/apollo-operations';
+import { THEMES } from '@/types/common';
 
 import { Setlist } from '../../types/graphql';
 
@@ -150,12 +151,12 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
                 <Box
                   sx={{
                     background: `linear-gradient(135deg, ${
-                      setlist.theme === 'white'
+                      setlist.theme === THEMES.WHITE
                         ? '#f8fafc 0%, #e2e8f0 100%'
                         : '#1e293b 0%, #0f172a 100%'
                     })`,
                     p: 1.5,
-                    color: setlist.theme === 'white' ? 'text.primary' : 'white',
+                    color: setlist.theme === THEMES.WHITE ? 'text.primary' : 'white',
                     flex: 1,
                     display: 'flex',
                     flexDirection: 'column',
@@ -172,7 +173,7 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
                   >
                     <Avatar
                       sx={{
-                        bgcolor: setlist.theme === 'white' ? 'primary.main' : 'secondary.main',
+                        bgcolor: setlist.theme === THEMES.WHITE ? 'primary.main' : 'secondary.main',
                         width: 40,
                         height: 40,
                       }}
@@ -201,17 +202,17 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
                       />
                       <Chip
                         label={
-                          setlist.theme === 'white'
+                          setlist.theme === THEMES.WHITE
                             ? messages.pages.home.dashboard.white
                             : messages.pages.home.dashboard.black
                         }
                         size="small"
                         sx={{
                           bgcolor:
-                            setlist.theme === 'white'
+                            setlist.theme === THEMES.WHITE
                               ? 'rgba(59, 130, 246, 0.1)'
                               : 'rgba(239, 68, 68, 0.2)',
-                          color: setlist.theme === 'white' ? 'primary.main' : '#ef4444',
+                          color: setlist.theme === THEMES.WHITE ? 'primary.main' : '#ef4444',
                           fontWeight: 600,
                         }}
                       />

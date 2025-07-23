@@ -14,6 +14,7 @@ import { hashIP } from '@/lib/security/security-utils';
 import { DatabaseThreatDetection, ThreatSeverity } from '@/lib/security/threat-detection-db';
 import { emailService } from '@/lib/server/email/emailService';
 import { prisma } from '@/lib/server/prisma';
+import { AUTH_PROVIDERS } from '@/types/common';
 
 // Threat detection instance
 const threatDetection = new DatabaseThreatDetection(prisma);
@@ -78,7 +79,7 @@ export async function POST(request: NextRequest) {
       });
 
       // セキュリティチェック：Google認証ユーザーのみがこの機能を使用可能
-      if (!currentUser || currentUser.authProvider !== 'google') {
+      if (!currentUser || currentUser.authProvider !== AUTH_PROVIDERS.GOOGLE) {
         return NextResponse.json(
           { success: false, message: 'この機能はGoogle認証ユーザーのみ利用可能です。' },
           { status: 403 },
