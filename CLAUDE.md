@@ -135,13 +135,14 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 - **認証プロバイダー管理**: 登録方法追跡とGoogle→メール認証の移行機能
 
 **フロントエンドアーキテクチャ**
-- MUIProviderとApolloProviderを分離したProviderパターン
+- MUIProvider、ApolloProvider、SnackbarProviderを分離したProviderパターン
 - 青/赤カラースキーム、Interフォント付きカスタムMUIテーマ
 - HttpOnly Cookie認証とCSRF保護が設定されたApollo Client
 - NextJS App Routerによるクライアントサイドルーティング
 - html2canvasとQRコード統合を使用した高度な画像生成システム
 - UX向上のためのBlack/White選択による簡素化テーマシステム
 - Material-UIコンポーネントによるレスポンシブデザイン
+- 統一スナックバー通知システム（レスポンシブ配置・自動キューイング）
 
 **GraphQL統合**
 - Apollo ClientはHttpOnly Cookieによる自動認証を使用
@@ -308,6 +309,7 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 │   │   │   └── ui/
 │   │   │       ├── ErrorMessage.tsx
 │   │   │       ├── LoadingSpinner.tsx
+│   │   │       ├── Snackbar.tsx        # レスポンシブスナックバーコンポーネント
 │   │   │       ├── StepIcon.tsx        # 共通ステップアイコン
 │   │   │       └── SuccessMessage.tsx
 │   │   ├── forms/          # フォーム関連コンポーネント
@@ -324,7 +326,8 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 │   │   │   ├── Providers.tsx
 │   │   │   ├── MuiProvider.tsx
 │   │   │   ├── ApolloProvider.tsx
-│   │   │   └── CSRFProvider.tsx
+│   │   │   ├── CSRFProvider.tsx
+│   │   │   └── SnackbarProvider.tsx
 │   │   ├── setlist/        # セットリスト専用コンポーネント
 │   │   │   ├── SetlistActions.tsx
 │   │   │   ├── SetlistDetail.tsx
@@ -455,6 +458,7 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 
 #### **ユーザーエクスペリエンス**
 - **直感的UI**: Material-UI v5によるモダンでアクセシブルなインターフェース
+- **統一通知システム**: レスポンシブスナックバー（デスクトップ右下・モバイル上部中央）による一貫した操作フィードバック
 - **包括的ガイド**: 認証手順、機能説明、完全無料利用の強調
 - **エラーハンドリング**: 適切なエラーメッセージと回復手順
 - **SEO最適化**: 動的サイトマップ、メタデータ、検索エンジン対応
@@ -572,6 +576,16 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 最新の開発履歴と変更記録については、[HISTORY.md](./docs/project/HISTORY.md)を参照してください。
 
 ### 最新の主要更新
+- **スナックバー通知システム完全実装 (2025-07-23)**: UX大幅改善による統一された通知体験
+  - ✅ レスポンシブスナックバーコンポーネント実装（デスクトップ右下・モバイル上部中央）
+  - ✅ グローバルSnackbarProviderとuseSnackbarフック追加による全体管理
+  - ✅ 全認証フォーム（ログイン・登録・パスワードリセット）のAlert表示をスナックバー通知に移行
+  - ✅ mutation系処理（セットリスト・楽曲作成）の成功・エラー通知統一
+  - ✅ 画像生成の成功通知「Setlist Generated !」追加とUX向上
+  - ✅ 既存Alert表示コードの完全削除による200行以上のコード簡素化
+  - ✅ 国際化対応の成功メッセージ追加（messages.ts）
+  - ✅ 自動キューイング機能による複数メッセージの順次表示
+  - ✅ Material-UIスライドトランジション付きアニメーション実装
 - **メール認証必須化 (2025-07-23)**: セキュリティ強化によるメール認証の完全必須化
   - ✅ メールアドレス登録時の即座ログイン廃止
   - ✅ 認証完了まで全機能利用不可の厳格な制御
