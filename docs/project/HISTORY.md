@@ -1,5 +1,57 @@
 # 更新履歴と記録
 
+## 認証フローリファクタリング・コード品質向上 (2025-07-24)
+- **早期returnパターンの徹底**: else使用を排除し、コード可読性を大幅向上
+- **Google認証フロー改善**: 
+  - google-syncルートのelse使用を早期returnパターンに修正
+  - 条件分岐の明確化とエラーハンドリングの改善
+- **メール変更処理の関数分離**: ProfileClientの複雑な処理を認証プロバイダー別に分割
+  - validateEmailInput(): 共通メールアドレスバリデーション
+  - handleChangeEmailForGoogleUser(): Google認証ユーザー専用処理（パスワード設定対応）
+  - handleChangeEmailForEmailUser(): メール認証ユーザー専用処理（現在のパスワード確認）
+  - handleChangeEmail(): 安全なプロバイダー判定とルーティング
+- **技術的改善**:
+  - null/undefinedチェックの追加で型安全性向上
+  - プロバイダー固有ロジックの分離により保守性・テスト容易性向上
+  - 単一責任の原則に基づく関数設計
+
+## 未使用コード・API削除によるコードベース簡素化 (2025-07-24)
+- **EmailHistoryResolver整理**: 未使用メソッドと型定義の削除
+  - verifyEmailOwnershipForReturnメソッドを削除
+  - EmailOwnershipVerificationResponse型定義を削除
+  - cooldownUntilフィールドを削除（使用されていないため）
+- **APIルート統合**: google-email-changeルートを削除（google-syncに統合済み）
+  - 重複機能の排除による保守性向上
+  - APIエンドポイントの簡素化
+  - Google認証ユーザーのメール変更機能はgoogle-syncルートに統合
+- **i18nメッセージ整理**: 未使用メッセージ5件を削除
+  - 削除されたAPIに関連するエラーメッセージを整理
+- **効果**: コードベースの簡素化、保守性向上、技術的負債の削減
+
+## Material-UI アクセシビリティ・i18n完全対応 (2025-07-23)
+- **アクセシビリティ改善**: WAI-ARIA仕様準拠の実装
+  - Popover/Menuコンポーネントのaria-hidden問題を解決
+  - UserMenuコンポーネントにキーボードナビゲーション対応を追加
+  - SetlistActionsのSelectコンポーネントにaria-label属性を追加
+  - 全MenuItemにrole属性（menuitem/option）を適切に設定
+  - MuiProviderでアクセシビリティデフォルト設定を追加
+- **i18n（国際化）システム完成**:
+  - emailService.tsのハードコードされた日本語メッセージを完全i18n化
+  - EmailMessagesインターフェースにemail通知機能用型定義を追加
+  - 全i18nメッセージファイルの型定義を完備（14ファイル対応）
+  - TypeScriptコンパイルエラーを完全解決
+- **技術的成果**: スクリーンリーダー対応、キーボード操作完全対応、多言語対応の完成
+
+## セットリスト削除通知改善 (2025-07-23)
+- **削除通知のUX向上**: 削除したセットリストの詳細情報を通知に含める
+  - DeleteSetlistResult型を追加し、削除したセットリスト情報を返すように実装
+  - GraphQL apollo-operationsを更新して削除されたセットリストの詳細を取得
+  - SetlistDashboardで削除成功時に削除したセットリストのタイトルを含む通知を表示
+- **統一された通知メッセージ**: 楽曲削除と同じ形式に統一
+  - i18nメッセージを「セットリスト名」を削除しました形式に統一
+  - 完全な多言語対応実装（日本語・英語）
+- **ユーザビリティ向上**: 削除操作の結果が明確に分かるフィードバック
+
 ## CSP nonce方式・JSON-LD体系化実装 (2025-07-23)
 - **セキュリティ最適化とSEO強化の完全実装**: Content Security PolicyとJSON-LD構造化データの体系的改善
 - **middleware.ts実装**: CSP nonce方式によるセキュリティとパフォーマンスの両立

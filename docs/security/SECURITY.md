@@ -17,6 +17,7 @@
 - **アクセス制御**: プライベート/パブリックセットリストの厳格なアクセス制御
 
 ### セキュリティモニタリング・ログ
+- **軽量監査ログシステム**: AuditLogテーブルによるリスクベース記録
 - **データベースベースセキュリティログ**: Vercel Functions互換の永続ログシステム
 - **脅威検出エンジン**: ブルートフォースと認証情報詰込み攻撃の検出
 - **OAuth認証ログ**: Google認証の成功・失敗・新規ユーザー作成イベントの詳細記録
@@ -26,6 +27,7 @@
 
 ### 攻撃防御
 - **CSRF保護**: タイミング攻撃耐性のDouble Submit Cookie + HMAC
+- **CSP nonce方式**: Content Security Policyによるスクリプト実行制限
 - **適応的レート制限**: 正常利用と攻撃の最適バランス
   - 認証試行: 1時間に50回まで（IP単位）
   - API呼び出し: 5分間に200回まで（本番）、500回まで（開発）
@@ -59,6 +61,9 @@ SecurityEvent: type, severity, timestamp, userId, ipAddress, details
 
 -- 脅威活動解析
 ThreatActivity: ipAddress, activityType, userId, timestamp, metadata
+
+-- 軽量監査ログ（リスクベース記録）
+AuditLog: userId, action, resourceType, resourceId, ipHash, timestamp, riskScore, metadata
 ```
 
 ## トークンアーキテクチャ・実装詳細

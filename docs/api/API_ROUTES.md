@@ -5,6 +5,7 @@
 | エンドポイント | メソッド | 目的 | 認証要否 |
 |---------------|---------|------|----------|
 | `/api/auth` | GET, POST, DELETE | JWT認証管理 | GET: 要、POST/DELETE: 不要 |
+| `/api/auth/google-sync` | POST | Google認証ユーザーのメール変更・同期 | 要 |
 | `/api/csrf` | GET | CSRFトークン生成 | 不要 |
 | `/api/graphql` | GET, POST | メインGraphQL API | リゾルバー依存 |
 | `/api/security/cleanup` | GET, POST | セキュリティデータクリーンアップ | GET: CRON_SECRET、POST: 開発環境のみ |
@@ -29,7 +30,24 @@
 - 2時間の有効期限
 - 無効トークンの自動クリーンアップ
 
-### 2. `/api/csrf` - CSRF保護
+### 2. `/api/auth/google-sync` - Google認証同期
+**目的**: Google認証でのログイン処理とメールアドレス同期
+
+**機能**:
+- Google OAuth認証後のユーザー作成・ログイン
+- 既存ユーザーのGoogle認証によるメールアドレス更新
+- 認証プロバイダーの更新:
+  - `email` → `google`: メール認証ユーザーがGoogle認証でメールアドレス変更
+  - `google` → `google`: Google認証ユーザーがGoogle認証で別のメールアドレスに変更
+- 既存メール認証ユーザーとの重複検出・防止
+
+**セキュリティ**:
+- NextAuth認証セッション必須
+- メールアドレス重複チェック
+- 既存アカウント検出時の適切なエラー処理
+- 早期returnパターンによるエラーハンドリング
+
+### 3. `/api/csrf` - CSRF保護
 **目的**: Cross-Site Request Forgeryを防ぐためのトークン生成
 
 **特徴**:
@@ -37,7 +55,7 @@
 - Double Submit Cookieパターン実装
 - GETメソッドのみサポート
 
-### 3. `/api/graphql` - メインAPI
+### 4. `/api/graphql` - メインAPI
 **目的**: アプリケーションの全ビジネスロジックを処理するGraphQLエンドポイント
 
 **機能**:
@@ -57,7 +75,7 @@
   - 開発: 詳細なデバッグ情報
 - **リクエストサイズ制限**: 4MB（Next.jsデフォルト）
 
-### 4. `/api/security/cleanup` - セキュリティメンテナンス
+### 5. `/api/security/cleanup` - セキュリティメンテナンス
 **目的**: セキュリティ関連データの定期的なクリーンアップ（Vercel Cron Jobs用）
 
 **機能**:
