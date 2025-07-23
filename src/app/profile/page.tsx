@@ -263,70 +263,91 @@ function ProfileContent() {
     setConfirmPassword('');
   };
 
-  const handleChangeEmail = async () => {
-    // バリデーション
+  // 共通のメールアドレスバリデーション
+  const validateEmailInput = (): boolean => {
     if (!newEmail) {
       showError(messages.validation.required);
-      return;
+      return false;
     }
 
     // メールアドレス形式チェック
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(newEmail)) {
       showError(messages.auth.invalidEmailFormat);
+      return false;
+    }
+
+    return true;
+  };
+
+  // Google認証ユーザー用のメール変更処理
+  const handleChangeEmailForGoogleUser = async () => {
+    if (!validateEmailInput()) return;
+
+    // パスワード設定バリデーション
+    if (!newPasswordForEmailAuth || !confirmNewPasswordForEmailAuth) {
+      showError(messages.validation.required);
       return;
     }
 
-    // Google認証ユーザーの場合はパスワード設定が必要
-    if (currentUser?.authProvider === AUTH_PROVIDERS.GOOGLE) {
-      if (!newPasswordForEmailAuth || !confirmNewPasswordForEmailAuth) {
-        showError(messages.validation.required);
-        return;
-      }
-
-      if (newPasswordForEmailAuth !== confirmNewPasswordForEmailAuth) {
-        showError(messages.validation.passwordsDoNotMatch);
-        return;
-      }
-
-      if (newPasswordForEmailAuth.length < PASSWORD_POLICY.MIN_LENGTH) {
-        showError(messages.validation.passwordTooShort);
-        return;
-      }
-
-      if (!PASSWORD_POLICY.REGEX.test(newPasswordForEmailAuth)) {
-        showError(messages.validation.passwordTooShort);
-        return;
-      }
-    } else {
-      // メール認証ユーザーの場合は現在のパスワードが必要
-      if (!emailChangePassword) {
-        showError(messages.validation.required);
-        return;
-      }
+    if (newPasswordForEmailAuth !== confirmNewPasswordForEmailAuth) {
+      showError(messages.validation.passwordsDoNotMatch);
+      return;
     }
 
-    const inputData: {
-      newEmail: string;
-      currentPassword?: string;
-      newPassword?: string;
-    } = {
-      newEmail: newEmail.trim(),
-    };
+    if (newPasswordForEmailAuth.length < PASSWORD_POLICY.MIN_LENGTH) {
+      showError(messages.validation.passwordTooShort);
+      return;
+    }
 
-    if (currentUser?.authProvider === AUTH_PROVIDERS.GOOGLE) {
-      // Google認証ユーザーは新しいパスワードを設定
-      inputData.newPassword = newPasswordForEmailAuth;
-    } else {
-      // メール認証ユーザーは現在のパスワードを確認
-      inputData.currentPassword = emailChangePassword;
+    if (!PASSWORD_POLICY.REGEX.test(newPasswordForEmailAuth)) {
+      showError(messages.validation.passwordTooShort);
+      return;
     }
 
     await requestEmailChange({
       variables: {
-        input: inputData,
+        input: {
+          newEmail: newEmail.trim(),
+          newPassword: newPasswordForEmailAuth,
+        },
       },
     });
+  };
+
+  // メール認証ユーザー用のメール変更処理
+  const handleChangeEmailForEmailUser = async () => {
+    if (!validateEmailInput()) return;
+
+    // 現在のパスワード確認
+    if (!emailChangePassword) {
+      showError(messages.validation.required);
+      return;
+    }
+
+    await requestEmailChange({
+      variables: {
+        input: {
+          newEmail: newEmail.trim(),
+          currentPassword: emailChangePassword,
+        },
+      },
+    });
+  };
+
+  // メイン処理: プロバイダーに応じて適切な関数を呼び出し
+  const handleChangeEmail = async () => {
+    if (!currentUser?.authProvider) {
+      showError(messages.errors.somethingWentWrong);
+      return;
+    }
+
+    if (currentUser.authProvider === AUTH_PROVIDERS.GOOGLE) {
+      await handleChangeEmailForGoogleUser();
+      return;
+    }
+
+    await handleChangeEmailForEmailUser();
   };
 
   const resetEmailForm = () => {

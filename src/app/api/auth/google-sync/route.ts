@@ -339,8 +339,10 @@ async function handleGoogleSync(req: NextRequest) {
       }
       user = emailChangeResult.user;
       isEmailChange = true;
-    } else {
-      // 2. 通常のユーザー検索・作成
+    }
+
+    // 通常のユーザー検索・作成の場合（メールアドレス変更以外）
+    if (!profileContext || !currentUserId) {
       const userResult = await findOrCreateGoogleUser(req, email, name);
       if (userResult.error) {
         return userResult.error;
