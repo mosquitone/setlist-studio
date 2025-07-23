@@ -1,10 +1,11 @@
 // Vercel Cron Job用：セキュリティデータベースクリーンアップ
 
-import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
+import { NextRequest, NextResponse } from 'next/server';
+
 import { cleanupExpiredRateLimits } from '../../../../lib/security/rate-limit-db';
-import { cleanupOldThreatActivities } from '../../../../lib/security/threat-detection-db';
 import { cleanupOldSecurityEvents } from '../../../../lib/security/security-logger-db';
+import { cleanupOldThreatActivities } from '../../../../lib/security/threat-detection-db';
 import { cleanupExpiredTokens } from '../../../../lib/security/token-manager';
 
 const prisma = new PrismaClient();

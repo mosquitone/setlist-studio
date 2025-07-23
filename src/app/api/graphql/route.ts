@@ -1,15 +1,15 @@
 import 'reflect-metadata';
 import { ApolloServer } from '@apollo/server';
 import { startServerAndCreateNextHandler } from '@as-integrations/next';
-import { NextRequest } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { GraphQLSchema } from 'graphql';
 import depthLimit from 'graphql-depth-limit';
-import { createApiRateLimit, createAuthRateLimit } from '../../../lib/security/rate-limit-db';
-import { csrfProtection } from '../../../lib/security/csrf-protection';
 import jwt from 'jsonwebtoken';
-import { withI18n } from '../../../lib/i18n/context';
+import { NextRequest } from 'next/server';
 
+import { withI18n } from '../../../lib/i18n/context';
+import { csrfProtection } from '../../../lib/security/csrf-protection';
+import { createApiRateLimit, createAuthRateLimit } from '../../../lib/security/rate-limit-db';
 // Import pre-built schema
 import { getPreBuiltSchema } from '../../../lib/server/graphql/generated-schema';
 

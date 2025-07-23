@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useQuery, useMutation } from '@apollo/client';
 import {
   Container,
   Alert,
@@ -12,20 +12,21 @@ import {
   Typography,
   Box,
 } from '@mui/material';
-import { Button } from '@/components/common/ui/Button';
-import { useQuery, useMutation } from '@apollo/client';
 import { useParams } from 'next/navigation';
-import { GET_SETLIST, TOGGLE_SETLIST_VISIBILITY } from '@/lib/server/graphql/apollo-operations';
-import { SetlistData } from '@/types/components';
-import { Theme } from '@/types/common';
+import React, { useState } from 'react';
+
+import { SetlistProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { Button } from '@/components/common/ui/Button';
+import { useAuth } from '@/components/providers/AuthProvider';
 import { ImageGenerator } from '@/components/setlist/ImageGenerator';
 import { SetlistActions } from '@/components/setlist/SetlistActions';
 import { SetlistPreview } from '@/components/setlist/SetlistPreview';
-import { useSetlistActions } from '@/hooks/useSetlistActions';
-import { useImageGeneration } from '@/hooks/useImageGeneration';
-import { useAuth } from '@/components/providers/AuthProvider';
-import { SetlistProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { useI18n } from '@/hooks/useI18n';
+import { useImageGeneration } from '@/hooks/useImageGeneration';
+import { useSetlistActions } from '@/hooks/useSetlistActions';
+import { GET_SETLIST, TOGGLE_SETLIST_VISIBILITY } from '@/lib/server/graphql/apollo-operations';
+import { Theme } from '@/types/common';
+import { SetlistData } from '@/types/components';
 
 export default function SetlistDetailPage() {
   const params = useParams();

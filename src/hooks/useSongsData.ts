@@ -1,4 +1,5 @@
 import { useQuery } from '@apollo/client';
+
 import { GET_SONGS } from '@/lib/server/graphql/apollo-operations';
 import { GetSongsResponse } from '@/types/graphql';
 

@@ -1,14 +1,16 @@
 import 'reflect-metadata';
-import { buildSchemaSync } from 'type-graphql';
-import { printSchema } from 'graphql';
 import { writeFileSync } from 'fs';
 import { join } from 'path';
 
+import { printSchema } from 'graphql';
+import { buildSchemaSync } from 'type-graphql';
+
 // Import resolvers
-import { SetlistResolver } from '../src/lib/server/graphql/resolvers/SetlistResolver';
-import { SetlistItemResolver } from '../src/lib/server/graphql/resolvers/SetlistItemResolver';
-import { SongResolver } from '../src/lib/server/graphql/resolvers/SongResolver';
 import { AuthResolver } from '../src/lib/server/graphql/resolvers/AuthResolver';
+import { EmailHistoryResolver } from '../src/lib/server/graphql/resolvers/EmailHistoryResolver';
+import { SetlistItemResolver } from '../src/lib/server/graphql/resolvers/SetlistItemResolver';
+import { SetlistResolver } from '../src/lib/server/graphql/resolvers/SetlistResolver';
+import { SongResolver } from '../src/lib/server/graphql/resolvers/SongResolver';
 import { UserResolver } from '../src/lib/server/graphql/resolvers/UserResolver';
 
 async function generateSchema() {
@@ -17,7 +19,14 @@ async function generateSchema() {
 
     // Build schema from resolvers
     const schema = buildSchemaSync({
-      resolvers: [SetlistResolver, SetlistItemResolver, SongResolver, AuthResolver, UserResolver],
+      resolvers: [
+        SetlistResolver,
+        SetlistItemResolver,
+        SongResolver,
+        AuthResolver,
+        UserResolver,
+        EmailHistoryResolver,
+      ],
       validate: false,
       authChecker: undefined,
     });
@@ -42,13 +51,14 @@ import { SetlistItemResolver } from './resolvers/SetlistItemResolver';
 import { SongResolver } from './resolvers/SongResolver';
 import { AuthResolver } from './resolvers/AuthResolver';
 import { UserResolver } from './resolvers/UserResolver';
+import { EmailHistoryResolver } from './resolvers/EmailHistoryResolver';
 
 let cachedSchema: GraphQLSchema | null = null;
 
 export function getPreBuiltSchema(): GraphQLSchema {
   if (!cachedSchema) {
     cachedSchema = buildSchemaSync({
-      resolvers: [SetlistResolver, SetlistItemResolver, SongResolver, AuthResolver, UserResolver],
+      resolvers: [SetlistResolver, SetlistItemResolver, SongResolver, AuthResolver, UserResolver, EmailHistoryResolver],
       validate: false,
       authChecker: undefined,
     });

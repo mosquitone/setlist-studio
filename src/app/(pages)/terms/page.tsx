@@ -1,7 +1,8 @@
 'use client';
 
-import React from 'react';
 import { Typography, List, ListItem, ListItemText } from '@mui/material';
+import React from 'react';
+
 import LegalPageTemplate from '@/components/common/templates/LegalPageTemplate';
 import { useI18n } from '@/hooks/useI18n';
 

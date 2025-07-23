@@ -1,14 +1,15 @@
 'use client';
 
 import { Container, Box, Alert } from '@mui/material';
+
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { MultiDeleteModal } from '@/components/common/MultiDeleteModal';
+import { SingleDeleteModal } from '@/components/common/SingleDeleteModal';
+import { SongEditDialog } from '@/components/songs/SongEditDialog';
 import { SongPageHeader } from '@/components/songs/SongPageHeader';
 import { SongTable } from '@/components/songs/SongTable';
-import { SongEditDialog } from '@/components/songs/SongEditDialog';
-import { SingleDeleteModal } from '@/components/common/SingleDeleteModal';
-import { MultiDeleteModal } from '@/components/common/MultiDeleteModal';
-import { useSongs } from '@/hooks/useSongs';
-import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { useI18n } from '@/hooks/useI18n';
+import { useSongs } from '@/hooks/useSongs';
 
 export default function SongsPage() {
   const { messages } = useI18n();

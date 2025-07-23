@@ -1,3 +1,5 @@
+import { PrismaClient } from '@prisma/client';
+import { IsOptional, IsString, IsInt, Min, Max } from 'class-validator';
 import {
   Resolver,
   Query,
@@ -10,10 +12,10 @@ import {
   Int,
   ID,
 } from 'type-graphql';
-import { IsOptional, IsString, IsInt, Min, Max } from 'class-validator';
-import { PrismaClient } from '@prisma/client';
-import { Song } from '../types/Song';
+
 import { AuthMiddleware } from '@/lib/server/graphql/middleware/jwt-auth-middleware';
+
+import { Song } from '../types/Song';
 
 interface Context {
   prisma: PrismaClient;

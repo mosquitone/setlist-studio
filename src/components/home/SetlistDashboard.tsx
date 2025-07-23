@@ -1,19 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import {
-  Box,
-  Typography,
-  Card,
-  Grid,
-  Avatar,
-  Chip,
-  Stack,
-  IconButton,
-  CardActionArea,
-} from '@mui/material';
-import { Button } from '@/components/common/ui/Button';
-import { SingleDeleteModal } from '@/components/common/SingleDeleteModal';
+import { useMutation } from '@apollo/client';
 import {
   PlaylistPlay as PlaylistPlayIcon,
   Add as AddIcon,
@@ -25,11 +12,26 @@ import {
   Lock as LockIcon,
   Delete as DeleteIcon,
 } from '@mui/icons-material';
+import {
+  Box,
+  Typography,
+  Card,
+  Grid,
+  Avatar,
+  Chip,
+  Stack,
+  IconButton,
+  CardActionArea,
+} from '@mui/material';
 import Link from 'next/link';
-import { useMutation } from '@apollo/client';
-import { DELETE_SETLIST, GET_SETLISTS } from '@/lib/server/graphql/apollo-operations';
-import { Setlist } from '../../types/graphql';
+import { useState } from 'react';
+
+import { SingleDeleteModal } from '@/components/common/SingleDeleteModal';
+import { Button } from '@/components/common/ui/Button';
 import { useI18n } from '@/hooks/useI18n';
+import { DELETE_SETLIST, GET_SETLISTS } from '@/lib/server/graphql/apollo-operations';
+
+import { Setlist } from '../../types/graphql';
 
 interface SetlistDashboardProps {
   setlistsData: { setlists: Setlist[] } | undefined;

@@ -1,9 +1,11 @@
-import React, { useMemo } from 'react';
 import { Box, Typography } from '@mui/material';
-import { SETLIST_FOOTER_TEXT } from './constants';
-import { SetlistThemeProps } from '@/types/components';
-import { formatEventDateJST } from '@/lib/shared/dateUtils';
+import React, { useMemo } from 'react';
+
 import { isValidUrl } from '@/lib/security/security-utils';
+import { formatEventDate } from '@/lib/shared/dateUtils';
+import { SetlistThemeProps } from '@/types/components';
+
+import { SETLIST_FOOTER_TEXT } from './constants';
 
 interface ThemeColors {
   background: string;
@@ -75,7 +77,7 @@ const SongItem: React.FC<{
   </Box>
 );
 
-export const BaseTheme: React.FC<BaseThemeProps> = ({ data, className, colors }) => {
+export const BaseTheme: React.FC<BaseThemeProps> = ({ data, className, colors, lang = 'ja' }) => {
   const { artistName, eventName, eventDate, openTime, startTime, items, qrCodeURL } = data;
 
   // 20曲制限を適用
@@ -196,7 +198,7 @@ export const BaseTheme: React.FC<BaseThemeProps> = ({ data, className, colors })
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
           {eventDate && (
             <Typography sx={{ fontSize: '16px', color: colors.text, fontWeight: 400 }}>
-              {formatEventDateJST(eventDate)}
+              {formatEventDate(eventDate, lang)}
             </Typography>
           )}
           <Box sx={{ display: 'flex', gap: 2 }}>

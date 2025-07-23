@@ -29,6 +29,18 @@ export interface Messages {
     rateLimitExceeded: string;
     checkingLoginStatus: string;
 
+    // メールアドレス履歴・所有権確認
+    emailHistory: string;
+    emailOwnershipVerification: string;
+    emailOwnershipVerificationSent: string;
+    emailOwnershipVerificationFailed: string;
+    noEmailHistoryFound: string;
+    emailCurrentlySame: string;
+    emailInUseByOther: string;
+    emailCooldownActive: string;
+    verifyOwnershipFirst: string;
+    emailOwnershipVerified: string;
+
     // ログイン・登録フォーム
     login: string;
     logout: string;
@@ -41,7 +53,6 @@ export interface Messages {
     registerButton: string;
     loggingIn: string;
     registering: string;
-    or: string;
     currentPassword: string;
     newPassword: string;
     confirmPassword: string;
@@ -138,6 +149,19 @@ export interface Messages {
     invalidEmailFormat: string;
     emailAlreadyInUse: string;
     usernameAlreadyInUse: string;
+    // 認証プロバイダー
+    authProvider: string;
+    authProviderEmail: string;
+    authProviderGoogle: string;
+    googleUserPasswordChangeNotAllowed: string;
+    googleUserEmailChangeNote: string;
+    setNewPassword: string;
+    setNewPasswordHelper: string;
+    googleChangeEmail: string;
+    googleChangeEmailDescription: string;
+    invalidGoogleToken: string;
+    emailMismatch: string;
+    googleEmailChangeSuccess: string;
   };
 
   // エラーメッセージ
@@ -460,6 +484,7 @@ export interface Messages {
     wait: string;
     yes: string;
     no: string;
+    or: string;
     account: string;
     song: string;
     newSong: string;
@@ -709,6 +734,12 @@ export interface Messages {
     passwordResetSuccessBody: (username: string) => string;
     emailChangeSubject: string;
     emailChangeBody: (username: string, link: string) => string;
+    emailOwnershipSubject: string;
+    emailOwnershipDescription: string;
+    emailOwnershipEmailLabel: string;
+    emailOwnershipButtonText: string;
+    emailOwnershipExpiresLabel: string;
+    emailOwnershipDisclaimer: string;
   };
 }
 
@@ -737,6 +768,18 @@ const jaMessages: Messages = {
     checkingLoginStatus: 'ログイン状態を確認中...',
     redirectingToLogin: 'ログインページにリダイレクトしています...',
 
+    // メールアドレス履歴・所有権確認
+    emailHistory: 'メールアドレス変更履歴',
+    emailOwnershipVerification: 'メールアドレス所有権確認',
+    emailOwnershipVerificationSent: 'メールアドレスの所有権確認メールを送信しました',
+    emailOwnershipVerificationFailed: 'メール送信に失敗しました',
+    noEmailHistoryFound: 'このメールアドレスの使用履歴が見つかりません',
+    emailCurrentlySame: '現在のメールアドレスと同じです',
+    emailInUseByOther: 'このメールアドレスは現在他のユーザーが使用中です',
+    emailCooldownActive: 'このメールアドレスは一定期間変更できません',
+    verifyOwnershipFirst: 'メールアドレスの所有権を確認してください',
+    emailOwnershipVerified: 'メールアドレスの所有権が確認されました',
+
     login: 'ログイン',
     logout: 'ログアウト',
     register: '新規登録',
@@ -748,7 +791,6 @@ const jaMessages: Messages = {
     registerButton: '登録',
     loggingIn: 'ログイン中...',
     registering: '登録中...',
-    or: 'または',
     currentPassword: '現在のパスワード',
     newPassword: '新しいパスワード',
     confirmPassword: 'パスワード（確認）',
@@ -843,6 +885,21 @@ const jaMessages: Messages = {
     invalidEmailFormat: 'メールアドレスの形式が正しくありません',
     emailAlreadyInUse: 'このメールアドレスは既に使用されています',
     usernameAlreadyInUse: 'このユーザー名は既に使用されています',
+    // 認証プロバイダー
+    authProvider: '認証方法',
+    authProviderEmail: 'メール認証',
+    authProviderGoogle: 'Google認証',
+    googleUserPasswordChangeNotAllowed:
+      'Google認証でログインしたユーザーはパスワード変更できません。Googleアカウントでパスワードを管理してください。',
+    googleUserEmailChangeNote: '注意：メール認証変更時は新しいパスワードを設定してください。',
+    setNewPassword: '新しいパスワード',
+    setNewPasswordHelper: 'メール認証用の新しいパスワードを設定してください',
+    googleChangeEmail: '別のGoogleアカウントに切り替え',
+    googleChangeEmailDescription:
+      '別のGoogleアカウントに切り替えることができます。現在のデータ（セットリスト・楽曲）はすべて新しいアカウントに移行されます。新しいGoogleアカウントをお持ちでない場合は、ボタンをクリック後にGoogleアカウント作成画面に進めます。',
+    invalidGoogleToken: 'Google認証トークンが無効です。再度認証してください。',
+    emailMismatch: 'リクエストされたメールアドレスがGoogle認証と一致しません。',
+    googleEmailChangeSuccess: 'Google認証によりメールアドレスが正常に変更されました。',
   },
   errors: {
     serverError: 'サーバーエラーが発生しました',
@@ -887,6 +944,7 @@ const jaMessages: Messages = {
     wait: 'しばらくお待ちください',
     yes: 'はい',
     no: 'いいえ',
+    or: 'または',
     account: 'アカウント',
     song: '楽曲',
     newSong: '新しい楽曲',
@@ -1456,6 +1514,13 @@ ${link}
 よろしくお願いします,
 Setlist Studio チーム
 `,
+    emailOwnershipSubject: 'メールアドレス所有権確認',
+    emailOwnershipDescription:
+      '過去に使用していたメールアドレスへの復帰リクエストを受け付けました。',
+    emailOwnershipEmailLabel: 'メールアドレス',
+    emailOwnershipButtonText: '所有権を確認する',
+    emailOwnershipExpiresLabel: 'リンクの有効期限',
+    emailOwnershipDisclaimer: 'このメールに心当たりがない場合は、このメールを無視してください。',
   },
 };
 
@@ -1522,6 +1587,18 @@ const enMessages: Messages = {
     checkingLoginStatus: 'Checking login status...',
     redirectingToLogin: 'Redirecting to login...',
 
+    // Email history & ownership verification
+    emailHistory: 'Email Change History',
+    emailOwnershipVerification: 'Email Ownership Verification',
+    emailOwnershipVerificationSent: 'Email ownership verification has been sent',
+    emailOwnershipVerificationFailed: 'Failed to send email',
+    noEmailHistoryFound: 'No usage history found for this email address',
+    emailCurrentlySame: 'Same as current email address',
+    emailInUseByOther: 'This email address is currently in use by another user',
+    emailCooldownActive: 'This email address cannot be changed for a certain period',
+    verifyOwnershipFirst: 'Please verify email address ownership first',
+    emailOwnershipVerified: 'Email address ownership verified',
+
     // Login/Register form
     login: 'Login',
     logout: 'Logout',
@@ -1534,7 +1611,6 @@ const enMessages: Messages = {
     registerButton: 'Register',
     loggingIn: 'Logging in...',
     registering: 'Registering...',
-    or: 'or',
     currentPassword: 'Current Password',
     newPassword: 'New Password',
     confirmPassword: 'Confirm Password',
@@ -1633,6 +1709,22 @@ const enMessages: Messages = {
     invalidEmailFormat: 'Invalid email format',
     emailAlreadyInUse: 'This email address is already in use',
     usernameAlreadyInUse: 'This username is already in use',
+    // 認証プロバイダー
+    authProvider: 'Authentication Method',
+    authProviderEmail: 'Email Authentication',
+    authProviderGoogle: 'Google Authentication',
+    googleUserPasswordChangeNotAllowed:
+      'Users who signed in with Google cannot change their password. Please manage your password through your Google account.',
+    googleUserEmailChangeNote: 'Note: Set a new password when switching to email authentication.',
+    setNewPassword: 'New Password',
+    setNewPasswordHelper: 'Set a new password for email authentication',
+    googleChangeEmail: 'Switch to Different Google Account',
+    googleChangeEmailDescription:
+      "Switch to a different Google account. All your current data (setlists and songs) will be transferred to the new account. If you don't have another Google account, you can create one after clicking the button.",
+    invalidGoogleToken: 'Google authentication token is invalid. Please authenticate again.',
+    emailMismatch: 'The requested email address does not match Google authentication.',
+    googleEmailChangeSuccess:
+      'Email address has been successfully changed using Google authentication.',
   },
   errors: {
     serverError: 'Server error occurred',
@@ -1947,6 +2039,7 @@ const enMessages: Messages = {
     wait: 'Please wait',
     yes: 'Yes',
     no: 'No',
+    or: 'or',
     account: 'Account',
     song: 'Song',
     newSong: 'New Song',
@@ -2245,5 +2338,12 @@ If you didn't request this, please ignore this email.
 Best regards,
 Setlist Studio Team
 `,
+    emailOwnershipSubject: 'Email Ownership Verification',
+    emailOwnershipDescription:
+      'A request to return to a previously used email address has been received.',
+    emailOwnershipEmailLabel: 'Email address',
+    emailOwnershipButtonText: 'Verify Ownership',
+    emailOwnershipExpiresLabel: 'Link expires',
+    emailOwnershipDisclaimer: 'If you did not request this, please ignore this email.',
   },
 };

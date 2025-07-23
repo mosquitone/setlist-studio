@@ -1,9 +1,11 @@
 'use client';
 
-import HomeClient from './HomeClient';
-import NoSSR from '@/components/common/ui/NoSSR';
 import { Container, Box, Typography } from '@mui/material';
+
+import NoSSR from '@/components/common/ui/NoSSR';
 import { useI18n } from '@/hooks/useI18n';
+
+import HomeClient from './HomeClient';
 
 // Disable caching for authentication-dependent content
 export const dynamic = 'force-dynamic';

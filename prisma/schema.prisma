@@ -22,8 +22,11 @@ model User {
   passwordResetExpires     DateTime?
   passwordResetToken       String?
   pendingEmail             String?
+  authProvider             String         @default("email")
+  pendingPassword          String?
   setlists                 Setlist[]
   songs                    Song[]
+  emailHistories           EmailHistory[]
 
   @@map("users")
 }
@@ -47,7 +50,6 @@ model Song {
 model Setlist {
   id         String        @id @default(cuid())
   title      String
-  artistName String?
   eventName  String?
   eventDate  DateTime?
   openTime   String?
@@ -57,6 +59,7 @@ model Setlist {
   userId     String
   createdAt  DateTime      @default(now())
   updatedAt  DateTime      @updatedAt
+  artistName String?
   items      SetlistItem[]
   user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -125,11 +128,11 @@ model AuditLog {
   eventType String
   outcome   String
   timestamp DateTime @default(now())
-  details   Json?
-  ipAddress String?
-  riskLevel String
-  userAgent String?
   userId    String?
+  ipAddress String?
+  userAgent String?
+  riskLevel String
+  details   Json?
 
   @@index([timestamp])
   @@index([eventType])
@@ -139,3 +142,25 @@ model AuditLog {
   @@map("audit_logs")
 }
 
+model EmailHistory {
+  id               String    @id @default(cuid())
+  userId           String
+  oldEmail         String
+  newEmail         String
+  changeMethod     String    // "manual" | "google_oauth" | "verification"
+  changedAt        DateTime  @default(now())
+  ipAddress        String?
+  userAgent        String?
+  authProvider     String?   // 変更時の認証プロバイダー
+  lastUsedAt       DateTime? // 最後にこのメールアドレスが使用された日時
+  cooldownUntil    DateTime? // クールダウン期間（再変更制限）
+  verificationSent Boolean   @default(false) // 所有権確認メール送信済みフラグ
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([oldEmail])
+  @@index([newEmail])
+  @@index([changedAt])
+  @@index([cooldownUntil])
+  @@map("email_histories")
+}

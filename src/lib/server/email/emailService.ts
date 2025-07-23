@@ -1,6 +1,9 @@
-import { Resend } from 'resend';
 import crypto from 'crypto';
+
+import { Resend } from 'resend';
+
 import { getMessages, Language } from '../../i18n/messages';
+
 import { EmailReliabilityService, EmailResult } from './emailReliability';
 
 // ビルド時エラーを避けるため、環境変数が存在しない場合はダミー値を使用
@@ -390,6 +393,131 @@ export class EmailService {
         html,
       },
       'email_change',
+    );
+  }
+
+  /**
+   * メールアドレス変更通知メール送信（旧メールアドレスに送信）
+   */
+  public async sendEmailChangeNotificationEmail(
+    oldEmail: string,
+    username: string,
+    newEmail: string,
+    lang?: Language,
+  ): Promise<EmailResult> {
+    const messages = getMessages(lang || 'ja');
+    const emailBody = `${messages.auth.profile}の${username}様
+
+お客様のアカウントのメールアドレスが変更されました。
+
+変更前: ${oldEmail}
+変更後: ${newEmail}
+
+この変更を行っていない場合は、直ちにサポートにお問い合わせください。
+
+--
+Setlist Studio チーム`;
+
+    const html = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        ${SETLIST_STUDIO_LOGO}
+        <pre style="font-family: Arial, sans-serif; white-space: pre-wrap;">${emailBody}</pre>
+      </div>
+    `;
+
+    return this.sendEmailWithDetails(
+      {
+        from: this.fromEmail,
+        to: oldEmail,
+        subject: `Setlist Studio - メールアドレス変更通知`,
+        html,
+      },
+      'notification',
+    );
+  }
+
+  /**
+   * メールアドレス変更成功メール送信（新メールアドレスに送信）
+   */
+  public async sendEmailChangeSuccessEmail(
+    newEmail: string,
+    username: string,
+    lang?: Language,
+  ): Promise<EmailResult> {
+    const messages = getMessages(lang || 'ja');
+    const emailBody = `${messages.auth.profile}の${username}様
+
+メールアドレスの変更が正常に完了しました。
+
+新しいメールアドレス: ${newEmail}
+
+今後はこのメールアドレスでログインしてください。
+
+--
+Setlist Studio チーム`;
+
+    const html = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        ${SETLIST_STUDIO_LOGO}
+        <pre style="font-family: Arial, sans-serif; white-space: pre-wrap;">${emailBody}</pre>
+      </div>
+    `;
+
+    return this.sendEmailWithDetails(
+      {
+        from: this.fromEmail,
+        to: newEmail,
+        subject: `Setlist Studio - メールアドレス変更完了`,
+        html,
+      },
+      'notification',
+    );
+  }
+
+  /**
+   * 過去のメールアドレス復帰時の所有権確認メール送信
+   */
+  public async sendEmailOwnershipVerificationEmail(
+    email: string,
+    username: string,
+    userId: string,
+    lang?: Language,
+  ): Promise<EmailResult> {
+    const messages = getMessages(lang || 'ja');
+    // 所有権確認用トークン生成
+    const verificationToken = this.generateSecureToken();
+
+    const html = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        ${SETLIST_STUDIO_LOGO}
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h2 style="color: #1976d2; margin-top: 0;">${messages.auth.emailOwnershipVerification}</h2>
+          <p>${messages.emails.emailOwnershipDescription}</p>
+          <p>${messages.emails.emailOwnershipEmailLabel}: <strong>${email}</strong></p>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="https://${process.env.NEXTAUTH_URL || 'localhost:3000'}/auth/verify-email-ownership?token=${verificationToken.token}&userId=${userId}" 
+               style="background: #1976d2; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">
+              ${messages.emails.emailOwnershipButtonText}
+            </a>
+          </div>
+          <p style="font-size: 14px; color: #666;">
+            ${messages.emails.emailOwnershipExpiresLabel}: ${verificationToken.expires.toLocaleString(lang === 'en' ? 'en-US' : 'ja-JP')}
+          </p>
+        </div>
+        <p style="font-size: 12px; color: #888;">
+          ${messages.emails.emailOwnershipDisclaimer}
+        </p>
+      </div>
+    `;
+
+    return this.sendEmailWithDetails(
+      {
+        from: this.fromEmail,
+        to: email,
+        subject: `Setlist Studio - ${messages.emails.emailOwnershipSubject}`,
+        html,
+      },
+      'verification',
     );
   }
 

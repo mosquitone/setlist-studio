@@ -1,6 +1,6 @@
-import Link from 'next/link';
-import Image from 'next/image';
 import { Box } from '@mui/material';
+import Image from 'next/image';
+import Link from 'next/link';
 
 export function HeaderLogo() {
   return (

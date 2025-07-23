@@ -1,5 +1,6 @@
 'use client';
 
+import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 import {
   TableContainer,
   Paper,
@@ -20,9 +21,10 @@ import {
   Chip,
   Checkbox,
 } from '@mui/material';
-import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
-import { Song } from '../../types/graphql';
+
 import { useI18n } from '@/hooks/useI18n';
+
+import { Song } from '../../types/graphql';
 
 interface SongTableProps {
   songs: Song[];

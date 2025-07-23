@@ -1,15 +1,19 @@
 import React from 'react';
+
+import { Language } from '@/lib/i18n/messages';
 import { SetlistData, SetlistThemeProps } from '@/types/components';
+
 import { BlackTheme } from './BlackTheme';
 import { WhiteTheme } from './WhiteTheme';
 
 interface SetlistRendererProps {
   data: SetlistData;
   className?: string;
+  lang?: Language;
 }
 
-export const SetlistRenderer: React.FC<SetlistRendererProps> = ({ data, className }) => {
-  const props: SetlistThemeProps = { data, className };
+export const SetlistRenderer: React.FC<SetlistRendererProps> = ({ data, className, lang }) => {
+  const props: SetlistThemeProps = { data, className, lang };
 
   switch (data.theme) {
     case 'black':

@@ -1,6 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useMutation, gql } from '@apollo/client';
+import {
+  Email as EmailIcon,
+  CheckCircle as CheckCircleIcon,
+  Schedule as ScheduleIcon,
+  Refresh as RefreshIcon,
+} from '@mui/icons-material';
 import {
   Container,
   Paper,
@@ -13,17 +19,11 @@ import {
   StepLabel,
   StepContent,
 } from '@mui/material';
-import { Button } from '@/components/common/ui/Button';
-import {
-  Email as EmailIcon,
-  CheckCircle as CheckCircleIcon,
-  Schedule as ScheduleIcon,
-  Refresh as RefreshIcon,
-} from '@mui/icons-material';
-import { useMutation } from '@apollo/client';
-import { gql } from '@apollo/client';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
+
+import { Button } from '@/components/common/ui/Button';
 import { useI18n } from '@/hooks/useI18n';
 
 const RESEND_VERIFICATION_EMAIL = gql`

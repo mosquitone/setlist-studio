@@ -1,14 +1,15 @@
 'use client';
 
-import React from 'react';
-import { Container, Alert, CircularProgress, Typography } from '@mui/material';
 import { useQuery, useMutation } from '@apollo/client';
+import { Container, Alert, CircularProgress, Typography } from '@mui/material';
 import { useParams, useRouter } from 'next/navigation';
-import { GET_SETLIST, UPDATE_SETLIST } from '@/lib/server/graphql/apollo-operations';
-import SetlistForm from '@/components/forms/SetlistForm';
-import { SetlistFormValues } from '@/types/components';
+import React from 'react';
+
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import SetlistForm from '@/components/forms/SetlistForm';
+import { GET_SETLIST, UPDATE_SETLIST } from '@/lib/server/graphql/apollo-operations';
 import { formatDateForInput } from '@/lib/shared/dateUtils';
+import { SetlistFormValues } from '@/types/components';
 
 export default function EditSetlistPage() {
   const params = useParams();

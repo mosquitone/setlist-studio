@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Container, Paper, Typography, Box, Alert, CircularProgress } from '@mui/material';
-import { Button } from '@/components/common/ui/Button';
+import { useMutation, gql } from '@apollo/client';
 import { VerifiedUser as VerifiedUserIcon, ErrorOutline as ErrorIcon } from '@mui/icons-material';
-import { useMutation } from '@apollo/client';
-import { gql } from '@apollo/client';
+import { Container, Paper, Typography, Box, Alert, CircularProgress } from '@mui/material';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
+
+import { Button } from '@/components/common/ui/Button';
 import { useI18n } from '@/hooks/useI18n';
 
 const VERIFY_EMAIL = gql`

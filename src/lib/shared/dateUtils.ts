@@ -1,7 +1,12 @@
 /**
- * Utility functions for date formatting with Japan timezone (JST)
+ * Utility functions for date formatting with timezone support and i18n
+ * @deprecated Use formatDate from @/lib/i18n/date-format instead for i18n support
  */
 
+import { formatDate } from '@/lib/i18n/date-format';
+import { Language } from '@/lib/i18n/messages';
+
+// レガシー関数 - 後方互換性のため保持
 export const formatDateJST = (dateString: string | null | undefined): string => {
   if (!dateString) return '';
 
@@ -28,16 +33,18 @@ export const formatDateTimeJST = (dateString: string | null | undefined): string
   });
 };
 
-export const formatEventDateJST = (dateString: string | null | undefined): string => {
+// i18n対応版の関数 - 新しいformatDate関数を使用
+export const formatEventDate = (
+  dateString: string | null | undefined,
+  language: Language = 'ja',
+): string => {
   if (!dateString) return '';
+  return formatDate(dateString, 'short', language);
+};
 
-  const date = new Date(dateString);
-  return date.toLocaleDateString('ja-JP', {
-    timeZone: 'Asia/Tokyo',
-    year: 'numeric',
-    month: 'numeric',
-    day: 'numeric',
-  });
+// 後方互換性のため残しておく
+export const formatEventDateJST = (dateString: string | null | undefined): string => {
+  return formatEventDate(dateString, 'ja');
 };
 
 export const formatDateForInput = (dateString: string | null | undefined): string => {

@@ -1,6 +1,7 @@
 'use client';
 
 import { Box, Link, SxProps, Theme } from '@mui/material';
+
 import { useI18n } from '@/hooks/useI18n';
 
 interface LogoOfficialLinkProps {

@@ -1,9 +1,10 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+
 import { secureAuthClient } from '@/lib/client/secure-auth-client';
-import { User } from '@/types/entities';
 import { AuthResponse } from '@/types/api';
+import { User } from '@/types/entities';
 
 interface AuthContextType {
   isLoggedIn: boolean;
@@ -11,6 +12,7 @@ interface AuthContextType {
   user: User | null;
   login: (token: string) => Promise<AuthResponse>;
   logout: () => Promise<void>;
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -52,12 +54,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
     window.location.reload();
   };
 
+  const refreshUser = async () => {
+    await secureAuthClient.refreshUser();
+    // 状態はsecureAuthClientのsubscribeで自動的に更新される
+  };
+
   const value = {
     isLoggedIn,
     isLoading,
     user,
     login,
     logout,
+    refreshUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

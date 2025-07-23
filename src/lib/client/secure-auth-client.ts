@@ -1,8 +1,10 @@
 // セキュアな認証クライアント（HttpOnly Cookie使用）
-import { apolloClient } from './apollo-client';
-import { GET_ME_QUERY } from '../server/graphql/apollo-operations';
-import { User } from '@/types/entities';
 import { AuthResponse } from '@/types/api';
+import { User } from '@/types/entities';
+
+import { GET_ME_QUERY } from '../server/graphql/apollo-operations';
+
+import { apolloClient } from './apollo-client';
 
 export interface AuthState {
   authenticated: boolean;
@@ -144,6 +146,32 @@ class SecureAuthClient {
     } catch (error) {
       console.error('Login failed:', error);
       return { success: false, error: 'Network error' };
+    }
+  }
+
+  // ユーザー情報を再取得
+  async refreshUser(): Promise<void> {
+    if (!this.currentState.authenticated) {
+      return;
+    }
+
+    try {
+      const { data: graphqlData } = await apolloClient.query({
+        query: GET_ME_QUERY,
+        fetchPolicy: 'network-only', // キャッシュを使わず常に最新データを取得
+      });
+
+      if (graphqlData?.me) {
+        this.updateState({
+          authenticated: true,
+          user: graphqlData.me,
+          loading: false,
+        });
+      }
+    } catch (error) {
+      console.error('Failed to refresh user data:', error);
+      // エラーの場合は認証状態を再確認
+      await this.checkAuthStatus();
     }
   }
 

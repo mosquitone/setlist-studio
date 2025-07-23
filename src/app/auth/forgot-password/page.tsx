@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+
 import ForgotPasswordClient from './ForgotPasswordClient';
 
 export const metadata: Metadata = {

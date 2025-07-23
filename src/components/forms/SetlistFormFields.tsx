@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import { useQuery } from '@apollo/client';
 import {
   Grid,
   TextField,
@@ -13,10 +13,11 @@ import {
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs, { Dayjs } from 'dayjs';
 import { FormikProps } from 'formik';
-import { SetlistFormValues } from '@/types/components';
-import { useQuery } from '@apollo/client';
-import { GET_ARTIST_NAMES } from '@/lib/server/graphql/apollo-operations';
+import React from 'react';
+
 import { useI18n } from '@/hooks/useI18n';
+import { GET_ARTIST_NAMES } from '@/lib/server/graphql/apollo-operations';
+import { SetlistFormValues } from '@/types/components';
 
 interface SetlistFormFieldsProps {
   formik: FormikProps<SetlistFormValues>;

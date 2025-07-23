@@ -1,6 +1,7 @@
 'use client';
 
 import { Box, Typography, Stack } from '@mui/material';
+
 import { LogoOfficialLink } from '@/components/common/LogoOfficialLink';
 import { useI18n } from '@/hooks/useI18n';
 

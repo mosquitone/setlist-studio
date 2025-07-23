@@ -1,7 +1,8 @@
 'use client';
 
-import React from 'react';
 import { Container, Typography, Box, Paper } from '@mui/material';
+import React from 'react';
+
 import { useI18n } from '@/hooks/useI18n';
 
 interface LegalPageTemplateProps {

@@ -1,16 +1,18 @@
 'use client';
 
-import { Container, Box, Typography } from '@mui/material';
 import { useQuery } from '@apollo/client';
-import { GET_SETLISTS } from '@/lib/server/graphql/apollo-operations';
-import { GetSetlistsResponse } from '../types/graphql';
+import { Container, Box, Typography } from '@mui/material';
+
 import { useAuth } from '@/components/providers/AuthProvider';
-import { WelcomeSection } from '../components/home/WelcomeSection';
-import { PrimaryAuthSection } from '../components/home/PrimaryAuthSection';
+import { useI18n } from '@/hooks/useI18n';
+import { GET_SETLISTS } from '@/lib/server/graphql/apollo-operations';
+
 import { FeatureSection } from '../components/home/FeatureSection';
+import { PrimaryAuthSection } from '../components/home/PrimaryAuthSection';
 import { SampleSetlistsSection } from '../components/home/SampleSetlistsSection';
 import { SetlistDashboard } from '../components/home/SetlistDashboard';
-import { useI18n } from '@/hooks/useI18n';
+import { WelcomeSection } from '../components/home/WelcomeSection';
+import { GetSetlistsResponse } from '../types/graphql';
 
 export default function HomeClient() {
   const { isLoggedIn, isLoading } = useAuth();

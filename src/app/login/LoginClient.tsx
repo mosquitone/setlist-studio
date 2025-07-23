@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useMutation } from '@apollo/client';
+import { Login as LoginIcon, Visibility, VisibilityOff } from '@mui/icons-material';
 import {
   Container,
   Paper,
@@ -12,15 +13,15 @@ import {
   InputAdornment,
   Divider,
 } from '@mui/material';
-import { Button } from '@/components/common/ui/Button';
-import { Login as LoginIcon, Visibility, VisibilityOff } from '@mui/icons-material';
-import GoogleAuthButton from '@/components/auth/GoogleAuthButton';
-import { useMutation } from '@apollo/client';
-import { LOGIN } from '@/lib/server/graphql/apollo-operations';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+
+import GoogleAuthButton from '@/components/auth/GoogleAuthButton';
+import { Button } from '@/components/common/ui/Button';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useI18n } from '@/hooks/useI18n';
+import { LOGIN } from '@/lib/server/graphql/apollo-operations';
 
 export default function LoginClient() {
   const [email, setEmail] = useState('');
@@ -117,9 +118,9 @@ export default function LoginClient() {
             </Button>
           </Box>
 
-          <Divider sx={{ my: 3 }}>
+          <Divider sx={{ my: 2, '&::before, &::after': { borderTopWidth: 2 } }}>
             <Typography variant="body2" color="text.secondary">
-              または
+              {messages.common.or}
             </Typography>
           </Divider>
 

@@ -1,3 +1,4 @@
+import { PrismaClient } from '@prisma/client';
 import {
   Resolver,
   Query,
@@ -12,16 +13,17 @@ import {
   FieldResolver,
   Root,
 } from 'type-graphql';
-import { PrismaClient } from '@prisma/client';
-import { Setlist } from '../types/Setlist';
-import { SetlistItem } from '../types/SetlistItem';
+
 import { AuthMiddleware } from '@/lib/server/graphql/middleware/jwt-auth-middleware';
+import { verifyAndValidateJWT } from '@/types/jwt';
+
 import {
   logSecurityEventDB,
   SecurityEventType,
   SecurityEventSeverity,
 } from '../../../security/security-logger-db';
-import { verifyAndValidateJWT } from '@/types/jwt';
+import { Setlist } from '../types/Setlist';
+import { SetlistItem } from '../types/SetlistItem';
 
 interface Context {
   prisma: PrismaClient;

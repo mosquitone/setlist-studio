@@ -1,10 +1,12 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Box } from '@mui/material';
+import { useState, useEffect, useRef } from 'react';
+
 import { Button } from '@/components/common/ui/Button';
-import { Song } from '../../types/graphql';
 import { useI18n } from '@/hooks/useI18n';
+
+import { Song } from '../../types/graphql';
 
 interface SongEditDialogProps {
   open: boolean;
