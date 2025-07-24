@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { headers } from 'next/headers';
 
-import { getMessages, type Language } from '@/lib/i18n/messages';
+import { getMessages, Language } from '@/lib/i18n';
 
 import VerifyEmailClient from './VerifyEmailClient';
 
@@ -14,6 +14,15 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: messages.metadata.verifyEmailTitle,
     description: messages.metadata.verifyEmailDescription,
+    keywords: [
+      ...messages.metadata.keywords,
+      lang === 'ja' ? 'メールアドレス認証' : 'email verification',
+    ],
+    openGraph: {
+      title: messages.metadata.verifyEmailTitle,
+      description: messages.metadata.verifyEmailDescription,
+      type: 'website',
+    },
   };
 }
 

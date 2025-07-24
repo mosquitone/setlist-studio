@@ -1,49 +1,31 @@
-'use client';
+import { Metadata } from 'next';
+import { headers } from 'next/headers';
 
-import { Container, Box, Typography } from '@mui/material';
-import Script from 'next/script';
+import { getMessages, Language } from '@/lib/i18n';
 
-import NoSSR from '@/components/common/ui/NoSSR';
-import { useI18n } from '@/hooks/useI18n';
-import { getSoftwareApplicationSchema } from '@/lib/metadata/pageSchemas';
-
-import HomeClient from './HomeClient';
+import HomePageClient from './HomePageClient';
 
 // Disable caching for authentication-dependent content
 export const dynamic = 'force-dynamic';
 
-export default function HomePage() {
-  const { messages } = useI18n();
-  const softwareSchema = getSoftwareApplicationSchema();
+export async function generateMetadata(): Promise<Metadata> {
+  const headersList = await headers();
+  const acceptLanguage = headersList.get('accept-language') || 'ja';
+  const lang: Language = acceptLanguage.startsWith('en') ? 'en' : 'ja';
+  const messages = getMessages(lang);
 
-  return (
-    <>
-      <Script
-        id="software-application-jsonld"
-        type="application/ld+json"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareSchema) }}
-      />
-      <NoSSR
-        fallback={
-          <Container maxWidth="lg">
-            <Box
-              sx={{
-                minHeight: '60vh',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <Typography variant="h6" color="text.secondary">
-                {messages.common.loading}
-              </Typography>
-            </Box>
-          </Container>
-        }
-      >
-        <HomeClient />
-      </NoSSR>
-    </>
-  );
+  return {
+    title: messages.metadata.homeTitle,
+    description: messages.metadata.homeDescription,
+    keywords: messages.metadata.keywords,
+    openGraph: {
+      title: messages.metadata.homeTitle,
+      description: messages.metadata.homeDescription,
+      type: 'website',
+    },
+  };
+}
+
+export default function HomePage() {
+  return <HomePageClient />;
 }
