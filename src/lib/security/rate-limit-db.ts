@@ -192,7 +192,7 @@ export function createAuthRateLimit(prisma: PrismaClient) {
 
   return createDatabaseRateLimit(prisma, {
     windowMs: isDevelopment ? 5 * 60 * 1000 : 60 * 60 * 1000, // 開発: 5分, 本番: 1時間
-    maxRequests: isDevelopment ? 1000 : 100, // 開発: 制限なし, 本番: 1時間に100回
+    maxRequests: isDevelopment ? 1000 : 150, // 開発: 制限なし, 本番: 1時間に150回
     message: 'Authentication attempts exceeded. Please try again later.',
   });
 }

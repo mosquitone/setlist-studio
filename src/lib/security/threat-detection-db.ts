@@ -52,10 +52,10 @@ export interface ThreatAlert {
 export class DatabaseThreatDetection {
   private prisma: PrismaClient;
   private readonly thresholds = {
-    maxFailedLogins: 20, // IP単位：1時間での連続ログイン失敗回数（緩和）
-    maxLoginAttemptsPerHour: 30, // 1時間あたりの最大ログイン試行（緩和）
-    maxRequestsPerMinute: 200, // 1分あたりの最大リクエスト数（厳格化）
-    maxUsersPerIP: 10, // 1つのIPから同時利用できる最大ユーザー数（緩和）
+    maxFailedLogins: 25, // IP単位：1時間での連続ログイン失敗回数（緩和）
+    maxLoginAttemptsPerHour: 40, // 1時間あたりの最大ログイン試行（緩和）
+    maxRequestsPerMinute: 250, // 1分あたりの最大リクエスト数（緩和）
+    maxUsersPerIP: 12, // 1つのIPから同時利用できる最大ユーザー数（緩和）
     suspiciousUserAgents: ['bot', 'crawler', 'spider', 'scraper', 'automated'],
   };
 
