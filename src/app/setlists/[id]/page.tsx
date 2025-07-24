@@ -3,7 +3,6 @@
 import { useQuery, useMutation } from '@apollo/client';
 import {
   Container,
-  Alert,
   CircularProgress,
   Dialog,
   DialogTitle,
@@ -34,12 +33,11 @@ export default function SetlistDetailPage() {
   const params = useParams();
   const setlistId = params.id as string;
   const { messages } = useI18n();
-  const { showError, showSuccess: showSnackbarSuccess } = useSnackbar();
+  const { showError, showSuccess } = useSnackbar();
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedTheme, setSelectedTheme] = useState<Theme | null>(null);
   const [themeInitialized, setThemeInitialized] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
   const isDev = process.env.NODE_ENV === 'development';
 
   const { user, isLoggedIn, isLoading: authLoading } = useAuth();
@@ -54,9 +52,9 @@ export default function SetlistDetailPage() {
     onCompleted: (data: ToggleSetlistVisibilityData) => {
       const isNowPublic = data.toggleSetlistVisibility.isPublic;
       if (isNowPublic) {
-        showSnackbarSuccess(messages.notifications.setlistMadePublic);
+        showSuccess(messages.notifications.setlistMadePublic);
       } else {
-        showSnackbarSuccess(messages.notifications.setlistMadePrivate);
+        showSuccess(messages.notifications.setlistMadePrivate);
       }
       // Force page reload to refresh data with correct authentication context
       setTimeout(() => window.location.reload(), 1000);
@@ -93,9 +91,7 @@ export default function SetlistDetailPage() {
     handleDebugToggle,
   } = useImageGeneration({
     onSuccess: () => {
-      showSnackbarSuccess(messages.setlistDetail.successMessage);
-      setShowSuccess(true);
-      setTimeout(() => setShowSuccess(false), 3000);
+      showSuccess(messages.setlistDetail.successMessage);
     },
   });
 
@@ -149,13 +145,6 @@ export default function SetlistDetailPage() {
           </Box>
         ) : (
           <>
-            {/* Success Banner */}
-            {showSuccess && (
-              <Alert severity="success" sx={{ mb: 3 }}>
-                {messages.setlistDetail.successMessage}
-              </Alert>
-            )}
-
             <SetlistActions
               onEdit={handleEdit}
               onDownload={onDownload}

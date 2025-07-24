@@ -1,6 +1,7 @@
 'use client';
 
 import { useMutation, useQuery } from '@apollo/client';
+import { Box, CircularProgress, Container } from '@mui/material';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
@@ -125,24 +126,33 @@ export default function NewSetlistPage() {
     }
   }, [duplicateData, selectedSongsParam, messages.setlistForm.copy]);
 
-  const isLoading = loading || duplicateLoading;
+  // 複製モードの場合、データが読み込まれるまで待つ
+  const isReady = !duplicateId || (duplicateId && !duplicateLoading);
 
   return (
     <ProtectedRoute>
-      <SetlistForm
-        title={
-          duplicateId
-            ? messages.setlistForm.titles.duplicate
-            : selectedSongsParam
-              ? messages.setlistForm.titles.fromSongs
-              : messages.setlistForm.titles.create
-        }
-        initialValues={initialValues}
-        onSubmit={handleSubmit}
-        loading={isLoading}
-        submitButtonText={messages.setlistForm.buttons.create}
-        enableDragAndDrop={true}
-      />
+      {isReady ? (
+        <SetlistForm
+          title={
+            duplicateId
+              ? messages.setlistForm.titles.duplicate
+              : selectedSongsParam
+                ? messages.setlistForm.titles.fromSongs
+                : messages.setlistForm.titles.create
+          }
+          initialValues={initialValues}
+          onSubmit={handleSubmit}
+          loading={loading}
+          submitButtonText={messages.setlistForm.buttons.create}
+          enableDragAndDrop={true}
+        />
+      ) : (
+        <Container maxWidth="md" sx={{ py: 4, px: { xs: 2, sm: 3 } }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
+            <CircularProgress />
+          </Box>
+        </Container>
+      )}
     </ProtectedRoute>
   );
 }
