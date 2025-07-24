@@ -26,17 +26,17 @@ export const SingleColumnLayout: React.FC<SingleColumnLayoutProps> = ({ items, c
 
     if (isNoteExitst) {
       const defalt = { fontSize: '40px' };
-      if (count < 4) return { ...defalt, gap: 3, noteFontSize: '22px' };
-      if (count <= 6) return { ...defalt, gap: 3, noteFontSize: '20px' };
-      if (count <= 8) return { fontSize: '38px', gap: 2, noteFontSize: '18px' };
-      if (count <= 10) return { fontSize: '30px', gap: 1.5, noteFontSize: '16px' };
+      if (count < 4) return { ...defalt, gap: 2.2, noteFontSize: '22px' };
+      if (count <= 6) return { ...defalt, gap: 2.2, noteFontSize: '22px' };
+      if (count <= 8) return { fontSize: '38px', gap: 2, noteFontSize: '19px' };
+      if (count <= 10) return { fontSize: '33px', gap: 1.5, noteFontSize: '17px' };
     }
 
     const defalut = { fontSize: '46px' };
     if (count < 4) return { ...defalut, gap: 5 };
     if (count <= 6) return { ...defalut, gap: 4 };
     if (count <= 8) return { ...defalut, gap: 3 };
-    return { fontSize: '40px', gap: 3 };
+    return { fontSize: '42px', gap: 3 };
   }, [items]);
 
   return (
