@@ -2,8 +2,11 @@
 
 import { useQuery } from '@apollo/client';
 import { Container, Box, Typography } from '@mui/material';
+import { useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
 
 import { useAuth } from '@/components/providers/AuthProvider';
+import { useSnackbar } from '@/components/providers/SnackbarProvider';
 import { useI18n } from '@/hooks/useI18n';
 import { GET_SETLISTS } from '@/lib/server/graphql/apollo-operations';
 
@@ -17,6 +20,16 @@ import { GetSetlistsResponse } from '../types/graphql';
 export default function HomeClient() {
   const { isLoggedIn, isLoading } = useAuth();
   const { messages } = useI18n();
+  const { showSuccess } = useSnackbar();
+  const searchParams = useSearchParams();
+
+  // URLパラメータからGoogle認証成功を検出して表示
+  useEffect(() => {
+    const loginType = searchParams.get('login');
+    if (loginType === 'google' && isLoggedIn) {
+      showSuccess(messages.notifications.loginSuccess);
+    }
+  }, [searchParams, isLoggedIn, showSuccess, messages]);
 
   const { data: setlistsData, loading: setlistsLoading } = useQuery<GetSetlistsResponse>(
     GET_SETLISTS,

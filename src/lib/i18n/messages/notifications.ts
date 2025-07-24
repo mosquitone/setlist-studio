@@ -24,6 +24,7 @@ export interface NotificationMessages {
   emailSent: string;
   linkCopied: string;
   accountCreated: string;
+  loginSuccess: string;
 }
 
 // 日本語版
@@ -48,6 +49,7 @@ export const notificationsJa: NotificationMessages = {
   emailSent: 'メールが送信されました',
   linkCopied: 'リンクがコピーされました',
   accountCreated: 'アカウントが作成されました',
+  loginSuccess: 'ログインしました',
 };
 
 // 英語版
@@ -72,4 +74,5 @@ export const notificationsEn: NotificationMessages = {
   emailSent: 'Email sent',
   linkCopied: 'Link copied',
   accountCreated: 'Account created successfully. Please login.',
+  loginSuccess: 'Logged in successfully',
 };

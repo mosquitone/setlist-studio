@@ -284,6 +284,9 @@ function handleSuccessRedirect(
   // メールアドレス変更の場合は成功メッセージを追加
   if (isEmailChange) {
     redirectUrl = `${req.nextUrl.origin}/profile?success=email_changed&message=${encodeURIComponent('Google認証によりメールアドレスが正常に変更されました')}`;
+  } else if (!profileContext) {
+    // 通常のGoogle認証ログインの場合、成功パラメータを追加
+    redirectUrl = `${req.nextUrl.origin}/?login=google`;
   }
 
   const redirectResponse = NextResponse.redirect(redirectUrl);

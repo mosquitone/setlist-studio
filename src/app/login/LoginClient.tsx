@@ -32,7 +32,7 @@ export default function LoginClient() {
   const searchParams = useSearchParams();
   const { login: authLogin } = useAuth();
   const { messages } = useI18n();
-  const { showError } = useSnackbar();
+  const { showError, showSuccess } = useSnackbar();
 
   // URLパラメータからエラーメッセージを取得して表示
   useEffect(() => {
@@ -55,6 +55,7 @@ export default function LoginClient() {
     onCompleted: async (data: LoginData) => {
       const result = await authLogin(data.login.token);
       if (result.success) {
+        showSuccess(messages.notifications.loginSuccess);
         router.push('/');
       } else {
         showError(result.error || 'Login failed');
