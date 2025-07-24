@@ -308,6 +308,25 @@ git push gitlab main
 2. 「Speed Insights」で Core Web Vitals を監視
 3. パフォーマンス低下が見られる場合は最適化を検討
 
+## 🔧 データベースメンテナンス
+
+### 本番データベースのリセット（開発期間中のみ）
+
+開発期間中に本番データベースを完全にリセットする必要がある場合、以下のコマンドを使用できます：
+
+```bash
+# 1. 現在のスキーマを確認（オプション）
+DATABASE_URL="your_production_database_url_here" npx prisma db pull
+
+# 2. 全データを削除してスキーマを再作成
+DATABASE_URL="your_production_database_url_here" npx prisma db push --force-reset
+
+# 3. 初期データを投入（必要に応じて）
+DATABASE_URL="your_production_database_url_here" npx prisma db seed
+```
+
+⚠️ **警告**: このコマンドは**全てのデータを削除**します。本番運用開始後は絶対に実行しないでください。
+
 ## ⚠️ 重要な注意事項
 
 ### セキュリティベストプラクティス

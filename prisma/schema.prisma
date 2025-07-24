@@ -24,9 +24,9 @@ model User {
   pendingEmail             String?
   authProvider             String         @default("email")
   pendingPassword          String?
+  emailHistories           EmailHistory[]
   setlists                 Setlist[]
   songs                    Song[]
-  emailHistories           EmailHistory[]
 
   @@map("users")
 }
@@ -147,13 +147,13 @@ model EmailHistory {
   userId           String
   oldEmail         String
   newEmail         String
-  changeMethod     String    // "manual" | "google_oauth" | "verification"
+  changeMethod     String
   changedAt        DateTime  @default(now())
   ipAddress        String?
   userAgent        String?
-  authProvider     String?   // 変更時の認証プロバイダー
-  lastUsedAt       DateTime? // 最後にこのメールアドレスが使用された日時
-  verificationSent Boolean   @default(false) // 所有権確認メール送信済みフラグ
+  authProvider     String?
+  lastUsedAt       DateTime?
+  verificationSent Boolean   @default(false)
   user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
