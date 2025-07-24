@@ -25,7 +25,6 @@ interface SetlistFormProps {
   loading: boolean;
   submitButtonText: string;
   enableDragAndDrop?: boolean;
-  enableReinitialize?: boolean;
 }
 
 /**
@@ -38,7 +37,6 @@ interface SetlistFormProps {
  * @param loading - 送信中のローディング状態
  * @param submitButtonText - 送信ボタンのテキスト
  * @param enableDragAndDrop - ドラッグ&ドロップ機能の有効/無効
- * @param enableReinitialize - 初期値の動的更新を許可するか（デフォルト: false）
  */
 
 // バリデーションスキーマを関数として定義し、i18nメッセージを動的に取得
@@ -131,7 +129,6 @@ const SetlistForm = memo(function SetlistForm({
   loading,
   submitButtonText,
   enableDragAndDrop = true,
-  enableReinitialize = false,
 }: SetlistFormProps) {
   const { data: songsData } = useQuery(GET_SONGS, {
     fetchPolicy: 'cache-first',
@@ -157,7 +154,6 @@ const SetlistForm = memo(function SetlistForm({
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={onSubmit}
-        enableReinitialize={enableReinitialize}
         validateOnChange={false}
         validateOnBlur={true}
       >

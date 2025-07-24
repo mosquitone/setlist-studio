@@ -618,7 +618,15 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 
 最新の開発履歴と変更記録については、[HISTORY.md](./docs/project/HISTORY.md)を参照してください。
 
-### 最新の主要更新 (2025-07-24)
+### 最新の主要更新 (2025-07-25)
+- **enableReinitialize完全削除**: フォーム動作の安定性向上のための抜本的対策
+  - ✅ SetlistFormコンポーネントから`enableReinitialize`プロップを削除
+  - ✅ `/setlists/new/page.tsx`から`shouldReinitialize`状態と関連ロジックを削除
+  - ✅ Formikの初期値を1回のみ設定する安定動作に変更
+  - ✅ 不安定な動的初期値更新による入力問題を根本解決
+  - ✅ TypeScript型定義・ドキュメントの同期更新
+
+### その他の主要更新 (2025-07-24)
 - **認証フローリファクタリング・コード品質向上**: 早期returnパターンの徹底と関数分離
   - ✅ Google認証フロー(google-sync)のelse使用を早期returnパターンに修正
   - ✅ ProfileClientのメール変更処理を認証プロバイダー別関数に分離
@@ -684,13 +692,12 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
   - ✅ ESLint import/order準拠・デフォルト言語統一（日本語）
   - ✅ 新規コードでは個別ファイル直接インポート推奨構造
 
-### その他の最近の主要改善 (2025-07-19〜2025-07-24)
+### その他の最近の主要改善 (2025-07-19〜2025-07-25)
 - **パフォーマンス最適化実装**: React.memo、useMemo、useCallbackによる最適化（2025-07-24）
   - ✅ SetlistDashboard、SetlistFormのメモ化
   - ✅ Formik validateOnChange=falseによる入力パフォーマンス向上
   - ✅ Apollo Client fetchPolicy最適化（cache-and-network）
   - ✅ awaitRefetchQueries=falseによる遷移高速化
-  - ✅ enableReinitialize動的制御による入力保護
   - ✅ note文字数制限を20文字に変更（要見直し）
 - **Material-UI アクセシビリティ改善**: WAI-ARIA仕様準拠のキーボード・スクリーンリーダー対応
 - **セットリスト削除通知改善**: 削除したセットリスト名を含む詳細な通知メッセージ
