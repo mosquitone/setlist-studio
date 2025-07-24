@@ -3,7 +3,7 @@ import { headers } from 'next/headers';
 
 import { getMessages, Language } from '@/lib/i18n';
 
-import TermsClient from './TermsClient';
+import TermsOfServiceClient from './TermsOfServiceClient';
 
 export async function generateMetadata(): Promise<Metadata> {
   const headersList = await headers();
@@ -23,6 +23,6 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function TermsPage() {
-  return <TermsClient />;
+export default function TermsOfServicePage() {
+  return <TermsOfServiceClient />;
 }

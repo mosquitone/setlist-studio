@@ -8,7 +8,7 @@ import LegalPageTemplate from '@/components/common/templates/LegalPageTemplate';
 import { useI18n } from '@/hooks/useI18n';
 import { getLegalPageSchema } from '@/lib/metadata/pageSchemas';
 
-const TermsClient: React.FC = () => {
+const TermsOfServiceClient: React.FC = () => {
   const { messages } = useI18n();
   const termsSchema = getLegalPageSchema('terms');
 
@@ -255,4 +255,4 @@ const TermsClient: React.FC = () => {
   );
 };
 
-export default TermsClient;
+export default TermsOfServiceClient;

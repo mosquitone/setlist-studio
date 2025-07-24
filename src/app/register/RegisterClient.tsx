@@ -197,7 +197,10 @@ export default function RegisterClient() {
               }
               label={
                 <Typography variant="body2">
-                  <Link href="/terms" style={{ color: 'inherit', textDecoration: 'underline' }}>
+                  <Link
+                    href="/terms-of-service"
+                    style={{ color: 'inherit', textDecoration: 'underline' }}
+                  >
                     {messages.auth.terms}
                   </Link>
                   {messages.auth.and || 'and'}

@@ -23,7 +23,7 @@ export default function Footer() {
     >
       {/* 法的情報 */}
       <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, flexWrap: 'wrap', mb: 2 }}>
-        <NextLink href="/terms" style={{ textDecoration: 'none', fontSize: '0.875rem' }}>
+        <NextLink href="/terms-of-service" style={{ textDecoration: 'none', fontSize: '0.875rem' }}>
           {messages.navigation.terms}
         </NextLink>
         <NextLink href="/privacy-policy" style={{ textDecoration: 'none', fontSize: '0.875rem' }}>
