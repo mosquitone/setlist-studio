@@ -202,8 +202,10 @@ export const pagesJa = {
         description: 'アカウント情報の確認・管理ができます。',
         feature1: 'ユーザー名の変更・メールアドレス表示',
         feature2: 'メールアドレス変更（確認メール付き）',
-        feature3: 'パスワード変更機能',
-        feature4: 'アカウント作成日時・ID表示',
+        feature3: 'パスワード変更（メール認証ユーザーのみ）',
+        feature4: '認証方法の確認（メール/Google）',
+        feature5: 'Google→メール認証への切り替え',
+        feature6: 'アカウント削除機能',
       },
     },
   },
@@ -422,8 +424,10 @@ export const pagesEn = {
         description: 'You can check and manage your account information.',
         feature1: 'Username editing and email address display',
         feature2: 'Email address change (with confirmation email)',
-        feature3: 'Password change function',
-        feature4: 'Account creation date and ID display',
+        feature3: 'Password change (email auth users only)',
+        feature4: 'Authentication method display (Email/Google)',
+        feature5: 'Switch from Google to email authentication',
+        feature6: 'Account deletion function',
       },
     },
   },
@@ -636,6 +640,8 @@ export interface PageMessages {
         feature2: string;
         feature3: string;
         feature4: string;
+        feature5: string;
+        feature6: string;
       };
     };
   };

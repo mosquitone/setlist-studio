@@ -174,8 +174,18 @@ const SetlistForm = memo(function SetlistForm({
                 <Typography variant="h6" gutterBottom>
                   {messages.setlistForm.songsList.title}
                 </Typography>
-                <Alert severity="info" sx={{ mb: 2 }}>
+                <Alert 
+                  severity="info" 
+                  sx={{ 
+                    mb: 2,
+                    '& .MuiAlert-icon': {
+                      alignItems: 'center',
+                    },
+                  }}
+                >
                   {messages.setlistForm.songsList.maxSongsWarning}
+                  <br />
+                  {messages.setlistForm.songsList.autoAddInfo}
                 </Alert>
 
                 <FieldArray name="items">

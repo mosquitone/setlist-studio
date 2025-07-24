@@ -46,6 +46,7 @@ export interface SetlistMessages {
     songsList: {
       title: string;
       maxSongsWarning: string;
+      autoAddInfo: string;
       songTitle: string;
       songNote: string;
       addSong: string;
@@ -120,6 +121,7 @@ export const setlistsJa: SetlistMessages = {
     songsList: {
       title: '楽曲リスト',
       maxSongsWarning: '最大20曲まで追加できます。',
+      autoAddInfo: '楽曲管理に登録されていない曲は自動的に追加されます。',
       songTitle: '楽曲タイトル',
       songNote: 'メモ',
       addSong: '楽曲を追加',
@@ -194,6 +196,7 @@ export const setlistsEn: SetlistMessages = {
     songsList: {
       title: 'Song List',
       maxSongsWarning: 'You can add up to 20 songs.',
+      autoAddInfo: 'Songs not in the song management will be automatically added.',
       songTitle: 'Song Title',
       songNote: 'Note',
       addSong: 'Add Song',

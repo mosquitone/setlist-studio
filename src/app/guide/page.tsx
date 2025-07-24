@@ -680,6 +680,16 @@ export default function GuidePage() {
                         primary={`• ${messages.pages.guide.pageDetails.profile.feature4}`}
                       />
                     </ListItem>
+                    <ListItem sx={{ pl: 0 }}>
+                      <ListItemText
+                        primary={`• ${messages.pages.guide.pageDetails.profile.feature5}`}
+                      />
+                    </ListItem>
+                    <ListItem sx={{ pl: 0 }}>
+                      <ListItemText
+                        primary={`• ${messages.pages.guide.pageDetails.profile.feature6}`}
+                      />
+                    </ListItem>
                   </List>
                 </Paper>
               </Grid>
