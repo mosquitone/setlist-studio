@@ -26,7 +26,6 @@ export default function NewSetlistPage() {
   const selectedSongsParam = searchParams.get('selectedSongs');
   const { messages } = useI18n();
   const { showError, showSuccess } = useSnackbar();
-  const [shouldReinitialize, setShouldReinitialize] = useState(true);
   const [initialValues, setInitialValues] = useState<SetlistFormValues>({
     title: '',
     artistName: '',
@@ -111,8 +110,6 @@ export default function NewSetlistPage() {
                 }))
             : [{ title: '', note: '' }],
       });
-      // 初期値設定後、再初期化を無効化
-      setTimeout(() => setShouldReinitialize(false), 100);
     } else if (selectedSongsParam) {
       try {
         const selectedSongs: unknown = JSON.parse(selectedSongsParam);
@@ -121,15 +118,10 @@ export default function NewSetlistPage() {
             ...prev,
             items: selectedSongs.slice(0, 20), // 20曲制限
           }));
-          // 初期値設定後、再初期化を無効化
-          setTimeout(() => setShouldReinitialize(false), 100);
         }
       } catch (error: unknown) {
         console.error('Failed to parse selected songs:', error);
       }
-    } else {
-      // 通常の新規作成時は即座に無効化
-      setShouldReinitialize(false);
     }
   }, [duplicateData, selectedSongsParam, messages.setlistForm.copy]);
 
@@ -150,7 +142,6 @@ export default function NewSetlistPage() {
         loading={isLoading}
         submitButtonText={messages.setlistForm.buttons.create}
         enableDragAndDrop={true}
-        enableReinitialize={shouldReinitialize}
       />
     </ProtectedRoute>
   );
