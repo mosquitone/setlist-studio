@@ -33,7 +33,7 @@ export const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({ items, colors 
       };
     }
 
-    return { fontSize: '30px', gap: 3 };
+    return { fontSize: '32px', gap: 3 };
   }, [items]);
 
   return (
@@ -43,7 +43,8 @@ export const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({ items, colors 
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'row',
-        gap: 3.5,
+        pl: 1,
+        gap: 4,
         minHeight: 0,
       }}
     >
