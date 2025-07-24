@@ -33,10 +33,11 @@ export const validationEn: ValidationMessages = {
   required: 'This field is required',
   emailInvalid: 'Invalid email address',
   usernameInvalid: 'Invalid username',
-  passwordTooShort: 'Password is too short',
+  passwordTooShort:
+    'Password must be at least 8 characters and contain uppercase, lowercase, and numbers',
   passwordsDoNotMatch: 'Passwords do not match',
   usernameTooShort: 'Username is too short',
   titleTooShort: 'Title is too short',
-  titleTooLong: 'Title is too long',
+  titleTooLong: 'Title is too long (100 characters or less)',
   agreeToTerms: 'Please agree to the terms and privacy policy',
 };

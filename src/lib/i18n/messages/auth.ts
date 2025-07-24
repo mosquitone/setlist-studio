@@ -191,8 +191,8 @@ export interface AuthMessages {
 export const authJa: AuthMessages = {
   loginRequired: 'ログインが必要です',
   authenticationExpired: '認証の有効期限が切れました。再度ログインしてください',
-  serverError: 'サーバーエラーが発生しました。後でもう一度お試しください',
-  userAlreadyExists: '登録に失敗しました。入力内容をご確認ください',
+  serverError: '一時的な問題が発生しました。しばらくしてからもう一度お試しください',
+  userAlreadyExists: 'このメールアドレスは既に登録されています',
   invalidCredentials: 'メールアドレスまたはパスワードが正しくありません',
   emailSent: 'メールを送信しました',
   passwordResetRequested: 'パスワードリセットのメールを送信しました',
@@ -242,7 +242,7 @@ export const authJa: AuthMessages = {
   passwordResetDescription: 'メールアドレスを入力してパスワードリセット手順をお送りします',
   resendPasswordReset: 'パスワードリセットを再送信',
   resendAvailableIn: '再送信可能まで',
-  resendCount: '回送信済み',
+  resendCount: '回送信しました',
   emailNotFound: 'メールが届かない場合：',
   resetEmailHelp: '登録済みのメールアドレスを入力してください',
   checkSpamFolder: '迷惑メールフォルダを確認してください',
@@ -361,8 +361,8 @@ export const authJa: AuthMessages = {
   deleteToConfirm: '削除',
 
   // API Route メッセージ
-  tokenRequired: 'トークンが必要です',
-  invalidToken: '無効なトークンです',
+  tokenRequired: '認証が必要です',
+  invalidToken: '認証情報が無効です',
   invalidRequest: '無効なリクエストです',
   googleAuthRequired: 'Google認証が必要です。',
   googleAccountNotFound: '元のGoogleアカウントが見つかりません。',
@@ -380,8 +380,8 @@ export const authJa: AuthMessages = {
 export const authEn: AuthMessages = {
   loginRequired: 'Login required',
   authenticationExpired: 'Authentication expired. Please login again',
-  serverError: 'Server error occurred. Please try again later.',
-  userAlreadyExists: 'Registration failed. Please check your input',
+  serverError: 'A temporary issue occurred. Please try again in a moment.',
+  userAlreadyExists: 'This email address is already registered',
   invalidCredentials: 'Invalid email or password',
   emailSent: 'Email sent',
   passwordResetRequested: 'Password reset instructions have been sent to your email.',
@@ -559,8 +559,8 @@ export const authEn: AuthMessages = {
   deleteToConfirm: 'DELETE',
 
   // API Route messages
-  tokenRequired: 'Token required',
-  invalidToken: 'Invalid token',
+  tokenRequired: 'Authentication required',
+  invalidToken: 'Invalid authentication',
   invalidRequest: 'Invalid request',
   googleAuthRequired: 'Google authentication required.',
   googleAccountNotFound: 'Original Google account not found.',

@@ -47,7 +47,7 @@ export const errorsJa: ErrorMessages = {
   authenticationRequired: '認証が必要です',
   authenticationRequiredPrivate: '非公開セットリストへのアクセスには認証が必要です',
   unauthorizedAccessPrivate: '非公開セットリストへの不正アクセスです',
-  jwtNotConfigured: 'JWT設定エラーです',
+  jwtNotConfigured: '認証システムの設定エラーが発生しました',
   usernameAlreadyExists: 'このユーザー名は既に使用されています',
   setlistItemNotFound: 'セットリスト項目が見つかりません',
   somethingWentWrong: '何らかのエラーが発生しました',
@@ -57,7 +57,7 @@ export const errorsJa: ErrorMessages = {
     '認証の試行回数が上限に達しました。しばらく時間をおいてから再試行してください',
   emailRateLimitExceeded:
     'メール送信回数が上限に達しました。しばらく時間をおいてから再試行してください',
-  csrfValidationFailed: 'CSRFトークンの検証に失敗しました',
+  csrfValidationFailed: 'セキュリティ検証に失敗しました。ページを再読み込みしてください',
   inputTooLong: '入力が長すぎます。{maxLength}文字以下にしてください',
   urlCopiedToClipboard: 'URLをクリップボードにコピーしました',
   // Google OAuth エラー
@@ -82,7 +82,7 @@ export const errorsEn: ErrorMessages = {
   authenticationRequired: 'Authentication required',
   authenticationRequiredPrivate: 'Authentication required to access private setlist',
   unauthorizedAccessPrivate: 'Unauthorized access to private setlist',
-  jwtNotConfigured: 'JWT_SECRET environment variable is not configured',
+  jwtNotConfigured: 'Authentication system configuration error',
   usernameAlreadyExists: 'This username is already in use',
   setlistItemNotFound: 'Setlist item not found',
   somethingWentWrong: 'Something went wrong',
@@ -90,7 +90,7 @@ export const errorsEn: ErrorMessages = {
   rateLimitExceeded: 'Request limit exceeded. Please try again later',
   authRateLimitExceeded: 'Authentication attempts exceeded. Please try again later',
   emailRateLimitExceeded: 'Email sending limit exceeded. Please try again later',
-  csrfValidationFailed: 'CSRF token validation failed',
+  csrfValidationFailed: 'Security validation failed. Please reload the page',
   inputTooLong: 'Input is too long. Please keep it under {maxLength} characters',
   urlCopiedToClipboard: 'URL copied to clipboard',
   // Google OAuth エラー

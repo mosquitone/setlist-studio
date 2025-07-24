@@ -47,7 +47,7 @@ export const notificationsJa: NotificationMessages = {
   passwordChanged: 'パスワードが変更されました',
   emailSent: 'メールが送信されました',
   linkCopied: 'リンクがコピーされました',
-  accountCreated: 'アカウントが作成されました。ログインしてください。',
+  accountCreated: 'アカウントが作成されました',
 };
 
 // 英語版
@@ -71,5 +71,5 @@ export const notificationsEn: NotificationMessages = {
   passwordChanged: 'Password changed',
   emailSent: 'Email sent',
   linkCopied: 'Link copied',
-  accountCreated: 'Account created successfully',
+  accountCreated: 'Account created successfully. Please login.',
 };
