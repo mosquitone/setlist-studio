@@ -182,8 +182,6 @@ export interface AuthMessages {
   googleAccountNotFound: string;
   sameGoogleAccount: string;
   googleAccountAlreadyRegistered: string;
-  googleAccountSwitchSuccess: string;
-  googleAccountSwitchFailed: string;
   temporaryAccessRestricted: string;
 
   // Google認証説明
@@ -381,9 +379,6 @@ export const authJa: AuthMessages = {
   sameGoogleAccount: '現在のGoogleアカウントと同じです。',
   googleAccountAlreadyRegistered:
     'この新しいGoogleアカウントは既に別のユーザーとして登録されています。',
-  googleAccountSwitchSuccess:
-    'Googleアカウントが正常に切り替えられました。すべてのデータが移行されました。',
-  googleAccountSwitchFailed: 'Googleアカウント切り替えに失敗しました。',
   temporaryAccessRestricted:
     '一時的にアクセスが制限されています。しばらく待ってから再度お試しください。',
 
@@ -591,9 +586,6 @@ export const authEn: AuthMessages = {
   googleAccountNotFound: 'Original Google account not found.',
   sameGoogleAccount: 'Same as current Google account.',
   googleAccountAlreadyRegistered: 'This new Google account is already registered as another user.',
-  googleAccountSwitchSuccess:
-    'Google account has been successfully switched. All data has been migrated.',
-  googleAccountSwitchFailed: 'Failed to switch Google account.',
   temporaryAccessRestricted: 'Access temporarily restricted. Please try again later.',
 
   // Google Authentication Explanation
