@@ -4,6 +4,7 @@ import { getServerSession } from 'next-auth/next';
 
 import { authOptions } from '@/lib/auth/nextauth';
 import { PASSWORD_POLICY } from '@/lib/constants/auth';
+import { getMessage } from '@/lib/i18n/api-helpers';
 import {
   logSecurityEventDB,
   SecurityEventType,
@@ -24,7 +25,7 @@ export async function POST(request: NextRequest) {
     const session = await getServerSession(authOptions);
     if (!session || !session.user?.email) {
       return NextResponse.json(
-        { success: false, message: 'Google認証が必要です。' },
+        { success: false, message: getMessage(request, 'auth', 'googleAuthRequired') },
         { status: 401 },
       );
     }
@@ -46,7 +47,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          message: '一時的にアクセスが制限されています。しばらく待ってから再度お試しください。',
+          message: getMessage(request, 'auth', 'temporaryAccessRestricted'),
         },
         { status: 429 },
       );
@@ -85,7 +86,7 @@ export async function POST(request: NextRequest) {
 
     if (!originalUser || originalUser.authProvider !== AUTH_PROVIDERS.GOOGLE) {
       return NextResponse.json(
-        { success: false, message: '元のGoogleアカウントが見つかりません。' },
+        { success: false, message: getMessage(request, 'auth', 'googleAccountNotFound') },
         { status: 404 },
       );
     }
@@ -95,7 +96,7 @@ export async function POST(request: NextRequest) {
     // 新しいGoogleアカウントが既存アカウントと同じかチェック
     if (originalUser.email === newGoogleEmail) {
       return NextResponse.json(
-        { success: false, message: '現在のGoogleアカウントと同じです。' },
+        { success: false, message: getMessage(request, 'auth', 'sameGoogleAccount') },
         { status: 400 },
       );
     }
@@ -109,7 +110,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          message: 'この新しいGoogleアカウントは既に別のユーザーとして登録されています。',
+          message: getMessage(request, 'auth', 'googleAccountAlreadyRegistered'),
         },
         { status: 400 },
       );
@@ -171,13 +172,13 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: 'Googleアカウントが正常に切り替えられました。すべてのデータが移行されました。',
+      message: getMessage(request, 'auth', 'googleAccountSwitchSuccess'),
     });
   } catch (error) {
     console.error('Google account switch error:', error);
 
     return NextResponse.json(
-      { success: false, message: 'Googleアカウント切り替えに失敗しました。' },
+      { success: false, message: getMessage(request, 'auth', 'googleAccountSwitchFailed') },
       { status: 500 },
     );
   }

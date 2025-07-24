@@ -24,6 +24,11 @@ interface Context {
   request?: Request;
   i18n?: {
     lang: 'ja' | 'en';
+    messages: {
+      auth: {
+        userNotFound: string;
+      };
+    };
   };
 }
 
@@ -52,7 +57,7 @@ export class EmailHistoryResolver {
     });
 
     if (!user) {
-      throw new Error('User not found');
+      throw new Error(ctx.i18n?.messages.auth.userNotFound || 'User not found');
     }
 
     return user;

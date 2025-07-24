@@ -19,6 +19,14 @@ import { SetlistItem } from '../types/SetlistItem';
 interface Context {
   prisma: PrismaClient;
   userId?: string;
+  i18n?: {
+    messages: {
+      errors: {
+        setlistNotFound: string;
+        setlistItemNotFound: string;
+      };
+    };
+  };
 }
 
 @InputType()
@@ -62,7 +70,7 @@ export class SetlistItemResolver {
     });
 
     if (!setlist) {
-      throw new Error('Setlist not found');
+      throw new Error(ctx.i18n?.messages.errors.setlistNotFound || 'Setlist not found');
     }
 
     return ctx.prisma.setlistItem.findMany({
@@ -89,7 +97,7 @@ export class SetlistItemResolver {
 
     // Verify that the setlist belongs to the authenticated user
     if (setlistItem.setlist.userId !== ctx.userId) {
-      throw new Error('Setlist item not found');
+      throw new Error(ctx.i18n?.messages.errors.setlistItemNotFound || 'Setlist item not found');
     }
 
     // Return the item without setlist relation to match GraphQL type
@@ -114,7 +122,7 @@ export class SetlistItemResolver {
     });
 
     if (!setlist) {
-      throw new Error('Setlist not found');
+      throw new Error(ctx.i18n?.messages.errors.setlistNotFound || 'Setlist not found');
     }
 
     return ctx.prisma.setlistItem.create({
@@ -136,12 +144,12 @@ export class SetlistItemResolver {
     });
 
     if (!setlistItemWithSetlist) {
-      throw new Error('Setlist item not found');
+      throw new Error(ctx.i18n?.messages.errors.setlistItemNotFound || 'Setlist item not found');
     }
 
     // Verify that the setlist belongs to the authenticated user
     if (setlistItemWithSetlist.setlist.userId !== ctx.userId) {
-      throw new Error('Setlist item not found');
+      throw new Error(ctx.i18n?.messages.errors.setlistItemNotFound || 'Setlist item not found');
     }
 
     return ctx.prisma.setlistItem.update({
@@ -160,12 +168,12 @@ export class SetlistItemResolver {
     });
 
     if (!setlistItemWithSetlist) {
-      throw new Error('Setlist item not found');
+      throw new Error(ctx.i18n?.messages.errors.setlistItemNotFound || 'Setlist item not found');
     }
 
     // Verify that the setlist belongs to the authenticated user
     if (setlistItemWithSetlist.setlist.userId !== ctx.userId) {
-      throw new Error('Setlist item not found');
+      throw new Error(ctx.i18n?.messages.errors.setlistItemNotFound || 'Setlist item not found');
     }
 
     await ctx.prisma.setlistItem.delete({
@@ -188,7 +196,7 @@ export class SetlistItemResolver {
     });
 
     if (!setlist) {
-      throw new Error('Setlist not found');
+      throw new Error(ctx.i18n?.messages.errors.setlistNotFound || 'Setlist not found');
     }
 
     // Batch update the order of each item using transaction

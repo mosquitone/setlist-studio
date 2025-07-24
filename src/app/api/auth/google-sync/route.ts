@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 
 import { authOptions } from '@/lib/auth/nextauth';
+import { getErrorMessage } from '@/lib/i18n/api-helpers';
 import { csrfProtection } from '@/lib/security/csrf-protection';
 import { createAuthRateLimit } from '@/lib/security/rate-limit-db';
 import {
@@ -68,7 +69,10 @@ async function validateGoogleSession(req: NextRequest) {
       },
     });
 
-    return { session: null, error: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) };
+    return {
+      session: null,
+      error: NextResponse.json({ error: getErrorMessage(req, 'unauthorized') }, { status: 401 }),
+    };
   }
 
   return { session, error: null };

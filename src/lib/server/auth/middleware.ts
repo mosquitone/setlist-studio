@@ -69,13 +69,3 @@ export const authChecker: AuthChecker<Context> = async ({ context }) => {
     return false;
   }
 };
-
-/**
- * 認証ユーザー取得ヘルパー
- */
-export function getAuthenticatedUser(context: Context) {
-  if (!context.user) {
-    throw new Error('認証が必要です');
-  }
-  return context.user;
-}

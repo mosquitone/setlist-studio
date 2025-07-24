@@ -7,6 +7,7 @@ import depthLimit from 'graphql-depth-limit';
 import jwt from 'jsonwebtoken';
 import { NextRequest } from 'next/server';
 
+import { getErrorMessage } from '../../../lib/i18n/api-helpers';
 import { withI18n } from '../../../lib/i18n/context';
 import { csrfProtection } from '../../../lib/security/csrf-protection';
 import { createApiRateLimit, createAuthRateLimit } from '../../../lib/security/rate-limit-db';
@@ -221,9 +222,6 @@ async function createSecureContext(req: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
-  // Create i18n context early for error message localization
-  const i18nContext = withI18n({});
-
   // Apply database-based rate limiting
   const apiRateLimit = createApiRateLimit(prisma);
   const rateLimitResponse = await apiRateLimit(request);
@@ -233,7 +231,7 @@ export async function GET(request: NextRequest) {
       return Response.json(
         {
           ...json,
-          error: i18nContext.i18n?.messages.errors.rateLimitExceeded || json.error,
+          error: getErrorMessage(request, 'rateLimitExceeded'),
         },
         {
           status: rateLimitResponse.status,
@@ -252,9 +250,6 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  // Create i18n context early for error message localization
-  const i18nContext = withI18n({});
-
   // Parallel processing for maximum performance optimization
   const bodyPromise = request.clone().text();
   const apiRateLimitPromise = createApiRateLimit(prisma)(request);
@@ -268,14 +263,14 @@ export async function POST(request: NextRequest) {
     serverPromise,
   ]);
 
-  // Check API rate limit first with i18n message
+  // Check API rate limit first
   if (apiRateLimitResponse) {
     if (apiRateLimitResponse.status === 429) {
       const json = await apiRateLimitResponse.clone().json();
       return Response.json(
         {
           ...json,
-          error: i18nContext.i18n?.messages.errors.rateLimitExceeded || json.error,
+          error: getErrorMessage(request, 'rateLimitExceeded'),
         },
         {
           status: apiRateLimitResponse.status,
@@ -300,7 +295,7 @@ export async function POST(request: NextRequest) {
 
   const authResults = await Promise.all(authPromises);
 
-  // Check for any auth/CSRF failures with i18n messages
+  // Check for any auth/CSRF failures
   for (const result of authResults) {
     if (result) {
       if (result.status === 429) {
@@ -309,7 +304,7 @@ export async function POST(request: NextRequest) {
         return Response.json(
           {
             ...json,
-            error: i18nContext.i18n?.messages.errors.authRateLimitExceeded || json.error,
+            error: getErrorMessage(request, 'authRateLimitExceeded'),
           },
           {
             status: result.status,
@@ -322,7 +317,7 @@ export async function POST(request: NextRequest) {
         return Response.json(
           {
             ...json,
-            error: i18nContext.i18n?.messages.errors.csrfValidationFailed || json.error,
+            error: getErrorMessage(request, 'csrfValidationFailed'),
           },
           {
             status: result.status,

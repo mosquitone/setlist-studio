@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import { getMessage } from '@/lib/i18n/api-helpers';
 import { JWTPayload, verifyAndValidateJWT } from '@/types/jwt';
 
 interface AuthCookieOptions {
@@ -66,13 +67,19 @@ export async function POST(request: NextRequest) {
     const { token } = await request.json();
 
     if (!token) {
-      return NextResponse.json({ error: 'トークンが必要です' }, { status: 400 });
+      return NextResponse.json(
+        { error: getMessage(request, 'auth', 'tokenRequired') },
+        { status: 400 },
+      );
     }
 
     // トークンの有効性を検証
     const decoded = verifyToken(token);
     if (!decoded) {
-      return NextResponse.json({ error: '無効なトークンです' }, { status: 400 });
+      return NextResponse.json(
+        { error: getMessage(request, 'auth', 'invalidToken') },
+        { status: 400 },
+      );
     }
 
     const response = NextResponse.json({
@@ -90,7 +97,10 @@ export async function POST(request: NextRequest) {
 
     return response;
   } catch {
-    return NextResponse.json({ error: '無効なリクエストです' }, { status: 400 });
+    return NextResponse.json(
+      { error: getMessage(request, 'auth', 'invalidRequest') },
+      { status: 400 },
+    );
   }
 }
 

@@ -173,6 +173,18 @@ export interface AuthMessages {
   deleteAccountSuccess: string;
   typeDeleteToConfirm: string;
   deleteToConfirm: string;
+
+  // API Route メッセージ
+  tokenRequired: string;
+  invalidToken: string;
+  invalidRequest: string;
+  googleAuthRequired: string;
+  googleAccountNotFound: string;
+  sameGoogleAccount: string;
+  googleAccountAlreadyRegistered: string;
+  googleAccountSwitchSuccess: string;
+  googleAccountSwitchFailed: string;
+  temporaryAccessRestricted: string;
 }
 
 // 日本語メッセージ
@@ -347,6 +359,21 @@ export const authJa: AuthMessages = {
   deleteAccountSuccess: 'アカウントが削除されました',
   typeDeleteToConfirm: '削除を確定するには「削除」と入力してください',
   deleteToConfirm: '削除',
+
+  // API Route メッセージ
+  tokenRequired: 'トークンが必要です',
+  invalidToken: '無効なトークンです',
+  invalidRequest: '無効なリクエストです',
+  googleAuthRequired: 'Google認証が必要です。',
+  googleAccountNotFound: '元のGoogleアカウントが見つかりません。',
+  sameGoogleAccount: '現在のGoogleアカウントと同じです。',
+  googleAccountAlreadyRegistered:
+    'この新しいGoogleアカウントは既に別のユーザーとして登録されています。',
+  googleAccountSwitchSuccess:
+    'Googleアカウントが正常に切り替えられました。すべてのデータが移行されました。',
+  googleAccountSwitchFailed: 'Googleアカウント切り替えに失敗しました。',
+  temporaryAccessRestricted:
+    '一時的にアクセスが制限されています。しばらく待ってから再度お試しください。',
 };
 
 // 英語メッセージ
@@ -530,4 +557,17 @@ export const authEn: AuthMessages = {
   deleteAccountSuccess: 'Account has been deleted',
   typeDeleteToConfirm: 'Type "DELETE" to confirm deletion',
   deleteToConfirm: 'DELETE',
+
+  // API Route messages
+  tokenRequired: 'Token required',
+  invalidToken: 'Invalid token',
+  invalidRequest: 'Invalid request',
+  googleAuthRequired: 'Google authentication required.',
+  googleAccountNotFound: 'Original Google account not found.',
+  sameGoogleAccount: 'Same as current Google account.',
+  googleAccountAlreadyRegistered: 'This new Google account is already registered as another user.',
+  googleAccountSwitchSuccess:
+    'Google account has been successfully switched. All data has been migrated.',
+  googleAccountSwitchFailed: 'Failed to switch Google account.',
+  temporaryAccessRestricted: 'Access temporarily restricted. Please try again later.',
 };
