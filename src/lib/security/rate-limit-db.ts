@@ -187,23 +187,23 @@ export function createDatabaseRateLimit(prisma: PrismaClient, options: RateLimit
 
 // プリセット設定（Vercel対応）
 export function createAuthRateLimit(prisma: PrismaClient) {
-  // 適切なバランス：攻撃は防ぐが正常利用は許可
+  // 適切なバランス：攻撃は防ぐが正常利用は許可（GraphQL複数リクエスト対応）
   const isDevelopment = process.env.NODE_ENV === 'development';
 
   return createDatabaseRateLimit(prisma, {
     windowMs: isDevelopment ? 5 * 60 * 1000 : 60 * 60 * 1000, // 開発: 5分, 本番: 1時間
-    maxRequests: isDevelopment ? 1000 : 50, // 開発: 制限なし, 本番: 1時間に50回
+    maxRequests: isDevelopment ? 1000 : 100, // 開発: 制限なし, 本番: 1時間に100回
     message: 'Authentication attempts exceeded. Please try again later.',
   });
 }
 
 export function createApiRateLimit(prisma: PrismaClient) {
-  // 攻撃防止重視：正常利用には十分、大量攻撃は確実にブロック
+  // 攻撃防止重視：正常利用には十分、大量攻撃は確実にブロック（GraphQL環境最適化）
   const isDevelopment = process.env.NODE_ENV === 'development';
 
   return createDatabaseRateLimit(prisma, {
     windowMs: isDevelopment ? 5 * 60 * 1000 : 5 * 60 * 1000, // 開発・本番: 5分
-    maxRequests: isDevelopment ? 500 : 200, // 開発: 5分に500回, 本番: 5分に200回
+    maxRequests: isDevelopment ? 500 : 400, // 開発: 5分に500回, 本番: 5分に400回
     message: 'Request limit exceeded. Please try again later.',
   });
 }
