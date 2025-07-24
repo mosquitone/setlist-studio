@@ -4,7 +4,7 @@ import { useMutation } from '@apollo/client';
 import { Container, Typography, TextField, Box, Paper } from '@mui/material';
 import { Formik, Form } from 'formik';
 import { useRouter } from 'next/navigation';
-import React from 'react';
+import React, { useMemo, useCallback } from 'react';
 import * as Yup from 'yup';
 
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
@@ -34,7 +34,7 @@ const getValidationSchema = (messages: Messages) =>
     artist: Yup.string().required(messages.songs.newSong.validation.artistRequired),
     key: Yup.string(),
     tempo: Yup.number().typeError(messages.songs.newSong.validation.tempoInvalid).nullable(),
-    notes: Yup.string(),
+    notes: Yup.string().max(20, messages.songs.newSong.validation.notesMaxLength),
   });
 
 const initialValues: SongFormValues = {
@@ -49,6 +49,9 @@ export default function NewSongPage() {
   const { messages } = useI18n();
   const router = useRouter();
   const { showError, showSuccess } = useSnackbar();
+
+  // validationSchemaをメモ化
+  const validationSchema = useMemo(() => getValidationSchema(messages), [messages]);
   const [createSong, { loading }] = useMutation<CreateSongData>(CREATE_SONG, {
     onCompleted: (data: CreateSongData) => {
       if (data.createSong) {
@@ -61,20 +64,27 @@ export default function NewSongPage() {
     },
   });
 
-  const handleSubmit = async (values: SongFormValues) => {
-    const tempoVal = values.tempo ? parseInt(values.tempo, 10) : undefined;
-    await createSong({
-      variables: {
-        input: {
-          title: values.title,
-          artist: values.artist,
-          key: values.key || undefined,
-          tempo: tempoVal,
-          notes: values.notes || undefined,
+  const handleSubmit = useCallback(
+    async (values: SongFormValues) => {
+      const tempoVal = values.tempo ? parseInt(values.tempo, 10) : undefined;
+      await createSong({
+        variables: {
+          input: {
+            title: values.title,
+            artist: values.artist,
+            key: values.key || undefined,
+            tempo: tempoVal,
+            notes: values.notes || undefined,
+          },
         },
-      },
-    });
-  };
+      });
+    },
+    [createSong],
+  );
+
+  const handleCancel = useCallback(() => {
+    router.back();
+  }, [router]);
 
   return (
     <ProtectedRoute>
@@ -85,7 +95,7 @@ export default function NewSongPage() {
 
         <Formik
           initialValues={initialValues}
-          validationSchema={getValidationSchema(messages)}
+          validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
           {({ values, errors, touched, handleChange, handleBlur }) => (
@@ -147,7 +157,7 @@ export default function NewSongPage() {
               </Paper>
 
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
-                <Button variant="outlined" disabled={loading} onClick={() => router.back()}>
+                <Button variant="outlined" disabled={loading} onClick={handleCancel}>
                   {messages.common.cancel}
                 </Button>
                 <Button type="submit" loading={loading}>

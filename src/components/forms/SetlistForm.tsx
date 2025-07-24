@@ -5,7 +5,7 @@ import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea
 import { Add as AddIcon } from '@mui/icons-material';
 import { Box, Container, Typography, Paper, Alert } from '@mui/material';
 import { Formik, Form, FieldArray } from 'formik';
-import React, { useMemo } from 'react';
+import React, { useMemo, memo } from 'react';
 import * as Yup from 'yup';
 
 import { Button } from '@/components/common/ui/Button';
@@ -25,6 +25,7 @@ interface SetlistFormProps {
   loading: boolean;
   submitButtonText: string;
   enableDragAndDrop?: boolean;
+  enableReinitialize?: boolean;
 }
 
 /**
@@ -35,9 +36,9 @@ interface SetlistFormProps {
  * @param initialValues - フォームの初期値
  * @param onSubmit - フォーム送信時のハンドラー関数
  * @param loading - 送信中のローディング状態
- * @param error - エラーオブジェクト
  * @param submitButtonText - 送信ボタンのテキスト
  * @param enableDragAndDrop - ドラッグ&ドロップ機能の有効/無効
+ * @param enableReinitialize - 初期値の動的更新を許可するか（デフォルト: false）
  */
 
 // バリデーションスキーマを関数として定義し、i18nメッセージを動的に取得
@@ -103,14 +104,14 @@ const createValidationSchema = (messages: Messages) =>
               },
             ),
           note: Yup.string()
-            .max(500, messages.setlistForm.validation.songNoteMaxLength)
+            .max(20, messages.setlistForm.validation.songNoteMaxLength)
             .test(
               'sanitize',
               messages.setlistForm.validation.songNoteInvalidChars,
               function (value) {
                 if (!value) return true;
                 try {
-                  validateAndSanitizeInput(value, 500);
+                  validateAndSanitizeInput(value, 20);
                   return true;
                 } catch {
                   return false;
@@ -123,17 +124,23 @@ const createValidationSchema = (messages: Messages) =>
       .max(20, messages.setlistForm.validation.maxSongsExceeded),
   });
 
-export default function SetlistForm({
+const SetlistForm = memo(function SetlistForm({
   title,
   initialValues,
   onSubmit,
   loading,
   submitButtonText,
   enableDragAndDrop = true,
+  enableReinitialize = false,
 }: SetlistFormProps) {
-  const { data: songsData } = useQuery(GET_SONGS);
+  const { data: songsData } = useQuery(GET_SONGS, {
+    fetchPolicy: 'cache-first',
+  });
   const { messages } = useI18n();
   const songs = useMemo(() => songsData?.songs || [], [songsData]);
+
+  // validationSchemaをメモ化
+  const validationSchema = useMemo(() => createValidationSchema(messages), [messages]);
 
   return (
     <Container maxWidth="md" sx={{ py: 4, px: { xs: 2, sm: 3 } }}>
@@ -148,9 +155,11 @@ export default function SetlistForm({
 
       <Formik
         initialValues={initialValues}
-        validationSchema={createValidationSchema(messages)}
+        validationSchema={validationSchema}
         onSubmit={onSubmit}
-        enableReinitialize
+        enableReinitialize={enableReinitialize}
+        validateOnChange={false}
+        validateOnBlur={true}
       >
         {(formik) => {
           const { values } = formik;
@@ -279,4 +288,8 @@ export default function SetlistForm({
       </Formik>
     </Container>
   );
-}
+});
+
+SetlistForm.displayName = 'SetlistForm';
+
+export default SetlistForm;

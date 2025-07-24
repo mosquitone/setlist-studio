@@ -4,6 +4,8 @@ import Skeleton from '@mui/material/Skeleton';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+import { usePrefetch } from '@/hooks/usePrefetch';
+
 interface NavigationItem {
   label: string;
   path: string;
@@ -17,6 +19,15 @@ interface DesktopNavigationProps {
 
 export function DesktopNavigation({ items, isLoading }: DesktopNavigationProps) {
   const pathname = usePathname();
+  const { prefetchSetlists, prefetchSongs } = usePrefetch();
+
+  const handleMouseEnter = (path: string) => {
+    if (path === '/setlists') {
+      prefetchSetlists();
+    } else if (path === '/songs') {
+      prefetchSongs();
+    }
+  };
 
   if (isLoading) {
     return (
@@ -47,6 +58,7 @@ export function DesktopNavigation({ items, isLoading }: DesktopNavigationProps) 
             component={Link}
             href={item.path}
             startIcon={<IconComponent />}
+            onMouseEnter={() => handleMouseEnter(item.path)}
             sx={{
               color: 'white',
               textTransform: 'none',

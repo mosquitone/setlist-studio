@@ -7,7 +7,7 @@ import {
 } from '@mui/icons-material';
 import { Box, Typography, Stack, useTheme, useMediaQuery } from '@mui/material';
 import Link from 'next/link';
-import React from 'react';
+import React, { memo } from 'react';
 
 import { Button } from '@/components/common/ui/Button';
 import { useI18n } from '@/hooks/useI18n';
@@ -18,7 +18,7 @@ interface SongPageHeaderProps {
   onDeleteSelected: () => void;
 }
 
-export function SongPageHeader({
+export const SongPageHeader = memo(function SongPageHeader({
   selectedSongs,
   onCreateSetlist,
   onDeleteSelected,
@@ -80,4 +80,6 @@ export function SongPageHeader({
       </Typography>
     </Box>
   );
-}
+});
+
+SongPageHeader.displayName = 'SongPageHeader';

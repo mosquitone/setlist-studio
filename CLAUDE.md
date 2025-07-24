@@ -679,7 +679,14 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
   - ✅ ESLint import/order準拠・デフォルト言語統一（日本語）
   - ✅ 新規コードでは個別ファイル直接インポート推奨構造
 
-### その他の最近の主要改善 (2025-07-19〜2025-07-23)
+### その他の最近の主要改善 (2025-07-19〜2025-07-24)
+- **パフォーマンス最適化実装**: React.memo、useMemo、useCallbackによる最適化（2025-07-24）
+  - ✅ SetlistDashboard、SetlistFormのメモ化
+  - ✅ Formik validateOnChange=falseによる入力パフォーマンス向上
+  - ✅ Apollo Client fetchPolicy最適化（cache-and-network）
+  - ✅ awaitRefetchQueries=falseによる遷移高速化
+  - ✅ enableReinitialize動的制御による入力保護
+  - ✅ note文字数制限を20文字に変更（要見直し）
 - **Material-UI アクセシビリティ改善**: WAI-ARIA仕様準拠のキーボード・スクリーンリーダー対応
 - **セットリスト削除通知改善**: 削除したセットリスト名を含む詳細な通知メッセージ
 - **アカウント削除機能実装**: ユーザーによる自己データ管理機能の追加

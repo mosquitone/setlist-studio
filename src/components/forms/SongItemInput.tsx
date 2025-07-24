@@ -13,7 +13,7 @@ import {
   useMediaQuery,
 } from '@mui/material';
 import { FormikProps } from 'formik';
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import { useI18n } from '@/hooks/useI18n';
 import { SetlistFormValues, SetlistFormItem } from '@/types/components';
@@ -48,47 +48,54 @@ export const SongItemInput = React.memo(function SongItemInput({
   const { messages } = useI18n();
 
   // テンプレート文字列を置換するヘルパー関数
-  const formatMessage = (template: string, replacements: Record<string, string | number>) => {
-    return Object.entries(replacements).reduce((str, [key, value]) => {
-      return str.replace(new RegExp(`{${key}}`, 'g'), String(value));
-    }, template);
-  };
+  const formatMessage = useCallback(
+    (template: string, replacements: Record<string, string | number>) => {
+      return Object.entries(replacements).reduce((str, [key, value]) => {
+        return str.replace(new RegExp(`{${key}}`, 'g'), String(value));
+      }, template);
+    },
+    [],
+  );
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'ArrowUp' && event.ctrlKey && onMoveUp) {
-      event.preventDefault();
-      onMoveUp(index);
-    } else if (event.key === 'ArrowDown' && event.ctrlKey && onMoveDown) {
-      event.preventDefault();
-      onMoveDown(index);
-    }
-  };
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent) => {
+      if (event.key === 'ArrowUp' && event.ctrlKey && onMoveUp) {
+        event.preventDefault();
+        onMoveUp(index);
+      } else if (event.key === 'ArrowDown' && event.ctrlKey && onMoveDown) {
+        event.preventDefault();
+        onMoveDown(index);
+      }
+    },
+    [index, onMoveUp, onMoveDown],
+  );
 
-  const handleSongSelect = (
-    selectedSong: { id: string; title: string; notes?: string | null } | null,
-  ) => {
-    if (selectedSong) {
-      // 楽曲タイトルを設定
-      handleChange({
-        target: {
-          name: `items.${index}.title`,
-          value: selectedSong.title,
-        },
-      });
-
-      // ノートを設定（既存のノートが空の場合のみ）
-      if (!item.note && selectedSong.notes) {
+  const handleSongSelect = useCallback(
+    (selectedSong: { id: string; title: string; notes?: string | null } | null) => {
+      if (selectedSong) {
+        // 楽曲タイトルを設定
         handleChange({
           target: {
-            name: `items.${index}.note`,
-            value: selectedSong.notes,
+            name: `items.${index}.title`,
+            value: selectedSong.title,
           },
         });
+
+        // ノートを設定（既存のノートが空の場合のみ）
+        if (!item.note && selectedSong.notes) {
+          handleChange({
+            target: {
+              name: `items.${index}.note`,
+              value: selectedSong.notes,
+            },
+          });
+        }
       }
-    }
-  };
+    },
+    [handleChange, index, item.note],
+  );
 
   return (
     <Paper

@@ -9,7 +9,12 @@ import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import SetlistForm from '@/components/forms/SetlistForm';
 import { useSnackbar } from '@/components/providers/SnackbarProvider';
 import { useI18n } from '@/hooks/useI18n';
-import { GET_SETLIST, UPDATE_SETLIST, GET_SONGS } from '@/lib/server/graphql/apollo-operations';
+import {
+  GET_SETLIST,
+  UPDATE_SETLIST,
+  GET_SONGS,
+  GET_SETLISTS,
+} from '@/lib/server/graphql/apollo-operations';
 import { formatDateForInput } from '@/lib/shared/dateUtils';
 import { generateNewSongNotification } from '@/lib/shared/notificationHelpers';
 import { THEMES } from '@/types/common';
@@ -35,7 +40,8 @@ export default function EditSetlistPage() {
   const [updateSetlist, { loading: updateLoading }] = useMutation<UpdateSetlistData>(
     UPDATE_SETLIST,
     {
-      refetchQueries: [{ query: GET_SONGS }],
+      refetchQueries: [{ query: GET_SONGS }, { query: GET_SETLISTS }],
+      awaitRefetchQueries: false,
       onCompleted: (data: UpdateSetlistData) => {
         showSuccess('セットリストが更新されました');
 
@@ -48,6 +54,7 @@ export default function EditSetlistPage() {
           showSuccess(notificationMessage);
         }
 
+        // 即座に遷移
         router.push(`/setlists/${setlistId}`);
       },
       onError: (error) => {

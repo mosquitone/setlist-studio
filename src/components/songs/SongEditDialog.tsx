@@ -1,7 +1,7 @@
 'use client';
 
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Box } from '@mui/material';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, memo, useCallback } from 'react';
 
 import { Button } from '@/components/common/ui/Button';
 import { useI18n } from '@/hooks/useI18n';
@@ -16,7 +16,7 @@ interface SongEditDialogProps {
   loading?: boolean;
 }
 
-export function SongEditDialog({
+export const SongEditDialog = memo(function SongEditDialog({
   open,
   song,
   onClose,
@@ -53,17 +53,17 @@ export function SongEditDialog({
     }
   }, [open]);
 
-  const handleFieldChange = (field: keyof typeof formValues, value: string) => {
+  const handleFieldChange = useCallback((field: keyof typeof formValues, value: string) => {
     setFormValues((prev) => ({
       ...prev,
       [field]: field === 'tempo' ? (value === '' ? null : Number(value)) : value,
     }));
-  };
+  }, []);
 
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     await onSave(formValues);
     onClose();
-  };
+  }, [formValues, onSave, onClose]);
 
   return (
     <Dialog open={open} onClose={loading ? undefined : onClose} maxWidth="sm" fullWidth>
@@ -118,4 +118,6 @@ export function SongEditDialog({
       </DialogActions>
     </Dialog>
   );
-}
+});
+
+SongEditDialog.displayName = 'SongEditDialog';

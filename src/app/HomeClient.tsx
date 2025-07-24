@@ -24,7 +24,7 @@ export default function HomeClient() {
       skip: !isLoggedIn,
       errorPolicy: 'all',
       fetchPolicy: 'cache-and-network',
-      notifyOnNetworkStatusChange: true,
+      notifyOnNetworkStatusChange: false,
     },
   );
 

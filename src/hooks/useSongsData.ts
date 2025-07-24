@@ -33,7 +33,7 @@ import { GetSongsResponse } from '@/types/graphql';
  */
 export function useSongsData() {
   const { data, loading, error, refetch } = useQuery<GetSongsResponse>(GET_SONGS, {
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-and-network',
   });
 
   return {

@@ -47,6 +47,7 @@ export default function SetlistDetailPage() {
   const { data, loading, error } = useQuery(GET_SETLIST, {
     variables: { id: setlistId },
     skip: !setlistId,
+    fetchPolicy: 'cache-first',
   });
 
   const [toggleVisibility] = useMutation(TOGGLE_SETLIST_VISIBILITY, {

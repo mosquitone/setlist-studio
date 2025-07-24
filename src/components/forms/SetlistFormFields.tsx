@@ -12,8 +12,8 @@ import {
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs, { Dayjs } from 'dayjs';
-import { FormikProps } from 'formik';
-import React from 'react';
+import { FormikProps, FastField, FieldProps } from 'formik';
+import React, { memo } from 'react';
 
 import { useI18n } from '@/hooks/useI18n';
 import { GET_ARTIST_NAMES } from '@/lib/server/graphql/apollo-operations';
@@ -23,7 +23,9 @@ interface SetlistFormFieldsProps {
   formik: FormikProps<SetlistFormValues>;
 }
 
-export function SetlistFormFields({ formik }: SetlistFormFieldsProps) {
+export const SetlistFormFields = memo(function SetlistFormFields({
+  formik,
+}: SetlistFormFieldsProps) {
   const { values, errors, touched, handleChange, handleBlur, setFieldValue } = formik;
   const { messages, lang } = useI18n();
 
@@ -40,6 +42,7 @@ export function SetlistFormFields({ formik }: SetlistFormFieldsProps) {
   // アーティスト名のオートコンプリート用データ取得（楽曲のアーティスト名から）
   const { data: artistNamesData } = useQuery(GET_ARTIST_NAMES, {
     errorPolicy: 'ignore', // エラーが発生しても処理を続行
+    fetchPolicy: 'cache-first',
   });
 
   const artistNames = artistNamesData?.artistNames || [];
@@ -47,20 +50,21 @@ export function SetlistFormFields({ formik }: SetlistFormFieldsProps) {
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
-        <TextField
-          fullWidth
-          name="title"
-          label={`${messages.setlistForm.fields.title}（${messages.setlistForm.fields.titlePlaceholder}）`}
-          value={values.title}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          error={touched.title && Boolean(errors.title)}
-          helperText={
-            touched.title && errors.title
-              ? errors.title
-              : messages.setlistForm.fields.titleHelperText
-          }
-        />
+        <FastField name="title">
+          {({ field, meta }: FieldProps) => (
+            <TextField
+              fullWidth
+              {...field}
+              label={`${messages.setlistForm.fields.title}（${messages.setlistForm.fields.titlePlaceholder}）`}
+              error={meta.touched && Boolean(meta.error)}
+              helperText={
+                meta.touched && meta.error
+                  ? meta.error
+                  : messages.setlistForm.fields.titleHelperText
+              }
+            />
+          )}
+        </FastField>
       </Grid>
 
       <Grid item xs={12} sm={6}>
@@ -127,14 +131,11 @@ export function SetlistFormFields({ formik }: SetlistFormFieldsProps) {
       </Grid>
 
       <Grid item xs={12} sm={6}>
-        <TextField
-          fullWidth
-          name="eventName"
-          label={messages.setlistForm.fields.eventName}
-          value={values.eventName}
-          onChange={handleChange}
-          onBlur={handleBlur}
-        />
+        <FastField name="eventName">
+          {({ field }: FieldProps) => (
+            <TextField fullWidth {...field} label={messages.setlistForm.fields.eventName} />
+          )}
+        </FastField>
       </Grid>
       <Grid item xs={12} sm={6}>
         <DatePicker
@@ -150,12 +151,16 @@ export function SetlistFormFields({ formik }: SetlistFormFieldsProps) {
               helperText: touched.eventDate && errors.eventDate,
               onBlur: handleBlur,
               name: 'eventDate',
+              id: 'eventDate',
               InputProps: {
                 sx: {
                   borderRadius: '12px',
                   width: '100%',
                 },
               },
+            },
+            field: {
+              onBlur: () => handleBlur({ target: { name: 'eventDate' } }),
             },
           }}
           format={lang === 'ja' ? 'YYYY年MM月DD日' : 'MM/DD/YYYY'}
@@ -187,4 +192,6 @@ export function SetlistFormFields({ formik }: SetlistFormFieldsProps) {
       </Grid>
     </Grid>
   );
-}
+});
+
+SetlistFormFields.displayName = 'SetlistFormFields';

@@ -67,15 +67,50 @@ const authLink = setContext(async (_, { headers }) => {
   };
 });
 
+// キャッシュ戦略を最適化
+const cache = new InMemoryCache({
+  typePolicies: {
+    Query: {
+      fields: {
+        setlists: {
+          // マージ戦略を定義してキャッシュの更新を最適化
+          merge(_, incoming) {
+            return incoming;
+          },
+        },
+        songs: {
+          merge(_, incoming) {
+            return incoming;
+          },
+        },
+      },
+    },
+    Setlist: {
+      fields: {
+        items: {
+          // セットリストアイテムの順序を保持
+          merge(_, incoming) {
+            return incoming;
+          },
+        },
+      },
+    },
+  },
+});
+
 export const apolloClient = new ApolloClient({
   link: authLink.concat(httpLink),
-  cache: new InMemoryCache(),
+  cache,
   defaultOptions: {
     watchQuery: {
       errorPolicy: 'all',
+      // デフォルトでcache-and-networkを使用（パフォーマンスと鮮度のバランス）
+      fetchPolicy: 'cache-and-network',
     },
     query: {
       errorPolicy: 'all',
+      // デフォルトでcache-and-networkを使用（パフォーマンスと鮮度のバランス）
+      fetchPolicy: 'cache-and-network',
     },
   },
 });
