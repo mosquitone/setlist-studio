@@ -9,11 +9,14 @@ export function PrimaryAuthSection() {
     <Box
       sx={{
         display: 'flex',
-        justifyContent: 'center',
+        flexDirection: 'column',
+        alignItems: 'center',
         width: '100%',
         px: { xs: 2, md: 0 },
+        gap: 4,
       }}
     >
+      {/* 認証ボタンセクション */}
       <Stack
         direction="row"
         spacing={{ xs: 1.5, sm: 2 }}

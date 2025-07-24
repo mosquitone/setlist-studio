@@ -185,6 +185,18 @@ export interface AuthMessages {
   googleAccountSwitchSuccess: string;
   googleAccountSwitchFailed: string;
   temporaryAccessRestricted: string;
+
+  // Google認証説明
+  googleAuthAbout: string;
+  googleAuthSafeAndEasy: string;
+  googleAuthPurpose: string;
+  googleAuthSecure: string;
+  googleAuthSecureDescription: string;
+  googleAuthBasicInfo: string;
+  googleAuthBasicInfoDescription: string;
+  googleAuthDataSave: string;
+  googleAuthDataSaveDescription: string;
+  googleAuthPrivacyNote: string;
 }
 
 // 日本語メッセージ
@@ -374,6 +386,19 @@ export const authJa: AuthMessages = {
   googleAccountSwitchFailed: 'Googleアカウント切り替えに失敗しました。',
   temporaryAccessRestricted:
     '一時的にアクセスが制限されています。しばらく待ってから再度お試しください。',
+
+  // Google認証説明
+  googleAuthAbout: 'Google認証について',
+  googleAuthSafeAndEasy: '安全で簡単なログイン',
+  googleAuthPurpose: 'Setlist Studioは、お客様のGoogleアカウント情報を以下の目的でのみ使用します',
+  googleAuthSecure: '安全な認証',
+  googleAuthSecureDescription: 'Googleの高度なセキュリティ機能で保護',
+  googleAuthBasicInfo: '基本情報の取得',
+  googleAuthBasicInfoDescription: 'お名前とメールアドレスのみ',
+  googleAuthDataSave: 'データの保存',
+  googleAuthDataSaveDescription: 'セットリストの作成と管理',
+  googleAuthPrivacyNote:
+    '取得した情報は本サービスの提供のみに使用し、第三者への提供は一切行いません',
 };
 
 // 英語メッセージ
@@ -570,4 +595,18 @@ export const authEn: AuthMessages = {
     'Google account has been successfully switched. All data has been migrated.',
   googleAccountSwitchFailed: 'Failed to switch Google account.',
   temporaryAccessRestricted: 'Access temporarily restricted. Please try again later.',
+
+  // Google Authentication Explanation
+  googleAuthAbout: 'About Google Authentication',
+  googleAuthSafeAndEasy: 'Safe and Easy Login',
+  googleAuthPurpose:
+    'Setlist Studio uses your Google account information only for the following purposes',
+  googleAuthSecure: 'Secure Authentication',
+  googleAuthSecureDescription: "Protected by Google's advanced security features",
+  googleAuthBasicInfo: 'Basic Information',
+  googleAuthBasicInfoDescription: 'Name and email address only',
+  googleAuthDataSave: 'Data Storage',
+  googleAuthDataSaveDescription: 'Creating and managing setlists',
+  googleAuthPrivacyNote:
+    'The information obtained is used only for providing this service and will never be shared with third parties',
 };
