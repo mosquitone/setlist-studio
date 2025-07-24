@@ -36,8 +36,8 @@ const TermsClient: React.FC = () => {
         <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
           第2条（利用登録）
         </Typography>
-        <List sx={{ pl: 2 }}>
-          <ListItem sx={{ display: 'list-item', pl: 0 }}>
+        <List sx={{ pl: 2, mt: 0, pt: 0 }}>
+          <ListItem sx={{ display: 'list-item', pl: 0, pt: 0 }}>
             <ListItemText
               primary={
                 <Typography variant="body2" color="text.secondary">
