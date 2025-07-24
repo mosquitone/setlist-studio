@@ -27,7 +27,7 @@ export const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({ items, colors 
     // 10曲以上は同じサイズが好ましい
     if (isNoteExitst) {
       return {
-        fontSize: '28px',
+        fontSize: '32px',
         gap: 1.5,
         noteFontSize: '14px',
       };
