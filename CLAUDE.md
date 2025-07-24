@@ -61,7 +61,7 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
   - `PASSWORD_RESET_SECRET`: パスワードリセット用シークレット (32文字以上)
   - `GOOGLE_CLIENT_ID`: Google OAuthクライアントID
   - `GOOGLE_CLIENT_SECRET`: Google OAuthクライアントシークレット
-  - `NEXTAUTH_URL`: NextAuth URL (本番環境では実際のURL)
+  - `NEXTAUTH_URL`: アプリケーションのベースURL（メール内リンク生成用、https://を含む完全なURL）
   - `NEXTAUTH_SECRET`: NextAuth用シークレット (JWT_SECRETと同じ値推奨)
 
 ### 環境変数詳細
@@ -80,7 +80,7 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 | `PASSWORD_RESET_SECRET` | パスワードリセット署名 | 32文字以上の任意文字列 | 強力なランダム文字列 | `openssl rand -base64 32` |
 | `GOOGLE_CLIENT_ID` | Google OAuth ID | Google Consoleから取得 | 本番用ID | Google Cloud Console |
 | `GOOGLE_CLIENT_SECRET` | Google OAuth秘密鍵 | Google Consoleから取得 | 本番用秘密鍵 | Google Cloud Console |
-| `NEXTAUTH_URL` | NextAuth URL | `http://localhost:3000` | `https://yourdomain.com` | 実際のURL |
+| `NEXTAUTH_URL` | アプリケーションベースURL | `http://localhost:3000` | `https://yourdomain.com` | https://を含む完全URL |
 | `NEXTAUTH_SECRET` | NextAuth署名 | JWT_SECRETと同じ値 | JWT_SECRETと同じ値 | N/A (JWT_SECRET流用) |
 | `NODE_ENV` | 環境モード | `development` | Vercelで自動設定 | N/A |
 
@@ -221,7 +221,11 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
   - `CRON_SECRET`: クロンジョブ認証用（32文字以上、一意）
   - `GOOGLE_CLIENT_ID`: Google OAuthクライアントID（本番用）
   - `GOOGLE_CLIENT_SECRET`: Google OAuthクライアントシークレット（本番用）
-  - `NEXTAUTH_URL`: 本番環境URL（例: https://yourdomain.com）
+  - `RESEND_API_KEY`: Resendメール送信APIキー（Resendダッシュボードから取得）
+  - `RESEND_FROM_EMAIL`: メール送信元アドレス（例: noreply@yourdomain.com）
+  - `EMAIL_VERIFICATION_SECRET`: メール認証署名（32文字以上、一意）
+  - `PASSWORD_RESET_SECRET`: パスワードリセット署名（32文字以上、一意）
+  - `NEXTAUTH_URL`: アプリケーションベースURL（例: https://yourdomain.com）
   - `NEXTAUTH_SECRET`: NextAuth署名（JWT_SECRETと同じ値を推奨）
 - **クロンジョブ**: Vercelダッシュボードで設定
   - path: `/api/cron/cleanup`

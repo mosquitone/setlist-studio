@@ -41,6 +41,23 @@ export class EmailService {
     this.circuitBreaker = EmailReliabilityService.createCircuitBreaker(5, 60000);
   }
 
+  /**
+   * ベースURLを取得
+   */
+  private getBaseUrl(): string {
+    const url = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+
+    // URLが既にプロトコルを含んでいる場合はそのまま使用
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+
+    // プロトコルが含まれていない場合
+    // 本番環境ではhttps、開発環境ではhttpを付与
+    const protocol = process.env.NODE_ENV === 'production' ? 'https://' : 'http://';
+    return `${protocol}${url}`;
+  }
+
   public static getInstance(): EmailService {
     if (!EmailService.instance) {
       EmailService.instance = new EmailService();
@@ -184,7 +201,7 @@ export class EmailService {
     token: string,
     lang?: Language,
   ): Promise<boolean> {
-    const verificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/auth/verify-email?token=${token}`;
+    const verificationUrl = `${this.getBaseUrl()}/auth/verify-email?token=${token}`;
     const messages = getMessages(lang || 'ja');
     const emailBody = messages.emails.verificationBody(username, verificationUrl);
 
@@ -215,7 +232,7 @@ export class EmailService {
     token: string,
     lang?: Language,
   ): Promise<boolean> {
-    const resetUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/auth/reset-password?token=${token}`;
+    const resetUrl = `${this.getBaseUrl()}/auth/reset-password?token=${token}`;
     const messages = getMessages(lang || 'ja');
     const emailBody = messages.emails.passwordResetBody(username, resetUrl);
 
@@ -247,7 +264,7 @@ export class EmailService {
     token: string,
     lang?: Language,
   ): Promise<boolean> {
-    const confirmUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/auth/confirm-email-change?token=${token}`;
+    const confirmUrl = `${this.getBaseUrl()}/auth/confirm-email-change?token=${token}`;
     const messages = getMessages(lang || 'ja');
     const emailBody = messages.emails.emailChangeBody(username, oldEmail, newEmail, confirmUrl);
 
@@ -278,7 +295,7 @@ export class EmailService {
     lang?: Language,
   ): Promise<boolean> {
     const messages = getMessages(lang || 'ja');
-    const loginUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/login`;
+    const loginUrl = `${this.getBaseUrl()}/login`;
     const emailBody = messages.emails.passwordResetSuccessBody(username, loginUrl);
 
     const html = `
@@ -308,7 +325,7 @@ export class EmailService {
     token: string,
     lang?: Language,
   ): Promise<EmailResult> {
-    const verificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/auth/verify-email?token=${token}`;
+    const verificationUrl = `${this.getBaseUrl()}/auth/verify-email?token=${token}`;
     const messages = getMessages(lang || 'ja');
     const emailBody = messages.emails.verificationBody(username, verificationUrl);
 
@@ -339,7 +356,7 @@ export class EmailService {
     token: string,
     lang?: Language,
   ): Promise<EmailResult> {
-    const resetUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/auth/reset-password?token=${token}`;
+    const resetUrl = `${this.getBaseUrl()}/auth/reset-password?token=${token}`;
     const messages = getMessages(lang || 'ja');
     const emailBody = messages.emails.passwordResetBody(username, resetUrl);
 
@@ -371,7 +388,7 @@ export class EmailService {
     token: string,
     lang?: Language,
   ): Promise<EmailResult> {
-    const confirmUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/auth/confirm-email-change?token=${token}`;
+    const confirmUrl = `${this.getBaseUrl()}/auth/confirm-email-change?token=${token}`;
     const messages = getMessages(lang || 'ja');
     const emailBody = messages.emails.emailChangeBody(username, oldEmail, newEmail, confirmUrl);
 
@@ -473,7 +490,7 @@ export class EmailService {
           <p>${messages.emails.emailOwnershipDescription}</p>
           <p>${messages.emails.emailOwnershipEmailLabel}: <strong>${email}</strong></p>
           <div style="text-align: center; margin: 30px 0;">
-            <a href="https://${process.env.NEXTAUTH_URL || 'localhost:3000'}/auth/verify-email-ownership?token=${verificationToken.token}&userId=${userId}" 
+            <a href="${this.getBaseUrl()}/auth/verify-email-ownership?token=${verificationToken.token}&userId=${userId}" 
                style="background: #1976d2; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">
               ${messages.emails.emailOwnershipButtonText}
             </a>

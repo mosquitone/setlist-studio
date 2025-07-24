@@ -137,7 +137,79 @@
 - **値**: Vercelが自動的に`production`に設定
 - **注意**: 手動設定は不要
 
-#### 7️⃣ **PNPM_VERSION**（推奨）
+#### 7️⃣ **RESEND_API_KEY** （必須）
+- **説明**: Resendメール送信サービスのAPIキー
+- **要件**: Resendダッシュボードから取得したAPIキー
+- **取得方法**:
+  1. [resend.com](https://resend.com)でアカウントを作成
+  2. ダッシュボードから「API Keys」を選択
+  3. 「Create API Key」をクリックして新しいキーを生成
+  4. 生成されたキーをコピー
+- **例**: `re_1234567890abcdef1234567890abcdef`
+- **用途**: ユーザー認証メール、パスワードリセットメールの送信
+
+#### 8️⃣ **RESEND_FROM_EMAIL** （必須）
+- **説明**: メール送信時の送信元アドレス
+- **要件**: Resendで検証済みのドメイン、または`onboarding@resend.dev`（開発用）
+- **設定方法**:
+  - **本番環境**: 独自ドメインを使用（例: `noreply@yourdomain.com`）
+    1. Resendダッシュボードで「Domains」を選択
+    2. 独自ドメインを追加してDNS設定を完了
+    3. 検証完了後、そのドメインのメールアドレスを使用
+  - **開発環境**: `onboarding@resend.dev`を使用可能
+- **例**: `noreply@yourdomain.com`
+
+#### 9️⃣ **EMAIL_VERIFICATION_SECRET** （必須）
+- **説明**: メール認証トークンの署名に使用する秘密鍵
+- **要件**: 32文字以上のランダムな文字列
+- **生成方法**: `openssl rand -base64 32`
+- **例**: `eF7gH9iJ1kL3mN5oP7qR9sT1uV3wX5yZ7`
+
+#### 🔟 **PASSWORD_RESET_SECRET** （必須）
+- **説明**: パスワードリセットトークンの署名に使用する秘密鍵
+- **要件**: 32文字以上のランダムな文字列（EMAIL_VERIFICATION_SECRETとは異なる値）
+- **生成方法**: `openssl rand -base64 32`
+- **例**: `mN5oP7qR9sT1uV3wX5yZ7aB9cD1eF3gH5`
+
+#### 1️⃣1️⃣ **GOOGLE_CLIENT_ID** （必須）
+- **説明**: Google OAuth認証のクライアントID
+- **取得方法**:
+  1. [Google Cloud Console](https://console.cloud.google.com)にアクセス
+  2. プロジェクトを作成または選択
+  3. 「APIs & Services」→「Credentials」を選択
+  4. 「Create Credentials」→「OAuth Client ID」を選択
+  5. アプリケーションタイプで「Web application」を選択
+  6. 承認済みリダイレクトURIに以下を追加:
+     - 本番: `https://yourdomain.com/api/auth/callback/google`
+     - 開発: `http://localhost:3000/api/auth/callback/google`
+- **例**: `123456789012-abcdefghijklmnopqrstuvwxyz123456.apps.googleusercontent.com`
+
+#### 1️⃣2️⃣ **GOOGLE_CLIENT_SECRET** （必須）
+- **説明**: Google OAuth認証のクライアントシークレット
+- **要件**: Google Cloud Consoleで生成されたシークレット
+- **取得方法**: GOOGLE_CLIENT_IDと同じ画面で表示されるシークレットをコピー
+- **例**: `GOCSPX-1234567890abcdefghijklmno`
+
+#### 1️⃣3️⃣ **NEXTAUTH_URL** （必須）
+- **説明**: アプリケーションのベースURL（メール内のリンクとOAuth認証に使用）
+- **要件**: 
+  - **本番環境**: https://を含む完全なURL（例: `https://yourdomain.com`または`https://www.yourdomain.com`）
+  - **開発環境**: `http://localhost:3000`
+- **設定方法**:
+  - httpsプロトコルを含む完全なURLを設定
+  - サブドメインを使用する場合は含める（例: `https://app.yourdomain.com`）
+- **例**: 
+  - 本番: `https://yourdomain.com`または`https://www.yourdomain.com`
+  - 開発: `http://localhost:3000`
+- **重要**: この値がメール内のリンクURLの生成に使用されます
+
+#### 1️⃣4️⃣ **NEXTAUTH_SECRET** （必須）
+- **説明**: NextAuth.jsの暗号化に使用する秘密鍵
+- **要件**: JWT_SECRETと同じ値を推奨（既存のJWT認証と統合するため）
+- **設定方法**: JWT_SECRETと同じ値を設定
+- **例**: JWT_SECRETと同じ
+
+#### 1️⃣5️⃣ **PNPM_VERSION**（推奨）
 - **説明**: pnpmのバージョンを固定（プロジェクトとの互換性確保）
 - **値**: `10.12.1`（このプロジェクトで使用しているバージョン）
 - **設定理由**: 
