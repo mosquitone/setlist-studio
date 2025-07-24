@@ -24,7 +24,7 @@ const LegalPageTemplate: React.FC<LegalPageTemplateProps> = ({ title, children }
           {children}
 
           <Typography variant="body2" color="text.secondary" sx={{ mt: 6 }}>
-            {messages.common.effectiveDate}：2025年7月18日
+            {messages.common.effectiveDate}：2025年7月24日
           </Typography>
         </Box>
       </Paper>
