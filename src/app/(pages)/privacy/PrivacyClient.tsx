@@ -191,10 +191,10 @@ const PrivacyClient: React.FC = () => {
         </Typography>
 
         <Typography variant="body2" color="text.secondary" paragraph sx={{ mt: 4 }}>
-          制定日：2024年7月1日
+          制定日：2024年7月20日
         </Typography>
         <Typography variant="body2" color="text.secondary" paragraph>
-          最終改定日：2025年7月1日
+          最終改定日：2025年7月24日
         </Typography>
       </LegalPageTemplate>
     </>

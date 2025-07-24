@@ -55,6 +55,35 @@ const TermsClient: React.FC = () => {
               }
             />
           </ListItem>
+          <List sx={{ pl: 2 }}>
+            <ListItem sx={{ display: 'list-item', pl: 0 }}>
+              <ListItemText
+                primary={
+                  <Typography variant="body2" color="text.secondary">
+                    利用登録の申請に際して虚偽の事項を届け出た場合
+                  </Typography>
+                }
+              />
+            </ListItem>
+            <ListItem sx={{ display: 'list-item', pl: 0 }}>
+              <ListItemText
+                primary={
+                  <Typography variant="body2" color="text.secondary">
+                    本規約に違反したことがある者からの申請である場合
+                  </Typography>
+                }
+              />
+            </ListItem>
+            <ListItem sx={{ display: 'list-item', pl: 0 }}>
+              <ListItemText
+                primary={
+                  <Typography variant="body2" color="text.secondary">
+                    その他，当方が利用登録を相当でないと判断した場合
+                  </Typography>
+                }
+              />
+            </ListItem>
+          </List>
         </List>
 
         <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
@@ -216,10 +245,10 @@ const TermsClient: React.FC = () => {
         </Typography>
 
         <Typography variant="body2" color="text.secondary" paragraph sx={{ mt: 4 }}>
-          制定日：2024年7月1日
+          制定日：2024年7月20日
         </Typography>
         <Typography variant="body2" color="text.secondary" paragraph>
-          最終改定日：2025年7月1日
+          最終改定日：2025年7月24日
         </Typography>
       </LegalPageTemplate>
     </>
