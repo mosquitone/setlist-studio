@@ -26,7 +26,7 @@ export default function Footer() {
         <NextLink href="/terms" style={{ textDecoration: 'none', fontSize: '0.875rem' }}>
           {messages.navigation.terms}
         </NextLink>
-        <NextLink href="/privacy" style={{ textDecoration: 'none', fontSize: '0.875rem' }}>
+        <NextLink href="/privacy-policy" style={{ textDecoration: 'none', fontSize: '0.875rem' }}>
           {messages.navigation.privacy}
         </NextLink>
       </Box>

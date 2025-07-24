@@ -201,7 +201,10 @@ export default function RegisterClient() {
                     {messages.auth.terms}
                   </Link>
                   {messages.auth.and || 'and'}
-                  <Link href="/privacy" style={{ color: 'inherit', textDecoration: 'underline' }}>
+                  <Link
+                    href="/privacy-policy"
+                    style={{ color: 'inherit', textDecoration: 'underline' }}
+                  >
                     {messages.auth.privacy}
                   </Link>
                   {messages.auth.agree || 'に同意します'}

@@ -8,7 +8,7 @@ import LegalPageTemplate from '@/components/common/templates/LegalPageTemplate';
 import { useI18n } from '@/hooks/useI18n';
 import { getLegalPageSchema } from '@/lib/metadata/pageSchemas';
 
-const PrivacyClient: React.FC = () => {
+const PrivacyPolicyClient: React.FC = () => {
   const { messages } = useI18n();
   const privacySchema = getLegalPageSchema('privacy');
 
@@ -201,4 +201,4 @@ const PrivacyClient: React.FC = () => {
   );
 };
 
-export default PrivacyClient;
+export default PrivacyPolicyClient;

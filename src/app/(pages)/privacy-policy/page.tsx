@@ -3,7 +3,7 @@ import { headers } from 'next/headers';
 
 import { getMessages, Language } from '@/lib/i18n';
 
-import PrivacyClient from './PrivacyClient';
+import PrivacyPolicyClient from './PrivacyPolicyClient';
 
 export async function generateMetadata(): Promise<Metadata> {
   const headersList = await headers();
@@ -26,6 +26,6 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function PrivacyPage() {
-  return <PrivacyClient />;
+export default function PrivacyPolicyPage() {
+  return <PrivacyPolicyClient />;
 }
