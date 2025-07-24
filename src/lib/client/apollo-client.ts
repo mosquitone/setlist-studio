@@ -104,11 +104,13 @@ export const apolloClient = new ApolloClient({
   defaultOptions: {
     watchQuery: {
       errorPolicy: 'all',
-      fetchPolicy: 'cache-first' as const,
+      // デフォルトでcache-and-networkを使用（パフォーマンスと鮮度のバランス）
+      fetchPolicy: 'cache-and-network' as const,
     },
     query: {
       errorPolicy: 'all',
-      fetchPolicy: 'cache-first' as const,
+      // デフォルトでcache-and-networkを使用（パフォーマンスと鮮度のバランス）
+      fetchPolicy: 'cache-and-network' as const,
     },
   },
 });
