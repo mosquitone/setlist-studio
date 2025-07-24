@@ -1,6 +1,6 @@
-import { ThemeColors } from './BaseTheme';
+import { BaseThemeColors } from './BaseTheme';
 
-export const blackThemeColors: ThemeColors = {
+export const blackThemeColors: BaseThemeColors = {
   background: '#000000',
   text: '#ffffff',
   secondaryText: '#cccccc',
@@ -9,7 +9,7 @@ export const blackThemeColors: ThemeColors = {
   qrBackground: '#ffffff',
 };
 
-export const whiteThemeColors: ThemeColors = {
+export const whiteThemeColors: BaseThemeColors = {
   background: '#ffffff',
   text: '#000000',
   secondaryText: '#333333',

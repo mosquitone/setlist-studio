@@ -3,8 +3,8 @@ import React from 'react';
 import { Language } from '@/lib/i18n/messages';
 import { SetlistData, SetlistThemeProps } from '@/types/components';
 
-import { BlackTheme } from './BlackTheme';
-import { WhiteTheme } from './WhiteTheme';
+import { BlackTheme } from './theme/BlackTheme';
+import { WhiteTheme } from './theme/WhiteTheme';
 
 interface SetlistRendererProps {
   data: SetlistData;
