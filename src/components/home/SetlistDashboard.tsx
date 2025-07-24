@@ -37,12 +37,11 @@ import { Setlist } from '../../types/graphql';
 
 interface SetlistCardProps {
   setlist: Setlist;
-  lang: 'ja' | 'en';
   messages: Record<string, any>;
   onDeleteClick: (setlist: Setlist, event: React.MouseEvent) => void;
 }
 
-const SetlistCard = memo(({ setlist, lang, messages, onDeleteClick }: SetlistCardProps) => {
+const SetlistCard = memo(({ setlist, messages, onDeleteClick }: SetlistCardProps) => {
   const client = useApolloClient();
   const handleDeleteClick = useCallback(
     (event: React.MouseEvent) => {
@@ -227,7 +226,13 @@ const SetlistCard = memo(({ setlist, lang, messages, onDeleteClick }: SetlistCar
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1 }}>
               <ScheduleIcon sx={{ fontSize: 14 }} />
               <Typography variant="caption" sx={{ fontSize: '0.75rem', opacity: 0.8 }}>
-                {new Date(setlist.eventDate).toLocaleDateString(lang === 'ja' ? 'ja-JP' : 'en-US')}
+                {(() => {
+                  const date = new Date(setlist.eventDate);
+                  const year = date.getFullYear();
+                  const month = String(date.getMonth() + 1).padStart(2, '0');
+                  const day = String(date.getDate()).padStart(2, '0');
+                  return `${year}/${month}/${day}`;
+                })()}
               </Typography>
             </Box>
           )}
@@ -306,7 +311,7 @@ interface SetlistDashboardProps {
 }
 
 export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashboardProps) {
-  const { messages, lang } = useI18n();
+  const { messages } = useI18n();
   const { showSuccess, showError } = useSnackbar();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [setlistToDelete, setSetlistToDelete] = useState<Setlist | null>(null);
@@ -398,12 +403,7 @@ export function SetlistDashboard({ setlistsData, setlistsLoading }: SetlistDashb
       <Grid container spacing={2}>
         {setlistsData.setlists.map((setlist: Setlist) => (
           <Grid item xs={12} sm={6} md={4} key={setlist.id}>
-            <SetlistCard
-              setlist={setlist}
-              lang={lang}
-              messages={messages}
-              onDeleteClick={handleDeleteClick}
-            />
+            <SetlistCard setlist={setlist} messages={messages} onDeleteClick={handleDeleteClick} />
           </Grid>
         ))}
       </Grid>

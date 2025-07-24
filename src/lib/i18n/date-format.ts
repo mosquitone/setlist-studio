@@ -20,7 +20,7 @@ export type DateFormatType = 'short' | 'long' | 'datetime' | 'time' | 'year' | '
  */
 const DATE_FORMATS: Record<Language, Record<DateFormatType, string>> = {
   ja: {
-    short: 'yyyy年MM月dd日',
+    short: 'yyyy/MM/dd',
     long: 'yyyy年MM月dd日 EEEE',
     datetime: 'yyyy年MM月dd日 HH:mm',
     time: 'HH:mm',
@@ -28,7 +28,7 @@ const DATE_FORMATS: Record<Language, Record<DateFormatType, string>> = {
     month: 'yyyy年MM月',
   },
   en: {
-    short: 'MMM dd, yyyy',
+    short: 'yyyy/MM/dd',
     long: 'EEEE, MMMM dd, yyyy',
     datetime: 'MMM dd, yyyy HH:mm',
     time: 'HH:mm',
