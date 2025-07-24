@@ -115,6 +115,7 @@ async function createServer() {
       if (isProduction) {
         // 本番環境では詳細なエラー情報を隠蔽
         const userFriendlyErrors = [
+          // 日本語キーワード
           '認証',
           '権限',
           'メールアドレス',
@@ -126,9 +127,30 @@ async function createServer() {
           '楽曲',
           '不正',
           '無効',
+          // 英語キーワード
+          'authentication',
+          'auth',
+          'permission',
+          'email',
+          'password',
+          'user',
+          'register',
+          'login',
+          'setlist',
+          'song',
+          'invalid',
+          'unauthorized',
+          'forbidden',
+          'not found',
+          'already exists',
+          'expired',
+          'verified',
+          'incorrect',
         ];
 
-        const isUserError = userFriendlyErrors.some((keyword) => err.message.includes(keyword));
+        const isUserError = userFriendlyErrors.some((keyword) =>
+          err.message.toLowerCase().includes(keyword.toLowerCase()),
+        );
 
         if (isUserError) {
           return { message: err.message };
