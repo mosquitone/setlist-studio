@@ -5,6 +5,7 @@ import type {
   SoftwareApplication,
   Article,
   WebPage,
+  BreadcrumbList,
 } from 'schema-dts';
 
 // 共通のOrganization情報
@@ -167,4 +168,24 @@ export const getSetlistSchema = (setlistData: {
   ...(setlistData.date && {
     dateCreated: setlistData.date,
   }),
+});
+
+// パンくずリストスキーマ
+export const getGuideBreadcrumbSchema = (): WithContext<BreadcrumbList> => ({
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'ホーム',
+      item: 'https://setlist-studio.mosquit.one',
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: '利用ガイド',
+      item: 'https://setlist-studio.mosquit.one/guide',
+    },
+  ],
 });

@@ -20,6 +20,8 @@ export interface MetadataMessages {
   checkEmailDescription: string;
   confirmEmailChangeTitle: string;
   confirmEmailChangeDescription: string;
+  guideTitle: string;
+  guideDescription: string;
   keywords: string[];
 }
 
@@ -42,6 +44,9 @@ export const metadataJa = {
   checkEmailDescription: '送信されたメールを確認してください',
   confirmEmailChangeTitle: 'メールアドレス変更確認',
   confirmEmailChangeDescription: 'メールアドレスの変更を確認します',
+  guideTitle: '利用ガイド - 完全マニュアル',
+  guideDescription:
+    'Setlist Studioの使い方を完全解説。無料で使える機能、アカウント作成のメリット、セットリスト作成から共有まで、すべての機能を詳しく説明します。',
   keywords: [
     'セットリスト',
     'バンド',
@@ -74,6 +79,9 @@ export const metadataEn = {
   checkEmailDescription: 'Please check the email that was sent',
   confirmEmailChangeTitle: 'Confirm Email Change',
   confirmEmailChangeDescription: 'Confirm your email address change',
+  guideTitle: 'User Guide - Complete Manual',
+  guideDescription:
+    'Complete guide to using Setlist Studio. Learn about free features, benefits of creating an account, and detailed instructions from setlist creation to sharing.',
   keywords: [
     'setlist',
     'band',

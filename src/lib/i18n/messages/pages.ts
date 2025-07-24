@@ -183,15 +183,18 @@ export const pagesJa = {
         title: 'こんな時に便利',
         case1: {
           title: 'ライブ会場で',
-          description: 'ファンにセットリストURLを共有して、スマホで確認',
+          description:
+            'ファンにセットリストURLを共有して、スマホで確認。\n事前にコンビニや自宅でダウンロード・印刷しておけば、電波が届かない場所でも安心',
         },
         case2: {
           title: 'SNSシェア',
-          description: 'ダウンロードした画像をTwitterやInstagramに投稿',
+          description:
+            'ダウンロードした高品質画像をTwitterやInstagramに投稿。\nライブ告知や終演後の報告、思い出の記録として最適',
         },
         case3: {
           title: 'バンド内共有',
-          description: 'メンバーやスタッフとセットリストを共有',
+          description:
+            'メンバーやスタッフとセットリストをURL共有。\nリハーサル準備、機材セッティング、照明・音響の打ち合わせに活用',
         },
       },
       viewPublicSetlists: 'セットリスト閲覧',
@@ -446,15 +449,18 @@ export const pagesEn = {
         title: 'Useful Scenarios',
         case1: {
           title: 'At Live Venues',
-          description: 'Share setlist URL with fans for smartphone viewing',
+          description:
+            'Share setlist URL with fans for smartphone viewing.\nPrint in advance at convenience stores or home for peace of mind in areas with poor signal',
         },
         case2: {
           title: 'Social Media Sharing',
-          description: 'Post downloaded images to Twitter or Instagram',
+          description:
+            'Post high-quality downloaded images to Twitter or Instagram.\nPerfect for live announcements, post-show reports, and preserving memories',
         },
         case3: {
           title: 'Band Internal Sharing',
-          description: 'Share setlists with members and staff',
+          description:
+            'Share setlists with members and staff via URL.\nUseful for rehearsal prep, equipment setup, and lighting/sound coordination',
         },
       },
       viewPublicSetlists: 'View setlists',
