@@ -17,6 +17,8 @@ import {
   Palette,
   FileCopy,
   PersonOff,
+  Email,
+  VpnKey,
 } from '@mui/icons-material';
 import {
   Container,
@@ -41,6 +43,7 @@ import {
 import Script from 'next/script';
 import React from 'react';
 
+import GoogleColorIcon from '@/components/common/icons/GoogleColorIcon';
 import { StepIcon } from '@/components/common/ui/StepIcon';
 import { useI18n } from '@/hooks/useI18n';
 import { getGuideArticleSchema } from '@/lib/metadata/pageSchemas';
@@ -305,11 +308,113 @@ export default function GuidePage() {
             </Typography>
 
             <Grid container spacing={3}>
+              {/* Google認証 */}
+              <Grid item xs={12}>
+                <Paper sx={{ p: 3, mb: 3 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                    <GoogleColorIcon sx={{ mr: 2, fontSize: 28 }} />
+                    <Typography variant="h6">
+                      {messages.pages.guide.authentication.googleAuth.title}
+                    </Typography>
+                  </Box>
+                  <Typography variant="body2" paragraph>
+                    {messages.pages.guide.authentication.googleAuth.description}
+                  </Typography>
+
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} md={6}>
+                      <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold' }}>
+                        {messages.pages.guide.authentication.googleAuth.authSteps}
+                      </Typography>
+                      <List dense>
+                        <ListItem sx={{ pl: 0 }}>
+                          <ListItemIcon>
+                            <StepIcon step={1} />
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={messages.pages.guide.authentication.googleAuth.step1}
+                          />
+                        </ListItem>
+                        <ListItem sx={{ pl: 0 }}>
+                          <ListItemIcon>
+                            <StepIcon step={2} />
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={messages.pages.guide.authentication.googleAuth.step2}
+                          />
+                        </ListItem>
+                        <ListItem sx={{ pl: 0 }}>
+                          <ListItemIcon>
+                            <StepIcon step={3} />
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={messages.pages.guide.authentication.googleAuth.step3}
+                          />
+                        </ListItem>
+                        <ListItem sx={{ pl: 0 }}>
+                          <ListItemIcon>
+                            <StepIcon step={4} />
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={messages.pages.guide.authentication.googleAuth.step4}
+                          />
+                        </ListItem>
+                      </List>
+                    </Grid>
+
+                    <Grid item xs={12} md={6}>
+                      <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold' }}>
+                        {messages.pages.guide.authentication.googleAuth.benefits.title}
+                      </Typography>
+                      <List dense>
+                        <ListItem sx={{ pl: 0 }}>
+                          <ListItemIcon>
+                            <Check sx={{ color: 'success.main', fontSize: 20 }} />
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={
+                              messages.pages.guide.authentication.googleAuth.benefits.benefit1
+                            }
+                          />
+                        </ListItem>
+                        <ListItem sx={{ pl: 0 }}>
+                          <ListItemIcon>
+                            <Check sx={{ color: 'success.main', fontSize: 20 }} />
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={
+                              messages.pages.guide.authentication.googleAuth.benefits.benefit2
+                            }
+                          />
+                        </ListItem>
+                        <ListItem sx={{ pl: 0 }}>
+                          <ListItemIcon>
+                            <Check sx={{ color: 'success.main', fontSize: 20 }} />
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={
+                              messages.pages.guide.authentication.googleAuth.benefits.benefit3
+                            }
+                          />
+                        </ListItem>
+                      </List>
+                    </Grid>
+                  </Grid>
+
+                  <Alert severity="info" sx={{ mt: 2 }}>
+                    {messages.pages.guide.authentication.googleAuth.note}
+                  </Alert>
+                </Paper>
+              </Grid>
+
               <Grid item xs={12} md={6}>
                 <Paper sx={{ p: 3, height: '100%' }}>
-                  <Typography variant="h6" gutterBottom>
-                    {messages.pages.guide.authentication.emailVerification.title}
-                  </Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                    <Email sx={{ mr: 2, color: 'info.main' }} />
+                    <Typography variant="h6">
+                      {messages.pages.guide.authentication.emailVerification.title}
+                    </Typography>
+                  </Box>
                   <Typography variant="body2" paragraph>
                     {messages.pages.guide.authentication.emailVerification.description}
                   </Typography>
@@ -352,9 +457,12 @@ export default function GuidePage() {
 
               <Grid item xs={12} md={6}>
                 <Paper sx={{ p: 3, height: '100%' }}>
-                  <Typography variant="h6" gutterBottom>
-                    {messages.pages.guide.authentication.passwordReset.title}
-                  </Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                    <VpnKey sx={{ mr: 2, color: 'warning.main' }} />
+                    <Typography variant="h6">
+                      {messages.pages.guide.authentication.passwordReset.title}
+                    </Typography>
+                  </Box>
                   <Typography variant="body2" paragraph>
                     {messages.pages.guide.authentication.passwordReset.description}
                   </Typography>
@@ -401,47 +509,126 @@ export default function GuidePage() {
         {/* 使用方法 */}
         <Card sx={{ mb: 4 }}>
           <CardContent>
-            <Typography variant="h4" component="h2" gutterBottom>
+            <Typography
+              variant="h4"
+              component="h2"
+              gutterBottom
+              sx={{ display: 'flex', alignItems: 'center' }}
+            >
+              <Visibility sx={{ mr: 2, color: 'success.main' }} />
               {messages.pages.guide.publicUsage.title}
             </Typography>
-            <List>
-              <ListItem>
-                <ListItemIcon>
-                  <StepIcon step={1} />
-                </ListItemIcon>
-                <ListItemText
-                  primary={messages.pages.guide.publicUsage.step1.title}
-                  secondary={messages.pages.guide.publicUsage.step1.description}
-                />
-              </ListItem>
-              <ListItem>
-                <ListItemIcon>
-                  <StepIcon step={2} />
-                </ListItemIcon>
-                <ListItemText
-                  primary={messages.pages.guide.publicUsage.step2.title}
-                  secondary={messages.pages.guide.publicUsage.step2.description}
-                />
-              </ListItem>
-              <ListItem>
-                <ListItemIcon>
-                  <StepIcon step={3} />
-                </ListItemIcon>
-                <ListItemText
-                  primary={messages.pages.guide.publicUsage.step3.title}
-                  secondary={messages.pages.guide.publicUsage.step3.description}
-                />
-              </ListItem>
-              <ListItem>
-                <ListItemIcon>
-                  <StepIcon step={4} />
-                </ListItemIcon>
-                <ListItemText
-                  primary={messages.pages.guide.publicUsage.step4.title}
-                  secondary={messages.pages.guide.publicUsage.step4.description}
-                />
-              </ListItem>
-            </List>
+            <Typography variant="body1" paragraph sx={{ mb: 3 }}>
+              {messages.pages.guide.publicUsage.intro}
+            </Typography>
+
+            {/* 各ステップの詳細説明 */}
+            <Grid container spacing={3}>
+              {/* Step 1 */}
+              <Grid item xs={12} md={6}>
+                <Paper sx={{ p: 3, height: '100%' }}>
+                  <Typography variant="h6" gutterBottom color="primary">
+                    {messages.pages.guide.publicUsage.step1.title}
+                  </Typography>
+                  <Typography variant="body2" paragraph sx={{ fontWeight: 'bold' }}>
+                    {messages.pages.guide.publicUsage.step1.description}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {messages.pages.guide.publicUsage.step1.details}
+                  </Typography>
+                </Paper>
+              </Grid>
+
+              {/* Step 2 */}
+              <Grid item xs={12} md={6}>
+                <Paper sx={{ p: 3, height: '100%' }}>
+                  <Typography variant="h6" gutterBottom color="primary">
+                    {messages.pages.guide.publicUsage.step2.title}
+                  </Typography>
+                  <Typography variant="body2" paragraph sx={{ fontWeight: 'bold' }}>
+                    {messages.pages.guide.publicUsage.step2.description}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {messages.pages.guide.publicUsage.step2.details}
+                  </Typography>
+                </Paper>
+              </Grid>
+
+              {/* Step 3 */}
+              <Grid item xs={12} md={6}>
+                <Paper sx={{ p: 3, height: '100%' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                    <Download sx={{ mr: 1, color: 'info.main' }} />
+                    <Typography variant="h6" color="primary">
+                      {messages.pages.guide.publicUsage.step3.title}
+                    </Typography>
+                  </Box>
+                  <Typography variant="body2" paragraph sx={{ fontWeight: 'bold' }}>
+                    {messages.pages.guide.publicUsage.step3.description}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {messages.pages.guide.publicUsage.step3.details}
+                  </Typography>
+                </Paper>
+              </Grid>
+
+              {/* Step 4 */}
+              <Grid item xs={12} md={6}>
+                <Paper sx={{ p: 3, height: '100%' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                    <Share sx={{ mr: 1, color: 'warning.main' }} />
+                    <Typography variant="h6" color="primary">
+                      {messages.pages.guide.publicUsage.step4.title}
+                    </Typography>
+                  </Box>
+                  <Typography variant="body2" paragraph sx={{ fontWeight: 'bold' }}>
+                    {messages.pages.guide.publicUsage.step4.description}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {messages.pages.guide.publicUsage.step4.details}
+                  </Typography>
+                </Paper>
+              </Grid>
+            </Grid>
+
+            {/* 使用例 */}
+            <Box sx={{ mt: 4 }}>
+              <Typography variant="h5" gutterBottom sx={{ mb: 2 }}>
+                {messages.pages.guide.publicUsage.useCases.title}
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={4}>
+                  <Alert severity="success" sx={{ height: '100%' }}>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1 }}>
+                      {messages.pages.guide.publicUsage.useCases.case1.title}
+                    </Typography>
+                    <Typography variant="body2">
+                      {messages.pages.guide.publicUsage.useCases.case1.description}
+                    </Typography>
+                  </Alert>
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <Alert severity="info" sx={{ height: '100%' }}>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1 }}>
+                      {messages.pages.guide.publicUsage.useCases.case2.title}
+                    </Typography>
+                    <Typography variant="body2">
+                      {messages.pages.guide.publicUsage.useCases.case2.description}
+                    </Typography>
+                  </Alert>
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <Alert severity="warning" sx={{ height: '100%' }}>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1 }}>
+                      {messages.pages.guide.publicUsage.useCases.case3.title}
+                    </Typography>
+                    <Typography variant="body2">
+                      {messages.pages.guide.publicUsage.useCases.case3.description}
+                    </Typography>
+                  </Alert>
+                </Grid>
+              </Grid>
+            </Box>
           </CardContent>
         </Card>
 

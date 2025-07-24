@@ -102,6 +102,22 @@ export const pagesJa = {
     },
     authentication: {
       title: '認証・パスワード関連手順',
+      googleAuth: {
+        title: 'Google認証',
+        description: 'Googleアカウントを使用した簡単ログイン',
+        authSteps: '認証手順',
+        step1: 'ログイン/新規登録ページの「Googleで続ける」ボタンをクリック',
+        step2: 'Googleアカウントを選択してログイン',
+        step3: '初回利用時は自動的にアカウントが作成されます',
+        step4: 'すぐに全機能が利用可能（メール認証不要）',
+        benefits: {
+          title: 'Google認証のメリット',
+          benefit1: 'パスワードの設定・管理が不要',
+          benefit2: 'メール認証の手間がない',
+          benefit3: 'より安全な2段階認証をGoogleで設定可能',
+        },
+        note: '※Google認証ユーザーはパスワード変更ができません。Googleアカウントの設定から管理してください。',
+      },
       emailAuth: {
         title: 'メール認証の手順',
         step1: 'アカウント作成後、登録メールアドレスに認証メールが送信されます',
@@ -137,21 +153,46 @@ export const pagesJa = {
     publicUsage: {
       title: '公開機能の利用方法',
       description: 'アカウント登録なしでも利用できる機能です',
+      intro:
+        '公開セットリストは、URLを知っている人なら誰でもアクセスできます。アカウント登録やログインは一切不要で、以下の機能が利用可能です：',
       step1: {
-        title: 'URLアクセス',
+        title: '① URLアクセス',
         description: '公開セットリストのURLにアクセス',
+        details:
+          '作成者から共有されたURLをブラウザに入力するだけで、セットリストを表示できます。PC・スマホ・タブレットなど、どのデバイスからでもアクセス可能です。',
       },
       step2: {
-        title: 'コンテンツ閲覧',
+        title: '② コンテンツ閲覧',
         description: 'セットリスト内容を閲覧',
+        details:
+          'バンド名、会場、日時、楽曲リストなど、セットリストの全情報を確認できます。各楽曲のキー、テンポ、演奏時間などの詳細情報も含まれています。',
       },
       step3: {
-        title: '画像ダウンロード',
+        title: '③ 画像ダウンロード',
         description: '画像ダウンロード（黒/白テーマ選択可能）',
+        details:
+          'セットリストを高品質PNG画像としてダウンロードできます。ブラック/ホワイトの2種類のテーマから選択可能で、QRコード付きのプロフェッショナルなデザインです。印刷やSNSシェアに最適です。',
       },
       step4: {
-        title: 'URL共有',
+        title: '④ URL共有',
         description: 'URLコピーで他の人と共有',
+        details:
+          'ワンクリックでURLをコピーし、メール、SNS、メッセージングアプリなどで簡単に共有できます。ファン、バンドメンバー、スタッフなど、誰とでも瞬時に共有可能です。',
+      },
+      useCases: {
+        title: 'こんな時に便利',
+        case1: {
+          title: 'ライブ会場で',
+          description: 'ファンにセットリストURLを共有して、スマホで確認',
+        },
+        case2: {
+          title: 'SNSシェア',
+          description: 'ダウンロードした画像をTwitterやInstagramに投稿',
+        },
+        case3: {
+          title: 'バンド内共有',
+          description: 'メンバーやスタッフとセットリストを共有',
+        },
       },
       viewPublicSetlists: 'セットリスト閲覧',
       downloadImages: '画像ダウンロード',
@@ -322,6 +363,22 @@ export const pagesEn = {
     },
     authentication: {
       title: 'Authentication & Password Procedures',
+      googleAuth: {
+        title: 'Google Authentication',
+        description: 'Easy login using your Google account',
+        authSteps: 'Authentication Steps',
+        step1: 'Click "Continue with Google" on the login/register page',
+        step2: 'Select your Google account and log in',
+        step3: 'An account is automatically created on first use',
+        step4: 'All features are immediately available (no email verification needed)',
+        benefits: {
+          title: 'Benefits of Google Authentication',
+          benefit1: 'No password setup or management required',
+          benefit2: 'No email verification process',
+          benefit3: "Can enable Google's 2-factor authentication for extra security",
+        },
+        note: '※ Google auth users cannot change passwords. Please manage through Google account settings.',
+      },
       emailAuth: {
         title: 'Email Authentication Steps',
         step1:
@@ -359,21 +416,46 @@ export const pagesEn = {
     publicUsage: {
       title: 'How to Use Public Features',
       description: 'Features available without account registration',
+      intro:
+        'Public setlists can be accessed by anyone who knows the URL. No account registration or login required, with the following features available:',
       step1: {
-        title: 'Access URL',
+        title: '① Access URL',
         description: 'Access public setlist URL',
+        details:
+          'Simply enter the URL shared by the creator into your browser to view the setlist. Accessible from any device - PC, smartphone, or tablet.',
       },
       step2: {
-        title: 'View Content',
+        title: '② View Content',
         description: 'View setlist content',
+        details:
+          'View all setlist information including band name, venue, date/time, and song list. Detailed information for each song including key, tempo, and duration is also included.',
       },
       step3: {
-        title: 'Download Images',
+        title: '③ Download Images',
         description: 'Download images (black/white theme selectable)',
+        details:
+          'Download the setlist as a high-quality PNG image. Choose from Black or White themes, with professional design including QR code. Perfect for printing or social media sharing.',
       },
       step4: {
-        title: 'Share URL',
+        title: '④ Share URL',
         description: 'Share with others by copying URL',
+        details:
+          'Copy the URL with one click and easily share via email, social media, or messaging apps. Share instantly with fans, band members, staff, or anyone else.',
+      },
+      useCases: {
+        title: 'Useful Scenarios',
+        case1: {
+          title: 'At Live Venues',
+          description: 'Share setlist URL with fans for smartphone viewing',
+        },
+        case2: {
+          title: 'Social Media Sharing',
+          description: 'Post downloaded images to Twitter or Instagram',
+        },
+        case3: {
+          title: 'Band Internal Sharing',
+          description: 'Share setlists with members and staff',
+        },
       },
       viewPublicSetlists: 'View setlists',
       downloadImages: 'Download images',
@@ -539,6 +621,22 @@ export interface PageMessages {
     };
     authentication: {
       title: string;
+      googleAuth: {
+        title: string;
+        description: string;
+        authSteps: string;
+        step1: string;
+        step2: string;
+        step3: string;
+        step4: string;
+        benefits: {
+          title: string;
+          benefit1: string;
+          benefit2: string;
+          benefit3: string;
+        };
+        note: string;
+      };
       emailAuth: {
         title: string;
         step1: string;
@@ -574,21 +672,41 @@ export interface PageMessages {
     publicUsage: {
       title: string;
       description: string;
+      intro: string;
       step1: {
         title: string;
         description: string;
+        details: string;
       };
       step2: {
         title: string;
         description: string;
+        details: string;
       };
       step3: {
         title: string;
         description: string;
+        details: string;
       };
       step4: {
         title: string;
         description: string;
+        details: string;
+      };
+      useCases: {
+        title: string;
+        case1: {
+          title: string;
+          description: string;
+        };
+        case2: {
+          title: string;
+          description: string;
+        };
+        case3: {
+          title: string;
+          description: string;
+        };
       };
       viewPublicSetlists: string;
       downloadImages: string;
