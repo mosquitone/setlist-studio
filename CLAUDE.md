@@ -23,6 +23,14 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
   - `origin`: GitHub（開発用）
   - `gitlab`: GitLab（デプロイ用）
 
+## GitHub操作の優先順位
+GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサーバー（mcp__github__で始まるツール）を優先的に使用すること。通常のgitコマンドよりもMCPサーバーを使用する。
+
+### MCP GitHub設定
+- **リポジトリオーナー**: `mosquitone`
+- **リポジトリ名**: `setlist-studio`
+- これらの値はMCPツール使用時の`owner`と`repo`パラメータに使用する
+
 ## 開発コマンド
 
 ### 基本開発コマンド
