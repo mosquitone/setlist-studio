@@ -13,7 +13,7 @@ const nextConfig: NextConfig = {
   // Optimize images
   images: {
     formats: ['image/webp', 'image/avif'],
-    minimumCacheTTL: 86400, // 1 day cache
+    minimumCacheTTL: 86400,
   },
   // Compress assets
   compress: true,

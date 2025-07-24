@@ -6,10 +6,8 @@ import { getMessages, Language } from '../../i18n/messages';
 
 import { EmailReliabilityService, EmailResult } from './emailReliability';
 
-// ビルド時エラーを避けるため、環境変数が存在しない場合はダミー値を使用
 const resend = new Resend(process.env.RESEND_API_KEY || 'dummy-key-for-build');
 
-// Setlist Studio Logo - シンプルテキスト版（最大互換性）
 const SETLIST_STUDIO_LOGO = `
 <div style="text-align: center; margin: 30px 0 40px 0;">
   <h1 style="font-family: Arial, sans-serif; font-size: 36px; font-weight: bold; color: #1976d2; margin: 0; letter-spacing: 2px;">
@@ -40,7 +38,7 @@ export class EmailService {
 
   private constructor() {
     this.fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
-    this.circuitBreaker = EmailReliabilityService.createCircuitBreaker(5, 60000); // 5回失敗で1分間オープン
+    this.circuitBreaker = EmailReliabilityService.createCircuitBreaker(5, 60000);
   }
 
   public static getInstance(): EmailService {
@@ -55,7 +53,7 @@ export class EmailService {
    */
   public generateSecureToken(): TokenData {
     const token = crypto.randomBytes(32).toString('hex');
-    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24時間後
+    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
     return { token, expires };
   }
 
@@ -64,7 +62,7 @@ export class EmailService {
    */
   public generatePasswordResetToken(): TokenData {
     const token = crypto.randomBytes(32).toString('hex');
-    const expires = new Date(Date.now() + 60 * 60 * 1000); // 1時間後
+    const expires = new Date(Date.now() + 60 * 60 * 1000);
     return { token, expires };
   }
 
@@ -73,7 +71,7 @@ export class EmailService {
    */
   public generateEmailChangeToken(): TokenData {
     const token = crypto.randomBytes(32).toString('hex');
-    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24時間後
+    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
     return { token, expires };
   }
 
@@ -100,9 +98,7 @@ export class EmailService {
             const errorMessage = typeof error === 'string' ? error : JSON.stringify(error);
             const emailError = new Error(`Email sending failed: ${errorMessage}`);
 
-            // 一時的エラーかどうか判定
             if (!EmailReliabilityService.isTemporaryError(error)) {
-              // 永続的エラーの場合はリトライしない
               console.error('Permanent email error - not retrying:', error);
               throw emailError;
             }
@@ -149,9 +145,7 @@ export class EmailService {
             const errorMessage = typeof error === 'string' ? error : JSON.stringify(error);
             const emailError = new Error(`Email sending failed: ${errorMessage}`);
 
-            // 一時的エラーかどうか判定
             if (!EmailReliabilityService.isTemporaryError(error)) {
-              // 永続的エラーの場合はリトライしない
               console.error('Permanent email error - not retrying:', error);
               throw emailError;
             }

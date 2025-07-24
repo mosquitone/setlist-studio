@@ -107,8 +107,8 @@ export class AuthResolver {
     // 並列処理可能な部分を同時実行
     const [hashedPassword, { token: verificationToken, expires: verificationExpires }] =
       await Promise.all([
-        bcrypt.hash(input.password, 10), // 12から10に削減してパフォーマンス改善
-        Promise.resolve(emailService.generateSecureToken()), // トークン生成は高速なのでPromiseでラップ
+        bcrypt.hash(input.password, 10),
+        Promise.resolve(emailService.generateSecureToken()),
       ]);
 
     const user = await ctx.prisma.user.create({
@@ -167,8 +167,6 @@ export class AuthResolver {
             attempts: emailResult.attempts,
             error: emailResult.finalError?.message,
           });
-
-          // TODO: 管理者通知やリトライキューへの追加などを検討
         }
       } catch (error) {
         console.error('Background task failed completely:', {
@@ -661,7 +659,7 @@ export class AuthResolver {
     if (user.email === input.newEmail) {
       return {
         success: true,
-        message: '', // 空のメッセージで成功を返す
+        message: '',
       };
     }
 
@@ -759,7 +757,7 @@ export class AuthResolver {
       emailChangeToken: null,
       emailChangeExpires: null,
       emailVerified: true,
-      authProvider: AUTH_PROVIDERS.EMAIL, // メールアドレス変更後はemailユーザーとして扱う
+      authProvider: AUTH_PROVIDERS.EMAIL,
     };
 
     if (user.pendingPassword) {
@@ -781,7 +779,7 @@ export class AuthResolver {
       user.id,
       oldEmail,
       newEmail,
-      'verification', // 確認メール経由での変更
+      'verification',
       updateData.authProvider as string,
     );
 
