@@ -8,7 +8,7 @@
 - [ ] DATABASE_URLを以下に更新:
 
 ```bash
-DATABASE_URL="postgresql://postgres.your_user:your_password@aws-0-ap-northeast-1.pooler.supabase.com:6543/postgres?sslmode=require&pgbouncer=true&connection_limit=20&pool_timeout=30&statement_timeout=30000&connect_timeout=60&application_name=setlist-studio&pool_mode=transaction"
+DATABASE_URL="postgresql://postgres.your_user:your_password@your_supabase_host:6543/postgres?sslmode=require&pgbouncer=true&connection_limit=20&pool_timeout=30&statement_timeout=30000&connect_timeout=60&application_name=setlist-studio&pool_mode=transaction"
 ```
 
 - [ ] Production, Preview, Developmentに適用
