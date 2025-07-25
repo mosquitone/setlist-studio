@@ -188,6 +188,8 @@ export const SongItemInput = React.memo(function SongItemInput({
                       ? String(errors.items[index].title)
                       : ''
                   }
+                  name={`items.${index}.title`}
+                  onBlur={handleBlur}
                 />
               )}
             />
@@ -319,6 +321,8 @@ export const SongItemInput = React.memo(function SongItemInput({
                           ? String(errors.items[index].title)
                           : ''
                       }
+                      name={`items.${index}.title`}
+                      onBlur={handleBlur}
                     />
                   )}
                 />

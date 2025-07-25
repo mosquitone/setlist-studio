@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs, { Dayjs } from 'dayjs';
-import { FormikProps, FastField, FieldProps } from 'formik';
+import { FormikProps } from 'formik';
 import React, { memo } from 'react';
 
 import { useI18n } from '@/hooks/useI18n';
@@ -50,21 +50,20 @@ export const SetlistFormFields = memo(function SetlistFormFields({
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
-        <FastField name="title">
-          {({ field, meta }: FieldProps) => (
-            <TextField
-              fullWidth
-              {...field}
-              label={`${messages.setlistForm.fields.title}（${messages.setlistForm.fields.titlePlaceholder}）`}
-              error={meta.touched && Boolean(meta.error)}
-              helperText={
-                meta.touched && meta.error
-                  ? meta.error
-                  : messages.setlistForm.fields.titleHelperText
-              }
-            />
-          )}
-        </FastField>
+        <TextField
+          fullWidth
+          name="title"
+          value={values.title}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          label={`${messages.setlistForm.fields.title}（${messages.setlistForm.fields.titlePlaceholder}）`}
+          error={touched.title && Boolean(errors.title)}
+          helperText={
+            touched.title && errors.title
+              ? errors.title
+              : messages.setlistForm.fields.titleHelperText
+          }
+        />
       </Grid>
 
       <Grid item xs={12} sm={6}>
@@ -101,6 +100,7 @@ export const SetlistFormFields = memo(function SetlistFormFields({
                   : messages.setlistForm.fields.artistNameHelperText
               }
               required
+              name="artistName"
               onBlur={handleBlur}
             />
           )}
@@ -114,6 +114,7 @@ export const SetlistFormFields = memo(function SetlistFormFields({
             name="theme"
             value={values.theme}
             onChange={handleChange}
+            onBlur={handleBlur}
             label={messages.setlistForm.fields.theme}
             sx={{
               '& .MuiOutlinedInput-notchedOutline': {
@@ -131,11 +132,16 @@ export const SetlistFormFields = memo(function SetlistFormFields({
       </Grid>
 
       <Grid item xs={12} sm={6}>
-        <FastField name="eventName">
-          {({ field }: FieldProps) => (
-            <TextField fullWidth {...field} label={messages.setlistForm.fields.eventName} />
-          )}
-        </FastField>
+        <TextField
+          fullWidth
+          name="eventName"
+          value={values.eventName}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          label={messages.setlistForm.fields.eventName}
+          error={touched.eventName && Boolean(errors.eventName)}
+          helperText={touched.eventName && errors.eventName}
+        />
       </Grid>
       <Grid item xs={12} sm={6}>
         <DatePicker
