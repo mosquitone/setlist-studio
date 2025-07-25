@@ -1,7 +1,8 @@
 import { Box } from '@mui/material';
-import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
+
+import OptimizedImage from '@/components/common/ui/OptimizedImage';
 
 export const HeaderLogo = React.memo(function HeaderLogo() {
   return (
@@ -17,8 +18,9 @@ export const HeaderLogo = React.memo(function HeaderLogo() {
           transition: 'transform 0.2s ease-in-out',
         }}
       >
-        <Image
+        <OptimizedImage
           src="/setlist-studio-logo.png"
+          fallbackSrc="/setlist-studio-logo.png"
           alt="Setlist Studio"
           width={200}
           height={64}

@@ -1,8 +1,8 @@
 'use client';
 
 import { Box, Typography, Grid, Card, CardContent } from '@mui/material';
-import Image from 'next/image';
 
+import OptimizedImage from '@/components/common/ui/OptimizedImage';
 import { useI18n } from '@/hooks/useI18n';
 
 export function SampleSetlistsSection() {
@@ -62,12 +62,14 @@ export function SampleSetlistsSection() {
                   justifyContent: 'center',
                 }}
               >
-                <Image
+                <OptimizedImage
                   src="/setlist-mosquitone-black.png"
+                  fallbackSrc="/setlist-mosquitone-black.png"
                   alt={messages.pages.home.sampleSetlists.blackThemeAlt}
                   fill
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
                   style={{ objectFit: 'contain' }}
+                  priority
                 />
               </Box>
             </CardContent>
@@ -108,12 +110,14 @@ export function SampleSetlistsSection() {
                   justifyContent: 'center',
                 }}
               >
-                <Image
+                <OptimizedImage
                   src="/setlist-mosquitone-white.png"
+                  fallbackSrc="/setlist-mosquitone-white.png"
                   alt={messages.pages.home.sampleSetlists.whiteThemeAlt}
                   fill
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
                   style={{ objectFit: 'contain' }}
+                  priority
                 />
               </Box>
             </CardContent>

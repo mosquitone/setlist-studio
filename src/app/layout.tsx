@@ -16,7 +16,11 @@ import { SnackbarProvider } from '@/components/providers/SnackbarProvider';
 import { getPublicUrl } from '@/lib/config/url';
 import { getOrganizationSchema, getWebSiteSchema } from '@/lib/metadata/pageSchemas';
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  preload: true,
+});
 
 // Dynamic metadata will be handled by individual pages
 // This is the fallback metadata
@@ -95,6 +99,10 @@ export default function RootLayout({
         <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
         <link rel="icon" type="image/png" sizes="192x192" href="/favicon.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+        <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
         <Script
           id="organization-jsonld"
           type="application/ld+json"
