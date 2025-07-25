@@ -27,7 +27,7 @@ const getValidationSchema = (messages: Messages) =>
       .max(30, messages.songs.newSong.validation.titleMaxLength),
     artist: Yup.string()
       .required(messages.songs.newSong.validation.artistRequired)
-      .max(20, messages.songs.newSong.validation.artistMaxLength),
+      .max(30, messages.songs.newSong.validation.artistMaxLength),
     key: Yup.string(),
     tempo: Yup.number().nullable().typeError(messages.songs.newSong.validation.tempoInvalid),
     notes: Yup.string().max(20, messages.songs.newSong.validation.notesMaxLength),

@@ -30,7 +30,7 @@ abstract class BaseSongInput {
   @Field(() => String, { nullable: true })
   @IsOptional()
   @IsString()
-  @MaxLength(20)
+  @MaxLength(30)
   artist?: string;
 
   @Field(() => Int, { nullable: true })

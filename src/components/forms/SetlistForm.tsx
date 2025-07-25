@@ -55,11 +55,11 @@ const createValidationSchema = (messages: Messages) =>
       }),
     artistName: Yup.string()
       .required(messages.setlistForm.validation.artistNameRequired)
-      .max(20, messages.setlistForm.validation.artistNameMaxLength)
+      .max(30, messages.setlistForm.validation.artistNameMaxLength)
       .test('sanitize', messages.setlistForm.validation.artistNameInvalidChars, function (value) {
         if (!value) return true;
         try {
-          validateAndSanitizeInput(value, 20);
+          validateAndSanitizeInput(value, 30);
           return true;
         } catch {
           return false;

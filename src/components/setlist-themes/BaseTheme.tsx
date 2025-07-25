@@ -33,6 +33,14 @@ export const BaseTheme: React.FC<BaseThemeProps> = ({ data, className, colors, l
   const A4_WIDTH = 794;
   const A4_HEIGHT = 1123;
 
+  // アーティスト名の文字数に応じたフォントサイズを決定
+  const getArtistNameFontSize = (name: string): string => {
+    const length = name.length;
+    if (length <= 10) return '48px';
+    if (length <= 20) return '41px';
+    return '32px'; // 長い名前: 小さく表示
+  };
+
   return (
     <div
       className={className}
@@ -57,8 +65,9 @@ export const BaseTheme: React.FC<BaseThemeProps> = ({ data, className, colors, l
           variant="h1"
           component="h1"
           sx={{
-            fontSize: '48px',
+            fontSize: getArtistNameFontSize(artistName),
             fontWeight: 700,
+            width: '85%',
             color: colors.text,
             mb: 1,
             letterSpacing: '2px',
