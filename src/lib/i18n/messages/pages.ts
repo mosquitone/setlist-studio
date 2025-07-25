@@ -171,7 +171,7 @@ export const pagesJa = {
         title: '③ 画像ダウンロード',
         description: '画像ダウンロード（黒/白テーマ選択可能）',
         details:
-          'セットリストを高品質PNG画像としてダウンロードできます。ブラック/ホワイトの2種類のテーマから選択可能で、QRコード付きのプロフェッショナルなデザインです。印刷やSNSシェアに最適です。',
+          'セットリストを高品質PNG画像としてダウンロードできます。ブラック/ホワイトの2種類のテーマから選択可能で、QRコード付きの洗練されたデザインです。印刷やSNSシェアに最適です。',
       },
       step4: {
         title: '④ URL共有',
@@ -437,7 +437,7 @@ export const pagesEn = {
         title: '③ Download Images',
         description: 'Download images (black/white theme selectable)',
         details:
-          'Download the setlist as a high-quality PNG image. Choose from Black or White themes, with professional design including QR code. Perfect for printing or social media sharing.',
+          'Download the setlist as a high-quality PNG image. Choose from Black or White themes, with polished design including QR code. Perfect for printing or social media sharing.',
       },
       step4: {
         title: '④ Share URL',

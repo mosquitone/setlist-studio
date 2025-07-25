@@ -35,7 +35,7 @@ export const metadataJa = {
   siteTitle: 'Setlist Studio - バンド向けセットリスト管理ツール',
   siteDescription:
     'ステージで利用できるアーティスト向けのセットリスト作成アプリです。エクセルや手書きの時代はもう終わりです。楽曲管理から高品質なセットリスト生成まで。',
-  homeTitle: 'Setlist Studio - プロフェッショナルなセットリスト作成・管理ツール',
+  homeTitle: 'Setlist Studio - 高品質なセットリスト作成・管理ツール',
   homeDescription:
     '無料で使えるバンド向けセットリスト作成アプリ。ドラッグ&ドロップで簡単作成、高品質な画像生成、QRコード付き共有機能。ライブパフォーマンスを次のレベルへ。',
   loginTitle: 'ログイン',
@@ -80,7 +80,7 @@ export const metadataEn = {
   siteTitle: 'Setlist Studio - Setlist Management Tool for Bands',
   siteDescription:
     'A setlist creation app for artists that can be used on stage. The era of Excel and handwritten lists is over. From song management to high-quality setlist generation.',
-  homeTitle: 'Setlist Studio - Professional Setlist Creation & Management Tool',
+  homeTitle: 'Setlist Studio - High-Quality Setlist Creation & Management Tool',
   homeDescription:
     'Free setlist creation app for bands. Easy creation with drag & drop, high-quality image generation, QR code sharing. Take your live performance to the next level.',
   loginTitle: 'Login',

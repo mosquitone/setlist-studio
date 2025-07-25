@@ -61,7 +61,7 @@ export const getSoftwareApplicationSchema = (): WithContext<SoftwareApplication>
   featureList: [
     'セットリスト作成・編集',
     '楽曲管理',
-    'プロフェッショナルな画像生成',
+    '高品質な画像生成',
     'QRコード統合',
     'テーマ選択',
     'セットリスト共有',
