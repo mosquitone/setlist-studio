@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { IsString, MaxLength } from 'class-validator';
 import {
   Resolver,
   Query,
@@ -73,6 +74,8 @@ abstract class BaseSetlistInput {
 @InputType()
 export class CreateSetlistInput extends BaseSetlistInput {
   @Field(() => String)
+  @IsString()
+  @MaxLength(20)
   artistName: string; // 作成時は必須
 
   @Field(() => String)
@@ -85,6 +88,8 @@ export class CreateSetlistInput extends BaseSetlistInput {
 @InputType()
 export class UpdateSetlistInput extends BaseSetlistInput {
   @Field(() => String, { nullable: true })
+  @IsString()
+  @MaxLength(20)
   artistName?: string; // 更新時は任意
 
   @Field(() => String, { nullable: true })

@@ -62,7 +62,6 @@ export const BaseTheme: React.FC<BaseThemeProps> = ({ data, className, colors, l
             color: colors.text,
             mb: 1,
             letterSpacing: '2px',
-            textTransform: 'lowercase',
             lineHeight: 1.1,
           }}
         >

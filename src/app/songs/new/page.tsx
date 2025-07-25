@@ -31,7 +31,9 @@ interface CreateSongData {
 const getValidationSchema = (messages: Messages) =>
   Yup.object({
     title: Yup.string().required(messages.songs.newSong.validation.titleRequired),
-    artist: Yup.string().required(messages.songs.newSong.validation.artistRequired),
+    artist: Yup.string()
+      .required(messages.songs.newSong.validation.artistRequired)
+      .max(20, messages.songs.newSong.validation.artistMaxLength),
     key: Yup.string(),
     tempo: Yup.number().typeError(messages.songs.newSong.validation.tempoInvalid).nullable(),
     notes: Yup.string().max(20, messages.songs.newSong.validation.notesMaxLength),

@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { IsOptional, IsString, IsInt, Min, Max } from 'class-validator';
+import { IsOptional, IsString, IsInt, Min, Max, MaxLength } from 'class-validator';
 import {
   Resolver,
   Query,
@@ -30,6 +30,7 @@ abstract class BaseSongInput {
   @Field(() => String, { nullable: true })
   @IsOptional()
   @IsString()
+  @MaxLength(20)
   artist?: string;
 
   @Field(() => Int, { nullable: true })
@@ -53,6 +54,7 @@ abstract class BaseSongInput {
   @Field(() => String, { nullable: true })
   @IsOptional()
   @IsString()
+  @MaxLength(20)
   notes?: string;
 }
 
