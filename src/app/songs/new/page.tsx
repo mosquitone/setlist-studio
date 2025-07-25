@@ -101,6 +101,8 @@ export default function NewSongPage() {
           initialValues={initialValues}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
+          validateOnChange={false}
+          validateOnBlur={true}
         >
           {({ values, errors, touched, handleChange, handleBlur }) => (
             <Form>
