@@ -803,11 +803,6 @@ export default function GuideClient() {
                         primary={`• ${messages.pages.guide.pageDetails.songManagement.feature3}`}
                       />
                     </ListItem>
-                    <ListItem sx={{ pl: 0 }}>
-                      <ListItemText
-                        primary={`• ${messages.pages.guide.pageDetails.songManagement.feature4}`}
-                      />
-                    </ListItem>
                   </List>
                 </Paper>
               </Grid>
