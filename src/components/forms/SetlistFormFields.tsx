@@ -108,7 +108,7 @@ export const SetlistFormFields = memo(function SetlistFormFields({
       </Grid>
 
       <Grid item xs={12} sm={6}>
-        <FormControl fullWidth>
+        <FormControl fullWidth sx={{ minHeight: '56px' }}>
           <InputLabel>{messages.setlistForm.fields.theme}</InputLabel>
           <Select
             name="theme"
