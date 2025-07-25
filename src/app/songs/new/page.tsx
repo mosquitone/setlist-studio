@@ -30,7 +30,9 @@ interface CreateSongData {
 
 const getValidationSchema = (messages: Messages) =>
   Yup.object({
-    title: Yup.string().required(messages.songs.newSong.validation.titleRequired),
+    title: Yup.string()
+      .required(messages.songs.newSong.validation.titleRequired)
+      .max(30, messages.songs.newSong.validation.titleMaxLength),
     artist: Yup.string()
       .required(messages.songs.newSong.validation.artistRequired)
       .max(20, messages.songs.newSong.validation.artistMaxLength),

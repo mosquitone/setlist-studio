@@ -40,6 +40,8 @@ interface Context {
 @InputType()
 export class CreateSetlistItemForSetlistInput {
   @Field(() => String)
+  @IsString()
+  @MaxLength(30)
   title: string;
 
   @Field(() => String, { nullable: true })

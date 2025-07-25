@@ -50,6 +50,7 @@ export interface SongMessages {
     success: string;
     validation: {
       titleRequired: string;
+      titleMaxLength: string;
       artistRequired: string;
       artistMaxLength: string;
       tempoInvalid: string;
@@ -107,6 +108,7 @@ export const songsJa: SongMessages = {
     success: '楽曲を作成しました',
     validation: {
       titleRequired: '楽曲タイトルは必須です',
+      titleMaxLength: '楽曲タイトルは30文字以内で入力してください',
       artistRequired: 'アーティスト名は必須です',
       artistMaxLength: 'アーティスト名は20文字以内で入力してください',
       tempoInvalid: '有効な数値を入力してください',
@@ -163,6 +165,7 @@ export const songsEn: SongMessages = {
     success: 'Song created successfully',
     validation: {
       titleRequired: 'Song title is required',
+      titleMaxLength: 'Song title must be 30 characters or less',
       artistRequired: 'Artist name is required',
       artistMaxLength: 'Artist name must be 20 characters or less',
       tempoInvalid: 'Please enter a valid number',

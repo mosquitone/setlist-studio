@@ -62,6 +62,7 @@ abstract class BaseSongInput {
 export class CreateSongInput extends BaseSongInput {
   @Field(() => String)
   @IsString()
+  @MaxLength(30)
   title: string; // 作成時は必須
 }
 
@@ -70,6 +71,7 @@ export class UpdateSongInput extends BaseSongInput {
   @Field(() => String, { nullable: true })
   @IsOptional()
   @IsString()
+  @MaxLength(30)
   title?: string; // 更新時は任意
 }
 

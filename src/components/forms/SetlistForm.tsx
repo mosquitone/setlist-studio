@@ -87,14 +87,14 @@ const createValidationSchema = (messages: Messages) =>
             .required(
               messages.setlistForm.validation.songTitleRequired || messages.validation.required,
             )
-            .max(200, messages.setlistForm.validation.songTitleMaxLength)
+            .max(30, messages.setlistForm.validation.songTitleMaxLength)
             .test(
               'sanitize',
               messages.setlistForm.validation.songTitleInvalidChars,
               function (value) {
                 if (!value) return true;
                 try {
-                  validateAndSanitizeInput(value, 200);
+                  validateAndSanitizeInput(value, 30);
                   return true;
                 } catch {
                   return false;
