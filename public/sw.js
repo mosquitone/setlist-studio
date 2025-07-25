@@ -1,17 +1,13 @@
 // Service Worker for Setlist Studio
 const CACHE_NAME = 'setlist-studio-v1';
-const urlsToCache = [
-  '/',
-  '/favicon.ico',
-  '/setlist-studio-logo.webp',
-];
+const urlsToCache = ['/', '/favicon.ico', '/setlist-studio-logo.webp'];
 
 // Install event - cache essential files
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(urlsToCache);
-    })
+    }),
   );
   self.skipWaiting();
 });
@@ -25,9 +21,9 @@ self.addEventListener('activate', (event) => {
           if (cacheName !== CACHE_NAME) {
             return caches.delete(cacheName);
           }
-        })
+        }),
       );
-    })
+    }),
   );
   self.clients.claim();
 });
@@ -64,6 +60,6 @@ self.addEventListener('fetch', (event) => {
       .catch(() => {
         // Network failed, try cache
         return caches.match(event.request);
-      })
+      }),
   );
 });

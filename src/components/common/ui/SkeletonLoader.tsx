@@ -25,12 +25,7 @@ export const SkeletonLoader = React.memo(function SkeletonLoader({
     <Box>
       {Array.from({ length: count }).map((_, index) => (
         <Box key={index} sx={{ mb: index < count - 1 ? spacing : 0 }}>
-          <Skeleton
-            variant={variant}
-            width={width}
-            height={height}
-            animation={animation}
-          />
+          <Skeleton variant={variant} width={width} height={height} animation={animation} />
         </Box>
       ))}
     </Box>

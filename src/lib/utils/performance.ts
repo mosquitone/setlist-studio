@@ -6,7 +6,7 @@
  * Debounce function - delays execution until after wait milliseconds have elapsed
  * since the last time the debounced function was invoked
  */
-export function debounce<T extends (...args: any[]) => any>(
+export function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
   wait: number,
 ): (...args: Parameters<T>) => void {
@@ -26,7 +26,7 @@ export function debounce<T extends (...args: any[]) => any>(
 /**
  * Throttle function - ensures function is called at most once per specified time period
  */
-export function throttle<T extends (...args: any[]) => any>(
+export function throttle<T extends (...args: unknown[]) => unknown>(
   func: T,
   limit: number,
 ): (...args: Parameters<T>) => void {
@@ -50,27 +50,36 @@ export const requestIdleCallbackPolyfill = (
   callback: IdleRequestCallback,
   options?: IdleRequestOptions,
 ): number => {
+  // Check if running in browser environment
+  if (typeof window === 'undefined') {
+    return 0;
+  }
+
   if ('requestIdleCallback' in window) {
     return window.requestIdleCallback(callback, options);
   }
 
   // Fallback using setTimeout
   const start = Date.now();
-  return window.setTimeout(() => {
+  return globalThis.setTimeout(() => {
     callback({
       didTimeout: false,
       timeRemaining: () => Math.max(0, 50 - (Date.now() - start)),
     } as IdleDeadline);
-  }, 1);
+  }, 1) as unknown as number;
 };
 
 /**
  * CancelIdleCallback polyfill
  */
 export const cancelIdleCallbackPolyfill = (handle: number): void => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
   if ('cancelIdleCallback' in window) {
     window.cancelIdleCallback(handle);
   } else {
-    window.clearTimeout(handle);
+    globalThis.clearTimeout(handle);
   }
 };

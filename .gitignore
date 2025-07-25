@@ -51,3 +51,6 @@ postgres_data/
 # Generated GraphQL schema files
 src/lib/server/graphql/schema.graphql
 src/lib/server/graphql/generated-schema.ts
+
+# Claude session documentation
+docs/claude/SESSION_*.txt

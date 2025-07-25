@@ -10,7 +10,7 @@ export function usePassiveEventListener<K extends keyof WindowEventMap>(
   element: Window | Document | HTMLElement | null = window,
   options: AddEventListenerOptions = {},
 ) {
-  const savedHandler = useRef<(event: WindowEventMap[K]) => void>();
+  const savedHandler = useRef<((event: WindowEventMap[K]) => void) | undefined>(undefined);
 
   useEffect(() => {
     savedHandler.current = handler;

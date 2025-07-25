@@ -11,7 +11,7 @@ const compat = new FlatCompat({ baseDirectory: __dirname });
 const eslintConfig = [
   // ESLint ignore patterns (migrated from .eslintignore)
   {
-    ignores: ['node_modules', '.next', 'out', 'build', 'postgres_data'],
+    ignores: ['node_modules', '.next', 'out', 'build', 'postgres_data', 'scripts/**/*.js'],
   },
   // Core Next.js + TypeScript rules
   ...compat.extends(

@@ -1,20 +1,19 @@
+import { CircularProgress } from '@mui/material';
 import { Suspense, ComponentType } from 'react';
 
-import LoadingSpinner from './LoadingSpinner';
-
 interface LazyLoadProps {
-  component: ComponentType<any>;
+  component: ComponentType;
   fallback?: React.ReactNode;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /**
  * Wrapper component for lazy-loaded components with loading fallback
  */
-export default function LazyLoad({ 
-  component: Component, 
-  fallback = <LoadingSpinner />,
-  ...props 
+export default function LazyLoad({
+  component: Component,
+  fallback = <CircularProgress size={40} />,
+  ...props
 }: LazyLoadProps) {
   return (
     <Suspense fallback={fallback}>
