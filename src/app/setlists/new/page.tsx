@@ -25,6 +25,7 @@ export default function NewSetlistPage() {
   const searchParams = useSearchParams();
   const duplicateId = searchParams.get('duplicate');
   const selectedSongsParam = searchParams.get('selectedSongs');
+  const songsParam = searchParams.get('songs'); // Base64エンコードされた楽曲データ
   const { messages } = useI18n();
   const { showError, showSuccess } = useSnackbar();
   const [initialValues, setInitialValues] = useState<SetlistFormValues>({
@@ -111,7 +112,22 @@ export default function NewSetlistPage() {
                 }))
             : [{ title: '', note: '' }],
       });
+    } else if (songsParam) {
+      // Base64エンコードされた楽曲データをデコード
+      try {
+        const decodedString = decodeURIComponent(atob(songsParam));
+        const selectedSongs: unknown = JSON.parse(decodedString);
+        if (Array.isArray(selectedSongs) && selectedSongs.length > 0) {
+          setInitialValues((prev) => ({
+            ...prev,
+            items: selectedSongs.slice(0, 20), // 20曲制限
+          }));
+        }
+      } catch (error: unknown) {
+        console.error('Failed to decode selected songs:', error);
+      }
     } else if (selectedSongsParam) {
+      // 後方互換性のため、古い形式もサポート
       try {
         const selectedSongs: unknown = JSON.parse(selectedSongsParam);
         if (Array.isArray(selectedSongs) && selectedSongs.length > 0) {
@@ -124,7 +140,7 @@ export default function NewSetlistPage() {
         console.error('Failed to parse selected songs:', error);
       }
     }
-  }, [duplicateData, selectedSongsParam, messages.setlistForm.copy]);
+  }, [duplicateData, songsParam, selectedSongsParam, messages.setlistForm.copy]);
 
   // 複製モードの場合、データが読み込まれるまで待つ
   const isReady = !duplicateId || (duplicateId && !duplicateLoading);
@@ -136,7 +152,7 @@ export default function NewSetlistPage() {
           title={
             duplicateId
               ? messages.setlistForm.titles.duplicate
-              : selectedSongsParam
+              : songsParam || selectedSongsParam
                 ? messages.setlistForm.titles.fromSongs
                 : messages.setlistForm.titles.create
           }

@@ -156,6 +156,7 @@ const SetlistForm = memo(function SetlistForm({
         onSubmit={onSubmit}
         validateOnChange={false}
         validateOnBlur={true}
+        enableReinitialize={true}
       >
         {(formik) => {
           const { values } = formik;

@@ -64,10 +64,20 @@ export function useSongSelection() {
       .filter((song) => selectedSongs.includes(song.id))
       .map((song) => ({ title: song.title, note: song.notes || '' }));
 
-    const queryParams = new URLSearchParams();
-    queryParams.set('selectedSongs', JSON.stringify(selectedSongTitles));
+    // Base64エンコーディングでURLパラメータを圧縮
+    try {
+      const jsonString = JSON.stringify(selectedSongTitles);
+      const base64String = btoa(encodeURIComponent(jsonString));
 
-    router.push(`/setlists/new?${queryParams.toString()}`);
+      const queryParams = new URLSearchParams();
+      queryParams.set('songs', base64String);
+
+      router.push(`/setlists/new?${queryParams.toString()}`);
+    } catch (error) {
+      console.error('Failed to encode selected songs:', error);
+      // フォールバック: エンコーディングに失敗した場合は、楽曲なしで遷移
+      router.push('/setlists/new');
+    }
   };
 
   const clearSelection = () => {
