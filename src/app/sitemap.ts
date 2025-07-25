@@ -1,10 +1,12 @@
 import { PrismaClient } from '@prisma/client';
 import { MetadataRoute } from 'next';
 
+import { getPublicUrl } from '@/lib/config/url';
+
 const prisma = new PrismaClient();
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://setlist-studio.vercel.app';
+  const baseUrl = getPublicUrl();
   const lastModified = new Date();
 
   // 静的ページ

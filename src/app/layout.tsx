@@ -13,6 +13,7 @@ import { I18nProvider } from '@/components/providers/I18nProvider';
 import MUIProvider from '@/components/providers/MUIProvider';
 import NextAuthProvider from '@/components/providers/NextAuthProvider';
 import { SnackbarProvider } from '@/components/providers/SnackbarProvider';
+import { getPublicUrl } from '@/lib/config/url';
 import { getOrganizationSchema, getWebSiteSchema } from '@/lib/metadata/pageSchemas';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -41,7 +42,7 @@ export const metadata: Metadata = {
   authors: [{ name: 'mosquitone' }],
   creator: 'mosquitone',
   publisher: 'mosquitone',
-  metadataBase: new URL('https://setlist-studio.vercel.app'),
+  metadataBase: new URL(getPublicUrl()),
   alternates: {
     canonical: '/',
   },
@@ -49,7 +50,7 @@ export const metadata: Metadata = {
     title: 'Setlist Studio - アーティスト向けセットリスト管理ツール',
     description:
       'ステージで利用できるアーティスト向けのセットリスト作成アプリです。エクセルや手書きの時代はもう終わりです。楽曲管理から高品質なセットリスト生成まで。',
-    url: 'https://setlist-studio.vercel.app',
+    url: getPublicUrl(),
     siteName: 'Setlist Studio',
     locale: 'ja_JP',
     type: 'website',
