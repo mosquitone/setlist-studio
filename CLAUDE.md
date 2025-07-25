@@ -4,7 +4,7 @@
 
 ## プロジェクト概要
 
-mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセットリスト生成アプリケーションです。ユーザー認証、楽曲管理、セットリスト作成機能を備えています。Vercel Functionsを活用したGraphQL APIルートを持つ統一されたNext.jsアーキテクチャを使用し、本番環境デプロイ対応済みです。
+mosquitone Emotional Setlist Studioは、音楽アーティスト向けのモダンなセットリスト生成アプリケーションです。ユーザー認証、楽曲管理、セットリスト作成機能を備えています。Vercel Functionsを活用したGraphQL APIルートを持つ統一されたNext.jsアーキテクチャを使用し、本番環境デプロイ対応済みです。
 
 ### リポジトリ構成
 - **開発リポジトリ**: GitHub（このリポジトリ）

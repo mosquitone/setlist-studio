@@ -3,7 +3,7 @@ export const pagesJa = {
   home: {
     title: 'Setlist Studio',
     description: 'シンプルで直感的なセットリスト管理',
-    subtitle: 'バンド向けセットリスト作成ツール',
+    subtitle: 'アーティスト向けセットリスト作成ツール',
     heroTitle: 'ステージで使えるセットリスト作成アプリ',
     heroSubtitle: 'ExcelやA4用紙に手書きの時代は終わりです。',
     sampleSetlists: {
@@ -265,7 +265,7 @@ export const pagesEn = {
   home: {
     title: 'Setlist Studio',
     description: 'Setlist management app',
-    subtitle: 'Setlist creation tool for bands',
+    subtitle: 'Setlist creation tool for artists',
     heroTitle: 'Setlist creation app for artists that can be used on stage.',
     heroSubtitle: 'The era of Excel and handwritten lists is over.',
     sampleSetlists: {
@@ -321,7 +321,7 @@ export const pagesEn = {
     aboutSection: {
       title: 'About Setlist Studio',
       description1:
-        'Setlist Studio is a setlist generation and management tool for bands and music groups. You can manage song information and easily create high-quality setlist images.',
+        'Setlist Studio is a setlist generation and management tool for artists and music groups. You can manage song information and easily create high-quality setlist images.',
       description2:
         'Setlists can be managed as "Public" or "Private", and public setlists can be viewed and downloaded without account registration.',
       description3:

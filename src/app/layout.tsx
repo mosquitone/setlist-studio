@@ -22,7 +22,7 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: {
     template: '%s | Setlist Studio',
-    default: 'Setlist Studio - バンド向けセットリスト管理ツール',
+    default: 'Setlist Studio - アーティスト向けセットリスト管理ツール',
   },
   description:
     'ステージで利用できるアーティスト向けのセットリスト作成アプリです。エクセルや手書きの時代はもう終わりです。楽曲管理から高品質なセットリスト生成まで。',
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   openGraph: {
-    title: 'Setlist Studio - バンド向けセットリスト管理ツール',
+    title: 'Setlist Studio - アーティスト向けセットリスト管理ツール',
     description:
       'ステージで利用できるアーティスト向けのセットリスト作成アプリです。エクセルや手書きの時代はもう終わりです。楽曲管理から高品質なセットリスト生成まで。',
     url: 'https://setlist-studio.vercel.app',
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Setlist Studio - バンド向けセットリスト管理ツール',
+    title: 'Setlist Studio - アーティスト向けセットリスト管理ツール',
     description:
       'ステージで利用できるアーティスト向けのセットリスト作成アプリです。エクセルや手書きの時代はもう終わりです。楽曲管理から高品質なセットリスト生成まで。',
     images: ['/setlist-studio-logo.png'],

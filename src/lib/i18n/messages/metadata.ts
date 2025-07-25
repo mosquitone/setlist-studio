@@ -24,20 +24,20 @@ export interface MetadataMessages {
   confirmEmailChangeDescription: string;
   guideTitle: string;
   guideDescription: string;
-  termsTitle: string;
-  termsDescription: string;
-  privacyTitle: string;
-  privacyDescription: string;
+  termsOfServiceTitle: string;
+  termsOfServiceDescription: string;
+  privacyPolicyTitle: string;
+  privacyPolicyDescription: string;
   keywords: string[];
 }
 
 export const metadataJa = {
-  siteTitle: 'Setlist Studio - バンド向けセットリスト管理ツール',
+  siteTitle: 'Setlist Studio - アーティスト向けセットリスト管理ツール',
   siteDescription:
     'ステージで利用できるアーティスト向けのセットリスト作成アプリです。エクセルや手書きの時代はもう終わりです。楽曲管理から高品質なセットリスト生成まで。',
   homeTitle: 'Setlist Studio - 高品質なセットリスト作成・管理ツール',
   homeDescription:
-    '無料で使えるバンド向けセットリスト作成アプリ。ドラッグ&ドロップで簡単作成、高品質な画像生成、QRコード付き共有機能。ライブパフォーマンスを次のレベルへ。',
+    '無料で使えるアーティスト向けセットリスト作成アプリ。ドラッグ&ドロップで簡単作成、高品質な画像生成、QRコード付き共有機能。ライブパフォーマンスを次のレベルへ。',
   loginTitle: 'ログイン',
   loginDescription: 'Setlist Studioにログインしてあなたの楽曲とセットリストを管理しましょう',
   registerTitle: '新規登録',
@@ -56,11 +56,11 @@ export const metadataJa = {
   guideTitle: '利用ガイド - 完全マニュアル',
   guideDescription:
     'Setlist Studioの使い方を完全解説。無料で使える機能、アカウント作成のメリット、セットリスト作成から共有まで、すべての機能を詳しく説明します。',
-  termsTitle: '利用規約',
-  termsDescription:
+  termsOfServiceTitle: '利用規約',
+  termsOfServiceDescription:
     'Setlist Studioのご利用にあたっての利用規約です。サービスの利用条件、禁止事項、免責事項などを定めています。',
-  privacyTitle: 'プライバシーポリシー',
-  privacyDescription:
+  privacyPolicyTitle: 'プライバシーポリシー',
+  privacyPolicyDescription:
     'Setlist Studioにおける個人情報の取り扱いについて定めています。お客様の個人情報保護に関する方針をご確認ください。',
   keywords: [
     'セットリスト',
@@ -77,12 +77,12 @@ export const metadataJa = {
 };
 
 export const metadataEn = {
-  siteTitle: 'Setlist Studio - Setlist Management Tool for Bands',
+  siteTitle: 'Setlist Studio - Setlist Management Tool for Artists',
   siteDescription:
     'A setlist creation app for artists that can be used on stage. The era of Excel and handwritten lists is over. From song management to high-quality setlist generation.',
   homeTitle: 'Setlist Studio - High-Quality Setlist Creation & Management Tool',
   homeDescription:
-    'Free setlist creation app for bands. Easy creation with drag & drop, high-quality image generation, QR code sharing. Take your live performance to the next level.',
+    'Free setlist creation app for artists. Easy creation with drag & drop, high-quality image generation, QR code sharing. Take your live performance to the next level.',
   loginTitle: 'Login',
   loginDescription: 'Login to Setlist Studio to manage your songs and setlists',
   registerTitle: 'Sign Up',
@@ -100,11 +100,11 @@ export const metadataEn = {
   guideTitle: 'User Guide - Complete Manual',
   guideDescription:
     'Complete guide to using Setlist Studio. Learn about free features, benefits of creating an account, and detailed instructions from setlist creation to sharing.',
-  termsTitle: 'Terms of Service',
-  termsDescription:
+  termsOfServiceTitle: 'Terms of Service',
+  termsOfServiceDescription:
     'Terms of service for using Setlist Studio. Defines service usage conditions, prohibited actions, disclaimers, and more.',
-  privacyTitle: 'Privacy Policy',
-  privacyDescription:
+  privacyPolicyTitle: 'Privacy Policy',
+  privacyPolicyDescription:
     'Defines the handling of personal information in Setlist Studio. Please review our policy regarding the protection of your personal information.',
   keywords: [
     'setlist',

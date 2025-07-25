@@ -12,12 +12,12 @@ export async function generateMetadata(): Promise<Metadata> {
   const messages = getMessages(lang);
 
   return {
-    title: messages.metadata.termsTitle,
-    description: messages.metadata.termsDescription,
+    title: messages.metadata.termsOfServiceTitle,
+    description: messages.metadata.termsOfServiceDescription,
     keywords: [...messages.metadata.keywords, lang === 'ja' ? '利用規約' : 'terms of service'],
     openGraph: {
-      title: messages.metadata.termsTitle,
-      description: messages.metadata.termsDescription,
+      title: messages.metadata.termsOfServiceTitle,
+      description: messages.metadata.termsOfServiceDescription,
       type: 'article',
     },
   };

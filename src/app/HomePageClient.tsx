@@ -37,7 +37,7 @@ export default function HomePageClient() {
               <Box component="h1" sx={{ m: 0 }}>
                 <Image
                   src="/setlist-studio-logo.png"
-                  alt="Setlist Studio - バンド向けセットリスト作成ツール"
+                  alt="Setlist Studio - アーティスト向けセットリスト作成ツール"
                   width={350}
                   height={80}
                   priority
