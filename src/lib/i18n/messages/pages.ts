@@ -164,8 +164,7 @@ export const pagesJa = {
       step2: {
         title: '② コンテンツ閲覧',
         description: 'セットリスト内容を閲覧',
-        details:
-          'バンド名、会場、日時、楽曲リストなど、セットリストの全情報を確認できます。各楽曲のキー、テンポ、演奏時間などの詳細情報も含まれています。',
+        details: 'バンド名、会場、日時、楽曲リストなど、セットリストの全情報を確認できます。',
       },
       step3: {
         title: '③ 画像ダウンロード',
@@ -226,9 +225,8 @@ export const pagesJa = {
         title: '楽曲管理ページ',
         description: '個人の楽曲データベースを管理できます。',
         feature1: '楽曲の追加・編集・削除',
-        feature2: 'タイトル、アーティスト、キー、テンポ管理',
-        feature3: '演奏時間とメモ機能',
-        feature4: 'セットリスト作成時の楽曲選択',
+        feature2: 'タイトル、アーティスト、キー、テンポ管理、楽曲に関するメモ',
+        feature3: '選択した複数の楽曲をもとに、セットリスト作成ページへ移動',
       },
       setlistCreation: {
         title: 'セットリスト作成ページ',
@@ -492,9 +490,8 @@ export const pagesEn = {
         title: 'Song Management Page',
         description: 'You can manage your personal song database.',
         feature1: 'Adding, editing, and deleting songs',
-        feature2: 'Title, artist, key, tempo management',
-        feature3: 'Playing time and memo function',
-        feature4: 'Song selection when creating setlists',
+        feature2: 'Title, artist, key, tempo management, notes',
+        feature3: 'Move to setlist creation page based on selected songs',
       },
       setlistCreation: {
         title: 'Setlist Creation Page',
@@ -744,7 +741,6 @@ export interface PageMessages {
         feature1: string;
         feature2: string;
         feature3: string;
-        feature4: string;
       };
       setlistCreation: {
         title: string;
