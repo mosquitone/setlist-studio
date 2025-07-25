@@ -48,6 +48,15 @@ export function middleware() {
   // nonceをヘッダーに追加（Next.jsが自動的にScriptコンポーネントで使用）
   response.headers.set('X-Nonce', nonce);
 
+  // キャッシュヘッダーの設定（静的アセット用）
+  const pathname = new URL(response.url).pathname;
+  if (pathname.match(/\.(js|css|webp|png|jpg|jpeg|svg|gif|ico|woff|woff2|ttf|otf)$/)) {
+    response.headers.set('Cache-Control', 'public, max-age=31536000, immutable');
+  } else if (pathname.startsWith('/api/')) {
+    // APIルートはキャッシュしない
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+  }
+
   return response;
 }
 
