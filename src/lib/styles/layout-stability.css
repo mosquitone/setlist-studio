@@ -10,6 +10,15 @@
   min-height: 40px;
 }
 
+/* Buttons - Consistent sizing */
+.MuiButton-root {
+  min-height: 36px;
+}
+
+.MuiButton-sizeLarge {
+  min-height: 42px;
+}
+
 /* Images - Reserve space */
 img {
   max-width: 100%;
