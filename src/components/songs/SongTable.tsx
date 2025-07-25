@@ -88,7 +88,12 @@ export const SongTable = React.memo(function SongTable({
             <CardContent>
               <Stack spacing={1}>
                 <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
-                  <Stack direction="row" alignItems="flex-start" spacing={1}>
+                  <Stack
+                    direction="row"
+                    alignItems="flex-start"
+                    spacing={1}
+                    sx={{ flex: 1, minWidth: 0 }}
+                  >
                     <Checkbox
                       checked={selectedSongs.includes(song.id)}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -112,7 +117,7 @@ export const SongTable = React.memo(function SongTable({
                       </Typography>
                     </Box>
                   </Stack>
-                  <Stack direction="row" spacing={1}>
+                  <Stack direction="row" spacing={1} sx={{ flexShrink: 0 }}>
                     <IconButton
                       onClick={(e: React.MouseEvent) => {
                         e.stopPropagation();
