@@ -74,7 +74,7 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 
 ### 環境変数詳細
 
-環境変数の詳細な設定方法とテーブルは [環境変数設定ガイド](./docs/deployment/ENVIRONMENT_VARIABLES.md) を参照してください。
+環境変数の詳細な設定方法とテーブルは [環境変数設定ガイド](./docs/claude/ENVIRONMENT_VARIABLES.md) を参照してください。
 
 ## 実装方針
 
@@ -269,8 +269,8 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 ### 本番デプロイ（Vercel）
 
 本番環境へのデプロイ手順、環境変数設定、Vercel Functions設定については以下のドキュメントを参照：
-- [Vercelデプロイガイド](./docs/deployment/VERCEL_DEPLOYMENT_GUIDE.md)
-- [環境変数設定ガイド](./docs/deployment/ENVIRONMENT_VARIABLES.md)
+- [Vercelデプロイガイド](./docs/claude/VERCEL_DEPLOYMENT_GUIDE.md)
+- [環境変数設定ガイド](./docs/claude/ENVIRONMENT_VARIABLES.md)
 
 ### プロジェクト構造
 ```
@@ -547,7 +547,7 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 
 ## API Routes詳細
 
-詳細なAPI仕様については、[API_ROUTES.md](./docs/api/API_ROUTES.md)を参照してください。
+詳細なAPI仕様については、[API_ROUTES.md](./docs/claude/API_ROUTES.md)を参照してください。
 
 ### 主要エンドポイント
 - `/api/auth` - JWT認証管理
@@ -619,7 +619,7 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 
 ## セキュリティアーキテクチャ
 
-包括的なセキュリティ実装については、[SECURITY.md](./docs/security/SECURITY.md)を参照してください。
+包括的なセキュリティ実装については、[SECURITY.md](./docs/claude/SECURITY.md)を参照してください。
 
 ### 主要セキュリティ機能
 - **HttpOnly Cookie認証**: XSS攻撃防止
@@ -643,4 +643,4 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 
 ## 更新履歴
 
-最新の開発履歴と変更記録については、[HISTORY.md](./docs/project/HISTORY.md)を参照してください。
+最新の開発履歴と変更記録については、[HISTORY.md](./docs/claude/HISTORY.md)を参照してください。

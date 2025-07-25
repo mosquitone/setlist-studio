@@ -55,4 +55,4 @@
 ## 関連ドキュメント
 
 - [Vercelデプロイガイド](./VERCEL_DEPLOYMENT_GUIDE.md)
-- [セキュリティアーキテクチャ](../security/SECURITY.md)
+- [セキュリティアーキテクチャ](./SECURITY.md)
