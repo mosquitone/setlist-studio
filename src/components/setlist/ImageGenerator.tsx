@@ -2,8 +2,6 @@
 
 import { Image as ImageIcon } from '@mui/icons-material';
 import { Box, CircularProgress } from '@mui/material';
-import html2canvas from 'html2canvas';
-import QRCode from 'qrcode';
 import React, { useState, useEffect, memo } from 'react';
 
 import { Button } from '@/components/common/ui/Button';
@@ -41,6 +39,7 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = memo(
 
     const generateQRCode = React.useCallback(
       async (setlistId: string): Promise<string> => {
+        const QRCode = (await import('qrcode')).default;
         const url = `${baseUrl}/setlists/${setlistId}`;
 
         // Validate the URL before generating QR code
@@ -108,7 +107,8 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = memo(
             throw new Error('Rendered element not found');
           }
 
-          // Generate image with html2canvas
+          // Generate image with html2canvas (dynamic import)
+          const html2canvas = (await import('html2canvas')).default;
           const canvas = await html2canvas(element, {
             backgroundColor: null,
             scale: 1,
