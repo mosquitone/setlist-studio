@@ -1,7 +1,7 @@
 'use client';
 
 import CssBaseline from '@mui/material/CssBaseline';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { StyledEngineProvider, ThemeProvider, createTheme } from '@mui/material/styles';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import 'dayjs/locale/ja';
@@ -105,9 +105,11 @@ const theme = createTheme({
 
 export default function MUIProvider({ children }: { children: React.ReactNode }) {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <LocalizationProvider dateAdapter={AdapterDayjs}>{children}</LocalizationProvider>
-    </ThemeProvider>
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <LocalizationProvider dateAdapter={AdapterDayjs}>{children}</LocalizationProvider>
+      </ThemeProvider>
+    </StyledEngineProvider>
   );
 }
