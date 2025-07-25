@@ -1,0 +1,66 @@
+/* Layout Stability CSS - Prevents CLS (Cumulative Layout Shift) */
+
+/* Form elements - Consistent heights */
+.MuiTextField-root,
+.MuiFormControl-root {
+  min-height: 56px;
+}
+
+.MuiOutlinedInput-root {
+  min-height: 40px;
+}
+
+/* Buttons - Consistent sizing */
+.MuiButton-root {
+  min-height: 36px;
+}
+
+.MuiButton-sizeLarge {
+  min-height: 42px;
+}
+
+/* Images - Reserve space */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Skeleton placeholders */
+.MuiSkeleton-root {
+  transform: scale(1, 1);
+}
+
+/* Typography - Prevent text jumping */
+.MuiTypography-root {
+  line-height: 1.5;
+}
+
+/* Cards - Consistent spacing */
+.MuiCard-root {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Dialogs - Prevent shift on open */
+.MuiDialog-root {
+  position: fixed;
+}
+
+/* Tables - Fixed layout */
+.MuiTable-root {
+  table-layout: fixed;
+}
+
+/* Loading states */
+.loading-container {
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Prevent FOUC (Flash of Unstyled Content) */
+.mui-fixed {
+  visibility: visible !important;
+}

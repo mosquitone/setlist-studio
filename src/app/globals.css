@@ -8,3 +8,38 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* Layout Stability - Prevent CLS */
+* {
+  box-sizing: border-box;
+}
+
+/* Form elements - Consistent heights */
+.MuiTextField-root,
+.MuiFormControl-root {
+  min-height: 56px;
+}
+
+.MuiOutlinedInput-root {
+  min-height: 40px;
+}
+
+/* Images - Reserve space and prevent layout shift */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Prevent text jumping */
+.MuiTypography-root {
+  line-height: 1.5;
+}
+
+/* Loading states */
+.loading-container {
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
