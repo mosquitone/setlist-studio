@@ -70,8 +70,9 @@ const theme = createTheme({
         // ポップオーバーのアクセシビリティ改善
         disablePortal: false,
         disableScrollLock: true,
-        // ポータルではなく通常のDOMツリーに配置することで aria-hidden の問題を回避
-        container: undefined,
+        // aria-hiddenによるフォーカス問題を防ぐ
+        disableEnforceFocus: true,
+        disableAutoFocus: false,
       },
     },
     MuiMenu: {
@@ -80,6 +81,8 @@ const theme = createTheme({
         disablePortal: false,
         keepMounted: false,
         disableScrollLock: true,
+        // aria-hiddenによるフォーカス問題を防ぐ
+        disableEnforceFocus: true,
       },
     },
     MuiModal: {
@@ -87,17 +90,19 @@ const theme = createTheme({
         // モーダルのアクセシビリティ改善
         disablePortal: false,
         keepMounted: false,
+        // aria-hiddenによるフォーカス問題を防ぐ
+        disableEnforceFocus: true,
+        // フォーカス復元を無効化して警告を防ぐ
+        disableRestoreFocus: true,
       },
     },
-    MuiBackdrop: {
-      styleOverrides: {
-        root: {
-          // バックドロップのアクセシビリティ改善
-          '&[aria-hidden="true"]': {
-            // inert属性でフォーカス管理を改善
-            pointerEvents: 'auto',
-          },
-        },
+    MuiDialog: {
+      defaultProps: {
+        // ダイアログのアクセシビリティ改善
+        disableEnforceFocus: true,
+        disableScrollLock: true,
+        // フォーカス復元を無効化して警告を防ぐ
+        disableRestoreFocus: true,
       },
     },
   },
