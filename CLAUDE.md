@@ -13,8 +13,8 @@ mosquitone Emotional Setlist Studioは、音楽バンド向けのモダンなセ
 
 ## ソース修正
 
-すべての実装が完了後、必ずlintチェックとコンパイルチェックを行った上で、完了とすること。
-コミット前に、必ずClaude.mdを更新するかを検討すること
+コミット前に、必ずCLAUDE.mdを更新するかを検討すること。
+品質管理については「実装方針 > テスト・品質管理」セクションを参照。
 
 ### Git操作
 - **GitHub CLI**: `gh` コマンドが利用可能（v2.74.1）- プルリクエスト、Issue管理
@@ -74,23 +74,78 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 
 ### 環境変数詳細
 
-| 変数 | 用途 | ローカル開発 | 本番環境 (Vercel) | 生成方法 |
-|----------|---------|-------------------|---------------------|------------|
-| `DATABASE_URL` | データベース接続 | `postgresql://postgres:postgres@localhost:5432/setlist_generator` | マネージドDB接続文字列 | プロバイダから提供 |
-| `JWT_SECRET` | JWTトークン署名 | 32文字以上の任意文字列 | 強力なランダム文字列 | `openssl rand -base64 32` |
-| `CSRF_SECRET` | CSRFトークン署名 | 32文字以上の任意文字列 | JWT_SECRETとは別の文字列 | `openssl rand -base64 32` |
-| `IP_HASH_SALT` | IP匿名化 | 16文字以上の任意文字列 | 強力なランダム文字列 | `openssl rand -base64 16` |
-| `CRON_SECRET` | クロンジョブ認証 | 32文字以上の任意文字列 | 強力なランダム文字列 | `openssl rand -base64 32` |
-| `POSTGRES_PASSWORD` | Docker PostgreSQL | `postgres` | 未使用 (マネージドDB) | N/A |
-| `RESEND_API_KEY` | Resendメール送信 | `re_xxxxxx` | Resendダッシュボードから取得 | Resendアカウント作成 |
-| `RESEND_FROM_EMAIL` | メール送信元 | `onboarding@resend.dev` | `noreply@yourdomain.com` | 独自ドメイン設定 |
-| `EMAIL_VERIFICATION_SECRET` | メール認証署名 | 32文字以上の任意文字列 | 強力なランダム文字列 | `openssl rand -base64 32` |
-| `PASSWORD_RESET_SECRET` | パスワードリセット署名 | 32文字以上の任意文字列 | 強力なランダム文字列 | `openssl rand -base64 32` |
-| `GOOGLE_CLIENT_ID` | Google OAuth ID | Google Consoleから取得 | 本番用ID | Google Cloud Console |
-| `GOOGLE_CLIENT_SECRET` | Google OAuth秘密鍵 | Google Consoleから取得 | 本番用秘密鍵 | Google Cloud Console |
-| `NEXTAUTH_URL` | アプリケーションベースURL | `http://localhost:3000` | `https://yourdomain.com` | https://を含む完全URL |
-| `NEXTAUTH_SECRET` | NextAuth署名 | JWT_SECRETと同じ値 | JWT_SECRETと同じ値 | N/A (JWT_SECRET流用) |
-| `NODE_ENV` | 環境モード | `development` | Vercelで自動設定 | N/A |
+環境変数の詳細な設定方法とテーブルは [環境変数設定ガイド](./docs/deployment/ENVIRONMENT_VARIABLES.md) を参照してください。
+
+## 実装方針
+
+### フォームバリデーション
+- **統一フレームワーク**: 全てのフォームでFormikを使用（セットリスト作成/編集、楽曲作成、楽曲編集）
+- **バリデーションタイミング**: 
+  - `validateOnChange={false}` - 入力中のバリデーションを無効化してUXを向上
+  - `validateOnBlur={true}` - フィールドからフォーカスが外れた時にバリデーション実行
+  - 送信時は自動的に全フィールドのバリデーションを実行
+- **バリデーションスキーマ**: Yupを使用した宣言的バリデーション定義
+- **文字数制限**:
+  - アーティスト名: 最大20文字（必須）
+  - 楽曲タイトル: 最大30文字（必須）
+  - セットリスト名: 最大100文字（任意、空欄時は自動採番）
+  - イベント名: 最大200文字（任意）
+  - メモ: 最大20文字（任意）
+- **エラー表示**: `touched && errors`の条件でエラーメッセージを表示（不要なエラー表示を防止）
+- **エラー時の自動スクロール**: SetlistFormにはErrorFocusコンポーネントを実装（最初のエラーフィールドへ自動スクロール）
+- **FastField非推奨**: FormikのFastFieldはonBlurイベントが正しく伝播しないため使用しない
+
+### コンポーネント設計
+- **クライアントコンポーネント**: 'use client'ディレクティブを必要に応じて使用
+- **メモ化**: React.memoを使用してパフォーマンスを最適化（SetlistForm、SongEditDialog等）
+- **カスタムフック**: 共通ロジックは`/hooks`ディレクトリにカスタムフックとして実装
+- **Provider分離**: MuiProvider、ApolloProvider、SnackbarProviderは個別ファイルで管理
+- **型安全性**: TypeScriptの厳格な型定義、any型の使用は避ける
+
+### スタイリング
+- **UIライブラリ**: Material-UI v5を基本とし、カスタムコンポーネントで拡張
+- **レスポンシブ対応**: モバイルファーストで実装、breakpointsを活用
+- **テーマ**: MUIカスタムテーマ（青/赤カラースキーム、Interフォント）
+- **スナックバー位置**: デスクトップは右下、モバイルは上部中央
+
+### 状態管理
+- **認証状態**: secureAuthClientによるクライアントサイド認証状態管理
+- **フォーム状態**: Formikによる統一的なフォーム状態管理
+- **グローバル通知**: SnackbarProviderによる統一通知システム
+- **Apollo Client**: GraphQL状態はApollo Clientのキャッシュで管理
+
+### API通信
+- **GraphQL優先**: データ取得・更新はGraphQL APIを使用
+- **エラーハンドリング**: Apollo ClientのonError、onCompletedで一貫したエラー処理
+- **Mutation通知**: 全てのmutation操作（作成、更新、削除）の成功・失敗はスナックバーで通知
+  - 成功時: showSuccess()で操作完了メッセージを表示
+  - エラー時: showError()でエラーメッセージを表示
+  - 一貫したユーザーフィードバックを提供
+- **楽観的更新**: 必要に応じてoptimisticResponseを使用
+- **キャッシュ戦略**: fetchPolicy: 'cache-first'を基本とし、必要に応じて調整
+
+### セキュリティ
+- **認証**: HttpOnly Cookie + JWTトークン
+- **CSRF保護**: 全てのmutationにCSRFトークンを自動付与
+- **入力検証**: クライアント側（Formik/Yup）とサーバー側（class-validator）の二重検証
+- **サニタイゼーション**: validateAndSanitizeInputによる入力値の検証
+
+### 国際化（i18n）
+- **言語サポート**: 日本語・英語の完全対応
+- **メッセージ管理**: `/lib/i18n/messages/`配下にドメイン別で管理
+- **動的メタデータ**: generateMetadataで言語別のSEOメタデータを生成
+- **デフォルト言語**: 日本語（ja）
+
+### パフォーマンス最適化
+- **ハイブリッドレンダリング**: 静的ページとSSRの使い分け
+- **画像最適化**: Next.js Imageコンポーネントの活用（画像生成を除く）
+- **バンドル最適化**: dynamic importとcode splittingの活用
+- **メモ化**: useMemo、useCallbackの適切な使用
+
+### テスト・品質管理
+- **Lintチェック**: コミット前に`pnpm lint`を実行
+- **型チェック**: `npx tsc --noEmit`でTypeScriptエラーを確認
+- **コード整形**: Prettierによる自動整形（`pnpm lint:fix`）
 
 ## アーキテクチャ概要
 
@@ -101,14 +156,7 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 - Next.js 15.3.4 App Router、TypeScript 5、ハイブリッドレンダリング戦略
 - Material-UI v5.17.1（カスタムテーマとパッケージ最適化付き）
 - Apollo Client 3.13.8 for GraphQL状態管理
-- クライアントサイド認証状態管理
 - React 19.0.0（strict mode）
-
-**性能最適化**
-- **静的ページ**: ログイン/登録ページは完全静的生成でCDN配信 (10倍高速)
-- **SSRページ**: 動的ページ（セットリスト、楽曲）はセキュリティのためサーバーレンダリング
-- **画像最適化**: WebP/AVIF形式サポート、1日キャッシュTTL
-- **バンドル最適化**: MUIコンポーネント用に最適化されたパッケージインポート
 
 **GraphQL API (Vercel Functions)**
 - Apollo Server v4.12.2が`/api/graphql`でNext.js APIルートとして動作
@@ -150,7 +198,6 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 - html2canvasとQRコード統合を使用した高度な画像生成システム
 - UX向上のためのBlack/White選択による簡素化テーマシステム
 - Material-UIコンポーネントによるレスポンシブデザイン
-- 統一スナックバー通知システム（レスポンシブ配置・自動キューイング）
 
 **GraphQL統合**
 - Apollo ClientはHttpOnly Cookieによる自動認証を使用
@@ -165,7 +212,6 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 - セキュアなHttpOnly CookieにJWTトークンを保存
 - 保護されたGraphQLリゾルバーはCookie検証付きAuthMiddlewareデコレーターを使用
 - Cookie管理付きGraphQLミューテーションによるユーザー登録/ログイン
-- サブスクリプションパターンのsecureAuthClientによるクライアントサイド認証状態管理
 - 状態変更操作の自動CSRF保護
 
 ### 認証プロバイダー機能
@@ -194,6 +240,7 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 - **ESLint設定**: ignoresプロパティ付きフラット設定形式（eslint.config.mjs）を使用
 - **schema-dts 1.1.5**: JSON-LD構造化データの完全型安全実装
 
+
 ### 開発ワークフロー（ローカル）
 1. 依存関係インストール: `pnpm install`
 2. PostgreSQL起動（初回セットアップ）:
@@ -220,32 +267,10 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 4. 以降の起動: `docker-compose up -d postgres && pnpm dev`
 
 ### 本番デプロイ（Vercel）
-- **データベース**: Vercel Postgresまたは外部マネージドDBサービス（Supabase、Neon、Railway）を使用
-- **環境変数**: Vercelダッシュボードで設定（全て必須）:
-  - `DATABASE_URL`: 本番データベースへの接続文字列（SSL付き）
-  - `JWT_SECRET`: 強力な本番シークレット（32文字以上、一意）
-  - `CSRF_SECRET`: JWT_SECRETとは別（32文字以上、一意）
-  - `IP_HASH_SALT`: IPアドレス匿名化用（16文字以上、一意）
-  - `CRON_SECRET`: クロンジョブ認証用（32文字以上、一意）
-  - `GOOGLE_CLIENT_ID`: Google OAuthクライアントID（本番用）
-  - `GOOGLE_CLIENT_SECRET`: Google OAuthクライアントシークレット（本番用）
-  - `RESEND_API_KEY`: Resendメール送信APIキー（Resendダッシュボードから取得）
-  - `RESEND_FROM_EMAIL`: メール送信元アドレス（例: noreply@yourdomain.com）
-  - `EMAIL_VERIFICATION_SECRET`: メール認証署名（32文字以上、一意）
-  - `PASSWORD_RESET_SECRET`: パスワードリセット署名（32文字以上、一意）
-  - `NEXTAUTH_URL`: アプリケーションベースURL（例: https://yourdomain.com）
-  - `NEXTAUTH_SECRET`: NextAuth署名（JWT_SECRETと同じ値を推奨）
-- **クロンジョブ**: Vercelダッシュボードで設定
-  - path: `/api/cron/cleanup`
-  - スケジュール: `0 2 * * *`（毎日午前2時）
-- **セキュリティヘッダー**: vercel.jsonにより自動適用
-- **Vercel Functions設定**: 
-  - GraphQL API: 最大実行時間60秒、メモリ1024MB
-  - リージョン: hnd1（東京）
-  - パフォーマンス最適化: メモリ増強によるcold start時間短縮
-- **注意**: docker-compose.ymlはローカル開発のみ、Vercelでは未使用
 
-詳細なデプロイ手順は [VERCEL_DEPLOYMENT_GUIDE.md](./docs/deployment/VERCEL_DEPLOYMENT_GUIDE.md) を参照
+本番環境へのデプロイ手順、環境変数設定、Vercel Functions設定については以下のドキュメントを参照：
+- [Vercelデプロイガイド](./docs/deployment/VERCEL_DEPLOYMENT_GUIDE.md)
+- [環境変数設定ガイド](./docs/deployment/ENVIRONMENT_VARIABLES.md)
 
 ### プロジェクト構造
 ```
@@ -476,11 +501,6 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 
 **Setlist Studioは、本番運用可能なフル機能エンタープライズアプリケーションです**
 
-#### **アーキテクチャ & パフォーマンス**
-- **ハイブリッドNext.js**: static/SSRレンダリング戦略による最適化済みアーキテクチャ
-- **10倍高速化**: ログイン/登録ページの静的生成によるCDN配信
-- **セキュリティ重視**: 動的ページ（セットリスト、楽曲）はSSRでデータ保護
-- **モバイル対応**: フルレスポンシブデザインとタッチ最適化
 
 #### **機能完成度**
 - **認証システム**: Google OAuth 2.0・メール認証必須・パスワードリセット・JWT + HttpOnly Cookie完全実装
@@ -499,7 +519,6 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 
 #### **ユーザーエクスペリエンス**
 - **直感的UI**: Material-UI v5によるモダンでアクセシブルなインターフェース
-- **統一通知システム**: レスポンシブスナックバー（デスクトップ右下・モバイル上部中央）による一貫した操作フィードバック
 - **包括的ガイド**: 認証手順、機能説明、完全無料利用の強調
 - **エラーハンドリング**: 適切なエラーメッセージと回復手順
 - **SEO最適化**: 動的サイトマップ、メタデータ、検索エンジン対応
@@ -622,112 +641,6 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 ### セキュリティレベル
 **バランス型セキュリティ（OWASP Top 10準拠）**：攻撃防止と利便性の最適化を実現
 
-## 更新履歴と記録
+## 更新履歴
 
 最新の開発履歴と変更記録については、[HISTORY.md](./docs/project/HISTORY.md)を参照してください。
-
-### 最新の主要更新 (2025-07-25)
-- **全ページメタデータ動的実装**: SEO最適化のための包括的メタデータシステム構築
-  - ✅ ホーム・利用規約・プライバシーポリシーページのサーバーコンポーネント化
-  - ✅ 認証関連全ページの動的メタデータ実装（check-email、forgot-password、reset-password、confirm-email-change、verify-email）
-  - ✅ generateMetadata関数による言語対応（日本語・英語）動的生成
-  - ✅ ページ固有キーワードとOpenGraphメタデータの追加
-  - ✅ HomePageClientのロゴ画像実装とSEO最適化（h1タグ維持、詳細altテキスト）
-- **ガイドページSEO最適化・UI改善**: 検索エンジン最適化とユーザビリティ向上
-  - ✅ ページ固有のメタデータ実装（日本語・英語対応）
-  - ✅ パンくずリストスキーマ追加によるサイト構造の明示
-  - ✅ ページ名リンク化（ホーム、楽曲管理、セットリスト作成、プロフィール）
-  - ✅ 「こんな時に便利」セクションの詳細化（SNSシェア、バンド内共有）
-  - ✅ コンビニ・自宅印刷利用シーンの追記
-  - ✅ サーバー/クライアントコンポーネント分離による適切なアーキテクチャ実装
-- **enableReinitialize完全削除**: フォーム動作の安定性向上のための抜本的対策
-  - ✅ SetlistFormコンポーネントから`enableReinitialize`プロップを削除
-  - ✅ `/setlists/new/page.tsx`から`shouldReinitialize`状態と関連ロジックを削除
-  - ✅ Formikの初期値を1回のみ設定する安定動作に変更
-  - ✅ 不安定な動的初期値更新による入力問題を根本解決
-  - ✅ TypeScript型定義・ドキュメントの同期更新
-
-### その他の主要更新 (2025-07-24)
-- **認証フローリファクタリング・コード品質向上**: 早期returnパターンの徹底と関数分離
-  - ✅ Google認証フロー(google-sync)のelse使用を早期returnパターンに修正
-  - ✅ ProfileClientのメール変更処理を認証プロバイダー別関数に分離
-    - validateEmailInput(): 共通メールアドレスバリデーション
-    - handleChangeEmailForGoogleUser(): Google認証ユーザー専用処理
-    - handleChangeEmailForEmailUser(): メール認証ユーザー専用処理
-  - ✅ null/undefinedチェックの追加で型安全性向上
-  - ✅ プロバイダー固有ロジックの分離により保守性・テスト容易性向上
-- **未使用コード・API削除によるコードベース簡素化**: 技術的負債の削減
-  - ✅ EmailHistoryResolverから未使用メソッド・型定義を削除
-    - verifyEmailOwnershipForReturnメソッドを削除
-    - EmailOwnershipVerificationResponse型定義を削除  
-    - cooldownUntilフィールドを削除
-  - ✅ google-email-changeルートを削除（google-syncに統合済み）
-  - ✅ 未使用i18nメッセージ5件を削除
-  - ✅ コードベースの簡素化と保守性向上
-- **IP制限の適正化・利便性大幅向上**: 攻撃防止と正常利用のバランス最適化
-  - ✅ 過度なIP制限の撤廃: 同一ユーザーの複数IPアクセス完全対応
-  - ✅ 適応的レート制限: 認証1時間300回・API1分300回（本番・開発共通）に調整
-  - ✅ スマートブルートフォース検知: IP単位1時間20回失敗で制限
-  - ✅ 認証情報スタッフィング対策: 30分で8ユーザー20試行で検知
-  - ✅ 正当利用の保護: VPN・複数デバイス・地理的移動への完全対応
-  - ✅ セキュリティ維持: 悪意ある攻撃は確実に検知・ブロック
-  - ✅ レート制限追加緩和: GraphQL環境対応で認証300回/時間・API300回/分に再調整
-- **CSP nonce方式・JSON-LD体系化実装**: セキュリティ最適化とSEO強化の完全実装
-  - ✅ middleware.ts実装: CSP nonce方式によるセキュリティとパフォーマンスの両立
-  - ✅ next.config.tsのCSP設定削除: 設定一元化とコード簡素化
-  - ✅ JSON-LD体系化: ハイブリッドアプローチ（共通+ページ固有スキーマ）実装
-  - ✅ pageSchemas.ts作成: Organization/WebSite/SoftwareApplication/Article/WebPage統合管理
-  - ✅ 全主要ページのJSON-LD対応: ホーム・ガイド・利用規約・プライバシーポリシー
-  - ✅ schema-dts導入: 完全型安全なJSON-LD実装
-  - ✅ SEO効果向上: ホーム画面のみから全ページでの構造化データ対応
-  - ✅ Next.js Scriptコンポーネント統合: CSP nonceとの自動連携
-- **Google OAuth重複アカウント防止機能実装**: セキュリティ向上とユーザー体験改善
-  - ✅ 既存メール認証ユーザーとGoogle認証の重複登録防止機能実装
-  - ✅ 重複検出時の適切なエラーメッセージ表示とログイン誘導
-  - ✅ メールアドレス自動入力によるユーザビリティ向上
-  - ✅ 国際化対応エラーメッセージ（日本語・英語）追加
-  - ✅ セキュリティログによる重複検出イベント記録強化
-  - ✅ 条件分岐堅牢化: 未知認証プロバイダー・null assertion・Cookie解析脆弱性修正
-- **スナックバー通知システム完全実装**: UX大幅改善による統一された通知体験
-  - ✅ レスポンシブスナックバーコンポーネント実装（デスクトップ右下・モバイル上部中央）
-  - ✅ グローバルSnackbarProviderとuseSnackbarフック追加による全体管理
-  - ✅ 全認証フォーム（ログイン・登録・パスワードリセット）のAlert表示をスナックバー通知に移行
-  - ✅ mutation系処理（セットリスト・楽曲作成）の成功・エラー通知統一
-  - ✅ 画像生成の成功通知「Setlist Generated !」追加とUX向上
-  - ✅ 既存Alert表示コードの完全削除による200行以上のコード簡素化
-  - ✅ 国際化対応の成功メッセージ追加（messages.ts）
-  - ✅ 自動キューイング機能による複数メッセージの順次表示
-  - ✅ Material-UIスライドトランジション付きアニメーション実装
-- **メール認証必須化**: セキュリティ強化によるメール認証の完全必須化
-  - ✅ メールアドレス登録時の即座ログイン廃止
-  - ✅ 認証完了まで全機能利用不可の厳格な制御
-  - ✅ リアルタイム認証状態ポーリング（5秒間隔）実装
-  - ✅ RegistrationResponse型による適切なUXフロー
-  - ✅ Google認証は引き続き即座利用可能
-- **i18nメッセージシステム細分化・リファクタリング**: 保守性・可読性大幅向上
-  - ✅ 巨大messages.ts（2,400行）を14の機能別ファイルに分割
-  - ✅ ドメイン別責務分離（auth、common、pages、features、forms等）
-  - ✅ TypeScript型安全性完全維持・統合エントリーポイント実装
-  - ✅ 既存コードとの完全互換性確保（後方互換レイヤー）
-  - ✅ 静的インポート採用による型推論・Tree-shaking最適化
-  - ✅ ESLint import/order準拠・デフォルト言語統一（日本語）
-  - ✅ 新規コードでは個別ファイル直接インポート推奨構造
-
-### その他の最近の主要改善 (2025-07-19〜2025-07-25)
-- **パフォーマンス最適化実装**: React.memo、useMemo、useCallbackによる最適化（2025-07-24）
-  - ✅ SetlistDashboard、SetlistFormのメモ化
-  - ✅ Formik validateOnChange=falseによる入力パフォーマンス向上
-  - ✅ Apollo Client fetchPolicy最適化（cache-and-network）
-  - ✅ awaitRefetchQueries=falseによる遷移高速化
-  - ✅ note文字数制限を20文字に変更（要見直し）
-- **Material-UI アクセシビリティ改善**: WAI-ARIA仕様準拠のキーボード・スクリーンリーダー対応
-- **セットリスト削除通知改善**: 削除したセットリスト名を含む詳細な通知メッセージ
-- **アカウント削除機能実装**: ユーザーによる自己データ管理機能の追加
-- **認証プロバイダー管理機能**: Google/メール認証の統合管理システム
-- **ホーム画面UI大幅改善**: モバイル視認性向上と全体的なUX改善
-- **楽曲削除モーダル改善**: UX向上とコンポーネント命名統一
-- **利用ガイドページ大幅改善**: ユーザビリティとコード品質の向上
-- **i18n(国際化)機能完全実装**: 日本語・英語対応の完全な多言語システム
-- **PR #40改善実装完了**: セキュリティ強化・UX改善・メール信頼性向上・本番マイグレーション完了
-
-**注意**: 詳細な更新履歴は [HISTORY.md](./docs/project/HISTORY.md) を参照してください。
