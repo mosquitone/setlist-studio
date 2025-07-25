@@ -77,8 +77,17 @@ const cache = new InMemoryCache({
           merge(_, incoming) {
             return incoming;
           },
+          // ページネーションのキー設定
+          keyArgs: ['isPublic', 'limit'],
         },
         songs: {
+          merge(_, incoming) {
+            return incoming;
+          },
+          keyArgs: ['limit'],
+        },
+        me: {
+          // ユーザー情報は常に最新を取得
           merge(_, incoming) {
             return incoming;
           },
@@ -86,6 +95,7 @@ const cache = new InMemoryCache({
       },
     },
     Setlist: {
+      keyFields: ['id'],
       fields: {
         items: {
           // セットリストアイテムの順序を保持
@@ -93,7 +103,36 @@ const cache = new InMemoryCache({
             return incoming;
           },
         },
+        createdAt: {
+          // 日付フィールドの正規化
+          read(value) {
+            return value ? new Date(value) : null;
+          },
+        },
+        updatedAt: {
+          read(value) {
+            return value ? new Date(value) : null;
+          },
+        },
       },
+    },
+    Song: {
+      keyFields: ['id'],
+      fields: {
+        createdAt: {
+          read(value) {
+            return value ? new Date(value) : null;
+          },
+        },
+        updatedAt: {
+          read(value) {
+            return value ? new Date(value) : null;
+          },
+        },
+      },
+    },
+    User: {
+      keyFields: ['id'],
     },
   },
 });

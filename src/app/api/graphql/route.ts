@@ -54,10 +54,14 @@ async function ensureConnection() {
       .$connect()
       .then(() => {
         isConnected = true;
-        console.log('✅ Prisma connected successfully');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('✅ Prisma connected successfully');
+        }
       })
       .catch((error) => {
-        console.error('❌ Prisma connection failed:', error);
+        if (process.env.NODE_ENV === 'development') {
+          console.error('❌ Prisma connection failed:', error);
+        }
         connectionPromise = null;
         throw error;
       });
@@ -71,7 +75,9 @@ async function gracefulDisconnect() {
   if (isConnected) {
     await prisma.$disconnect();
     isConnected = false;
-    console.log('🔌 Prisma disconnected');
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🔌 Prisma disconnected');
+    }
   }
 }
 
@@ -84,7 +90,9 @@ if (typeof process !== 'undefined') {
 
 // 接続確立（エラーは無視してリクエスト時に再試行）
 ensureConnection().catch(() => {
-  console.log('⚠️  Initial connection failed, will retry on request');
+  if (process.env.NODE_ENV === 'development') {
+    console.log('⚠️  Initial connection failed, will retry on request');
+  }
 });
 
 // Use pre-built schema for better performance
