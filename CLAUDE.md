@@ -71,6 +71,7 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
   - `GOOGLE_CLIENT_SECRET`: Google OAuthクライアントシークレット
   - `NEXTAUTH_URL`: アプリケーションのベースURL（メール内リンク生成用、https://を含む完全なURL）
   - `NEXTAUTH_SECRET`: NextAuth用シークレット (JWT_SECRETと同じ値推奨)
+  - `NEXT_PUBLIC_SITE_URL`: サイトの公開URL（robots.txt・sitemap.xml生成用）
 
 ### 環境変数詳細
 
@@ -242,6 +243,16 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 - コードフォーマット用ESLint 9.x、TypeScript 5、Prettier 3.6.2
 - **ESLint設定**: ignoresプロパティ付きフラット設定形式（eslint.config.mjs）を使用
 - **schema-dts 1.1.5**: JSON-LD構造化データの完全型安全実装
+
+### Favicon設定
+- **マルチプラットフォーム対応**: iOS、Android、PWA、デスクトップ全対応
+- **ファイル構成**:
+  - `/public/favicon.ico`: SEO・ブラウザタブ用メインアイコン（ICO形式）
+  - `/public/apple-icon.png`: iOS Safari用（180x180）
+  - `/public/icon-192.png`・`/public/icon-512.png`: Android・PWA用
+  - `/src/app/icon.ico`: Next.js App Router自動検出用
+- **PWAマニフェスト**: `/public/manifest.json`でアプリ名・テーマカラー定義
+- **SEO最適化**: robots.txt・sitemap.xmlの動的生成（NEXT_PUBLIC_SITE_URL使用）
 
 
 ### 開発ワークフロー（ローカル）
@@ -457,7 +468,11 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 │   ├── migrations/         # マイグレーション
 │   └── schema.prisma       # Prismaスキーマ
 ├── public/                 # 静的アセット
-│   └── favicon.ico
+│   ├── favicon.ico         # メインfavicon（ICO形式）
+│   ├── apple-icon.png      # iOS対応アイコン（180x180）
+│   ├── icon-192.png        # Android/PWA用アイコン（192x192）
+│   ├── icon-512.png        # Android/PWA用アイコン（512x512）
+│   └── manifest.json       # PWAマニフェスト
 ├── scripts/                # 開発スクリプト
 │   └── generate-schema.ts
 ├── .env.example            # 環境変数サンプル

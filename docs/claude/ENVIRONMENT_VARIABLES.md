@@ -24,6 +24,7 @@
 | `GOOGLE_CLIENT_SECRET` | Google OAuth秘密鍵 | Google Consoleから取得 | 本番用秘密鍵 | Google Cloud Console |
 | `NEXTAUTH_URL` | アプリケーションベースURL | `http://localhost:3000` | `https://yourdomain.com` | https://を含む完全URL |
 | `NEXTAUTH_SECRET` | NextAuth署名 | JWT_SECRETと同じ値 | JWT_SECRETと同じ値 | N/A (JWT_SECRET流用) |
+| `NEXT_PUBLIC_SITE_URL` | 公開サイトURL | `http://localhost:3000` | `https://yourdomain.com` | robots.txt/sitemap.xml用 |
 | `NODE_ENV` | 環境モード | `development` | Vercelで自動設定 | N/A |
 
 ## セットアップ手順
