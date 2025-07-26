@@ -3,7 +3,7 @@
 import { useQuery } from '@apollo/client';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { Add as AddIcon } from '@mui/icons-material';
-import { Box, Container, Typography, Paper, Alert } from '@mui/material';
+import { Box, Container, Typography, Paper, Alert, Stack } from '@mui/material';
 import { Formik, Form, FieldArray } from 'formik';
 import React, { useMemo, memo } from 'react';
 import * as Yup from 'yup';
@@ -171,19 +171,30 @@ const SetlistForm = memo(function SetlistForm({
                 <Typography variant="h6" gutterBottom>
                   {messages.setlistForm.songsList.title}
                 </Typography>
-                <Alert
-                  severity="info"
-                  sx={{
-                    mb: 2,
-                    '& .MuiAlert-icon': {
-                      alignItems: 'center',
-                    },
-                  }}
-                >
-                  {messages.setlistForm.songsList.maxSongsWarning}
-                  <br />
-                  {messages.setlistForm.songsList.autoAddInfo}
-                </Alert>
+                <Stack spacing={1} sx={{ mb: 2 }}>
+                  <Alert
+                    severity="info"
+                    sx={{
+                      '& .MuiAlert-icon': {
+                        alignItems: 'center',
+                      },
+                    }}
+                  >
+                    {messages.setlistForm.songsList.maxSongsWarning}
+                    <br />
+                    {messages.setlistForm.songsList.autoAddInfo}
+                  </Alert>
+                  <Alert
+                    severity="info"
+                    sx={{
+                      '& .MuiAlert-icon': {
+                        alignItems: 'center',
+                      },
+                    }}
+                  >
+                    {messages.setlistForm.songsList.dragDropInfo}
+                  </Alert>
+                </Stack>
 
                 <FieldArray name="items">
                   {({ push, remove, move }) => {
