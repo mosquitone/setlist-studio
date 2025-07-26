@@ -14,6 +14,7 @@ import React, { useState, useEffect } from 'react';
 
 import { useContainerWidth } from '@/hooks/useContainerWidth';
 import { useI18n } from '@/hooks/useI18n';
+import { Messages } from '@/lib/i18n/types';
 import { Theme } from '@/types/common';
 import { SetlistData } from '@/types/components';
 
@@ -52,7 +53,7 @@ interface RenderProps {
   data: SetlistData;
   selectedTheme: Theme;
   generatedQrCode: string;
-  messages: any;
+  messages: Messages;
   isMobile: boolean;
 }
 
@@ -62,7 +63,8 @@ const styles = {
     display: 'flex',
     justifyContent: 'center',
     overflow: 'auto',
-    backgroundColor: '#e0e0e0',
+    backgroundColor: 'transparent',
+    boxShadow: 'inset 0 0 0 1px rgba(0, 0, 0, 0.12)',
     borderRadius: 1,
     p: 2,
   },
