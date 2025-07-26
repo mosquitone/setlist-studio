@@ -11,6 +11,67 @@ mosquitone Emotional Setlist Studioは、音楽アーティスト向けのモダ
 - **デプロイリポジトリ**: GitLab（https://gitlab.com/mosquitone8/setlist-studio）
 - **デプロイメント**: Vercelを通じてGitLabリポジトリから本番環境へデプロイ
 
+## ⚠️ クリティカル: CSP Nonce実装（Next.js 15 + App Router）
+
+### 🚨 重要：本番環境での動的ページ表示問題と解決方法（2025-07-27）
+
+Next.js 15のApp Routerで動的ページ（認証が必要なページ等）にCSP（Content Security Policy）を実装する際、以下の対応が**必須**です。この設定を誤ると、本番環境で動的ページが完全に表示されなくなります。
+
+#### 問題の詳細
+- **症状**: 動的ページでヘッダーのみ表示され、コンテンツが表示されない
+- **原因**: Next.jsの内部スクリプト（`__NEXT_DATA__`、チャンクローダー等）がCSPによりブロックされる
+- **影響**: プロフィール、セットリスト編集等の認証必須ページが機能しない
+
+#### 正しい実装方法
+
+1. **middleware.ts**での実装:
+```typescript
+// 動的ページではnonce + strict-dynamicを使用（unsafe-inlineは使用しない！）
+const scriptSrc = isStaticPage
+  ? `script-src 'self' 'unsafe-inline' ${isDev ? "'unsafe-eval'" : ''} https://accounts.google.com`
+  : `script-src 'self' 'nonce-${nonce}' ${isDev ? "'unsafe-eval'" : "'wasm-unsafe-eval'"} 'strict-dynamic' https://accounts.google.com`;
+```
+
+2. **layout.tsx**での実装（最重要）:
+```typescript
+import { headers } from 'next/headers';
+
+export default async function RootLayout({ children }) {
+  // middlewareで設定されたnonceを取得
+  const nonce = (await headers()).get('x-nonce');
+  
+  return (
+    <html lang="ja">
+      <head>
+        {/* Script要素にnonceを適用 */}
+        <Script nonce={nonce || undefined} ... />
+      </head>
+      <body>
+        {/* WebpackにもNonceを伝える（Next.js 15必須） */}
+        {nonce && (
+          <Script
+            id="webpack-nonce"
+            strategy="afterInteractive"
+            nonce={nonce}
+            dangerouslySetInnerHTML={{
+              __html: `__webpack_nonce__ = "${nonce}";`,
+            }}
+          />
+        )}
+        {children}
+      </body>
+    </html>
+  );
+}
+```
+
+#### セキュリティ上の注意点
+- **絶対に`unsafe-inline`を本番環境で使用しない**: XSS攻撃の重大なリスク
+- **`strict-dynamic`の併用が必須**: Next.jsの動的スクリプトを安全に許可
+- **nonceは毎リクエストで再生成**: 使い回しは厳禁
+
+この実装により、セキュリティを維持しながらNext.js 15の動的ページが正常に動作します。
+
 ## ソース修正
 
 コミット前に、必ずCLAUDE.mdを更新するかを検討すること。

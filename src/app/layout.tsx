@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import { headers } from 'next/headers';
 import Script from 'next/script';
 import { Suspense } from 'react';
 
@@ -80,13 +81,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   const organizationSchema = getOrganizationSchema();
   const websiteSchema = getWebSiteSchema();
+
+  // middlewareで設定されたnonceを取得
+  const nonce = (await headers()).get('x-nonce');
 
   return (
     <html lang="ja">
@@ -101,16 +105,28 @@ export default function RootLayout({
           id="organization-jsonld"
           type="application/ld+json"
           strategy="beforeInteractive"
+          nonce={nonce || undefined}
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
         />
         <Script
           id="website-jsonld"
           type="application/ld+json"
           strategy="beforeInteractive"
+          nonce={nonce || undefined}
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
       </head>
       <body className={inter.className}>
+        {nonce && (
+          <Script
+            id="webpack-nonce"
+            strategy="afterInteractive"
+            nonce={nonce}
+            dangerouslySetInnerHTML={{
+              __html: `__webpack_nonce__ = "${nonce}";`,
+            }}
+          />
+        )}
         <NextAuthProvider>
           <I18nProvider>
             <ApolloProviderWrapper>

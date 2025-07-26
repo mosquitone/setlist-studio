@@ -1,12 +1,31 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
-export function middleware() {
-  // Generate a random nonce for each request
+export function middleware(request: NextRequest) {
+  // リクエストごとにランダムなnonceを生成
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
+
+  // 開発環境かどうかをチェック
+  const isDev = process.env.NODE_ENV === 'development';
+
+  // 現在のパスが静的ページかどうかを判定
+  const pathname = request.nextUrl.pathname;
+  const isStaticPage = [
+    '/login',
+    '/register',
+    '/guide',
+    '/privacy-policy',
+    '/terms-of-service',
+    '/auth/',
+  ].some((path) => pathname.startsWith(path));
+
+  // ページタイプに基づいてCSPヘッダーを構築
+  const scriptSrc = isStaticPage
+    ? `script-src 'self' 'unsafe-inline' ${isDev ? "'unsafe-eval'" : ''} https://accounts.google.com`
+    : `script-src 'self' 'nonce-${nonce}' ${isDev ? "'unsafe-eval'" : "'wasm-unsafe-eval'"} 'strict-dynamic' https://accounts.google.com`;
 
   const cspHeader = [
     "default-src 'self'",
-    `script-src 'self' 'wasm-unsafe-eval' 'nonce-${nonce}' https://accounts.google.com`,
+    scriptSrc,
     "style-src 'self' 'unsafe-inline'", // Material-UIのため保持
     "img-src 'self' data: https: blob:", // 画像生成とQRコードのため
     "font-src 'self' data:",
@@ -25,10 +44,24 @@ export function middleware() {
       : []),
   ].join('; ');
 
-  const response = NextResponse.next();
+  // 動的ページの場合はヘッダーでnonceを渡す
+  const requestHeaders = new Headers(request.headers);
+  if (!isStaticPage) {
+    requestHeaders.set('x-nonce', nonce);
+  }
+
+  const response = NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
 
   // CSPヘッダーを設定
   response.headers.set('Content-Security-Policy', cspHeader);
+
+  // デバッグ用ヘッダー
+  response.headers.set('X-Middleware-Applied', 'true');
+  response.headers.set('X-CSP-Nonce', isStaticPage ? 'static-page' : nonce);
 
   // その他のセキュリティヘッダー
   response.headers.set('X-Frame-Options', 'DENY');
@@ -45,22 +78,10 @@ export function middleware() {
     response.headers.set('X-Robots-Tag', 'noindex, nofollow');
   }
 
-  // nonceをヘッダーに追加（Next.jsが自動的にScriptコンポーネントで使用）
-  response.headers.set('X-Nonce', nonce);
-
   return response;
 }
 
+// Middleware configuration
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - sitemap.xml, robots.txt (SEO files)
-     */
-    '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
-  ],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
 };
