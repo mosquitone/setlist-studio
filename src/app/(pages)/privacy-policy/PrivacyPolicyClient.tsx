@@ -187,14 +187,14 @@ const PrivacyPolicyClient: React.FC = () => {
           第10条（お問い合わせ窓口）
         </Typography>
         <Typography variant="body2" color="text.secondary" paragraph>
-          本ポリシーに関するお問い合わせは、本サービス内のお問い合わせフォームまでお願いいたします。
+          本ポリシーに関するお問い合わせは、お問い合わせメールまたはSNSまでお願いいたします。
         </Typography>
 
         <Typography variant="body2" color="text.secondary" paragraph sx={{ mt: 4 }}>
           制定日：2024年7月20日
         </Typography>
         <Typography variant="body2" color="text.secondary" paragraph>
-          最終改定日：2025年7月24日
+          最終改定日：2025年7月27日
         </Typography>
       </LegalPageTemplate>
     </>
