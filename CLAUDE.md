@@ -103,8 +103,10 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 - **クライアントコンポーネント**: 'use client'ディレクティブを必要に応じて使用
 - **メモ化**: React.memoを使用してパフォーマンスを最適化（SetlistForm、SongEditDialog等）
 - **カスタムフック**: 共通ロジックは`/hooks`ディレクトリにカスタムフックとして実装
+  - `useContainerWidth`: DOM要素の幅をResizeObserverで監視するフック
 - **Provider分離**: MuiProvider、ApolloProvider、SnackbarProviderは個別ファイルで管理
 - **型安全性**: TypeScriptの厳格な型定義、any型の使用は避ける
+- **コンポーネントリファクタリング**: 大規模コンポーネントは定数・スタイル・レンダリング関数に分離
 
 ### スタイリング
 - **UIライブラリ**: Material-UI v5を基本とし、カスタムコンポーネントで拡張
@@ -403,6 +405,7 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 │   │       └── SongListItem.tsx
 │   ├── hooks/              # カスタムReactフック
 │   │   ├── useAuth.ts
+│   │   ├── useContainerWidth.ts
 │   │   ├── useCSRF.ts
 │   │   ├── useSetlists.ts
 │   │   └── useSongs.ts
@@ -621,7 +624,10 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 - **ダウンロード統合**: useRefを使用して自動ダウンロードを防止、ボタンクリック時のみ
 - **QRコード統合**: 生成画像に自動QRコードを含める
 - **デバッグモード**: DOMプレビューと画像プレビュー間の開発専用トグル
-- **統一プレビューサイズ**: 全モードで一貫表示のための700px × 990px（A4比率）
+- **レスポンシブプレビュー**: width 100%ベースでモバイル・デスクトップ両対応（2025-07-26）
+  - ResizeObserverでコンテナ幅をリアルタイム監視
+  - CSS aspect-ratioでA4比率（700:990）を維持
+  - 動的スケール計算でSetlistRenderer（794px）を適切にリサイズ
 
 ### 複製ワークフロー
 - **クエリパラメータシステム**: シームレスクローンのための`/setlists/new?duplicate={id}`

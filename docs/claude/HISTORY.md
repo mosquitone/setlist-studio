@@ -1,5 +1,21 @@
 # 更新履歴と記録
 
+## セットリストプレビューレスポンシブ対応・リファクタリング (2025-07-26)
+- **レスポンシブプレビュー実装**: width 100%ベースでモバイル・デスクトップ完全対応
+  - 固定px値から相対値への移行でデバイス間の表示差異を解消
+  - CSS aspect-ratioプロパティでA4比率（700:990）を維持
+  - ResizeObserverでコンテナ幅をリアルタイム監視
+  - 動的スケール計算でSetlistRenderer（794px）を適切にリサイズ
+- **カスタムフック作成**: `useContainerWidth`フックで幅監視ロジックを分離
+  - ResizeObserverによる動的幅検出を再利用可能に
+  - コンポーネントの責務分離と保守性向上
+- **コンポーネントリファクタリング**: SetlistPreview.tsxの大規模整理
+  - 定数定義をファイル上部に集約（A4_ASPECT_RATIO、RENDERER_BASE_WIDTH等）
+  - スタイルオブジェクトの共通化（styles定数）
+  - レンダリング関数の分離（renderDOMPreview、renderLoadingState等）
+  - 型定義の改善（PreviewDimensions、RenderProps）
+- **プレビューコンテナ背景色**: #e0e0e0（暗めのグレー）で視認性向上
+
 ## フォームバリデーション統一・Blur対応 (2025-07-25)
 - **Formik統一**: 全フォーム（セットリスト作成/編集、楽曲作成、楽曲編集）でFormikを使用
 - **バリデーションタイミング統一**:
