@@ -248,7 +248,7 @@ const TermsOfServiceClient: React.FC = () => {
           制定日：2024年7月20日
         </Typography>
         <Typography variant="body2" color="text.secondary" paragraph>
-          最終改定日：2025年7月26日
+          最終改定日：2025年7月24日
         </Typography>
       </LegalPageTemplate>
     </>
