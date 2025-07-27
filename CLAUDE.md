@@ -114,6 +114,12 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 - **データベーススタジオ開く**: `pnpm db:studio`
 - **マイグレーション作成**: `pnpm db:migrate`
 
+### データベースマイグレーション
+- **重要**: マイグレーション操作前に必ず [データベースマイグレーション完全ガイド](./docs/guide/deployment/DATABASE_MIGRATION_GUIDE.md) を参照すること
+- **Shadow DB**: 開発環境でのマイグレーション検証用データベース（本番環境では不要）
+- **開発フロー**: `pnpm db:migrate:create --name feature_name` → 自動でShadow DBでテスト → メインDBに適用
+- **本番フロー**: `pnpm db:prod:migrate:status` → `pnpm db:prod:migrate:deploy`
+
 ### 環境セットアップ
 - **依存関係インストール**: `pnpm install`
 - **環境変数セットアップ**: `cp .env.example .env.local`
@@ -725,6 +731,24 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 
 ### セキュリティレベル
 **バランス型セキュリティ（OWASP Top 10準拠）**：攻撃防止と利便性の最適化を実現
+
+## 直近の重要な変更（2025-07-27）
+
+### UsedTokenテーブルとトークン履歴管理システム
+- **新機能**: 90日間のトークン履歴を保持する`UsedToken`テーブルを追加
+- **実装箇所**: 全認証フロー（login、メール認証、パスワードリセット、メール変更、Google OAuth）でトークン記録
+- **問題解決**: EMAIL_CHANGE_FAILUREイベントでnull userIdの問題を解決（トークン履歴からの推測機能）
+- **関連ファイル**:
+  - `prisma/schema.prisma`: UsedTokenモデル定義
+  - `src/lib/security/used-token-manager.ts`: トークン管理システム
+  - `src/lib/server/graphql/resolvers/AuthResolver.ts`: 各認証メソッドでの記録実装
+  - `src/app/api/auth/google-sync/route.ts`: Google OAuthでの記録実装
+
+### マイグレーション管理の改善
+- **ベースライン化**: 既存のデータベースをマイグレーション管理下に置く仕組みを実装
+- **環境別コマンド**: ローカル（`.env.local`）と本番（`.env.vercel`）で別々のコマンドを用意
+- **Shadow DB説明**: 開発環境専用の安全装置としての役割を明文化
+- **ドキュメント統合**: 複数のマイグレーションガイドを [DATABASE_MIGRATION_GUIDE.md](./docs/guide/deployment/DATABASE_MIGRATION_GUIDE.md) に統合
 
 ## 更新履歴
 
