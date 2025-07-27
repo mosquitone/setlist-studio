@@ -12,7 +12,7 @@ import { Button } from '@/components/common/ui/Button';
 import { useSnackbar } from '@/components/providers/SnackbarProvider';
 import { useI18n } from '@/hooks/useI18n';
 import { Messages } from '@/lib/i18n/messages';
-import { CREATE_SONG } from '@/lib/server/graphql/apollo-operations';
+import { CREATE_SONG, GET_SONGS } from '@/lib/server/graphql/apollo-operations';
 import { Song } from '@/types/graphql';
 
 interface SongFormValues {
@@ -57,6 +57,7 @@ export default function NewSongPage() {
   // validationSchemaをメモ化
   const validationSchema = useMemo(() => getValidationSchema(messages), [messages]);
   const [createSong, { loading }] = useMutation<CreateSongData>(CREATE_SONG, {
+    refetchQueries: [{ query: GET_SONGS }],
     onCompleted: (data: CreateSongData) => {
       if (data.createSong) {
         showSuccess(`「${data.createSong.title}」${messages.notifications.songCreated}`);
