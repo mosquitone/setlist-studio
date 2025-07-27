@@ -113,7 +113,7 @@ export class SongResolver {
         createdAt: true,
         updatedAt: true,
       },
-      orderBy: { createdAt: 'desc' }, // 最新順に変更
+      orderBy: { id: 'desc' }, // ID順（作成順を保持、編集しても順番が変わらない）
     }) as Promise<Song[]>;
   }
 
