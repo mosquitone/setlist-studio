@@ -12,6 +12,7 @@ import {
   SecurityEventSeverity,
 } from '@/lib/security/security-logger-db';
 import { getSecureClientIP, hashIP } from '@/lib/security/security-utils';
+import { saveUsedToken, TokenType } from '@/lib/security/used-token-manager';
 import { generateSafeUsername } from '@/lib/server/auth/username-generator';
 import { emailService } from '@/lib/server/email/emailService';
 import { prisma } from '@/lib/server/prisma';
@@ -367,6 +368,17 @@ async function handleGoogleSync(req: NextRequest) {
       throw new Error('User not found after operation');
     }
     const token = generateAuthToken(user);
+
+    // トークンを記録
+    await saveUsedToken(prisma, {
+      token,
+      tokenType: TokenType.JWT,
+      userId: user.id,
+      ipAddress: getSecureClientIP(req),
+      userAgent: req.headers.get('user-agent') || 'unknown',
+      success: true,
+      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30日後
+    });
 
     // 4. Cookie設定
     const authResponse = await setAuthCookie(req, token);

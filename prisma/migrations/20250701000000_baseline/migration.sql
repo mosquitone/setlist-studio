@@ -1,0 +1,2 @@
+-- This is an empty migration.
+-- The database schema was already applied via prisma db push before migrations were introduced.

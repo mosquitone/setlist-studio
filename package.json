@@ -15,8 +15,18 @@
     "generate:schema": "dotenv -e .env.local -- tsx scripts/generate-schema.ts",
     "db:push": "dotenv -e .env.local -- prisma db push",
     "db:migrate": "dotenv -e .env.local -- prisma migrate dev",
+    "db:migrate:create": "dotenv -e .env.local -- prisma migrate dev --create-only",
+    "db:migrate:deploy": "dotenv -e .env.local -- prisma migrate deploy",
+    "db:migrate:status": "dotenv -e .env.local -- prisma migrate status",
+    "db:migrate:reset": "dotenv -e .env.local -- prisma migrate reset",
     "db:studio": "dotenv -e .env.local -- prisma studio",
     "db:setup": "bash scripts/setup-db.sh",
+    "db:setup:shadow": "bash scripts/setup-shadow-db.sh",
+    "db:migrate:baseline": "bash scripts/baseline-migrations.sh",
+    "db:prod:migrate:deploy": "dotenv -e .env.vercel -- prisma migrate deploy",
+    "db:prod:migrate:status": "dotenv -e .env.vercel -- prisma migrate status",
+    "db:prod:push": "dotenv -e .env.vercel -- prisma db push",
+    "db:prod:studio": "dotenv -e .env.vercel -- prisma studio",
     "postinstall": "prisma generate"
   },
   "dependencies": {

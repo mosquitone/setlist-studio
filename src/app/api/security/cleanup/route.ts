@@ -7,6 +7,7 @@ import { cleanupExpiredRateLimits } from '../../../../lib/security/rate-limit-db
 import { cleanupOldSecurityEvents } from '../../../../lib/security/security-logger-db';
 import { cleanupOldThreatActivities } from '../../../../lib/security/threat-detection-db';
 import { cleanupExpiredTokens } from '../../../../lib/security/token-manager';
+import { cleanupExpiredUsedTokens } from '../../../../lib/security/used-token-manager';
 
 const prisma = new PrismaClient();
 
@@ -24,13 +25,19 @@ export async function GET(request: NextRequest) {
     const startTime = Date.now();
 
     // 並行してクリーンアップ実行
-    const [rateLimitCleanup, threatActivityCleanup, securityEventCleanup, tokenCleanup] =
-      await Promise.all([
-        cleanupExpiredRateLimits(prisma),
-        cleanupOldThreatActivities(prisma),
-        cleanupOldSecurityEvents(prisma),
-        cleanupExpiredTokens(prisma),
-      ]);
+    const [
+      rateLimitCleanup,
+      threatActivityCleanup,
+      securityEventCleanup,
+      tokenCleanup,
+      usedTokenCleanup,
+    ] = await Promise.all([
+      cleanupExpiredRateLimits(prisma),
+      cleanupOldThreatActivities(prisma),
+      cleanupOldSecurityEvents(prisma),
+      cleanupExpiredTokens(prisma),
+      cleanupExpiredUsedTokens(prisma),
+    ]);
 
     const endTime = Date.now();
     const duration = endTime - startTime;
@@ -44,6 +51,7 @@ export async function GET(request: NextRequest) {
         threatActivities: threatActivityCleanup,
         securityEvents: securityEventCleanup,
         tokens: tokenCleanup,
+        usedTokens: usedTokenCleanup,
       },
     };
 

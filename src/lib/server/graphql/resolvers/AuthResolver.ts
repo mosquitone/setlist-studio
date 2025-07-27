@@ -17,6 +17,7 @@ import {
 } from '../../../security/security-logger-db';
 import { logSimpleAudit } from '../../../security/simple-audit-logger';
 import { DatabaseThreatDetection } from '../../../security/threat-detection-db';
+import { saveUsedToken, TokenType } from '../../../security/used-token-manager';
 import { emailService } from '../../email/emailService';
 import { AuthMiddleware } from '../middleware/jwt-auth-middleware';
 import {
@@ -355,6 +356,17 @@ export class AuthResolver {
       },
     });
 
+    // 使用されたトークンを記録（成功）
+    await saveUsedToken(ctx.prisma, {
+      token,
+      tokenType: TokenType.JWT,
+      userId: user.id,
+      ipAddress: getClientIP(ctx),
+      userAgent: ctx.req?.headers['user-agent'] || 'unknown',
+      success: true,
+      expiresAt: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2時間後
+    });
+
     return {
       token,
       user,
@@ -474,6 +486,18 @@ export class AuthResolver {
     });
 
     if (!user) {
+      // 失敗したトークンを記録
+      await saveUsedToken(ctx.prisma, {
+        token: input.token,
+        tokenType: TokenType.PASSWORD_RESET,
+        userId: null,
+        ipAddress: getClientIP(ctx),
+        userAgent: ctx.req?.headers['user-agent'] || 'unknown',
+        success: false,
+        reason: 'invalid_or_expired_token',
+        expiresAt: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90日後
+      });
+
       await logSecurityEventDB(ctx.prisma, {
         type: SecurityEventType.PASSWORD_RESET_FAILURE,
         severity: SecurityEventSeverity.MEDIUM,
@@ -501,6 +525,17 @@ export class AuthResolver {
         passwordResetToken: null,
         passwordResetExpires: null,
       },
+    });
+
+    // 成功したトークンを記録
+    await saveUsedToken(ctx.prisma, {
+      token: input.token,
+      tokenType: TokenType.PASSWORD_RESET,
+      userId: user.id,
+      ipAddress: getClientIP(ctx),
+      userAgent: ctx.req?.headers['user-agent'] || 'unknown',
+      success: true,
+      expiresAt: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90日後
     });
 
     // 成功通知メール送信
@@ -542,6 +577,18 @@ export class AuthResolver {
     });
 
     if (!user) {
+      // 失敗したトークンを記録
+      await saveUsedToken(ctx.prisma, {
+        token: input.token,
+        tokenType: TokenType.EMAIL_VERIFICATION,
+        userId: null,
+        ipAddress: getClientIP(ctx),
+        userAgent: ctx.req?.headers['user-agent'] || 'unknown',
+        success: false,
+        reason: 'invalid_or_expired_token',
+        expiresAt: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90日後
+      });
+
       await logSecurityEventDB(ctx.prisma, {
         type: SecurityEventType.EMAIL_VERIFICATION_FAILURE,
         severity: SecurityEventSeverity.MEDIUM,
@@ -567,6 +614,17 @@ export class AuthResolver {
         emailVerificationToken: null,
         emailVerificationExpires: null,
       },
+    });
+
+    // 成功したトークンを記録
+    await saveUsedToken(ctx.prisma, {
+      token: input.token,
+      tokenType: TokenType.EMAIL_VERIFICATION,
+      userId: user.id,
+      ipAddress: getClientIP(ctx),
+      userAgent: ctx.req?.headers['user-agent'] || 'unknown',
+      success: true,
+      expiresAt: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90日後
     });
 
     await logSecurityEventDB(ctx.prisma, {
@@ -741,6 +799,18 @@ export class AuthResolver {
 
     // ケース1: 完全に無効なトークン
     if (!tokenUser) {
+      // 失敗したトークンを記録
+      await saveUsedToken(ctx.prisma, {
+        token: input.token,
+        tokenType: TokenType.EMAIL_CHANGE,
+        userId: null,
+        ipAddress: getClientIP(ctx),
+        userAgent: ctx.req?.headers['user-agent'] || 'unknown',
+        success: false,
+        reason: 'invalid_token',
+        expiresAt: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90日後
+      });
+
       await logSecurityEventDB(ctx.prisma, {
         type: SecurityEventType.EMAIL_CHANGE_FAILURE,
         severity: SecurityEventSeverity.HIGH,
@@ -782,6 +852,18 @@ export class AuthResolver {
 
     // ケース3: 期限切れトークン
     if (tokenUser.emailChangeExpires && tokenUser.emailChangeExpires < new Date()) {
+      // 失敗したトークンを記録
+      await saveUsedToken(ctx.prisma, {
+        token: input.token,
+        tokenType: TokenType.EMAIL_CHANGE,
+        userId: tokenUser.id,
+        ipAddress: getClientIP(ctx),
+        userAgent: ctx.req?.headers['user-agent'] || 'unknown',
+        success: false,
+        reason: 'expired_token',
+        expiresAt: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90日後
+      });
+
       await logSecurityEventDB(ctx.prisma, {
         type: SecurityEventType.EMAIL_CHANGE_FAILURE,
         severity: SecurityEventSeverity.MEDIUM,
@@ -860,6 +942,17 @@ export class AuthResolver {
         updateData.authProvider as string,
         ctx.req,
       );
+
+      // 成功したトークンを記録
+      await saveUsedToken(tx, {
+        token: input.token,
+        tokenType: TokenType.EMAIL_CHANGE,
+        userId: tokenUser.id,
+        ipAddress: getClientIP(ctx),
+        userAgent: ctx.req?.headers['user-agent'] || 'unknown',
+        success: true,
+        expiresAt: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90日後
+      });
 
       await logSecurityEventDB(tx, {
         type: SecurityEventType.EMAIL_CHANGE_SUCCESS,

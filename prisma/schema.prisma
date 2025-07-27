@@ -28,6 +28,7 @@ model User {
   setlists                 Setlist[]
   songs                    Song[]
   securityEvents           SecurityEvent[]
+  usedTokens               UsedToken[]
 
   @@map("users")
 }
@@ -164,4 +165,25 @@ model EmailHistory {
   @@index([newEmail])
   @@index([changedAt])
   @@map("email_histories")
+}
+
+model UsedToken {
+  id        String   @id @default(cuid())
+  token     String
+  tokenType String   // emailChange, passwordReset, emailVerification
+  userId    String?
+  usedAt    DateTime @default(now())
+  ipAddress String?
+  userAgent String?
+  success   Boolean  @default(false)
+  reason    String?  // 使用結果の理由（expired, invalid, already_used等）
+  expiresAt DateTime // 90日後に削除するための期限
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([token])
+  @@index([userId])
+  @@index([tokenType])
+  @@index([usedAt])
+  @@index([expiresAt])
+  @@map("used_tokens")
 }
