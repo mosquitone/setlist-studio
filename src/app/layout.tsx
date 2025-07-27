@@ -102,20 +102,22 @@ export default async function RootLayout({
         <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
         <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
         <link rel="manifest" href="/manifest.json" />
-        <Script
-          id="organization-jsonld"
-          type="application/ld+json"
-          strategy="beforeInteractive"
-          nonce={nonce || undefined}
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
-        />
-        <Script
-          id="website-jsonld"
-          type="application/ld+json"
-          strategy="beforeInteractive"
-          nonce={nonce || undefined}
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
-        />
+        {process.env.NODE_ENV === 'production' && (
+          <>
+            <script
+              id="organization-jsonld"
+              type="application/ld+json"
+              nonce={nonce || undefined}
+              dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+            />
+            <script
+              id="website-jsonld"
+              type="application/ld+json"
+              nonce={nonce || undefined}
+              dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+            />
+          </>
+        )}
       </head>
       <body className={inter.className}>
         {nonce && (
