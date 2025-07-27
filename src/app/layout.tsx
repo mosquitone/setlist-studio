@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import { headers } from 'next/headers';
 import Script from 'next/script';
 import { Suspense } from 'react';
@@ -148,6 +149,7 @@ export default async function RootLayout({
             </ApolloProviderWrapper>
           </I18nProvider>
         </NextAuthProvider>
+        <SpeedInsights />
       </body>
     </html>
   );
