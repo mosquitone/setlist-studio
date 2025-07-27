@@ -145,6 +145,7 @@ export interface AuthMessages {
   backToProfile: string;
   invalidEmailFormat: string;
   emailAlreadyInUse: string;
+  emailAlreadyChanged: string;
   usernameAlreadyInUse: string;
 
   // 認証プロバイダー
@@ -336,6 +337,7 @@ export const authJa: AuthMessages = {
   backToProfile: 'プロフィールページに戻る',
   invalidEmailFormat: 'メールアドレスの形式が正しくありません',
   emailAlreadyInUse: 'このメールアドレスは既に使用されています',
+  emailAlreadyChanged: 'メールアドレスは既に変更されています。',
   usernameAlreadyInUse: 'このユーザー名は既に使用されています',
 
   // 認証プロバイダー
@@ -542,6 +544,7 @@ export const authEn: AuthMessages = {
   backToProfile: 'Back to Profile',
   invalidEmailFormat: 'Invalid email format',
   emailAlreadyInUse: 'This email address is already in use',
+  emailAlreadyChanged: 'Email address has already been changed.',
   usernameAlreadyInUse: 'This username is already in use',
 
   // 認証プロバイダー

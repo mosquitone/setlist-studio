@@ -1,8 +1,11 @@
+import { Prisma } from '@prisma/client';
 import { Resolver, Query, Ctx, UseMiddleware, FieldResolver, Root } from 'type-graphql';
 
 import { AuthMiddleware } from '../middleware/jwt-auth-middleware';
 import { EmailHistory } from '../types/EmailHistory';
 import { User } from '../types/User';
+
+import { AuthResolverReq } from './AuthResolver';
 
 // AuthResolverと同じContext型を使用
 interface Context {
@@ -64,19 +67,20 @@ export class EmailHistoryResolver {
   }
 
   // メールアドレス変更履歴を記録する内部メソッド
+  // AuthResolverのconfirmEmailChangeメソッドのトランザクション内で利用している
   static async recordEmailChange(
-    ctx: Context,
+    tx: Prisma.TransactionClient,
     userId: string,
     oldEmail: string,
     newEmail: string,
     changeMethod: string,
     authProvider?: string,
+    req?: AuthResolverReq, // リクエスト情報を追加
   ): Promise<EmailHistory> {
-    const userAgent = ctx.req?.headers['user-agent'] || '';
-    const clientIP =
-      ctx.req?.headers['x-forwarded-for'] || ctx.req?.headers['x-real-ip'] || 'unknown';
+    const userAgent = req?.headers['user-agent'] || '';
+    const clientIP = req?.headers['x-forwarded-for'] || req?.headers['x-real-ip'] || 'unknown';
 
-    const emailHistory = await ctx.prisma.emailHistory.create({
+    const emailHistory = await tx.emailHistory.create({
       data: {
         userId,
         oldEmail,

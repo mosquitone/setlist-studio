@@ -1,3 +1,5 @@
+import crypto from 'crypto';
+
 import { PrismaClient, Prisma } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -38,6 +40,15 @@ import {
 
 import { EmailHistoryResolver } from './EmailHistoryResolver';
 
+export interface AuthResolverReq {
+  headers: {
+    authorization?: string;
+    'user-agent'?: string;
+    'x-forwarded-for'?: string;
+    'x-real-ip'?: string;
+  };
+}
+
 interface Context {
   prisma: PrismaClient;
   userId?: string;
@@ -46,15 +57,7 @@ interface Context {
     email: string;
     username: string;
   };
-  req?: {
-    headers: {
-      authorization?: string;
-      'user-agent'?: string;
-      'x-forwarded-for'?: string;
-      'x-real-ip'?: string;
-    };
-  };
-  request?: Request;
+  req?: AuthResolverReq;
   i18n?: I18nContext;
 }
 
@@ -724,24 +727,28 @@ export class AuthResolver {
     @Arg('input', () => EmailChangeConfirmInput) input: EmailChangeConfirmInput,
     @Ctx() ctx: Context,
   ): Promise<EmailChangeResponse> {
-    const user = await ctx.prisma.user.findFirst({
-      where: {
-        emailChangeToken: input.token,
-        emailChangeExpires: {
-          gt: new Date(),
-        },
-      },
+    // まずトークンで検索（期限チェックなし）
+    const tokenUser = await ctx.prisma.user.findFirst({
+      where: { emailChangeToken: input.token },
     });
 
-    if (!user || !user.pendingEmail) {
+    // トークンハッシュ化（ログ用）
+    const tokenHash = crypto
+      .createHash('sha256')
+      .update(input.token)
+      .digest('hex')
+      .substring(0, 12);
+
+    // ケース1: 完全に無効なトークン
+    if (!tokenUser) {
       await logSecurityEventDB(ctx.prisma, {
         type: SecurityEventType.EMAIL_CHANGE_FAILURE,
-        severity: SecurityEventSeverity.MEDIUM,
+        severity: SecurityEventSeverity.HIGH,
         ipAddress: getClientIP(ctx),
         userAgent: ctx.req?.headers['user-agent'],
         details: {
-          token: input.token,
-          reason: 'invalid_or_expired_token',
+          tokenHash,
+          reason: 'invalid_token',
         },
       });
 
@@ -750,56 +757,128 @@ export class AuthResolver {
       );
     }
 
-    // メールアドレスを変更（pendingPasswordがある場合はパスワードも更新）
-    const updateData: Prisma.UserUpdateInput = {
-      email: user.pendingEmail,
-      pendingEmail: null,
-      emailChangeToken: null,
-      emailChangeExpires: null,
-      emailVerified: true,
-      authProvider: AUTH_PROVIDERS.EMAIL,
-    };
+    // ケース2: 既に変更済みのトークン
+    if (!tokenUser.pendingEmail) {
+      await logSecurityEventDB(ctx.prisma, {
+        type: SecurityEventType.EMAIL_CHANGE_DUPLICATE_ATTEMPT,
+        severity: SecurityEventSeverity.LOW,
+        userId: tokenUser.id,
+        ipAddress: getClientIP(ctx),
+        userAgent: ctx.req?.headers['user-agent'],
+        details: {
+          tokenHash,
+          reason: 'already_changed',
+          currentEmail: tokenUser.email,
+        },
+      });
 
-    if (user.pendingPassword) {
-      updateData.password = user.pendingPassword;
-      updateData.pendingPassword = null;
+      // エラーではなく成功メッセージを返す
+      return {
+        success: true,
+        message:
+          ctx.i18n?.messages.auth.emailAlreadyChanged || 'メールアドレスは既に変更されています。',
+      };
     }
 
-    const oldEmail = user.email;
-    const newEmail = user.pendingEmail;
+    // ケース3: 期限切れトークン
+    if (tokenUser.emailChangeExpires && tokenUser.emailChangeExpires < new Date()) {
+      await logSecurityEventDB(ctx.prisma, {
+        type: SecurityEventType.EMAIL_CHANGE_FAILURE,
+        severity: SecurityEventSeverity.MEDIUM,
+        userId: tokenUser.id,
+        ipAddress: getClientIP(ctx),
+        userAgent: ctx.req?.headers['user-agent'],
+        details: {
+          tokenHash,
+          reason: 'expired_token',
+          expiredAt: tokenUser.emailChangeExpires.toISOString(),
+          attemptedEmail: tokenUser.pendingEmail.replace(/(.{2}).*@/, '$1***@'),
+        },
+      });
 
-    await ctx.prisma.user.update({
-      where: { id: user.id },
-      data: updateData,
-    });
+      throw new Error(
+        ctx.i18n?.messages.auth.invalidChangeToken || '無効または期限切れの変更トークンです',
+      );
+    }
 
-    // メールアドレス変更履歴を記録
-    await EmailHistoryResolver.recordEmailChange(
-      ctx,
-      user.id,
-      oldEmail,
-      newEmail,
-      'verification',
-      updateData.authProvider as string,
-    );
+    // 正常な変更処理（トランザクション内で実行）
+    return await ctx.prisma.$transaction(async (tx) => {
+      // 新しいメールアドレスの重複チェック
+      const existingUser = await tx.user.findUnique({
+        where: { email: tokenUser.pendingEmail! },
+      });
 
-    await logSecurityEventDB(ctx.prisma, {
-      type: SecurityEventType.EMAIL_CHANGE_SUCCESS,
-      severity: SecurityEventSeverity.LOW,
-      userId: user.id,
-      ipAddress: getClientIP(ctx),
-      userAgent: ctx.req?.headers['user-agent'],
-      details: {
+      if (existingUser && existingUser.id !== tokenUser.id) {
+        await logSecurityEventDB(tx, {
+          type: SecurityEventType.EMAIL_CHANGE_FAILURE,
+          severity: SecurityEventSeverity.HIGH,
+          userId: tokenUser.id,
+          ipAddress: getClientIP(ctx),
+          userAgent: ctx.req?.headers['user-agent'],
+          details: {
+            tokenHash,
+            reason: 'email_already_taken',
+            attemptedEmail: tokenUser.pendingEmail!.replace(/(.{2}).*@/, '$1***@'),
+          },
+        });
+
+        throw new Error(
+          ctx.i18n?.messages.auth.emailAlreadyInUse || 'このメールアドレスは既に使用されています。',
+        );
+      }
+
+      // メールアドレスを変更（pendingPasswordがある場合はパスワードも更新）
+      const updateData: Prisma.UserUpdateInput = {
+        email: tokenUser.pendingEmail!,
+        pendingEmail: null,
+        emailChangeToken: null,
+        emailChangeExpires: null,
+        emailVerified: true,
+        authProvider: AUTH_PROVIDERS.EMAIL,
+      };
+
+      if (tokenUser.pendingPassword) {
+        updateData.password = tokenUser.pendingPassword;
+        updateData.pendingPassword = null;
+      }
+
+      const oldEmail = tokenUser.email;
+      const newEmail = tokenUser.pendingEmail!;
+
+      await tx.user.update({
+        where: { id: tokenUser.id },
+        data: updateData,
+      });
+
+      // メールアドレス変更履歴を記録
+      await EmailHistoryResolver.recordEmailChange(
+        tx,
+        tokenUser.id,
         oldEmail,
         newEmail,
-      },
-    });
+        'verification',
+        updateData.authProvider as string,
+        ctx.req,
+      );
 
-    return {
-      success: true,
-      message:
-        ctx.i18n?.messages.auth.emailChangedSuccess || 'メールアドレスが正常に変更されました。',
-    };
+      await logSecurityEventDB(tx, {
+        type: SecurityEventType.EMAIL_CHANGE_SUCCESS,
+        severity: SecurityEventSeverity.LOW,
+        userId: tokenUser.id,
+        ipAddress: getClientIP(ctx),
+        userAgent: ctx.req?.headers['user-agent'],
+        details: {
+          oldEmail,
+          newEmail,
+        },
+      });
+
+      return {
+        success: true,
+        message:
+          ctx.i18n?.messages.auth.emailChangedSuccess || 'メールアドレスが正常に変更されました。',
+      };
+    });
   }
 
   /**

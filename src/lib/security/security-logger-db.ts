@@ -1,6 +1,6 @@
 // Vercel互換性のためのデータベースベースセキュリティログ
 
-import { PrismaClient } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
 import { Timestamp } from '@/types/common';
 
@@ -42,6 +42,7 @@ export enum SecurityEventType {
   EMAIL_CHANGE_REQUEST = 'EMAIL_CHANGE_REQUEST',
   EMAIL_CHANGE_SUCCESS = 'EMAIL_CHANGE_SUCCESS',
   EMAIL_CHANGE_FAILURE = 'EMAIL_CHANGE_FAILURE',
+  EMAIL_CHANGE_DUPLICATE_ATTEMPT = 'EMAIL_CHANGE_DUPLICATE_ATTEMPT',
 
   // OAuth認証関連
   OAUTH_LOGIN_SUCCESS = 'OAUTH_LOGIN_SUCCESS',
@@ -94,9 +95,9 @@ export interface SecurityEvent {
 
 // Vercel互換性：データベースベースのセキュリティログシステム
 export class DatabaseSecurityLogger {
-  private prisma: PrismaClient;
+  private prisma: Prisma.TransactionClient;
 
-  constructor(prisma: PrismaClient) {
+  constructor(prisma: Prisma.TransactionClient) {
     this.prisma = prisma;
   }
 
@@ -304,7 +305,7 @@ export class DatabaseSecurityLogger {
 
 // 便利なヘルパー関数（データベースベース）
 export async function logSecurityEventDB(
-  prisma: PrismaClient,
+  prisma: Prisma.TransactionClient,
   event: Omit<SecurityEvent, 'id' | 'timestamp'>,
 ): Promise<void> {
   const logger = new DatabaseSecurityLogger(prisma);
@@ -313,7 +314,7 @@ export async function logSecurityEventDB(
 
 // 認証関連のログヘルパー
 export const logAuthSuccessDB = (
-  prisma: PrismaClient,
+  prisma: Prisma.TransactionClient,
   userId: string,
   ipAddress?: string,
   userAgent?: string,
@@ -328,7 +329,7 @@ export const logAuthSuccessDB = (
   });
 
 export const logAuthFailureDB = (
-  prisma: PrismaClient,
+  prisma: Prisma.TransactionClient,
   email: string,
   reason: string,
   ipAddress?: string,
@@ -347,7 +348,7 @@ export const logAuthFailureDB = (
   });
 
 export const logRateLimitExceededDB = (
-  prisma: PrismaClient,
+  prisma: Prisma.TransactionClient,
   ipAddress?: string,
   endpoint?: string,
   userAgent?: string,
@@ -362,7 +363,7 @@ export const logRateLimitExceededDB = (
   });
 
 // バックグラウンドクリーンアップ用（Vercel Cronジョブで実行可能）
-export async function cleanupOldSecurityEvents(prisma: PrismaClient): Promise<number> {
+export async function cleanupOldSecurityEvents(prisma: Prisma.TransactionClient): Promise<number> {
   try {
     const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
 
