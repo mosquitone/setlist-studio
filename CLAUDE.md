@@ -738,9 +738,12 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 - **新機能**: 90日間のトークン履歴を保持する`UsedToken`テーブルを追加
 - **実装箇所**: 全認証フロー（login、メール認証、パスワードリセット、メール変更、Google OAuth）でトークン記録
 - **問題解決**: EMAIL_CHANGE_FAILUREイベントでnull userIdの問題を解決（トークン履歴からの推測機能）
+- **エラーハンドリング改善**: saveUsedToken関数内でエラーハンドリングを一元化（DRY原則）
+  - 呼び出し元識別のため`caller`パラメータ追加
+  - エラーログ形式: `[呼び出し元] Failed to save used token:`
 - **関連ファイル**:
   - `prisma/schema.prisma`: UsedTokenモデル定義
-  - `src/lib/security/used-token-manager.ts`: トークン管理システム
+  - `src/lib/security/used-token-manager.ts`: トークン管理システム（エラーハンドリング統合）
   - `src/lib/server/graphql/resolvers/AuthResolver.ts`: 各認証メソッドでの記録実装
   - `src/app/api/auth/google-sync/route.ts`: Google OAuthでの記録実装
 

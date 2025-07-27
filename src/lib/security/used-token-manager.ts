@@ -34,6 +34,7 @@ interface SaveUsedTokenParams {
   ipAddress?: string;
   userAgent?: string;
   expiresAt?: Date;
+  caller?: string; // 呼び出し元の識別子（デバッグ用）
 }
 
 /**
@@ -43,23 +44,36 @@ export async function saveUsedToken(
   tx: Prisma.TransactionClient,
   params: SaveUsedTokenParams,
 ): Promise<void> {
-  const { token, tokenType, userId, success, reason, ipAddress, userAgent } = params;
+  const { token, tokenType, userId, success, reason, ipAddress, userAgent, caller } = params;
 
   // デフォルトは90日後、カスタム期限も設定可能
   const expiresAt = params.expiresAt || new Date(Date.now() + 90 * 24 * 60 * 60 * 1000);
 
-  await tx.usedToken.create({
-    data: {
-      token: hashToken(token), // ハッシュ化して保存
+  try {
+    await tx.usedToken.create({
+      data: {
+        token: hashToken(token), // ハッシュ化して保存
+        tokenType,
+        userId,
+        success,
+        reason,
+        ipAddress,
+        userAgent,
+        expiresAt,
+      },
+    });
+  } catch (error) {
+    // エラーログを記録するが、処理は継続
+    const prefix = caller || 'UsedTokenManager';
+    console.error(`[${prefix}] Failed to save used token:`, {
       tokenType,
       userId,
       success,
       reason,
-      ipAddress,
-      userAgent,
-      expiresAt,
-    },
-  });
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+    // エラーを再スローしない（監査ログは重要だが、メイン処理を止めるほどではない）
+  }
 }
 
 /**

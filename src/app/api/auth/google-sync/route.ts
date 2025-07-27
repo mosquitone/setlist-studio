@@ -378,6 +378,7 @@ async function handleGoogleSync(req: NextRequest) {
       userAgent: req.headers.get('user-agent') || 'unknown',
       success: true,
       expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30日後
+      caller: 'google-sync',
     });
 
     // 4. Cookie設定

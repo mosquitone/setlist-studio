@@ -365,6 +365,7 @@ export class AuthResolver {
       userAgent: ctx.req?.headers['user-agent'] || 'unknown',
       success: true,
       expiresAt: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2時間後
+      caller: 'AuthResolver.login',
     });
 
     return {
@@ -496,6 +497,7 @@ export class AuthResolver {
         success: false,
         reason: 'invalid_or_expired_token',
         expiresAt: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90日後
+        caller: 'AuthResolver.resetPassword',
       });
 
       await logSecurityEventDB(ctx.prisma, {
@@ -536,6 +538,7 @@ export class AuthResolver {
       userAgent: ctx.req?.headers['user-agent'] || 'unknown',
       success: true,
       expiresAt: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90日後
+      caller: 'AuthResolver.resetPassword',
     });
 
     // 成功通知メール送信
@@ -587,6 +590,7 @@ export class AuthResolver {
         success: false,
         reason: 'invalid_or_expired_token',
         expiresAt: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90日後
+        caller: 'AuthResolver.verifyEmail',
       });
 
       await logSecurityEventDB(ctx.prisma, {
@@ -625,6 +629,7 @@ export class AuthResolver {
       userAgent: ctx.req?.headers['user-agent'] || 'unknown',
       success: true,
       expiresAt: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90日後
+      caller: 'AuthResolver.verifyEmail',
     });
 
     await logSecurityEventDB(ctx.prisma, {
@@ -809,6 +814,7 @@ export class AuthResolver {
         success: false,
         reason: 'invalid_token',
         expiresAt: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90日後
+        caller: 'AuthResolver.confirmEmailChange',
       });
 
       await logSecurityEventDB(ctx.prisma, {
@@ -862,6 +868,7 @@ export class AuthResolver {
         success: false,
         reason: 'expired_token',
         expiresAt: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90日後
+        caller: 'AuthResolver.confirmEmailChange',
       });
 
       await logSecurityEventDB(ctx.prisma, {
@@ -952,6 +959,7 @@ export class AuthResolver {
         userAgent: ctx.req?.headers['user-agent'] || 'unknown',
         success: true,
         expiresAt: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90日後
+        caller: 'AuthResolver.confirmEmailChange',
       });
 
       await logSecurityEventDB(tx, {
