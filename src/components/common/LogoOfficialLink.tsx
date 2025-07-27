@@ -1,6 +1,7 @@
 'use client';
 
 import { Box, Link, SxProps, Theme } from '@mui/material';
+import Image from 'next/image';
 
 import { useI18n } from '@/hooks/useI18n';
 
@@ -120,11 +121,10 @@ export function LogoOfficialLink({
       }}
     >
       <Box
-        component="img"
-        src="/MQT_LOGO_BLACK.png"
-        alt="mosquitone logo"
         sx={{
+          position: 'relative',
           height,
+          width: 'auto',
           cursor: 'pointer',
           transition: 'all 0.3s ease',
           filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.1))',
@@ -141,7 +141,21 @@ export function LogoOfficialLink({
             animation: 'breathe 4s ease-in-out infinite',
           },
         }}
-      />
+      >
+        <Image
+          src="/MQT_LOGO_BLACK.png"
+          alt="mosquitone logo"
+          width={200}
+          height={70}
+          sizes="(max-width: 768px) 150px, 200px"
+          style={{
+            width: 'auto',
+            height: '100%',
+            objectFit: 'contain',
+          }}
+          priority
+        />
+      </Box>
     </Link>
   );
 }

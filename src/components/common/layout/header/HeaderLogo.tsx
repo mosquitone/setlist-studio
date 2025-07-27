@@ -22,6 +22,7 @@ export const HeaderLogo = React.memo(function HeaderLogo() {
           alt="Setlist Studio"
           width={200}
           height={64}
+          sizes="200px"
           style={{
             objectFit: 'contain',
             filter: 'invert(1)',
@@ -29,6 +30,7 @@ export const HeaderLogo = React.memo(function HeaderLogo() {
             padding: '2px 4px',
           }}
           priority
+          quality={90}
         />
       </Box>
     </Link>
