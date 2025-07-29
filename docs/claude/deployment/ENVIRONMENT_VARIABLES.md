@@ -25,6 +25,7 @@
 | `NEXTAUTH_URL` | アプリケーションベースURL | `http://localhost:3000` | `https://yourdomain.com` | https://を含む完全URL |
 | `NEXTAUTH_SECRET` | NextAuth署名 | JWT_SECRETと同じ値 | JWT_SECRETと同じ値 | N/A (JWT_SECRET流用) |
 | `NEXT_PUBLIC_SITE_URL` | 公開サイトURL | `http://localhost:3000` | `https://yourdomain.com` | robots.txt/sitemap.xml用 |
+| `SHADOW_DATABASE_URL` | Prismaマイグレーション用 | `postgresql://postgres:postgres@localhost:5432/shadow_db` | 未使用 | 開発環境のみ |
 | `NODE_ENV` | 環境モード | `development` | Vercelで自動設定 | N/A |
 
 ## セットアップ手順
@@ -39,6 +40,7 @@
 2. 各環境変数を設定：
    - データベース関連は`docker-compose.yml`のデフォルト値を使用
    - シークレット類は開発用の値を設定（本番とは異なる値を使用）
+   - `SHADOW_DATABASE_URL`はPrismaマイグレーション開発時に必要（本番環境では不要）
 
 ### 本番環境（Vercel）
 

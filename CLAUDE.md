@@ -72,10 +72,6 @@ export default async function RootLayout({ children }) {
 
 この実装により、セキュリティを維持しながらNext.js 15の動的ページが正常に動作します。
 
-## ソース修正
-
-コミット前に、必ずCLAUDE.mdを更新するかを検討すること。
-品質管理については「実装方針 > テスト・品質管理」セクションを参照。
 
 ### データベーススキーマ変更時の対応
 データベーススキーマ（Prismaスキーマ）を変更した場合は、必ず以下のドキュメントも更新すること：
@@ -153,12 +149,21 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
   - `NEXTAUTH_URL`: アプリケーションのベースURL（メール内リンク生成用、https://を含む完全なURL）
   - `NEXTAUTH_SECRET`: NextAuth用シークレット (JWT_SECRETと同じ値推奨)
   - `NEXT_PUBLIC_SITE_URL`: サイトの公開URL（robots.txt・sitemap.xml生成用）
+  - `SHADOW_DATABASE_URL`: Prismaマイグレーション用シャドウDB（ローカル開発のみ）
 
 ### 環境変数詳細
 
-環境変数の詳細な設定方法とテーブルは [環境変数設定ガイド](./docs/claude/ENVIRONMENT_VARIABLES.md) を参照してください。
+環境変数の詳細な設定方法とテーブルは [環境変数設定ガイド](./docs/claude/deployment/ENVIRONMENT_VARIABLES.md) を参照してください。
 
 ## 実装方針
+
+### 品質管理
+
+「実装方針 > テスト・品質管理」セクションを参照。
+
+### ドキュメント(mdファイル)
+
+コミット前に、必ずCLAUDE.mdと参照先ドキュメントを更新するかを検討すること。
 
 ### 命名
 変数、コンポーネント名、ファイル名全てにおいて、目的に沿った命名として正しいものになっていること
@@ -239,8 +244,8 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 ### ハイブリッドNext.jsアーキテクチャ (Static + Serverless)
 アプリケーションは、モダンで性能最適化されたハイブリッドアーキテクチャを使用しています：
 
-**フロントエンド & バックエンド (Next.js 15.3.4)**
-- Next.js 15.3.4 App Router、TypeScript 5、ハイブリッドレンダリング戦略
+**フロントエンド & バックエンド (Next.js 15.4.4)**
+- Next.js 15.4.4 App Router、TypeScript 5、ハイブリッドレンダリング戦略
 - Material-UI v5.17.1（カスタムテーマとパッケージ最適化付き）
 - Apollo Client 3.13.8 for GraphQL状態管理
 - React 19.0.0（strict mode）
@@ -248,7 +253,7 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 **GraphQL API (Vercel Functions)**
 - Apollo Server v4.12.2が`/api/graphql`でNext.js APIルートとして動作
 - Type-GraphQL 1.1.1によるスキーマファーストAPI開発
-- PostgreSQL用ORM Prisma 6.11.0
+- PostgreSQL用ORM Prisma 6.12.0
 - JWTトークンとbcryptjs 3.0.2によるHttpOnly Cookie認証
 - セキュリティ強化: クエリ深度制限、リクエストサイズ制限、イントロスペクション制御
 - 循環依存なしでリレーションを処理するフィールドリゾルバー
@@ -257,7 +262,7 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 - DockerコンテナでPostgreSQL 15を実行
 - User、Song、Setlist、SetlistItem、セキュリティ関連テーブル等を含むPrismaスキーマ
 - 全エンティティでCUIDベースのID
-- 詳細な[データベーススキーマ定義](./docs/guide/database/DATABASE_SCHEMA.md)を参照
+- 詳細な[データベーススキーマ定義](./docs/claude/database/DATABASE_SCHEMA.md)を参照
 
 ### 主要コンポーネント
 
@@ -322,7 +327,7 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 - 依存関係管理簡素化のための単一package.json
 
 ### パッケージ管理
-- Node.js 20.11.1要件でpnpm 10.12.1を使用
+- Node.js 20.19.3要件でpnpm 10.12.1を使用
 - プロジェクトルートの単一統合package.json
 - コードフォーマット用ESLint 9.x、TypeScript 5、Prettier 3.6.2
 - **ESLint設定**: ignoresプロパティ付きフラット設定形式（eslint.config.mjs）を使用
@@ -500,9 +505,18 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 │   │   │   ├── ImageGenerator.tsx
 │   │   │   └── ShareButtons.tsx
 │   │   ├── setlist-themes/ # テーマシステム
-│   │   │   ├── BasicBlackTheme.tsx
-│   │   │   ├── BasicWhiteTheme.tsx
-│   │   │   └── themes.ts
+│   │   │   ├── BaseTheme.tsx
+│   │   │   ├── SetlistRenderer.tsx
+│   │   │   ├── SingleColumnLayout.tsx
+│   │   │   ├── SongItem.tsx
+│   │   │   ├── TwoColumnLayout.tsx
+│   │   │   ├── constants.ts
+│   │   │   ├── index.ts
+│   │   │   ├── themeColors.ts
+│   │   │   ├── types.ts
+│   │   │   └── theme/
+│   │   │       ├── BlackTheme.tsx
+│   │   │       └── WhiteTheme.tsx
 │   │   └── songs/          # 楽曲管理コンポーネント
 │   │       ├── SongList.tsx
 │   │       └── SongListItem.tsx

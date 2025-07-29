@@ -118,45 +118,11 @@ pnpm install
 cp .env.example .env.local
 ```
 
-環境変数ファイル（`.env.local`）を編集:
-```bash
-# データベース接続
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/setlist_generator"
+環境変数の詳細設定については [環境変数設定ガイド](./docs/claude/deployment/ENVIRONMENT_VARIABLES.md) を参照してください。
 
-# 認証用シークレット（32文字以上の強力なランダム文字列に変更）
-JWT_SECRET="your-super-secret-jwt-key-change-this-in-production"
-
-# セキュリティ用シークレット（全て異なる値に設定）
-CSRF_SECRET="your-csrf-secret-key-different-from-jwt"
-IP_HASH_SALT="unique-salt-for-ip-address-hashing"
-CRON_SECRET="secret-for-vercel-cron-job-authentication"
-
-# Docker PostgreSQL パスワード（ローカル開発用）
-POSTGRES_PASSWORD="postgres"
-
-# メール配信システム（必須）
-RESEND_API_KEY="your-resend-api-key-here"
-RESEND_FROM_EMAIL="onboarding@resend.dev"
-
-# メール認証用シークレット（32文字以上）
-EMAIL_VERIFICATION_SECRET="your-email-verification-secret-here"
-PASSWORD_RESET_SECRET="your-password-reset-secret-here"
-
-# Google OAuth設定（必須）
-GOOGLE_CLIENT_ID="your-google-client-id.apps.googleusercontent.com"
-GOOGLE_CLIENT_SECRET="your-google-client-secret"
-
-# NextAuth設定
-NEXTAUTH_URL="http://localhost:3000"
-NEXTAUTH_SECRET="your-nextauth-secret-same-as-jwt-secret"
-```
-
-> **セキュリティ注意**: 
-> - 本番環境では必ず強力で異なる秘密鍵を設定してください
-> - 全てのシークレットは異なる値にしてください
-> - シークレット生成方法: `openssl rand -base64 32` (IP_HASH_SALTは`openssl rand -base64 16`)
-> - Google OAuth設定はGoogle Cloud Consoleで取得してください
-> - Resend APIキーはResendダッシュボードで取得してください
+> **重要**: 
+> - 必要な環境変数と設定方法の詳細は上記ガイドに記載されています
+> - セキュリティ関連の環境変数は必ず強力なランダム値を使用してください
 
 4. データベースを起動:
 
@@ -213,29 +179,51 @@ pnpm generate     # Prismaクライアント生成
 
 詳細なアーキテクチャ情報は [CLAUDE.md](./CLAUDE.md) を参照してください。
 
-**GraphQLアーキテクチャの詳細解説**: [GraphQL-Architecture-Guide.md](./docs/api/graphql/GraphQL-Architecture-Guide.md) でレストラン比喩を使った分かりやすい解説を提供しています。
+**GraphQLアーキテクチャの詳細解説**: [GRAPHQL_ARCHITECTURE.md](./docs/claude/api/GRAPHQL_ARCHITECTURE.md) で技術仕様を確認できます。初心者向けガイドは[GRAPHQL_BEGINNER_GUIDE.md](./docs/guide/api/GRAPHQL_BEGINNER_GUIDE.md)を参照してください。
 
 ### ドキュメント構造
 
 ```
 docs/
-├── api/                    # API関連ドキュメント
-│   ├── API_ROUTES.md      # REST APIエンドポイント詳細
-│   └── graphql/           # GraphQL専門ドキュメント
-│       ├── GraphQL-Architecture-Guide.md    # アーキテクチャガイド
-│       ├── GraphQL-Beginner-Guide.md        # 初心者向けガイド
-│       └── GraphQL-Libraries-Guide.md       # ライブラリ詳細
-├── deployment/            # デプロイ・運用関連
-│   ├── VERCEL_DEPLOYMENT_GUIDE.md          # Vercelデプロイガイド
-│   ├── SUPABASE_OPTIMIZATION_CHECKLIST.md  # Supabase最適化
-│   └── SUPABASE_RLS_SETUP_FINAL.sql        # RLS設定
-├── development/           # 開発関連
-│   └── PRISMA_OPTIMIZATION_GUIDE.md        # Prisma最適化
-├── security/              # セキュリティ関連
-│   ├── SECURITY.md                         # セキュリティアーキテクチャ
-│   └── SECURITY_TEST_PLAN.md               # セキュリティテストプラン
-└── project/               # プロジェクト管理
-    └── HISTORY.md                          # 更新履歴
+├── claude/                # Claude・開発者向け技術仕様
+│   ├── HISTORY.md         # プロジェクト履歴
+│   ├── SECURITY.md        # セキュリティアーキテクチャ
+│   ├── api/               # API関連技術仕様
+│   │   ├── API_ROUTES.md
+│   │   ├── EMAIL_AUTHENTICATION.md
+│   │   └── GRAPHQL_ARCHITECTURE.md
+│   ├── database/          # データベース関連技術仕様
+│   │   ├── DATABASE_SCHEMA.md
+│   │   └── PRISMA_OPTIMIZATION.md
+│   ├── deployment/        # デプロイメント関連技術仕様
+│   │   ├── ENVIRONMENT_VARIABLES.md
+│   │   └── VERCEL_DEPLOYMENT.md
+│   └── security/          # セキュリティ関連技術仕様
+│       └── SECURITY_LOGGING_SYSTEM.md
+└── guide/                 # 人が読むためのガイド
+    ├── api/               # API関連ガイド
+    │   ├── README.md
+    │   ├── GRAPHQL_BEGINNER_GUIDE.md
+    │   └── GRAPHQL_LIBRARIES_GUIDE.md
+    ├── auth/              # 認証関連ガイド
+    │   ├── README.md
+    │   ├── GOOGLE_OAUTH_FLOW_GUIDE.md
+    │   └── GOOGLE_OAUTH_IMPLEMENTATION_GUIDE.md
+    ├── database/          # データベース関連ガイド
+    │   ├── README.md
+    │   ├── PRISMA_BEGINNER_GUIDE.md
+    │   └── PRISMA_GRAPHQL_INTEGRATION_GUIDE.md
+    ├── deployment/        # デプロイメント関連ガイド
+    │   ├── README.md
+    │   ├── DATABASE_MIGRATION_GUIDE.md
+    │   ├── SUPABASE_OPTIMIZATION_CHECKLIST.md
+    │   └── SUPABASE_RLS_SETUP_FINAL.sql
+    └── security/          # セキュリティ関連ガイド
+        ├── README.md
+        ├── CSP_NONCE_IMPLEMENTATION_GUIDE.md
+        ├── REACT_XSS_PROTECTION_GUIDE.md
+        ├── SECURITY_BEGINNERS_GUIDE.md
+        └── SECURITY_TEST_PLAN.md
 ```
 
 ### セキュリティ
@@ -272,62 +260,30 @@ docs/
 - **監査ログ**: 全セキュリティイベントの永続化
 - **Docker強化**: セキュリティ設定済みコンテナ
 
-詳細なセキュリティ仕様は [SECURITY.md](./docs/security/SECURITY.md) を参照してください。
+詳細なセキュリティ仕様は [SECURITY.md](./docs/claude/SECURITY.md) を参照してください。
 
 ## 本番デプロイ（Vercel）
 
 ### デプロイ手順
 
-詳細なデプロイ手順は [VERCEL_DEPLOYMENT_GUIDE.md](./docs/deployment/VERCEL_DEPLOYMENT_GUIDE.md) を参照してください。
+詳細なデプロイ手順は [VERCEL_DEPLOYMENT.md](./docs/claude/deployment/VERCEL_DEPLOYMENT.md) を参照してください。
 
 ### 必要な環境変数
 
-| 環境変数名 | 説明 | 必須 | 有効期限 | 生成方法 |
-|-----------|------|------|----------|----------|
-| `DATABASE_URL` | PostgreSQL接続文字列 | ✅ | 永続 | データベースプロバイダーから取得 |
-| `JWT_SECRET` | JWT認証用シークレット (HMAC-SHA256署名) | ✅ | 2時間 | `openssl rand -base64 32` |
-| `CSRF_SECRET` | CSRF保護用シークレット (JWT_SECRETと異なる値) | ✅ | リクエスト毎 | `openssl rand -base64 32` |
-| `IP_HASH_SALT` | IPアドレス匿名化用ソルト (ログ保護) | ✅ | 永続 | `openssl rand -base64 16` |
-| `CRON_SECRET` | Cronジョブ認証用シークレット (自動削除) | ✅ | 永続 | `openssl rand -base64 32` |
-| `NODE_ENV` | 実行環境 | ❌ | 永続 | Vercelが自動設定 |
+本番環境で必要な環境変数の詳細については [環境変数設定ガイド](./docs/claude/deployment/ENVIRONMENT_VARIABLES.md) を参照してください。
 
-#### 🔒 トークンセキュリティ要件
+主要な環境変数：
+- `DATABASE_URL` - PostgreSQL接続文字列
+- `JWT_SECRET` - JWT認証用シークレット
+- `CSRF_SECRET` - CSRF保護用シークレット  
+- `RESEND_API_KEY` - メール送信APIキー
+- `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` - Google OAuth設定
 
-**必須事項**:
-- 全てのシークレットは**32文字以上**の強力なランダム文字列
-- `JWT_SECRET`と`CSRF_SECRET`は**必ず異なる値**を使用
-- 本番環境では`.env.example`の値を**絶対に使用しない**
+詳細な設定方法、セキュリティ要件、推奨ローテーション周期は上記ガイドをご確認ください。
 
-**トークン利用シーン**:
-- **JWT_SECRET**: ユーザーログイン時のトークン署名・検証
-- **CSRF_SECRET**: フォーム送信・データ変更時の攻撃防御
-- **IP_HASH_SALT**: セキュリティログでのプライバシー保護
-- **CRON_SECRET**: 自動メンテナンス処理の認証
+### デプロイ時の注意事項
 
-**推奨ローテーション**:
-- JWT/CSRF シークレット: 3-6ヶ月毎
-- その他: 年次または侵害発生時
-
-### データベース選択肢
-- **Vercel Postgres**: Vercel統合が最も簡単（推奨）
-- **Supabase**: 無料枠が充実
-- **Neon**: サーバーレスPostgreSQL
-- **Railway**: シンプルな管理画面
-
-### セキュリティチェックリスト
-- [ ] 全てのシークレット環境変数が異なる値に設定されている
-- [ ] シークレットが32文字以上（IP_HASH_SALTは16文字以上）
-- [ ] データベース接続がSSL/TLSを使用している
-- [ ] Google OAuth設定が正しく構成されている
-- [ ] Resendメール設定が正しく構成されている
-- [ ] Vercel Cron Jobsが設定されている（`/api/cron/cleanup`）
-
-### 注意事項
-- `docker-compose.yml`はローカル開発専用
-- 本番環境ではマネージドデータベースサービスを使用
-- セキュリティ設定は全てデータベースベースで動作
-- Google OAuthとResendメール機能は必須設定
-- 環境変数の合計サイズは64KB以下に収める
+データベース選択、セキュリティチェックリスト、その他の詳細な注意事項については [Vercelデプロイガイド](./docs/claude/deployment/VERCEL_DEPLOYMENT.md) を参照してください。
 ## ライセンス
 
 MIT License
