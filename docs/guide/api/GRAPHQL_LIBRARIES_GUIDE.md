@@ -4,8 +4,8 @@
 
 ## 📚 関連ドキュメント
 
-- **[GraphQLアーキテクチャガイド](./GraphQL-Architecture-Guide.md)** - アーキテクチャの全体像
-- **[GraphQL初心者ガイド](./GraphQL-Beginner-Guide.md)** - GraphQL入門とレストラン比喩
+- **[GraphQLアーキテクチャ](../../claude/api/GRAPHQL_ARCHITECTURE.md)** - アーキテクチャの全体像
+- **[GraphQL初心者ガイド](./GRAPHQL_BEGINNER_GUIDE.md)** - GraphQL入門とレストラン比喩
 
 ## 🎯 なぜこれらのライブラリが必要なのか？
 

@@ -4,9 +4,9 @@
 
 ## 📚 関連ドキュメント
 
-- **[Prisma最適化ガイド](./PRISMA_OPTIMIZATION_GUIDE.md)** - パフォーマンス最適化
-- **[PrismaとGraphQLの統合ガイド](./Prisma-GraphQL-Integration-Guide.md)** - GraphQLとの連携
-- **[GraphQL初心者ガイド](../api/graphql/GraphQL-Beginner-Guide.md)** - GraphQLの基本概念
+- **[Prisma最適化ガイド](../../claude/database/PRISMA_OPTIMIZATION.md)** - パフォーマンス最適化
+- **[PrismaとGraphQLの統合ガイド](./PRISMA_GRAPHQL_INTEGRATION_GUIDE.md)** - GraphQLとの連携
+- **[GraphQL初心者ガイド](../api/GRAPHQL_BEGINNER_GUIDE.md)** - GraphQLの基本概念
 
 ## 🧙‍♂️ Prismaとは何なのか？
 
@@ -744,8 +744,8 @@ Prismaをマスターして、データベースを自在に操る魔法使い�
 
 ### 🔗 次のステップ
 
-1. [Prisma最適化ガイド](./PRISMA_OPTIMIZATION_GUIDE.md)でパフォーマンスを向上
-2. [PrismaとGraphQLの統合ガイド](./Prisma-GraphQL-Integration-Guide.md)でAPIとの連携を学習
+1. [Prisma最適化ガイド](../../claude/database/PRISMA_OPTIMIZATION.md)でパフォーマンスを向上
+2. [PrismaとGraphQLの統合ガイド](./PRISMA_GRAPHQL_INTEGRATION_GUIDE.md)でAPIとの連携を学習
 3. 実際のプロジェクトでPrismaを使用
 
 Happy Coding with Prisma! 🎉✨

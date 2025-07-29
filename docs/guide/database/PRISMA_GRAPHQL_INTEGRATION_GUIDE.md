@@ -4,9 +4,9 @@
 
 ## 📚 関連ドキュメント
 
-- **[GraphQL初心者ガイド](../api/graphql/GraphQL-Beginner-Guide.md)** - GraphQLの基本概念
-- **[GraphQLアーキテクチャガイド](../api/graphql/GraphQL-Architecture-Guide.md)** - アーキテクチャの全体像と処理フロー
-- **[Prisma最適化ガイド](./PRISMA_OPTIMIZATION_GUIDE.md)** - パフォーマンス最適化
+- **[GraphQL初心者ガイド](../api/GRAPHQL_BEGINNER_GUIDE.md)** - GraphQLの基本概念
+- **[GraphQLアーキテクチャ](../../claude/api/GRAPHQL_ARCHITECTURE.md)** - アーキテクチャの全体像と処理フロー
+- **[Prisma最適化ガイド](../../claude/database/PRISMA_OPTIMIZATION.md)** - パフォーマンス最適化
 
 **💡 このガイドの位置づけ**: アーキテクチャガイドで学んだ全体像を基に、PrismaとGraphQLの具体的な統合方法を詳しく解説します。
 
@@ -641,8 +641,8 @@ PrismaとGraphQLの統合により、以下のメリットが得られます：
 
 ### 🔗 次のステップ
 
-1. [GraphQL初心者ガイド](./GraphQL-Beginner-Guide.md)でGraphQLの基本を学習
-2. [Prisma最適化ガイド](../../development/PRISMA_OPTIMIZATION_GUIDE.md)でパフォーマンスを向上
+1. [GraphQL初心者ガイド](../api/GRAPHQL_BEGINNER_GUIDE.md)でGraphQLの基本を学習
+2. [Prisma最適化ガイド](../../claude/database/PRISMA_OPTIMIZATION.md)でパフォーマンスを向上
 3. 実際のプロジェクトでパターンを適用
 
 Happy Coding! 🎉

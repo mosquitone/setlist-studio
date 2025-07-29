@@ -1,6 +1,6 @@
 # セキュリティ初心者ガイド
 
-このドキュメントでは、Setlist Studioのセキュリティ機能について、初心者にも分かりやすく解説します。技術的な詳細については[React XSS対策ガイド](./React-XSS-Protection-Guide.md)も参照してください。
+このドキュメントでは、Setlist Studioのセキュリティ機能について、初心者にも分かりやすく解説します。技術的な詳細については[React XSS対策ガイド](./REACT_XSS_PROTECTION_GUIDE.md)も参照してください。
 
 ## 目次
 
@@ -131,7 +131,7 @@ const userComment = '<script>alert("攻撃！")</script>';
 // 画面には「<script>alert("攻撃！")</script>」と文字として表示される
 ```
 
-詳しい技術的な解説は[React XSS対策ガイド](./React-XSS-Protection-Guide.md)を参照してください。
+詳しい技術的な解説は[React XSS対策ガイド](./REACT_XSS_PROTECTION_GUIDE.md)を参照してください。
 
 ## 認証とセッション管理
 
@@ -332,7 +332,7 @@ Setlist Studioは、複数のセキュリティレイヤーを実装すること
 
 ### 初心者向け
 - **現在のドキュメント** - セキュリティの基本概念
-- [React XSS対策ガイド](./React-XSS-Protection-Guide.md) - Reactの安全機能の詳細
+- [React XSS対策ガイド](./REACT_XSS_PROTECTION_GUIDE.md) - Reactの安全機能の詳細
 
 ### 上級者向け
 - [SECURITY.md](../../SECURITY.md) - 詳細な技術仕様

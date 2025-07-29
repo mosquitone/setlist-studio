@@ -4,9 +4,9 @@
 
 ## 📚 関連ドキュメント
 
-- **[GraphQL初心者ガイド](./GraphQL-Beginner-Guide.md)** - GraphQL入門とレストラン比喩
-- **[GraphQLライブラリガイド](./GraphQL-Libraries-Guide.md)** - 使用ライブラリの詳細解説
-- **[PrismaとGraphQLの統合ガイド](../../database/Prisma-GraphQL-Integration-Guide.md)** - 具体的な実装方法とベストプラクティス
+- **[GraphQL初心者ガイド](../../guide/api/GRAPHQL_BEGINNER_GUIDE.md)** - GraphQL入門とレストラン比喩
+- **[GraphQLライブラリガイド](../../guide/api/GRAPHQL_LIBRARIES_GUIDE.md)** - 使用ライブラリの詳細解説
+- **[PrismaとGraphQLの統合ガイド](../../guide/database/PRISMA_GRAPHQL_INTEGRATION_GUIDE.md)** - 具体的な実装方法とベストプラクティス
 
 **💡 このガイドの位置づけ**: GraphQLアーキテクチャの全体像を把握し、具体的な実装は統合ガイドで学習してください。
 
@@ -697,6 +697,6 @@ GraphQL APIを提供するためのサーバーライブラリ。
 5. **Reactコンポーネント実装** (`useQuery`, `useMutation`) → UI統合
 
 詳細な実装方法については、以下のガイドを参照：
-- [GraphQL初心者ガイド](./GraphQL-Beginner-Guide.md)
-- [GraphQLライブラリガイド](./GraphQL-Libraries-Guide.md)
-- [PrismaとGraphQLの統合ガイド](../../database/Prisma-GraphQL-Integration-Guide.md)
+- [GraphQL初心者ガイド](../../guide/api/GRAPHQL_BEGINNER_GUIDE.md)
+- [GraphQLライブラリガイド](../../guide/api/GRAPHQL_LIBRARIES_GUIDE.md)
+- [PrismaとGraphQLの統合ガイド](../../guide/database/PRISMA_GRAPHQL_INTEGRATION_GUIDE.md)

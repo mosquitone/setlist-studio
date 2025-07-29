@@ -4,8 +4,8 @@
 
 ## 📚 関連ドキュメント
 
-- **[GraphQLアーキテクチャガイド](./GraphQL-Architecture-Guide.md)** - アーキテクチャの全体像
-- **[GraphQLライブラリガイド](./GraphQL-Libraries-Guide.md)** - 使用ライブラリの詳細解説
+- **[GraphQLアーキテクチャ](../../claude/api/GRAPHQL_ARCHITECTURE.md)** - アーキテクチャの全体像
+- **[GraphQLライブラリガイド](./GRAPHQL_LIBRARIES_GUIDE.md)** - 使用ライブラリの詳細解説
 
 ## 🍽️ GraphQL初心者向け：レストラン完全版
 
@@ -533,8 +533,8 @@ GraphQLは最初は複雑に感じるかもしれませんが、**レストラ�
 
 ### 🚀 次のステップ
 
-1. [GraphQLアーキテクチャガイド](./GraphQL-Architecture-Guide.md)でアーキテクチャの全体像を学習
-2. [GraphQLライブラリガイド](./GraphQL-Libraries-Guide.md)で使用ライブラリの詳細を確認
+1. [GraphQLアーキテクチャ](../../claude/api/GRAPHQL_ARCHITECTURE.md)でアーキテクチャの全体像を学習
+2. [GraphQLライブラリガイド](./GRAPHQL_LIBRARIES_GUIDE.md)で使用ライブラリの詳細を確認
 3. 実際のコードを書いて練習
 
 GraphQLをマスターして、現代的なWebアプリケーション開発を楽しみましょう！

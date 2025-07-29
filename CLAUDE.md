@@ -79,7 +79,17 @@ export default async function RootLayout({ children }) {
 
 ### データベーススキーマ変更時の対応
 データベーススキーマ（Prismaスキーマ）を変更した場合は、必ず以下のドキュメントも更新すること：
-- [データベーススキーマ定義](./docs/guide/database/DATABASE_SCHEMA.md) - 全テーブル定義の詳細説明
+- [データベーススキーマ定義](./docs/claude/database/DATABASE_SCHEMA.md) - 全テーブル定義の詳細説明
+
+### セキュリティログ・監査ログ実装時の対応
+セキュリティログや監査ログ機能を変更・追加した場合は、必ず以下のドキュメントも更新すること：
+- [セキュリティログ・監査ログシステム](./docs/claude/security/SECURITY_LOGGING_SYSTEM.md) - ログシステムの詳細説明
+
+### 技術仕様ドキュメント
+以下の技術仕様は実装時に参照すること：
+- [メール認証システム実装](./docs/claude/api/EMAIL_AUTHENTICATION.md) - メール認証の技術仕様
+- [GraphQLアーキテクチャ](./docs/claude/api/GRAPHQL_ARCHITECTURE.md) - GraphQL実装詳細
+- [Prisma接続最適化](./docs/claude/database/PRISMA_OPTIMIZATION.md) - DB接続の最適化設定
 
 ### Git操作
 - **GitHub CLI**: `gh` コマンドが利用可能（v2.74.1）- プルリクエスト、Issue管理
@@ -357,30 +367,51 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 ### 本番デプロイ（Vercel）
 
 本番環境へのデプロイ手順、環境変数設定、Vercel Functions設定については以下のドキュメントを参照：
-- [Vercelデプロイガイド](./docs/claude/VERCEL_DEPLOYMENT_GUIDE.md)
-- [環境変数設定ガイド](./docs/claude/ENVIRONMENT_VARIABLES.md)
+- [Vercelデプロイガイド](./docs/claude/deployment/VERCEL_DEPLOYMENT.md)
+- [環境変数設定ガイド](./docs/claude/deployment/ENVIRONMENT_VARIABLES.md)
 
 ### プロジェクト構造
 ```
 /                           # Next.jsアプリケーションルート
-├── docs/                   # 技術ドキュメント（構造化済み）
-│   ├── api/                # API・GraphQL関連ドキュメント
-│   │   ├── API_ROUTES.md
-│   │   ├── GRAPHQL_BEGINNERS_GUIDE.md
-│   │   ├── GRAPHQL_CIRCULAR_DEPS_RESOLUTION.md
-│   │   └── GRAPHQL_SCHEMA_TYPES.md
-│   ├── database/           # データベース・Prisma関連ドキュメント
-│   │   ├── PRISMA_BEGINNERS_GUIDE.md
-│   │   ├── PRISMA_OPTIMIZATION_GUIDE.md
-│   │   └── PRISMA_GRAPHQL_INTEGRATION.md
-│   ├── deployment/         # デプロイ・運用関連ドキュメント
-│   │   ├── VERCEL_DEPLOYMENT_GUIDE.md
-│   │   └── SUPABASE_SETUP_GUIDE.md
-│   ├── security/           # セキュリティ関連ドキュメント
-│   │   ├── SECURITY.md
-│   │   └── SECURITY_TEST_PLAN.md
-│   └── project/            # プロジェクト管理ドキュメント
-│       └── HISTORY.md
+├── docs/                   # 技術ドキュメント
+│   ├── claude/             # Claude・開発者向け技術仕様
+│   │   ├── HISTORY.md      # プロジェクト履歴
+│   │   ├── SECURITY.md     # セキュリティアーキテクチャ
+│   │   ├── api/            # API関連技術仕様
+│   │   │   ├── API_ROUTES.md
+│   │   │   ├── EMAIL_AUTHENTICATION.md
+│   │   │   └── GRAPHQL_ARCHITECTURE.md
+│   │   ├── database/       # データベース関連技術仕槕
+│   │   │   ├── DATABASE_SCHEMA.md
+│   │   │   └── PRISMA_OPTIMIZATION.md
+│   │   ├── deployment/     # デプロイメント関連技術仕様
+│   │   │   ├── ENVIRONMENT_VARIABLES.md
+│   │   │   └── VERCEL_DEPLOYMENT.md
+│   │   └── security/       # セキュリティ関連技術仕様
+│   │       └── SECURITY_LOGGING_SYSTEM.md
+│   └── guide/              # 人が読むためのガイド
+│       ├── api/            # API関連ガイド
+│       │   ├── README.md
+│       │   ├── GRAPHQL_BEGINNER_GUIDE.md
+│       │   └── GRAPHQL_LIBRARIES_GUIDE.md
+│       ├── auth/           # 認証関連ガイド
+│       │   ├── README.md
+│       │   ├── GOOGLE_OAUTH_FLOW_GUIDE.md
+│       │   └── GOOGLE_OAUTH_IMPLEMENTATION_GUIDE.md
+│       ├── database/       # データベース関連ガイド
+│       │   ├── README.md
+│       │   ├── PRISMA_BEGINNER_GUIDE.md
+│       │   └── PRISMA_GRAPHQL_INTEGRATION_GUIDE.md
+│       ├── deployment/     # デプロイメント関連ガイド
+│       │   ├── README.md
+│       │   ├── DATABASE_MIGRATION_GUIDE.md
+│       │   └── SUPABASE_OPTIMIZATION_CHECKLIST.md
+│       └── security/       # セキュリティ関連ガイド
+│           ├── README.md
+│           ├── CSP_NONCE_IMPLEMENTATION_GUIDE.md
+│           ├── REACT_XSS_PROTECTION_GUIDE.md
+│           ├── SECURITY_BEGINNERS_GUIDE.md
+│           └── SECURITY_TEST_PLAN.md
 ├── src/
 │   ├── app/                # Next.js App Router
 │   │   ├── api/            # APIルート（Vercel Functions）
@@ -567,11 +598,17 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 ### 主要ディレクトリ詳細
 
 **docs/**: 技術ドキュメント（構造化済み）
-- `api/`: API Routes・GraphQL関連ドキュメント
-- `database/`: Prisma関連ドキュメント（初心者ガイド・最適化・GraphQL統合）
-- `deployment/`: Vercelデプロイ・Supabase設定
-- `security/`: セキュリティアーキテクチャ・テストプラン
-- `project/`: 更新履歴・プロジェクト管理
+- `claude/`: Claude・開発者向け技術仕槕
+  - `api/`: API Routes、メール認証、GraphQLアーキテクチャ
+  - `database/`: データベーススキーマ、Prisma最適化
+  - `deployment/`: Vercelデプロイ、環境変数
+  - `security/`: セキュリティログシステム
+- `guide/`: 人が読むためのガイド（各フォルダにREADME.md付き）
+  - `api/`: GraphQL初心者ガイド、ライブラリガイド
+  - `auth/`: Google OAuth実装ガイド
+  - `database/`: Prisma初心者ガイド、統合ガイド
+  - `deployment/`: マイグレーションガイド、Supabase最適化
+  - `security/`: CSP実装、XSS対策、初心者ガイド、テストプラン
 
 **src/app/**: Next.js App Router
 - `api/`: Vercel Functions（auth、csrf、graphql、security）
@@ -640,7 +677,7 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 
 ## API Routes詳細
 
-詳細なAPI仕様については、[API_ROUTES.md](./docs/claude/API_ROUTES.md)を参照してください。
+詳細なAPI仕様については、[APIルート仕様](./docs/claude/api/API_ROUTES.md)を参照してください。
 
 ### 主要エンドポイント
 - `/api/auth` - JWT認証管理
@@ -715,7 +752,7 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 
 ## セキュリティアーキテクチャ
 
-包括的なセキュリティ実装については、[SECURITY.md](./docs/claude/SECURITY.md)を参照してください。
+包括的なセキュリティ実装については、[セキュリティアーキテクチャ](./docs/claude/SECURITY.md)を参照してください。
 
 ### 主要セキュリティ機能
 - **HttpOnly Cookie認証**: XSS攻撃防止
@@ -760,4 +797,5 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 
 ## 更新履歴
 
-最新の開発履歴と変更記録については、[HISTORY.md](./docs/claude/HISTORY.md)を参照してください。
+最新の開発履歴と変更記録については、[プロジェクト履歴](./docs/claude/HISTORY.md)を参照してください。
+本セクションを更新する段階で日付が古いものは、[プロジェクト履歴](./docs/claude/HISTORY.md)へ移動するようにお願いします。

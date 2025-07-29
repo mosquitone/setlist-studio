@@ -55,5 +55,5 @@
 
 ## 関連ドキュメント
 
-- [Vercelデプロイガイド](./VERCEL_DEPLOYMENT_GUIDE.md)
-- [セキュリティアーキテクチャ](./SECURITY.md)
+- [Vercelデプロイ設定](./VERCEL_DEPLOYMENT.md)
+- [セキュリティアーキテクチャ](../SECURITY.md)
