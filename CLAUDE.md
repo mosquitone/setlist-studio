@@ -2,121 +2,88 @@
 
 このファイルは、Claude Code（claude.ai/code）がこのリポジトリでコード作業を行う際のガイダンスを提供します。
 
-## プロジェクト概要
+## 重要な制約
+
+### 🔒 セキュリティ（CSP実装）
+
+**必須**: Next.js 15のApp RouterでCSP（Content Security Policy）を実装する際、動的ページではnonce + strict-dynamicを使用すること。この設定を誤ると、本番環境で動的ページが完全に表示されなくなります。
+
+**必須**: `strict-dynamic`の併用が必須。Next.jsの動的スクリプトを安全に許可する。
+
+**必須**: nonceは毎リクエストで再生成すること。使い回しは厳禁。
+
+**重要**: layout.tsxでの実装（最重要）- middlewareで設定されたnonceを取得し、Script要素とWebpackに適用すること。
+
+**絶対禁止**: 本番環境で`unsafe-inline`を使用しない。XSS攻撃の重大なリスクがある。
+
+### 🛠️ 開発ワークフロー
+
+**重要**: コミット前に、必ずCLAUDE.mdと参照先ドキュメントを更新するかを検討すること。
+
+**必須**: 更新履歴を更新する段階で日付が古いものは、[プロジェクト履歴](./docs/claude/HISTORY.md)へ移動するようにお願いします。
+
+**必須**: 変数、コンポーネント名、ファイル名全てにおいて、名が体を表す命名になっていること。
+
+**必須**: TypeScriptの厳格な型定義、any型の使用は避ける。
+
+**必須**: 2箇所以上利用される処理・コンポーネントは、DRY原則に基づき再利用性を高めるため共通化する。
+
+**必須**: プライバシーポリシーと利用規約以外において国際化（i18n）対応を行う。
+
+**必須**: GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサーバー（mcp**github**で始まるツール）を優先的に使用すること。通常のgitコマンドよりもMCPサーバーを使用する。
+
+### 💾 データベース操作
+
+**重要**: マイグレーション操作前に必ず [データベースマイグレーション完全ガイド](./docs/guide/deployment/DATABASE_MIGRATION_GUIDE.md) を参照すること。
+
+## 1. プロジェクト基本情報
+
+### プロジェクト概要
 
 mosquitone Emotional Setlist Studioは、音楽アーティスト向けのモダンなセットリスト生成アプリケーションです。ユーザー認証、楽曲管理、セットリスト作成機能を備えています。Vercel Functionsを活用したGraphQL APIルートを持つ統一されたNext.jsアーキテクチャを使用し、本番環境デプロイ対応済みです。
 
 ### リポジトリ構成
+
 - **開発リポジトリ**: GitHub（このリポジトリ）
 - **デプロイリポジトリ**: GitLab（https://gitlab.com/mosquitone8/setlist-studio）
 - **デプロイメント**: Vercelを通じてGitLabリポジトリから本番環境へデプロイ
 
-## ⚠️ クリティカル: CSP Nonce実装（Next.js 15 + App Router）
-
-### 🚨 重要：本番環境での動的ページ表示問題と解決方法（2025-07-27）
-
-Next.js 15のApp Routerで動的ページ（認証が必要なページ等）にCSP（Content Security Policy）を実装する際、以下の対応が**必須**です。この設定を誤ると、本番環境で動的ページが完全に表示されなくなります。
-
-#### 問題の詳細
-- **症状**: 動的ページでヘッダーのみ表示され、コンテンツが表示されない
-- **原因**: Next.jsの内部スクリプト（`__NEXT_DATA__`、チャンクローダー等）がCSPによりブロックされる
-- **影響**: プロフィール、セットリスト編集等の認証必須ページが機能しない
-
-#### 正しい実装方法
-
-1. **middleware.ts**での実装:
-```typescript
-// 動的ページではnonce + strict-dynamicを使用（unsafe-inlineは使用しない！）
-const scriptSrc = isStaticPage
-  ? `script-src 'self' 'unsafe-inline' ${isDev ? "'unsafe-eval'" : ''} https://accounts.google.com`
-  : `script-src 'self' 'nonce-${nonce}' ${isDev ? "'unsafe-eval'" : "'wasm-unsafe-eval'"} 'strict-dynamic' https://accounts.google.com`;
-```
-
-2. **layout.tsx**での実装（最重要）:
-```typescript
-import { headers } from 'next/headers';
-
-export default async function RootLayout({ children }) {
-  // middlewareで設定されたnonceを取得
-  const nonce = (await headers()).get('x-nonce');
-  
-  return (
-    <html lang="ja">
-      <head>
-        {/* Script要素にnonceを適用 */}
-        <Script nonce={nonce || undefined} ... />
-      </head>
-      <body>
-        {/* WebpackにもNonceを伝える（Next.js 15必須） */}
-        {nonce && (
-          <Script
-            id="webpack-nonce"
-            strategy="afterInteractive"
-            nonce={nonce}
-            dangerouslySetInnerHTML={{
-              __html: `__webpack_nonce__ = "${nonce}";`,
-            }}
-          />
-        )}
-        {children}
-      </body>
-    </html>
-  );
-}
-```
-
-#### セキュリティ上の注意点
-- **絶対に`unsafe-inline`を本番環境で使用しない**: XSS攻撃の重大なリスク
-- **`strict-dynamic`の併用が必須**: Next.jsの動的スクリプトを安全に許可
-- **nonceは毎リクエストで再生成**: 使い回しは厳禁
-
-この実装により、セキュリティを維持しながらNext.js 15の動的ページが正常に動作します。
-
-
-### データベーススキーマ変更時の対応
-データベーススキーマ（Prismaスキーマ）を変更した場合は、必ず以下のドキュメントも更新すること：
-- [データベーススキーマ定義](./docs/claude/database/DATABASE_SCHEMA.md) - 全テーブル定義の詳細説明
-
-### セキュリティログ・監査ログ実装時の対応
-セキュリティログや監査ログ機能を変更・追加した場合は、必ず以下のドキュメントも更新すること：
-- [セキュリティログ・監査ログシステム](./docs/claude/security/SECURITY_LOGGING_SYSTEM.md) - ログシステムの詳細説明
-
-### 技術仕様ドキュメント
-以下の技術仕様は実装時に参照すること：
-- [メール認証システム実装](./docs/claude/api/EMAIL_AUTHENTICATION.md) - メール認証の技術仕様
-- [GraphQLアーキテクチャ](./docs/claude/api/GRAPHQL_ARCHITECTURE.md) - GraphQL実装詳細
-- [Prisma接続最適化](./docs/claude/database/PRISMA_OPTIMIZATION.md) - DB接続の最適化設定
-
-### Git操作
-- **GitHub CLI**: `gh` コマンドが利用可能（v2.74.1）- プルリクエスト、Issue管理
-- **GitLab CLI**: `glab` コマンドが利用可能（v1.63.0）- プロジェクト管理、MRなど
-- **リモートリポジトリ**: 
-  - `origin`: GitHub（開発用）
-  - `gitlab`: GitLab（デプロイ用）
-
-## GitHub操作の優先順位
-GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサーバー（mcp__github__で始まるツール）を優先的に使用すること。通常のgitコマンドよりもMCPサーバーを使用する。
-
 ### MCP GitHub設定
+
 - **リポジトリオーナー**: `mosquitone`
 - **リポジトリ名**: `setlist-studio`
 - これらの値はMCPツール使用時の`owner`と`repo`パラメータに使用する
 
-## 開発コマンド
+### 技術仕様ドキュメント
 
-### 基本開発コマンド
+以下の技術仕様は実装時に参照すること：
+
+- [メール認証システム実装](./docs/claude/api/EMAIL_AUTHENTICATION.md) - メール認証の技術仕様
+- [GraphQLアーキテクチャ](./docs/claude/api/GRAPHQL_ARCHITECTURE.md) - GraphQL実装詳細
+- [Prisma接続最適化](./docs/claude/database/PRISMA_OPTIMIZATION.md) - DB接続の最適化設定
+- [データベーススキーマ定義](./docs/claude/database/DATABASE_SCHEMA.md) - 全テーブル定義の詳細説明
+- [セキュリティログ・監査ログシステム](./docs/claude/security/SECURITY_LOGGING_SYSTEM.md) - ログシステムの詳細説明
+
+## 2. 開発ガイドライン
+
+### 開発コマンド
+
+#### 基本開発コマンド
+
 - **開発サーバー起動**: `pnpm dev` (Next.js + GraphQL API を http://localhost:3000 で実行)
 - **本番ビルド**: `pnpm build`
 - **コードチェック**: `pnpm lint`
 - **lint問題の修正**: `pnpm lint:fix`
 - **TypeScript型チェック**: `npx tsc --noEmit`
 
-### GraphQL開発
+#### GraphQL開発
+
 - **GraphQLスキーマ生成**: `pnpm generate:schema` (デバッグ用スキーマファイルを生成)
 - **GraphQLスキーマファイル**: `src/lib/server/graphql/schema.graphql`
 - **TypeScript生成スキーマ**: `src/lib/server/graphql/generated-schema.ts`
 
-### データベース操作
+#### データベース操作
+
 - **初期セットアップ**: `pnpm db:setup` (セキュリティ対応PostgreSQL初回セットアップ)
 - **PostgreSQL起動**: `docker-compose up -d postgres`
 - **スキーマ変更適用**: `pnpm db:push`
@@ -124,13 +91,26 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 - **データベーススタジオ開く**: `pnpm db:studio`
 - **マイグレーション作成**: `pnpm db:migrate`
 
-### データベースマイグレーション
-- **重要**: マイグレーション操作前に必ず [データベースマイグレーション完全ガイド](./docs/guide/deployment/DATABASE_MIGRATION_GUIDE.md) を参照すること
+#### データベースマイグレーション
+
 - **Shadow DB**: 開発環境でのマイグレーション検証用データベース（本番環境では不要）
 - **開発フロー**: `pnpm db:migrate:create --name feature_name` → 自動でShadow DBでテスト → メインDBに適用
 - **本番フロー**: `pnpm db:prod:migrate:status` → `pnpm db:prod:migrate:deploy`
 
+※ マイグレーション操作前の重要事項は「重要な制約」セクションを参照してください。
+
+#### Git操作
+
+- **GitHub CLI**: `gh` コマンドが利用可能（v2.74.1）- プルリクエスト、Issue管理
+- **GitLab CLI**: `glab` コマンドが利用可能（v1.63.0）- プロジェクト管理、MRなど
+- **リモートリポジトリ**:
+  - `origin`: GitHub（開発用）
+  - `gitlab`: GitLab（デプロイ用）
+
+※ GitHub操作の優先順位は「重要な制約」セクションを参照してください。
+
 ### 環境セットアップ
+
 - **依存関係インストール**: `pnpm install`
 - **環境変数セットアップ**: `cp .env.example .env.local`
 - **必須環境変数** (`.env.local`内):
@@ -155,22 +135,27 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 
 環境変数の詳細な設定方法とテーブルは [環境変数設定ガイド](./docs/claude/deployment/ENVIRONMENT_VARIABLES.md) を参照してください。
 
-## 実装方針
+### 実装方針
 
-### 品質管理
+#### 命名規則
 
-「実装方針 > テスト・品質管理」セクションを参照。
+「重要な制約」セクションを参照してください。
 
-### ドキュメント(mdファイル)
+#### ドキュメント構成
 
-コミット前に、必ずCLAUDE.mdと参照先ドキュメントを更新するかを検討すること。
+- `docs/claude/`: 主にCLAUDE.mdで参照するドキュメント
+- `docs/guide/`: 人が読むためのガイド（各フォルダにREADME.md付き）
 
-### 命名
-変数、コンポーネント名、ファイル名全てにおいて、目的に沿った命名として正しいものになっていること
+#### 更新時の対応
+
+- データベーススキーマ変更時：[データベーススキーマ定義](./docs/claude/database/DATABASE_SCHEMA.md)を更新
+- セキュリティログ・監査ログ実装変更時：[セキュリティログ・監査ログシステム](./docs/claude/security/SECURITY_LOGGING_SYSTEM.md)を更新
+- その他、「重要な制約」セクションを参照してください。
 
 ### フォームバリデーション
+
 - **統一フレームワーク**: 全てのフォームでFormikを使用（セットリスト作成/編集、楽曲作成、楽曲編集）
-- **バリデーションタイミング**: 
+- **バリデーションタイミング**:
   - `validateOnChange={false}` - 入力中のバリデーションを無効化してUXを向上
   - `validateOnBlur={true}` - フィールドからフォーカスが外れた時にバリデーション実行
   - 送信時は自動的に全フィールドのバリデーションを実行
@@ -186,27 +171,32 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 - **FastField非推奨**: FormikのFastFieldはonBlurイベントが正しく伝播しないため使用しない
 
 ### コンポーネント設計
+
+- **再利用性・共通化**: 「重要な制約」セクションを参照してください。
 - **クライアントコンポーネント**: 'use client'ディレクティブを必要に応じて使用
 - **メモ化**: React.memoを使用してパフォーマンスを最適化（SetlistForm、SongEditDialog等）
 - **カスタムフック**: 共通ロジックは`/hooks`ディレクトリにカスタムフックとして実装
   - `useContainerWidth`: DOM要素の幅をResizeObserverで監視するフック
 - **Provider分離**: MuiProvider、ApolloProvider、SnackbarProviderは個別ファイルで管理
-- **型安全性**: TypeScriptの厳格な型定義、any型の使用は避ける
+- **型安全性**: 「重要な制約」セクションを参照してください。
 - **コンポーネントリファクタリング**: 大規模コンポーネントは定数・スタイル・レンダリング関数に分離
 
 ### スタイリング
+
 - **UIライブラリ**: Material-UI v5を基本とし、カスタムコンポーネントで拡張
 - **レスポンシブ対応**: モバイルファーストで実装、breakpointsを活用
 - **テーマ**: MUIカスタムテーマ（青/赤カラースキーム、Interフォント）
 - **スナックバー位置**: デスクトップは右下、モバイルは上部中央
 
 ### 状態管理
+
 - **認証状態**: secureAuthClientによるクライアントサイド認証状態管理
 - **フォーム状態**: Formikによる統一的なフォーム状態管理
 - **グローバル通知**: SnackbarProviderによる統一通知システム
 - **Apollo Client**: GraphQL状態はApollo Clientのキャッシュで管理
 
 ### API通信
+
 - **GraphQL優先**: データ取得・更新はGraphQL APIを使用
 - **エラーハンドリング**: Apollo ClientのonError、onCompletedで一貫したエラー処理
 - **Mutation通知**: 全てのmutation操作（作成、更新、削除）の成功・失敗はスナックバーで通知
@@ -217,40 +207,51 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 - **キャッシュ戦略**: fetchPolicy: 'cache-first'を基本とし、必要に応じて調整
 
 ### セキュリティ
+
 - **認証**: HttpOnly Cookie + JWTトークン
 - **CSRF保護**: 全てのmutationにCSRFトークンを自動付与
 - **入力検証**: クライアント側（Formik/Yup）とサーバー側（class-validator）の二重検証
 - **サニタイゼーション**: validateAndSanitizeInputによる入力値の検証
 
 ### 国際化（i18n）
+
+「重要な制約」セクションを参照してください。
+
 - **言語サポート**: 日本語・英語の完全対応
 - **メッセージ管理**: `/lib/i18n/messages/`配下にドメイン別で管理
 - **動的メタデータ**: generateMetadataで言語別のSEOメタデータを生成
 - **デフォルト言語**: 日本語（ja）
 
 ### パフォーマンス最適化
+
 - **ハイブリッドレンダリング**: 静的ページとSSRの使い分け
 - **画像最適化**: Next.js Imageコンポーネントの活用（画像生成を除く）
 - **バンドル最適化**: dynamic importとcode splittingの活用
 - **メモ化**: useMemo、useCallbackの適切な使用
 
 ### テスト・品質管理
+
 - **Lintチェック**: コミット前に`pnpm lint`を実行
 - **型チェック**: `npx tsc --noEmit`でTypeScriptエラーを確認
 - **コード整形**: Prettierによる自動整形（`pnpm lint:fix`）
 
-## アーキテクチャ概要
+## 3. 技術詳細
 
-### ハイブリッドNext.jsアーキテクチャ (Static + Serverless)
+### アーキテクチャ概要
+
+#### ハイブリッドNext.jsアーキテクチャ (Static + Serverless)
+
 アプリケーションは、モダンで性能最適化されたハイブリッドアーキテクチャを使用しています：
 
 **フロントエンド & バックエンド (Next.js 15.4.4)**
+
 - Next.js 15.4.4 App Router、TypeScript 5、ハイブリッドレンダリング戦略
 - Material-UI v5.17.1（カスタムテーマとパッケージ最適化付き）
 - Apollo Client 3.13.8 for GraphQL状態管理
 - React 19.0.0（strict mode）
 
 **GraphQL API (Vercel Functions)**
+
 - Apollo Server v4.12.2が`/api/graphql`でNext.js APIルートとして動作
 - Type-GraphQL 1.1.1によるスキーマファーストAPI開発
 - PostgreSQL用ORM Prisma 6.12.0
@@ -259,6 +260,7 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 - 循環依存なしでリレーションを処理するフィールドリゾルバー
 
 **データベース**
+
 - DockerコンテナでPostgreSQL 15を実行
 - User、Song、Setlist、SetlistItem、セキュリティ関連テーブル等を含むPrismaスキーマ
 - 全エンティティでCUIDベースのID
@@ -267,6 +269,7 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 ### 主要コンポーネント
 
 **データモデル**
+
 - `User`: 一意のemailによる認証とユーザー管理（username重複許可）
   - `authProvider`: 認証プロバイダー（"email" | "google"）- 登録方法の追跡
   - `pendingPassword`: メール変更時のパスワード一時保存（Googleユーザー→メールユーザー移行用）
@@ -275,6 +278,7 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 - `SetlistItem`: セットリストと楽曲を順序・タイミング付きで結ぶ中間テーブル
 
 **主要機能**
+
 - **セットリスト管理**: ドラッグ&ドロップ楽曲順序付きでセットリストの作成、編集、削除、複製
 - **画像生成**: 合理化されたUIで高品質なセットリスト画像生成 - テーマ選択 + ワンクリックダウンロード
 - **QRコード統合**: セットリストページへのリンク付き自動QRコード
@@ -284,6 +288,7 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 - **認証プロバイダー管理**: 登録方法追跡とGoogle→メール認証の移行機能
 
 **フロントエンドアーキテクチャ**
+
 - MUIProvider、ApolloProvider、SnackbarProviderを分離したProviderパターン
 - 青/赤カラースキーム、Interフォント付きカスタムMUIテーマ
 - HttpOnly Cookie認証とCSRF保護が設定されたApollo Client
@@ -293,12 +298,14 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 - Material-UIコンポーネントによるレスポンシブデザイン
 
 **GraphQL統合**
+
 - Apollo ClientはHttpOnly Cookieによる自動認証を使用
 - GraphQL APIはCookieベースJWTトークン検証のAuthMiddlewareを使用
 - ミューテーション用トークンベース検証によるCSRF保護
 - 統一GraphQLバージョン: v15.8.0（pnpm overrideによる互換性）
 
 ### 認証フロー
+
 - **メール認証必須**: メールアドレス登録では認証完了まで一切の機能が利用不可
 - **登録フロー**: 登録 → メール認証待ち画面 → メール認証完了 → ログイン可能
 - **認証状態ポーリング**: `/auth/check-email`で5秒間隔の自動状態更新
@@ -308,6 +315,7 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 - 状態変更操作の自動CSRF保護
 
 ### 認証プロバイダー機能
+
 - **プロバイダー追跡**: ユーザー登録時に認証方法（email/google）を記録
 - **Google認証制限**: Google認証ユーザーはパスワード変更不可（Googleアカウント管理を推奨）
 - **メールアドレス変更時のプロバイダー変更**:
@@ -319,14 +327,16 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
     - `email` → `email`: メール認証ユーザーがメール認証でメール変更
 - **UI条件表示**: プロフィールページで認証方法に応じた機能制限を実装
 
-## 重要な設定ノート
+### 重要な設定ノート
 
-### GraphQLバージョン管理
+#### GraphQLバージョン管理
+
 - pnpm overrideによる統一GraphQLバージョン: v15.8.0
 - Apollo Client 3.13.8とType-GraphQL 1.1.1の両方と互換性
 - 依存関係管理簡素化のための単一package.json
 
 ### パッケージ管理
+
 - Node.js 20.19.3要件でpnpm 10.12.1を使用
 - プロジェクトルートの単一統合package.json
 - コードフォーマット用ESLint 9.x、TypeScript 5、Prettier 3.6.2
@@ -334,6 +344,7 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 - **schema-dts 1.1.5**: JSON-LD構造化データの完全型安全実装
 
 ### Favicon設定
+
 - **マルチプラットフォーム対応**: iOS、Android、PWA、デスクトップ全対応
 - **ファイル構成**:
   - `/public/favicon.ico`: SEO・ブラウザタブ用メインアイコン（ICO形式）
@@ -343,39 +354,27 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 - **PWAマニフェスト**: `/public/manifest.json`でアプリ名・テーマカラー定義
 - **SEO最適化**: robots.txt・sitemap.xmlの動的生成（NEXT_PUBLIC_SITE_URL使用）
 
-
 ### 開発ワークフロー（ローカル）
+
 1. 依存関係インストール: `pnpm install`
 2. PostgreSQL起動（初回セットアップ）:
+
    ```bash
    pnpm db:setup
    ```
-   
-   または手動で:
-   ```bash
-   # セキュリティ設定を一時的に無効化
-   sed -i.bak 's/user: "999:999"/# user: "999:999"/' docker-compose.yml
-   sed -i.bak 's/read_only: true/# read_only: true/' docker-compose.yml
-   
-   # PostgreSQL起動と初期化
-   docker-compose down -v && docker-compose up -d postgres
-   sleep 10 && pnpm db:push
-   
-   # セキュリティ設定を再有効化
-   sed -i.bak 's/# user: "999:999"/user: "999:999"/' docker-compose.yml
-   sed -i.bak 's/# read_only: true/read_only: true/' docker-compose.yml
-   docker-compose up -d postgres
-   ```
+
 3. 開発サーバー起動: `pnpm dev`
 4. 以降の起動: `docker-compose up -d postgres && pnpm dev`
 
 ### 本番デプロイ（Vercel）
 
 本番環境へのデプロイ手順、環境変数設定、Vercel Functions設定については以下のドキュメントを参照：
+
 - [Vercelデプロイガイド](./docs/claude/deployment/VERCEL_DEPLOYMENT.md)
 - [環境変数設定ガイド](./docs/claude/deployment/ENVIRONMENT_VARIABLES.md)
 
 ### プロジェクト構造
+
 ```
 /                           # Next.jsアプリケーションルート
 ├── docs/                   # 技術ドキュメント
@@ -609,139 +608,87 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 └── vercel.json             # Vercelデプロイ設定
 ```
 
-### 主要ディレクトリ詳細
-
-**docs/**: 技術ドキュメント（構造化済み）
-- `claude/`: Claude・開発者向け技術仕槕
-  - `api/`: API Routes、メール認証、GraphQLアーキテクチャ
-  - `database/`: データベーススキーマ、Prisma最適化
-  - `deployment/`: Vercelデプロイ、環境変数
-  - `security/`: セキュリティログシステム
-- `guide/`: 人が読むためのガイド（各フォルダにREADME.md付き）
-  - `api/`: GraphQL初心者ガイド、ライブラリガイド
-  - `auth/`: Google OAuth実装ガイド
-  - `database/`: Prisma初心者ガイド、統合ガイド
-  - `deployment/`: マイグレーションガイド、Supabase最適化
-  - `security/`: CSP実装、XSS対策、初心者ガイド、テストプラン
-
-**src/app/**: Next.js App Router
-- `api/`: Vercel Functions（auth、csrf、graphql、security）
-- 各ページ: login、register、guide、profile、setlists、songs
-
-**src/components/**: Reactコンポーネント
-- `common/`: ui、layout、auth関連の共通コンポーネント
-- `forms/`: セットリスト・楽曲フォーム
-- `setlist/`: セットリスト表示・画像生成・アクション
-- `setlist-themes/`: Black/Whiteテーマシステム
-
-**src/lib/**: 共有ユーティリティ
-- `server/graphql/`: GraphQLスキーマ、リゾルバー、型定義
-- `server/email/`: メール配信システム（Circuit Breaker・リトライ機構付き信頼性向上）
-- `security/`: レート制限、脅威検出、CSRF保護、軽量監査ログ（AuditLog）
-- `i18n/`: 国際化システム（細分化済み・14ファイル構造、日本語・英語完全対応）
-- `client/`: Apollo Client、認証クライアント
+## 4. プロジェクト管理
 
 ### 現在のステータス
 
 **Setlist Studioは、本番運用可能なフル機能エンタープライズアプリケーションです**
 
+#### 完成機能
+- 認証: Google OAuth 2.0、メール認証、JWT + HttpOnly Cookie
+- セットリスト: CRUD操作、複製、公開/非公開設定
+- 楽曲管理: 個人ライブラリ、バルク操作
+- 画像生成: Black/Whiteテーマ、QRコード、ワンクリックダウンロード
+- プロフィール: ユーザー情報管理、認証プロバイダー移行
 
-#### **機能完成度**
-- **認証システム**: Google OAuth 2.0・メール認証必須・パスワードリセット・JWT + HttpOnly Cookie完全実装
-- **セットリスト管理**: 作成、編集、削除、複製、公開/非公開設定の完全CRUD
-- **楽曲管理**: 個人ライブラリ、バルク操作、セットリスト統合
-- **画像生成**: Black/Whiteテーマ、QRコード統合、ワンクリックダウンロード
-- **共有機能**: 公開セットリスト、URL共有、匿名アクセス対応
-- **プロフィール管理**: ユーザー名変更、メールアドレス変更、パスワード変更、認証プロバイダー表示
-- **認証プロバイダー管理**: Google認証ユーザーのメール認証への移行機能
+#### UX & アクセシビリティ
+- UI: Material-UI v5によるモダンでアクセシブルなインターフェース
+- 国際化: 2,200+メッセージの日本語・英語完全対応
+- ガイド: 認証手順、機能説明、完全無料利用の強調
+- エラーハンドリング: 適切なエラーメッセージと回復手順
 
-#### **品質 & セキュリティ**
-- **エンタープライズ級セキュリティ**: OWASP Top 10準拠、CSRF保護、レート制限、脅威検出
-- **国際化完全対応**: 2,200+メッセージの日本語・英語完全翻訳
-- **コード品質**: TypeScript完全型安全、ESLint準拠、共通コンポーネント化
-- **パフォーマンス**: GraphQL最適化、N+1問題解決、バンドル最適化
+#### 品質指標
+- セキュリティ: OWASP Top 10準拠、CSRF保護、レート制限
+- コード品質: TypeScript完全型安全、ESLint準拠
+- パフォーマンス: GraphQL最適化、N+1問題解決
+- SEO: 動的サイトマップ、メタデータ、検索エンジン対応
 
-#### **ユーザーエクスペリエンス**
-- **直感的UI**: Material-UI v5によるモダンでアクセシブルなインターフェース
-- **包括的ガイド**: 認証手順、機能説明、完全無料利用の強調
-- **エラーハンドリング**: 適切なエラーメッセージと回復手順
-- **SEO最適化**: 動的サイトマップ、メタデータ、検索エンジン対応
+#### 運用環境
+- デプロイ: Vercel（東京リージョン）、自動スケーリング
+- メンテナンス: 自動セキュリティクリーンアップ、監査ログ
 
-#### **開発 & 運用**
-- **本番デプロイ**: Vercel最適化、東京リージョン、自動スケーリング
-- **メンテナンス**: 自動セキュリティクリーンアップ、監査ログ
-- **開発効率**: ホットリロード、TypeScript、包括的ドキュメント
-- **PR #40改善実装**: セキュリティ強化・UX改善・メール信頼性向上完了（2025-07-19）
-  - ✅ メール認証UX改善（/auth/check-email、プログレス表示、再送信クールダウン）
-  - ✅ セキュリティ強化（軽量監査ログ、Circuit Breaker、リトライ機構）
-  - ✅ 本番環境マイグレーション対応（完全ガイド・P3005エラー対応）
-  - ✅ Vercelリソース効率化（軽量実装、コスト最適化）
-- **i18n(国際化)機能**: 完全実装・細分化完了（2025-07-23）
-  - ✅ 保守性向上: 巨大ファイル（2,400行）を14の機能別ファイルに分割
-  - ✅ 日本語・英語対応の完全なメッセージシステム（2,200+メッセージ）
-  - ✅ TypeScript型安全性・既存コード互換性完全維持
-  - ✅ 認証状態メッセージ・フォームバリデーション国際化
-  - ✅ メール機能WithDetails版への移行完了
-  - ✅ 全UIコンポーネントの多言語対応実装
-- **利用ガイド改善**: 包括的ユーザーガイド実装（2025-07-22）
-  - ✅ 認証・パスワード関連手順の詳細説明（メール認証・パスワードリセット）
-  - ✅ 完全無料利用の強調表示とユーザビリティ向上
-  - ✅ StepIconコンポーネント共通化と重複コード削除
-  - ✅ 実装済み機能に合わせたプロフィール機能説明更新
-
-## API Routes詳細
+### API Routes詳細
 
 詳細なAPI仕様については、[APIルート仕様](./docs/claude/api/API_ROUTES.md)を参照してください。
 
-### 主要エンドポイント
+#### 主要エンドポイント
+
 - `/api/auth` - JWT認証管理
+- `/api/auth/google` - Google OAuth認証開始
+- `/api/auth/google/callback` - Google OAuth認証コールバック
+- `/api/auth/google-sync` - Google認証によるメールアドレス変更
 - `/api/csrf` - CSRF保護トークン生成
 - `/api/graphql` - メインGraphQL API
 - `/api/security/cleanup` - セキュリティデータクリーンアップ
 
-## パフォーマンス最適化（ハイブリッドアーキテクチャ）
+### パフォーマンス最適化（ハイブリッドアーキテクチャ）
 
-### レンダリング戦略最適化
+#### レンダリング戦略最適化
+
 アプリケーションは最適なパフォーマンスのための戦略的ハイブリッドアプローチを実装：
 
-| ページタイプ | 戦略 | パフォーマンス向上 | キャッシュ |
-|-----------|----------|------------------|---------|
-| `/login`, `/register` | **静的生成** | **10倍高速** | CDN永続 |
-| `/auth/check-email` | **静的生成+動的メタデータ** | **高速初期ロード** | CDN永続 |
-| `/auth/verify-email` | **静的生成+動的メタデータ** | **高速** | CDN永続 |
-| `/auth/forgot-password` | **静的生成+動的メタデータ** | **高速** | CDN永続 |
-| `/auth/reset-password` | **静的生成+動的メタデータ** | **高速** | CDN永続 |
-| `/auth/confirm-email-change` | **静的生成+動的メタデータ** | **高速** | CDN永続 |
-| `/guide` | **サーバーコンポーネント+動的メタデータ** | **高速** | デフォルトキャッシュ |
-| `/terms-of-service`, `/privacy-policy` | **サーバーコンポーネント+動的メタデータ** | **高速** | デフォルトキャッシュ |
-| `/` (ホーム) | **SSR+動的メタデータ** | 認証依存 | キャッシュなし |
-| `/setlists/[id]`, `/setlists/[id]/edit` | **SSR** | セキュリティ重視 | キャッシュなし |
-| `/setlists/new` | **SSR** | 認証必須 | キャッシュなし |
-| `/songs`, `/songs/new` | **SSR** | 認証必須 | キャッシュなし |
-| `/profile` | **SSR** | 認証必須 | キャッシュなし |
+| ページタイプ                            | 戦略                                      | パフォーマンス向上 | キャッシュ           |
+| --------------------------------------- | ----------------------------------------- | ------------------ | -------------------- |
+| `/login`, `/register`                   | **静的生成**                              | **10倍高速**       | CDN永続              |
+| `/auth/check-email`                     | **静的生成+動的メタデータ**               | **高速初期ロード** | CDN永続              |
+| `/auth/verify-email`                    | **静的生成+動的メタデータ**               | **高速**           | CDN永続              |
+| `/auth/forgot-password`                 | **静的生成+動的メタデータ**               | **高速**           | CDN永続              |
+| `/auth/reset-password`                  | **静的生成+動的メタデータ**               | **高速**           | CDN永続              |
+| `/auth/confirm-email-change`            | **静的生成+動的メタデータ**               | **高速**           | CDN永続              |
+| `/guide`                                | **サーバーコンポーネント+動的メタデータ** | **高速**           | デフォルトキャッシュ |
+| `/terms-of-service`, `/privacy-policy`  | **サーバーコンポーネント+動的メタデータ** | **高速**           | デフォルトキャッシュ |
+| `/` (ホーム)                            | **SSR+動的メタデータ**                    | 認証依存           | キャッシュなし       |
+| `/setlists/[id]`, `/setlists/[id]/edit` | **SSR**                                   | セキュリティ重視   | キャッシュなし       |
+| `/setlists/new`                         | **SSR**                                   | 認証必須           | キャッシュなし       |
+| `/songs`, `/songs/new`                  | **SSR**                                   | 認証必須           | キャッシュなし       |
+| `/profile`                              | **SSR**                                   | 認証必須           | キャッシュなし       |
 
-### 技術実装
+#### 技術実装
+
 - **静的ページ**: ビルド時事前構築、CDNから即座に配信
 - **静的+動的メタデータ**: 静的ページ配信とgenerateMetadataによる言語対応メタデータ
 - **SSR+動的メタデータ**: サーバーコンポーネントとgenerateMetadataの組み合わせ
 - **APIルート**: 全GraphQL操作用サーバーレス関数
 
 ### SEO & パフォーマンス利点
+
 - **Core Web Vitals**: 劇的に向上したローディングスコア
 - **検索エンジン最適化**: 静的ページの即座インデックス
 - **ユーザーエクスペリエンス**: 認証ページのほぼ瞬時ページロード
 - **コスト効率**: 戦略的キャッシュによるサーバー負荷軽減
 
-## 最近のUI/UX改善
-
-### セットリスト詳細ページ (/setlists/[id])
-- **簡素化レイアウト**: よりクリーンな単一ページ体験のためタブインターフェースを削除
-- **アクションボタン行**: 編集、ダウンロード、共有、複製ボタンの水平レイアウト
-- **テーマセレクター**: "Theme: basic/white"形式の右上ドロップダウン
-- **成功通知**: 画像ダウンロード成功後の"Setlist Generated !"バナー
-- **ワンクリックダウンロード**: プレビュータブなしの直接画像生成・ダウンロード
-
 ### 画像生成システム
+
 - **合理化コンポーネント**: ImageGeneratorを単一ダウンロードボタンに簡素化
 - **リアルタイムプレビュー**: テーマ変更でローディング状態付きプレビューを即座更新
 - **ダウンロード統合**: useRefを使用して自動ダウンロードを防止、ボタンクリック時のみ
@@ -753,22 +700,25 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
   - 動的スケール計算でSetlistRenderer（794px）を適切にリサイズ
 
 ### 複製ワークフロー
+
 - **クエリパラメータシステム**: シームレスクローンのための`/setlists/new?duplicate={id}`
 - **自動入力フォーム**: 元セットリストデータが"(コピー)"サフィックス付きでフォームを事前入力
 - **構造保持**: 複製で楽曲順序、タイミング、全メタデータを維持
 
 ### CSRF & CSP実装 (2025-07-01)
+
 - **CSRFトークンAPI**: セキュアなトークン生成と配布のため`/api/csrf`エンドポイントを追加
 - **CSP開発修正**: 開発時のみ`unsafe-inline`と`unsafe-eval`を許可するようContent Security Policyを更新
 - **Apollo Client統合**: 全GraphQLミューテーション用の自動CSRFトークン取得とヘッダー注入
 - **集約CSRF管理**: 単一CSRFProviderがアプリ全体のトークン初期化を処理、重複useCSRF呼び出しを削除
 - **本番セキュリティ**: Next.js開発機能を有効にしながら本番で厳格なCSPを維持
 
-## セキュリティアーキテクチャ
+### セキュリティアーキテクチャ
 
 包括的なセキュリティ実装については、[セキュリティアーキテクチャ](./docs/claude/SECURITY.md)を参照してください。
 
 ### 主要セキュリティ機能
+
 - **HttpOnly Cookie認証**: XSS攻撃防止
 - **CSRF保護**: タイミング攻撃耐性
 - **Google OAuth重複防止**: 既存メール認証ユーザーとGoogle認証の重複登録防止
@@ -785,31 +735,28 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 - **データ保護**: 入力サニタイゼーション + SQLインジェクション防止
 - **自動クリーンアップ**: Vercelクロン経由の定期メンテナンス
 
+### CSP Nonce実装の詳細
+
+Next.js 15のApp RouterでのCSP実装については、上記の「重要な制約」セクションを参照してください。
+
 ### セキュリティレベル
+
 **バランス型セキュリティ（OWASP Top 10準拠）**：攻撃防止と利便性の最適化を実現
 
-## 直近の重要な変更（2025-07-27）
+### 直近の重要な変更（2025-07-27）
 
-### UsedTokenテーブルとトークン履歴管理システム
-- **新機能**: 90日間のトークン履歴を保持する`UsedToken`テーブルを追加
-- **実装箇所**: 全認証フロー（login、メール認証、パスワードリセット、メール変更、Google OAuth）でトークン記録
-- **問題解決**: EMAIL_CHANGE_FAILUREイベントでnull userIdの問題を解決（トークン履歴からの推測機能）
-- **エラーハンドリング改善**: saveUsedToken関数内でエラーハンドリングを一元化（DRY原則）
-  - 呼び出し元識別のため`caller`パラメータ追加
-  - エラーログ形式: `[呼び出し元] Failed to save used token:`
-- **関連ファイル**:
-  - `prisma/schema.prisma`: UsedTokenモデル定義
-  - `src/lib/security/used-token-manager.ts`: トークン管理システム（エラーハンドリング統合）
-  - `src/lib/server/graphql/resolvers/AuthResolver.ts`: 各認証メソッドでの記録実装
-  - `src/app/api/auth/google-sync/route.ts`: Google OAuthでの記録実装
+#### UsedTokenテーブルとトークン履歴管理システム
+- 90日間のトークン履歴を保持する`UsedToken`テーブルを追加
+- 全認証フローでトークン記録を実装
+- EMAIL_CHANGE_FAILUREイベントでのnull userId問題を解決
+- saveUsedToken関数内でエラーハンドリングを一元化（DRY原則）
 
-### マイグレーション管理の改善
-- **ベースライン化**: 既存のデータベースをマイグレーション管理下に置く仕組みを実装
-- **環境別コマンド**: ローカル（`.env.local`）と本番（`.env.vercel`）で別々のコマンドを用意
-- **Shadow DB説明**: 開発環境専用の安全装置としての役割を明文化
-- **ドキュメント統合**: 複数のマイグレーションガイドを [DATABASE_MIGRATION_GUIDE.md](./docs/guide/deployment/DATABASE_MIGRATION_GUIDE.md) に統合
+#### マイグレーション管理の改善
+- 既存DBをマイグレーション管理下に置くベースライン化を実装
+- ローカルと本番で別々のコマンドを用意
+- Shadow DBの役割を明文化
+- マイグレーションガイドを [DATABASE_MIGRATION_GUIDE.md](./docs/guide/deployment/DATABASE_MIGRATION_GUIDE.md) に統合
 
-## 更新履歴
+### 更新履歴
 
 最新の開発履歴と変更記録については、[プロジェクト履歴](./docs/claude/HISTORY.md)を参照してください。
-本セクションを更新する段階で日付が古いものは、[プロジェクト履歴](./docs/claude/HISTORY.md)へ移動するようにお願いします。
