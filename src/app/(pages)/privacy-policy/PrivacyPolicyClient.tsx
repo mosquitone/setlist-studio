@@ -30,14 +30,77 @@ const PrivacyPolicyClient: React.FC = () => {
           第1条（個人情報）
         </Typography>
         <Typography variant="body2" color="text.secondary" paragraph>
-          「個人情報」とは、個人情報保護法にいう「個人情報」を指すものとし、生存する個人に関する情報であって、当該情報に含まれる氏名、生年月日、住所、電話番号、連絡先その他の記述等により特定の個人を識別できる情報及び容貌、指紋、声紋にかかるデータ、及び健康保険証の保険者番号などの当該情報単体から特定の個人を識別できる情報（個人識別情報）を指します。
+          「個人情報」とは、個人情報保護法にいう「個人情報」を指すものとし、生存する個人に関する情報であって、当該情報に含まれる氏名、メールアドレス、その他の記述等により特定の個人を識別できる情報を指します。
         </Typography>
+        <Typography variant="body2" color="text.secondary" paragraph>
+          本サービスでは、具体的に以下の情報を収集します：
+        </Typography>
+        <List sx={{ pl: 2 }}>
+          <ListItem sx={{ display: 'list-item', pl: 0 }}>
+            <ListItemText
+              primary={
+                <Typography variant="body2" color="text.secondary">
+                  メールアドレス
+                </Typography>
+              }
+            />
+          </ListItem>
+          <ListItem sx={{ display: 'list-item', pl: 0 }}>
+            <ListItemText
+              primary={
+                <Typography variant="body2" color="text.secondary">
+                  ユーザー名（表示名）
+                </Typography>
+              }
+            />
+          </ListItem>
+          <ListItem sx={{ display: 'list-item', pl: 0 }}>
+            <ListItemText
+              primary={
+                <Typography variant="body2" color="text.secondary">
+                  パスワード（暗号化して保存）
+                </Typography>
+              }
+            />
+          </ListItem>
+          <ListItem sx={{ display: 'list-item', pl: 0 }}>
+            <ListItemText
+              primary={
+                <Typography variant="body2" color="text.secondary">
+                  Google OAuth認証を利用する場合：Googleアカウントのメールアドレス、プロフィール名
+                </Typography>
+              }
+            />
+          </ListItem>
+          <ListItem sx={{ display: 'list-item', pl: 0 }}>
+            <ListItemText
+              primary={
+                <Typography variant="body2" color="text.secondary">
+                  IPアドレス（セキュリティ目的でハッシュ化して保存）
+                </Typography>
+              }
+            />
+          </ListItem>
+          <ListItem sx={{ display: 'list-item', pl: 0 }}>
+            <ListItemText
+              primary={
+                <Typography variant="body2" color="text.secondary">
+                  アクセスログ（ページ閲覧履歴、操作ログ）
+                </Typography>
+              }
+            />
+          </ListItem>
+        </List>
 
         <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
           第2条（個人情報の収集方法）
         </Typography>
         <Typography variant="body2" color="text.secondary" paragraph>
-          当方は、ユーザーが利用登録をする際にメールアドレス、ユーザー名、パスワードなどの個人情報をお尋ねすることがあります。また、ユーザーと提携先などとの間でなされたユーザーの個人情報を含む取引記録や決済に関する情報を、当方の提携先（情報提供元、広告主、広告配信先などを含みます。以下「提携先」といいます。）などから収集することがあります。
+          当方は、ユーザーが利用登録をする際にメールアドレス、ユーザー名、パスワードなどの個人情報をお尋ねします。Google
+          OAuth認証を利用する場合は、Googleから提供される認証情報（メールアドレス、プロフィール名）を収集します。
+        </Typography>
+        <Typography variant="body2" color="text.secondary" paragraph>
+          また、本サービスの利用に際して、Cookieを使用して認証トークンを保存し、アクセスログ、IPアドレス等の情報を自動的に収集します。これらの情報は、サービスの提供、セキュリティの確保、不正利用の防止等の目的で使用されます。
         </Typography>
 
         <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
@@ -153,6 +216,25 @@ const PrivacyPolicyClient: React.FC = () => {
               }
             />
           </ListItem>
+          <ListItem sx={{ display: 'list-item', pl: 0 }}>
+            <ListItemText
+              primary={
+                <Typography variant="body2" color="text.secondary">
+                  業務委託：当方が利用目的の達成に必要な範囲内において個人情報の取扱いの全部または一部を委託する場合（ホスティングサービス:
+                  Vercel、データベースサービス: Supabase、メール配信サービス: Resend等）
+                </Typography>
+              }
+            />
+          </ListItem>
+          <ListItem sx={{ display: 'list-item', pl: 0 }}>
+            <ListItemText
+              primary={
+                <Typography variant="body2" color="text.secondary">
+                  事業の承継：合併その他の事由により事業の承継が行われる場合であって、承継前の利用目的の範囲内で取り扱われる場合
+                </Typography>
+              }
+            />
+          </ListItem>
         </List>
 
         <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
@@ -160,6 +242,38 @@ const PrivacyPolicyClient: React.FC = () => {
         </Typography>
         <Typography variant="body2" color="text.secondary" paragraph>
           当方は、本人から個人情報の開示を求められたときは、本人に対し、遅滞なくこれを開示します。ただし、開示することにより次のいずれかに該当する場合は、その全部または一部を開示しないこともあり、開示しない決定をした場合には、その旨を遅滞なく通知します。
+        </Typography>
+        <List sx={{ pl: 2 }}>
+          <ListItem sx={{ display: 'list-item', pl: 0 }}>
+            <ListItemText
+              primary={
+                <Typography variant="body2" color="text.secondary">
+                  本人または第三者の生命、身体、財産その他の権利利益を害するおそれがある場合
+                </Typography>
+              }
+            />
+          </ListItem>
+          <ListItem sx={{ display: 'list-item', pl: 0 }}>
+            <ListItemText
+              primary={
+                <Typography variant="body2" color="text.secondary">
+                  当方の業務の適正な実施に著しい支障を及ぼすおそれがある場合
+                </Typography>
+              }
+            />
+          </ListItem>
+          <ListItem sx={{ display: 'list-item', pl: 0 }}>
+            <ListItemText
+              primary={
+                <Typography variant="body2" color="text.secondary">
+                  法令に違反することとなる場合
+                </Typography>
+              }
+            />
+          </ListItem>
+        </List>
+        <Typography variant="body2" color="text.secondary" paragraph>
+          なお、個人情報の開示請求については、手数料はいただきません。
         </Typography>
 
         <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
@@ -177,24 +291,176 @@ const PrivacyPolicyClient: React.FC = () => {
         </Typography>
 
         <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
-          第9条（プライバシーポリシーの変更）
+          第9条（セキュリティ対策）
+        </Typography>
+        <Typography variant="body2" color="text.secondary" paragraph>
+          当方は、収集した個人情報の漏えい、滅失または毀損の防止その他の個人情報の安全管理のために必要かつ適切な措置を講じます。
+        </Typography>
+        <List sx={{ pl: 2 }}>
+          <ListItem sx={{ display: 'list-item', pl: 0 }}>
+            <ListItemText
+              primary={
+                <Typography variant="body2" color="text.secondary">
+                  SSL/TLS暗号化通信による送受信データの保護
+                </Typography>
+              }
+            />
+          </ListItem>
+          <ListItem sx={{ display: 'list-item', pl: 0 }}>
+            <ListItemText
+              primary={
+                <Typography variant="body2" color="text.secondary">
+                  パスワードのハッシュ化（bcrypt）による安全な保存
+                </Typography>
+              }
+            />
+          </ListItem>
+          <ListItem sx={{ display: 'list-item', pl: 0 }}>
+            <ListItemText
+              primary={
+                <Typography variant="body2" color="text.secondary">
+                  HttpOnly Cookieを使用した認証トークンの保護
+                </Typography>
+              }
+            />
+          </ListItem>
+          <ListItem sx={{ display: 'list-item', pl: 0 }}>
+            <ListItemText
+              primary={
+                <Typography variant="body2" color="text.secondary">
+                  定期的なセキュリティ監査と脆弱性チェック
+                </Typography>
+              }
+            />
+          </ListItem>
+          <ListItem sx={{ display: 'list-item', pl: 0 }}>
+            <ListItemText
+              primary={
+                <Typography variant="body2" color="text.secondary">
+                  不正アクセス検知システム（レート制限、ブルートフォース攻撃対策）
+                </Typography>
+              }
+            />
+          </ListItem>
+        </List>
+
+        <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
+          第10条（個人情報の保存期間と削除）
+        </Typography>
+        <Typography variant="body2" color="text.secondary" paragraph>
+          当方は、個人情報を以下の期間保存し、期間経過後は速やかに削除します。
+        </Typography>
+        <List sx={{ pl: 2 }}>
+          <ListItem sx={{ display: 'list-item', pl: 0 }}>
+            <ListItemText
+              primary={
+                <Typography variant="body2" color="text.secondary">
+                  アカウント情報：ユーザーがアカウントを削除するまで
+                </Typography>
+              }
+            />
+          </ListItem>
+          <ListItem sx={{ display: 'list-item', pl: 0 }}>
+            <ListItemText
+              primary={
+                <Typography variant="body2" color="text.secondary">
+                  アクセスログ・セキュリティログ：90日間
+                </Typography>
+              }
+            />
+          </ListItem>
+          <ListItem sx={{ display: 'list-item', pl: 0 }}>
+            <ListItemText
+              primary={
+                <Typography variant="body2" color="text.secondary">
+                  使用済み認証トークン：90日間
+                </Typography>
+              }
+            />
+          </ListItem>
+        </List>
+        <Typography variant="body2" color="text.secondary" paragraph>
+          アカウント削除時は、ユーザーに関連する全ての個人情報（楽曲、セットリスト等）を速やかに削除します。ただし、法令により保存が義務付けられている場合はこの限りではありません。
+        </Typography>
+
+        <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
+          第11条（国際的なデータ移転）
+        </Typography>
+        <Typography variant="body2" color="text.secondary" paragraph>
+          本サービスは、サービス提供のために海外のサーバー（Vercel：米国等）を利用しており、ユーザーの個人情報が日本国外に移転される場合があります。この場合も、当方は本ポリシーに従って個人情報を適切に管理します。
+        </Typography>
+
+        <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
+          第12条（子どもの個人情報）
+        </Typography>
+        <Typography variant="body2" color="text.secondary" paragraph>
+          本サービスは13歳以上の方を対象としています。13歳未満の子どもから個人情報を収集することはありません。13歳未満の子どもが個人情報を提供したことが判明した場合、速やかに当該情報を削除します。
+        </Typography>
+
+        <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
+          第13条（プライバシーポリシーの変更）
         </Typography>
         <Typography variant="body2" color="text.secondary" paragraph>
           本ポリシーの内容は、法令その他本ポリシーに別段の定めのある事項を除いて、ユーザーに通知することなく、変更することができるものとします。当方が別途定める場合を除いて、変更後のプライバシーポリシーは、本ウェブサイトに掲載したときから効力を生じるものとします。
         </Typography>
 
         <Typography variant="h6" component="h2" sx={{ mt: 4, mb: 2 }}>
-          第10条（お問い合わせ窓口）
+          第14条（お問い合わせ窓口）
         </Typography>
         <Typography variant="body2" color="text.secondary" paragraph>
-          本ポリシーに関するお問い合わせは、お問い合わせメールまたはSNSまでお願いいたします。
+          本ポリシーに関するお問い合わせは、以下の方法でお願いいたします。
         </Typography>
+        <List sx={{ pl: 2 }}>
+          <ListItem sx={{ display: 'list-item', pl: 0 }}>
+            <ListItemText
+              primary={
+                <Typography variant="body2" color="text.secondary">
+                  メール：mosquitone8+setliststudiosupport@gmail.com
+                </Typography>
+              }
+            />
+          </ListItem>
+          <ListItem sx={{ display: 'list-item', pl: 0 }}>
+            <ListItemText
+              primary={
+                <Typography variant="body2" color="text.secondary">
+                  X（旧Twitter）：
+                  <a
+                    href="https://x.com/mosquitone_info"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: 'inherit', textDecoration: 'underline' }}
+                  >
+                    @mosquitone_info
+                  </a>
+                </Typography>
+              }
+            />
+          </ListItem>
+          <ListItem sx={{ display: 'list-item', pl: 0 }}>
+            <ListItemText
+              primary={
+                <Typography variant="body2" color="text.secondary">
+                  GitHubリポジトリのIssue：
+                  <a
+                    href="https://github.com/mosquitone/setlist-studio/issues"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: 'inherit', textDecoration: 'underline' }}
+                  >
+                    https://github.com/mosquitone/setlist-studio/issues
+                  </a>
+                </Typography>
+              }
+            />
+          </ListItem>
+        </List>
 
         <Typography variant="body2" color="text.secondary" paragraph sx={{ mt: 4 }}>
           制定日：2024年7月20日
         </Typography>
         <Typography variant="body2" color="text.secondary" paragraph>
-          最終改定日：2025年7月27日
+          最終改定日：2025年7月29日
         </Typography>
       </LegalPageTemplate>
     </>
