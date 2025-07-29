@@ -77,6 +77,10 @@ export default async function RootLayout({ children }) {
 コミット前に、必ずCLAUDE.mdを更新するかを検討すること。
 品質管理については「実装方針 > テスト・品質管理」セクションを参照。
 
+### データベーススキーマ変更時の対応
+データベーススキーマ（Prismaスキーマ）を変更した場合は、必ず以下のドキュメントも更新すること：
+- [データベーススキーマ定義](./docs/guide/database/DATABASE_SCHEMA.md) - 全テーブル定義の詳細説明
+
 ### Git操作
 - **GitHub CLI**: `gh` コマンドが利用可能（v2.74.1）- プルリクエスト、Issue管理
 - **GitLab CLI**: `glab` コマンドが利用可能（v1.63.0）- プロジェクト管理、MRなど
@@ -241,8 +245,9 @@ GitHubリポジトリに関する操作を行う際は、必ずMCP GitHubサー�
 
 **データベース**
 - DockerコンテナでPostgreSQL 15を実行
-- User、Song、Setlist、SetlistItemモデルを含むPrismaスキーマ
+- User、Song、Setlist、SetlistItem、セキュリティ関連テーブル等を含むPrismaスキーマ
 - 全エンティティでCUIDベースのID
+- 詳細な[データベーススキーマ定義](./docs/guide/database/DATABASE_SCHEMA.md)を参照
 
 ### 主要コンポーネント
 
