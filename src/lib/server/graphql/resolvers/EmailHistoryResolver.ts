@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { Resolver, Query, Ctx, UseMiddleware, FieldResolver, Root } from 'type-graphql';
 
 import { AuthMiddleware } from '../middleware/jwt-auth-middleware';
@@ -9,7 +9,7 @@ import { AuthResolverReq } from './AuthResolver';
 
 // AuthResolverと同じContext型を使用
 interface Context {
-  prisma: import('@prisma/client').PrismaClient;
+  prisma: PrismaClient;
   userId?: string;
   user?: {
     userId: string;
