@@ -61,7 +61,8 @@ function buildScriptSrc(config: CSPConfig): string {
     const vercelScripts = vercelDomains.scripts;
     const vercelUrl = vercelDomains.currentUrl ? ` ${vercelDomains.currentUrl}` : '';
 
-    return `${baseSrc} 'nonce-${nonce}'${evalDirective} ${vercelScripts}${vercelUrl} ${GOOGLE_AUTH_DOMAINS}`;
+    // プレビュー環境では開発の利便性のため 'strict-dynamic' を追加
+    return `${baseSrc} 'nonce-${nonce}'${evalDirective} 'strict-dynamic' ${vercelScripts}${vercelUrl} ${GOOGLE_AUTH_DOMAINS}`;
   }
 
   // 本番/開発環境の動的ページ: 最高セキュリティ
