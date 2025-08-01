@@ -52,7 +52,8 @@ function buildScriptSrc(config: CSPConfig): string {
   // 静的ページ: 認証ページなのでunsafe-inlineが必要
   if (isStaticPage) {
     const evalDirective = isDev ? " 'unsafe-eval'" : '';
-    return `${baseSrc} 'unsafe-inline'${evalDirective} ${GOOGLE_AUTH_DOMAINS}`;
+    const vercelScripts = isVercelPreview && vercelDomains ? ` ${vercelDomains.scripts}` : '';
+    return `${baseSrc} 'unsafe-inline'${evalDirective}${vercelScripts} ${GOOGLE_AUTH_DOMAINS}`;
   }
 
   // プレビュー環境の動的ページ: Vercelツールバー対応
