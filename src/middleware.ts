@@ -36,7 +36,7 @@ function getVercelDomains(isVercelPreview: boolean, vercelUrl: string): VercelDo
   if (!isVercelPreview) return null;
 
   return {
-    scripts: 'https://vercel.live https://vercel.com',
+    scripts: 'https://vercel.live https://vercel.com https://*.setlist-studio.com',
     assets: 'https://assets.vercel.com',
     fonts: 'https://vercel.live/fonts',
     websockets: 'wss://ws-us3.pusher.com https://sockjs-us3.pusher.com',
