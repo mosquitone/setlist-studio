@@ -36,6 +36,16 @@
 
 **重要**: マイグレーション操作前に必ず [データベースマイグレーション完全ガイド](./docs/guide/deployment/DATABASE_MIGRATION_GUIDE.md) を参照すること。
 
+### 🔀 Git運用ルール
+
+**必須**: GitHubのmainブランチは、GitLabのstagingブランチに相当する。本番デプロイはGitLabのmainブランチから行われる。
+
+**絶対禁止**: GitLabリポジトリへの直接pushは厳禁。必ずマージリクエスト（MR）を通じてマージすること。
+
+**開発フロー**: 
+- GitHub（開発）: feature/* → main（プルリクエスト経由）
+- GitLab（デプロイ）: staging → main（マージリクエスト経由）
+
 ## 1. プロジェクト基本情報
 
 ### プロジェクト概要
