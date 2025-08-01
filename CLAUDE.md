@@ -293,7 +293,7 @@ mosquitone Emotional Setlist Studioは、音楽アーティスト向けのモダ
 - 青/赤カラースキーム、Interフォント付きカスタムMUIテーマ
 - HttpOnly Cookie認証とCSRF保護が設定されたApollo Client
 - NextJS App Routerによるクライアントサイドルーティング
-- html2canvasとQRコード統合を使用した高度な画像生成システム
+- html-to-imageとQRコード統合を使用した高速画像生成システム
 - UX向上のためのBlack/White選択による簡素化テーマシステム
 - Material-UIコンポーネントによるレスポンシブデザイン
 
