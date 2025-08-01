@@ -2,7 +2,7 @@
 
 import { Image as ImageIcon } from '@mui/icons-material';
 import { Box, CircularProgress } from '@mui/material';
-import html2canvas from 'html2canvas';
+import { toBlob } from 'html-to-image';
 import QRCode from 'qrcode';
 import React, { useState, useEffect, memo } from 'react';
 
@@ -43,10 +43,8 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = memo(
       async (setlistId: string): Promise<string> => {
         const url = `${baseUrl}/setlists/${setlistId}`;
 
-        // Validate the URL before generating QR code
-        if (!isValidUrl(url)) {
-          return '';
-        }
+        // URLの妥当性チェック
+        if (!isValidUrl(url)) return '';
 
         try {
           const qrCodeDataURL = await QRCode.toDataURL(url, {
@@ -58,10 +56,8 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = memo(
             },
           });
 
-          // Additional validation for the generated data URL
-          if (!qrCodeDataURL.startsWith('data:image/')) {
-            return '';
-          }
+          // 生成されたData URLの検証
+          if (!qrCodeDataURL.startsWith('data:image/')) return '';
 
           return qrCodeDataURL;
         } catch {
@@ -74,63 +70,61 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = memo(
     const generateImage = React.useCallback(
       async (theme: string): Promise<string | null> => {
         setIsGenerating(true);
+        const isBlackTheme = theme === 'black';
+        const backgroundColor = isBlackTheme ? '#000000' : '#ffffff';
 
         try {
-          // Temporarily disable QR code for image generation
+          // QRコードを生成
           const qrCodeURL = await generateQRCode(data.id);
 
-          // Create data with QR code
           const dataWithQR = { ...data, theme: theme as Theme, qrCodeURL };
 
-          // Create a temporary container for rendering
+          // 画像生成用の一時的なコンテナを作成
           const container = document.createElement('div');
-          container.style.position = 'absolute';
-          container.style.left = '-9999px';
-          container.style.top = '-9999px';
-          container.style.width = 'auto';
-          container.style.height = 'auto';
+          Object.assign(container.style, {
+            position: 'absolute',
+            left: '-9999px',
+            top: '0',
+            width: '794px',
+            height: '1123px',
+            backgroundColor,
+            overflow: 'visible',
+          });
           document.body.appendChild(container);
 
-          // Create React root and render component
+          // React 18のcreateRootを使用してコンポーネントをレンダリング
           const { createRoot } = await import('react-dom/client');
           const root = createRoot(container);
 
-          // Render the component
+          // レンダリングとフォント読み込みを待機
           await new Promise<void>((resolve) => {
             root.render(<SetlistRenderer data={dataWithQR} className="setlist-image-generation" />);
-            // Wait for rendering to complete
-            setTimeout(resolve, 100);
+            setTimeout(async () => {
+              // フォントの読み込み完了を確認
+              if (document.fonts?.ready) await document.fonts.ready;
+              resolve();
+            }, 500);
           });
 
-          // Find the rendered element
+          // レンダリングされた要素を取得
           const element = container.querySelector('.setlist-image-generation') as HTMLElement;
           if (!element) {
             throw new Error('Rendered element not found');
           }
 
-          // Generate image with html2canvas
-          const canvas = await html2canvas(element, {
-            backgroundColor: null,
-            scale: 1,
-            logging: false,
-            useCORS: false,
-            allowTaint: false,
+          // html-to-imageでBlobを生成
+          const blob = await toBlob(element, {
+            pixelRatio: 2,
+            cacheBust: true,
+            backgroundColor,
+            style: { opacity: '1', display: 'block' },
           });
 
-          // Convert to blob URL
-          const blob = await new Promise<Blob>((resolve) => {
-            canvas.toBlob(
-              (blob) => {
-                if (blob) resolve(blob);
-              },
-              'image/png',
-              1,
-            );
-          });
+          if (!blob) throw new Error('Failed to generate image blob');
 
           const imageURL = URL.createObjectURL(blob);
 
-          // Cleanup
+          // クリーンアップ
           root.unmount();
           document.body.removeChild(container);
 
@@ -147,17 +141,16 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = memo(
       [data, generateQRCode, messages.common.generationError, showError],
     );
 
+    // プレビュー画像を生成
     const handleGeneratePreview = React.useCallback(async () => {
       if (onPreviewGenerationStart) {
         onPreviewGenerationStart();
       }
       const imageURL = await generateImage(selectedTheme);
       if (imageURL) {
-        // Clean up previous preview image URL
+        // 前のプレビュー画像URLを解放してから新しいURLを設定
         setPreviewImage((prevUrl) => {
-          if (prevUrl) {
-            URL.revokeObjectURL(prevUrl);
-          }
+          if (prevUrl) URL.revokeObjectURL(prevUrl);
           return imageURL;
         });
         if (onPreviewReady) {
@@ -166,9 +159,11 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = memo(
       }
     }, [selectedTheme, generateImage, onPreviewGenerationStart, onPreviewReady]);
 
+    // 画像をダウンロード
     const handleDownloadImage = React.useCallback(async () => {
       const imageURL = await generateImage(selectedTheme);
       if (imageURL) {
+        // ダウンロードリンクを作成してクリック
         const link = document.createElement('a');
         link.href = imageURL;
         link.download = `setlist-${data.artistName}-${selectedTheme}.png`;
@@ -178,36 +173,38 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = memo(
         URL.revokeObjectURL(imageURL);
         showSuccess(messages.setlistDetail.successMessage);
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedTheme, data.artistName, showSuccess, messages.setlistDetail.successMessage]);
+    }, [
+      selectedTheme,
+      data.artistName,
+      generateImage,
+      showSuccess,
+      messages.setlistDetail.successMessage,
+    ]);
 
+    // ダウンロード関数を親コンポーネントに渡す
     React.useEffect(() => {
       if (onDownloadReady) {
         onDownloadReady(handleDownloadImage);
       }
     }, [onDownloadReady, handleDownloadImage]);
 
-    // Reset generation flag when theme changes
+    // テーマ変更時にプレビューをリセット
     React.useEffect(() => {
       setHasGenerated(false);
       setPreviewImage((prevUrl) => {
-        if (prevUrl) {
-          URL.revokeObjectURL(prevUrl);
-        }
+        if (prevUrl) URL.revokeObjectURL(prevUrl);
         return null;
       });
     }, [selectedTheme, data.id]);
 
-    // Cleanup preview image on unmount
+    // コンポーネントのアンマウント時にプレビュー画像URLを解放
     useEffect(() => {
       return () => {
-        if (previewImage) {
-          URL.revokeObjectURL(previewImage);
-        }
+        if (previewImage) URL.revokeObjectURL(previewImage);
       };
     }, [previewImage]);
 
-    // Auto-generate preview when not generated yet
+    // 初回レンダリング時に自動でプレビューを生成
     React.useEffect(() => {
       if (!hasGenerated && !isGenerating) {
         handleGeneratePreview();
@@ -228,9 +225,9 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = memo(
           </Button>
         </Box>
 
-        {/* Preview Section */}
         <Box sx={{ mt: 2, textAlign: 'center' }}>
           {previewImage && (
+            // eslint-disable-next-line @next/next/no-img-element
             <img
               src={previewImage}
               alt="Setlist Preview"
