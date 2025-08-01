@@ -36,6 +36,16 @@
 
 **重要**: マイグレーション操作前に必ず [データベースマイグレーション完全ガイド](./docs/guide/deployment/DATABASE_MIGRATION_GUIDE.md) を参照すること。
 
+### 🔀 Git運用ルール
+
+**必須**: GitHubのmainブランチの内容は、GitLabのstagingブランチにプッシュする。
+
+**絶対禁止**: GitLabのmainブランチへの直接pushは厳禁。必ずマージリクエスト（MR）を通じてマージすること。
+
+**開発フロー**: 
+- GitHub（開発）: mainブランチに直接pushまたはPR経由でマージ
+- GitLab（デプロイ）: staging → main（マージリクエスト経由で本番デプロイ）
+
 ## 1. プロジェクト基本情報
 
 ### プロジェクト概要
@@ -293,7 +303,7 @@ mosquitone Emotional Setlist Studioは、音楽アーティスト向けのモダ
 - 青/赤カラースキーム、Interフォント付きカスタムMUIテーマ
 - HttpOnly Cookie認証とCSRF保護が設定されたApollo Client
 - NextJS App Routerによるクライアントサイドルーティング
-- html2canvasとQRコード統合を使用した高度な画像生成システム
+- html-to-imageとQRコード統合を使用した高速画像生成システム
 - UX向上のためのBlack/White選択による簡素化テーマシステム
 - Material-UIコンポーネントによるレスポンシブデザイン
 
