@@ -33,7 +33,7 @@ export function middleware(request: NextRequest) {
     "img-src 'self' data: https: blob:", // 画像生成とQRコードのため
     "font-src 'self' data:",
     `connect-src 'self' https://accounts.google.com ${isVercelPreview ? 'https://vercel.live wss://ws-us3.pusher.com https://sockjs-us3.pusher.com' : ''}`, // NextAuth Google認証用 + Vercelライブフィードバック
-    'frame-src https://accounts.google.com', // Google認証ポップアップのため
+    `frame-src https://accounts.google.com ${isVercelPreview ? 'https://vercel.live' : ''}`, // Google認証ポップアップのため + Vercelプレビュー
     "object-src 'none'", // プラグイン無効化
     "base-uri 'self'", // base要素制限
     "form-action 'self'", // フォーム送信先制限
