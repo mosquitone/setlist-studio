@@ -18,10 +18,13 @@ export function middleware(request: NextRequest) {
     '/auth/',
   ].some((path) => pathname.startsWith(path));
 
+  // Vercelプレビュー環境の検出
+  const isVercelPreview = process.env.VERCEL_ENV === 'preview';
+
   // ページタイプに基づいてCSPヘッダーを構築
   const scriptSrc = isStaticPage
-    ? `script-src 'self' 'unsafe-inline' ${isDev ? "'unsafe-eval'" : ''} https://accounts.google.com`
-    : `script-src 'self' 'nonce-${nonce}' ${isDev ? "'unsafe-eval'" : "'wasm-unsafe-eval'"} 'strict-dynamic' https://accounts.google.com`;
+    ? `script-src 'self' 'unsafe-inline' ${isDev ? "'unsafe-eval'" : ''} https://accounts.google.com ${isVercelPreview ? 'https://vercel.live' : ''}`
+    : `script-src 'self' 'nonce-${nonce}' ${isDev ? "'unsafe-eval'" : "'wasm-unsafe-eval'"} 'strict-dynamic' https://accounts.google.com ${isVercelPreview ? 'https://vercel.live' : ''}`;
 
   const cspHeader = [
     "default-src 'self'",
@@ -29,7 +32,7 @@ export function middleware(request: NextRequest) {
     "style-src 'self' 'unsafe-inline'", // Material-UIのため保持
     "img-src 'self' data: https: blob:", // 画像生成とQRコードのため
     "font-src 'self' data:",
-    "connect-src 'self' https://accounts.google.com", // NextAuth Google認証用
+    `connect-src 'self' https://accounts.google.com ${isVercelPreview ? 'https://vercel.live wss://ws-us3.pusher.com https://sockjs-us3.pusher.com' : ''}`, // NextAuth Google認証用 + Vercelライブフィードバック
     'frame-src https://accounts.google.com', // Google認証ポップアップのため
     "object-src 'none'", // プラグイン無効化
     "base-uri 'self'", // base要素制限
