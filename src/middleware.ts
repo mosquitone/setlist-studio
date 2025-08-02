@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import { env, config as envConfig } from '@/lib/config/environment';
+import { VercelEnv } from '@/types/environment';
+
 // 型定義
 interface VercelDomains {
   scripts: string;
@@ -154,10 +157,10 @@ export function middleware(request: NextRequest) {
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
 
   // 環境設定
-  const isDev = process.env.NODE_ENV === 'development';
-  const isProd = process.env.NODE_ENV === 'production';
-  const isVercelPreview = process.env.VERCEL_ENV === 'preview';
-  const vercelUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '';
+  const isDev = env.isDevelopment;
+  const isProd = env.isProduction;
+  const isVercelPreview = envConfig.vercelEnv === VercelEnv.Preview;
+  const vercelUrl = envConfig.vercelUrl ? `https://${envConfig.vercelUrl}` : '';
 
   // 現在のパスが静的ページかどうかを判定
   const isStaticPage = STATIC_PAGE_PATHS.some((path) => pathname.startsWith(path));

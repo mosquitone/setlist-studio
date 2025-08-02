@@ -2,6 +2,8 @@
 
 import { PrismaClient } from '@prisma/client';
 
+import { env } from '@/lib/config/environment';
+
 import { DatabaseRateLimit } from './rate-limit-db';
 import { logRateLimitExceededDB } from './security-logger-db';
 
@@ -186,26 +188,24 @@ export class EmailRateLimit {
   private getEmailRateLimitOptions(
     type: 'verification' | 'password_reset' | 'email_change',
   ): EmailRateLimitOptions {
-    const isDevelopment = process.env.NODE_ENV === 'development';
-
     switch (type) {
       case 'password_reset':
         return {
-          windowMs: isDevelopment ? 5 * 60 * 1000 : 60 * 60 * 1000, // 開発: 5分, 本番: 1時間
-          maxRequests: isDevelopment ? 100 : 3, // 開発: 100回, 本番: 3回
+          windowMs: env.isDevelopment ? 5 * 60 * 1000 : 60 * 60 * 1000, // 開発: 5分, 本番: 1時間
+          maxRequests: env.isDevelopment ? 100 : 3, // 開発: 100回, 本番: 3回
           message:
             'パスワードリセットメールの送信回数が上限に達しました。1時間後に再試行してください。',
         };
       case 'verification':
         return {
-          windowMs: isDevelopment ? 2 * 60 * 1000 : 15 * 60 * 1000, // 開発: 2分, 本番: 15分
-          maxRequests: isDevelopment ? 50 : 5, // 開発: 50回, 本番: 5回
+          windowMs: env.isDevelopment ? 2 * 60 * 1000 : 15 * 60 * 1000, // 開発: 2分, 本番: 15分
+          maxRequests: env.isDevelopment ? 50 : 5, // 開発: 50回, 本番: 5回
           message: 'メール認証メールの送信回数が上限に達しました。15分後に再試行してください。',
         };
       case 'email_change':
         return {
-          windowMs: isDevelopment ? 10 * 60 * 1000 : 60 * 60 * 1000, // 開発: 10分, 本番: 1時間
-          maxRequests: isDevelopment ? 20 : 2, // 開発: 20回, 本番: 2回
+          windowMs: env.isDevelopment ? 10 * 60 * 1000 : 60 * 60 * 1000, // 開発: 10分, 本番: 1時間
+          maxRequests: env.isDevelopment ? 20 : 2, // 開発: 20回, 本番: 2回
           message:
             'メールアドレス変更メールの送信回数が上限に達しました。1時間後に再試行してください。',
         };
@@ -224,25 +224,23 @@ export class EmailRateLimit {
   private getIPEmailRateLimitOptions(
     type: 'verification' | 'password_reset' | 'email_change',
   ): EmailRateLimitOptions {
-    const isDevelopment = process.env.NODE_ENV === 'development';
-
     switch (type) {
       case 'password_reset':
         return {
-          windowMs: isDevelopment ? 10 * 60 * 1000 : 60 * 60 * 1000, // 開発: 10分, 本番: 1時間
-          maxRequests: isDevelopment ? 200 : 10, // 開発: 200回, 本番: 10回
+          windowMs: env.isDevelopment ? 10 * 60 * 1000 : 60 * 60 * 1000, // 開発: 10分, 本番: 1時間
+          maxRequests: env.isDevelopment ? 200 : 10, // 開発: 200回, 本番: 10回
           message: 'このIPアドレスからのパスワードリセットメール送信回数が上限に達しました。',
         };
       case 'verification':
         return {
-          windowMs: isDevelopment ? 5 * 60 * 1000 : 15 * 60 * 1000, // 開発: 5分, 本番: 15分
-          maxRequests: isDevelopment ? 100 : 20, // 開発: 100回, 本番: 20回
+          windowMs: env.isDevelopment ? 5 * 60 * 1000 : 15 * 60 * 1000, // 開発: 5分, 本番: 15分
+          maxRequests: env.isDevelopment ? 100 : 20, // 開発: 100回, 本番: 20回
           message: 'このIPアドレスからのメール認証メール送信回数が上限に達しました。',
         };
       case 'email_change':
         return {
-          windowMs: isDevelopment ? 15 * 60 * 1000 : 60 * 60 * 1000, // 開発: 15分, 本番: 1時間
-          maxRequests: isDevelopment ? 50 : 5, // 開発: 50回, 本番: 5回
+          windowMs: env.isDevelopment ? 15 * 60 * 1000 : 60 * 60 * 1000, // 開発: 15分, 本番: 1時間
+          maxRequests: env.isDevelopment ? 50 : 5, // 開発: 50回, 本番: 5回
           message: 'このIPアドレスからのメールアドレス変更メール送信回数が上限に達しました。',
         };
       default:

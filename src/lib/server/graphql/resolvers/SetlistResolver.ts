@@ -16,6 +16,7 @@ import {
   ObjectType,
 } from 'type-graphql';
 
+import { config } from '@/lib/config/environment';
 import { AuthMiddleware } from '@/lib/server/graphql/middleware/jwt-auth-middleware';
 import { verifyAndValidateJWT } from '@/types/jwt';
 
@@ -202,7 +203,7 @@ export class SetlistResolver {
     }
 
     try {
-      const jwtSecret = process.env.JWT_SECRET;
+      const jwtSecret = config.jwtSecret;
       if (!jwtSecret) {
         throw new Error(
           ctx.i18n?.messages.errors.jwtNotConfigured ||

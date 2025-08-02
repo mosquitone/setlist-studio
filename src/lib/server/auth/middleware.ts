@@ -2,6 +2,8 @@ import { PrismaClient } from '@prisma/client';
 import jwt from 'jsonwebtoken';
 import { AuthChecker } from 'type-graphql';
 
+import { config } from '@/lib/config/environment';
+
 interface Context {
   prisma: PrismaClient;
   user?: {
@@ -39,7 +41,7 @@ export const authChecker: AuthChecker<Context> = async ({ context }) => {
 
   try {
     const token = req.headers.authorization.replace('Bearer ', '');
-    const jwtSecret = process.env.JWT_SECRET;
+    const jwtSecret = config.jwtSecret;
 
     if (!jwtSecret) {
       return false;

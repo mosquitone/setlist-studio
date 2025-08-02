@@ -6,6 +6,7 @@ import depthLimit from 'graphql-depth-limit';
 import jwt from 'jsonwebtoken';
 import { NextRequest } from 'next/server';
 
+import { config, env, settings } from '../../../lib/config/environment';
 import { getErrorMessage } from '../../../lib/i18n/api-helpers';
 import { withI18n } from '../../../lib/i18n/context';
 import { csrfProtection } from '../../../lib/security/csrf-protection';
@@ -30,16 +31,14 @@ async function createServer() {
 
   return new ApolloServer({
     schema: graphqlSchema,
-    introspection: process.env.NODE_ENV !== 'production',
+    introspection: settings.enableIntrospection,
     validationRules: [
       depthLimit(10), // Limit query depth
     ],
     formatError: (err) => {
       console.error('GraphQL Error:', err);
 
-      const isProduction = process.env.NODE_ENV === 'production';
-
-      if (isProduction) {
+      if (env.isProduction) {
         // 本番環境では詳細なエラー情報を隠蔽
         const userFriendlyErrors = [
           // 日本語キーワード
@@ -134,7 +133,7 @@ async function createSecureContext(req: NextRequest) {
 
   if (token) {
     try {
-      const jwtSecret = process.env.JWT_SECRET;
+      const jwtSecret = config.jwtSecret;
       if (jwtSecret) {
         const decoded = jwt.verify(token, jwtSecret) as JWTPayload;
         user = {

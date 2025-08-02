@@ -24,6 +24,7 @@ import { SetlistPreview } from '@/components/setlist/SetlistPreview';
 import { useI18n } from '@/hooks/useI18n';
 import { useImageGeneration } from '@/hooks/useImageGeneration';
 import { useSetlistActions } from '@/hooks/useSetlistActions';
+import { env } from '@/lib/config/environment';
 import { GET_SETLIST, TOGGLE_SETLIST_VISIBILITY } from '@/lib/server/graphql/apollo-operations';
 import { Theme, THEMES } from '@/types/common';
 import { SetlistData } from '@/types/components';
@@ -38,7 +39,7 @@ export default function SetlistDetailPage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedTheme, setSelectedTheme] = useState<Theme | null>(null);
   const [themeInitialized, setThemeInitialized] = useState(false);
-  const isDev = process.env.NODE_ENV === 'development';
+  const isDev = env.isDevelopment;
 
   const { user, isLoggedIn, isLoading: authLoading } = useAuth();
 

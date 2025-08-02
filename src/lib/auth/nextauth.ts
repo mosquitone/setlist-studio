@@ -1,11 +1,13 @@
 import type { NextAuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 
+import { config } from '@/lib/config/environment';
+
 export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      clientId: config.googleClientId,
+      clientSecret: config.googleClientSecret,
       authorization: {
         params: {
           prompt: 'select_account', // アカウント選択画面を強制表示

@@ -1,5 +1,7 @@
 import jwt from 'jsonwebtoken';
 
+import { env } from '@/lib/config/environment';
+
 export interface JWTPayload {
   userId: string;
   email: string;
@@ -44,7 +46,7 @@ export function verifyAndValidateJWT(token: string, secret: string): JWTPayload 
     const payload = jwt.verify(token, secret);
 
     if (!isValidJWTPayload(payload)) {
-      if (process.env.NODE_ENV === 'development') {
+      if (env.isDevelopment) {
         console.error('JWT payload validation failed:', payload);
       }
       throw new Error('Invalid JWT payload structure');
@@ -52,7 +54,7 @@ export function verifyAndValidateJWT(token: string, secret: string): JWTPayload 
 
     return payload;
   } catch (error) {
-    if (process.env.NODE_ENV === 'development') {
+    if (env.isDevelopment) {
       console.error('JWT verification error:', error);
     }
     throw new Error('JWT verification failed');

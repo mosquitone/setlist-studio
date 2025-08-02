@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
 
+import { env } from '@/lib/config/environment';
+
 export function useCSRF() {
   useEffect(() => {
     // Initialize CSRF token on app start
@@ -10,7 +12,7 @@ export function useCSRF() {
           credentials: 'include',
         });
       } catch (error) {
-        if (process.env.NODE_ENV === 'development') {
+        if (env.isDevelopment) {
           console.warn('Failed to initialize CSRF token:', error);
         }
       }

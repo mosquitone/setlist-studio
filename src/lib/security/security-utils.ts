@@ -5,6 +5,7 @@ import { createHash } from 'crypto';
 import DOMPurify from 'dompurify';
 import { NextRequest } from 'next/server';
 
+import { env, config } from '@/lib/config/environment';
 import { StringArray } from '@/types/common';
 
 // =============================================================================
@@ -194,7 +195,7 @@ export function getSecureClientIP(request: NextRequest): string {
  * @returns SHA256ハッシュ化されたIP（16文字に短縮）
  */
 export function hashIP(ip: string): string {
-  const salt = process.env.IP_HASH_SALT || 'default-salt-change-in-production';
+  const salt = config.ipHashSalt || 'default-salt-change-in-production';
 
   return createHash('sha256')
     .update(ip + salt)
@@ -272,7 +273,7 @@ export function assessRequestSecurity(request: NextRequest): {
   }
 
   // プライベートIPからのアクセス（開発環境以外では不審）
-  if (process.env.NODE_ENV === 'production' && isPrivateIP(ip)) {
+  if (env.isProduction && isPrivateIP(ip)) {
     reasons.push('Access from private IP in production');
     riskLevel = 'medium';
   }

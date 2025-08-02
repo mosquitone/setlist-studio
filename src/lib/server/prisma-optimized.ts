@@ -1,12 +1,14 @@
 import { PrismaClient } from '@prisma/client';
 
+import { config, env, settings } from '../config/environment';
+
 // Prismaクライアントの最適化設定
 const prismaClientSingleton = () => {
   return new PrismaClient({
-    log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
+    log: settings.prismaLogLevel,
     datasources: {
       db: {
-        url: process.env.DATABASE_URL,
+        url: config.databaseUrl,
       },
     },
     // Vercel Functions用の接続プール最適化
@@ -33,11 +35,11 @@ export const prisma = globalForPrisma.prisma ?? prismaClientSingleton();
 
 // 本番以外（development, test, staging等）でグローバルに保存
 // テスト環境での接続再利用やステージングでのデバッグに対応
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+if (!env.isProduction) globalForPrisma.prisma = prisma;
 
 // クエリ実行時間の計測は開発環境のみ
 // テスト実行時のノイズを避け、ステージングは専用の計測ツールを使用
-if (process.env.NODE_ENV === 'development') {
+if (env.isDevelopment) {
   prisma.$use(async (params, next) => {
     const before = Date.now();
     const result = await next(params);

@@ -3,6 +3,8 @@ import { randomBytes, timingSafeEqual, createHmac } from 'crypto';
 import { PrismaClient } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 
+import { config, settings } from '@/lib/config/environment';
+
 import { SecurityEventType, SecurityEventSeverity } from './security-logger-db';
 import { getSecureClientIP } from './security-utils';
 
@@ -13,7 +15,7 @@ export interface CSRFTokens {
 
 // CSRF秘密鍵の取得（環境変数から）
 function getCSRFSecret(): string {
-  const secret = process.env.CSRF_SECRET || process.env.JWT_SECRET;
+  const secret = config.csrfSecret || config.jwtSecret;
   if (!secret) {
     throw new Error('CSRF_SECRET or JWT_SECRET environment variable is required');
   }
@@ -112,7 +114,7 @@ export function verifyCSRFToken(request: NextRequest): boolean {
 export function setCSRFCookie(response: NextResponse, token: string): void {
   response.cookies.set('csrf_token', token, {
     httpOnly: false, // CSRFトークンはクライアントサイドでアクセス可能である必要がある
-    secure: process.env.NODE_ENV === 'production',
+    secure: settings.secureCookie,
     sameSite: 'strict',
     path: '/',
     maxAge: 60 * 60, // 1時間（トークンの有効期限と一致）

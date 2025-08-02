@@ -15,6 +15,7 @@ import { I18nProvider } from '@/components/providers/I18nProvider';
 import MUIProvider from '@/components/providers/MUIProvider';
 import NextAuthProvider from '@/components/providers/NextAuthProvider';
 import { SnackbarProvider } from '@/components/providers/SnackbarProvider';
+import { env } from '@/lib/config/environment';
 import { getPublicUrl } from '@/lib/config/url';
 import { getOrganizationSchema, getWebSiteSchema } from '@/lib/metadata/pageSchemas';
 
@@ -106,7 +107,7 @@ export default async function RootLayout({
         <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
         <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
         <link rel="manifest" href="/manifest.json" />
-        {process.env.NODE_ENV === 'production' && (
+        {env.isProduction && (
           <>
             <script
               id="organization-jsonld"

@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import { MiddlewareFn } from 'type-graphql';
 
+import { config } from '@/lib/config/environment';
 import { verifyAndValidateJWT } from '@/types/jwt';
 
 import { I18nContext } from '../../../i18n/context';
@@ -71,7 +72,7 @@ export const AuthMiddleware: MiddlewareFn<Context> = async ({ context }, next) =
   }
 
   try {
-    const jwtSecret = process.env.JWT_SECRET;
+    const jwtSecret = config.jwtSecret;
     if (!jwtSecret) {
       throw new Error(context.i18n?.messages.errors.serverError || 'サーバーエラーが発生しました');
     }

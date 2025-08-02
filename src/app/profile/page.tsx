@@ -38,6 +38,7 @@ import { useAuth } from '@/components/providers/AuthProvider';
 import { useSnackbar } from '@/components/providers/SnackbarProvider';
 import { useI18n } from '@/hooks/useI18n';
 import { apolloClient } from '@/lib/client/apollo-client';
+import { env } from '@/lib/config/environment';
 import { PASSWORD_POLICY } from '@/lib/constants/auth';
 import { formatDate } from '@/lib/i18n/date-format';
 import { UPDATE_USER_MUTATION, GET_ME_QUERY } from '@/lib/server/graphql/apollo-operations';
@@ -120,7 +121,7 @@ function ProfileContent() {
         showSuccess(messages.notifications.profileUpdated);
         setIsEditing(false);
       } catch (error) {
-        if (process.env.NODE_ENV === 'development') {
+        if (env.isDevelopment) {
           console.error('Failed to update cache:', error);
         }
         showError(messages.errors.somethingWentWrong);

@@ -5,6 +5,8 @@ import crypto from 'crypto';
 import { PrismaClient } from '@prisma/client';
 import jwt from 'jsonwebtoken';
 
+import { config } from '@/lib/config/environment';
+
 export interface TokenValidationResult {
   valid: boolean;
   userId?: string;
@@ -39,7 +41,7 @@ export class TokenManager {
    */
   public verifyJWTToken(token: string): TokenValidationResult {
     try {
-      const secret = process.env.JWT_SECRET;
+      const secret = config.jwtSecret;
       if (!secret) {
         return {
           valid: false,

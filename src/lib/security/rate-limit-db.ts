@@ -3,6 +3,8 @@
 import { PrismaClient } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 
+import { env } from '@/lib/config/environment';
+
 import { logRateLimitExceededDB } from './security-logger-db';
 import { generateRateLimitKey } from './security-utils';
 
@@ -36,8 +38,7 @@ export class DatabaseRateLimit {
       // トランザクションでアトミックな操作を保証
       const result = await this.prisma.$transaction(async (tx) => {
         // 本番環境では期限切れエントリの削除を5%の確率で実行（セキュリティとパフォーマンスのバランス）
-        const isProduction = process.env.NODE_ENV === 'production';
-        if (!isProduction || Math.random() < 0.05) {
+        if (!env.isProduction || Math.random() < 0.05) {
           await tx.rateLimitEntry.deleteMany({
             where: {
               resetTime: {
@@ -188,22 +189,18 @@ export function createDatabaseRateLimit(prisma: PrismaClient, options: RateLimit
 // プリセット設定（Vercel対応）
 export function createAuthRateLimit(prisma: PrismaClient) {
   // 適切なバランス：攻撃は防ぐが正常利用は許可（GraphQL複数リクエスト対応）
-  const isDevelopment = process.env.NODE_ENV === 'development';
-
   return createDatabaseRateLimit(prisma, {
-    windowMs: isDevelopment ? 5 * 60 * 1000 : 60 * 60 * 1000, // 開発: 5分, 本番: 1時間
-    maxRequests: isDevelopment ? 1000 : 150, // 開発: 制限なし, 本番: 1時間に150回
+    windowMs: env.isDevelopment ? 5 * 60 * 1000 : 60 * 60 * 1000, // 開発: 5分, 本番: 1時間
+    maxRequests: env.isDevelopment ? 1000 : 150, // 開発: 制限なし, 本番: 1時間に150回
     message: 'Authentication attempts exceeded. Please try again later.',
   });
 }
 
 export function createApiRateLimit(prisma: PrismaClient) {
   // 攻撃防止重視：正常利用には十分、大量攻撃は確実にブロック（GraphQL環境最適化）
-  const isDevelopment = process.env.NODE_ENV === 'development';
-
   return createDatabaseRateLimit(prisma, {
-    windowMs: isDevelopment ? 5 * 60 * 1000 : 5 * 60 * 1000, // 開発・本番: 5分
-    maxRequests: isDevelopment ? 500 : 400, // 開発: 5分に500回, 本番: 5分に400回
+    windowMs: env.isDevelopment ? 5 * 60 * 1000 : 5 * 60 * 1000, // 開発・本番: 5分
+    maxRequests: env.isDevelopment ? 500 : 400, // 開発: 5分に500回, 本番: 5分に400回
     message: 'Request limit exceeded. Please try again later.',
   });
 }

@@ -2,6 +2,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
+import { config, env } from '../../../../lib/config/environment';
 import { cleanupExpiredRateLimits } from '../../../../lib/security/rate-limit-db';
 import { cleanupOldSecurityEvents } from '../../../../lib/security/security-logger-db';
 import { cleanupOldThreatActivities } from '../../../../lib/security/threat-detection-db';
@@ -13,7 +14,7 @@ import { prisma } from '../../../../lib/server/prisma-optimized';
 export async function GET(request: NextRequest) {
   // 認証確認：Vercel環境変数でCronジョブからのアクセスを確認
   const authHeader = request.headers.get('authorization');
-  const cronSecret = process.env.CRON_SECRET;
+  const cronSecret = config.cronSecret;
 
   if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: '認証に失敗しました' }, { status: 401 });
@@ -73,7 +74,7 @@ export async function GET(request: NextRequest) {
 // 手動実行用（開発・テスト時）
 export async function POST(request: NextRequest) {
   // 開発環境でのみ許可
-  if (process.env.NODE_ENV !== 'development') {
+  if (!env.isDevelopment) {
     return NextResponse.json({ error: '本番環境では利用できません' }, { status: 403 });
   }
 

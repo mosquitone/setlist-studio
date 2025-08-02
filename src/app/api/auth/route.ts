@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import { config, settings } from '@/lib/config/environment';
 import { getMessage } from '@/lib/i18n/api-helpers';
 import { JWTPayload, verifyAndValidateJWT } from '@/types/jwt';
 
@@ -15,7 +16,7 @@ interface AuthCookieOptions {
 function getAuthCookieOptions(): AuthCookieOptions {
   return {
     httpOnly: true, // XSS攻撃を防ぐ
-    secure: process.env.NODE_ENV === 'production', // HTTPSでのみ送信
+    secure: settings.secureCookie, // HTTPSでのみ送信
     sameSite: 'strict', // CSRF攻撃を防ぐ
     path: '/',
     maxAge: 2 * 60 * 60, // 2時間（秒単位）
@@ -25,7 +26,7 @@ function getAuthCookieOptions(): AuthCookieOptions {
 // JWTトークンの検証
 function verifyToken(token: string): JWTPayload | null {
   try {
-    const secret = process.env.JWT_SECRET;
+    const secret = config.jwtSecret;
     if (!secret) {
       throw new Error('JWT_SECRET is not configured');
     }

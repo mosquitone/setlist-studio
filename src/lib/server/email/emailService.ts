@@ -2,11 +2,13 @@ import crypto from 'crypto';
 
 import { Resend } from 'resend';
 
+import { config, settings } from '@/lib/config/environment';
+
 import { getMessages, Language } from '../../i18n/messages';
 
 import { EmailReliabilityService, EmailResult } from './emailReliability';
 
-const resend = new Resend(process.env.RESEND_API_KEY || 'dummy-key-for-build');
+const resend = new Resend(config.resendApiKey || 'dummy-key-for-build');
 
 const SETLIST_STUDIO_LOGO = `
 <div style="text-align: center; margin: 30px 0 40px 0;">
@@ -37,7 +39,7 @@ export class EmailService {
   private circuitBreaker: ReturnType<typeof EmailReliabilityService.createCircuitBreaker>;
 
   private constructor() {
-    this.fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
+    this.fromEmail = config.resendFromEmail || 'onboarding@resend.dev';
     this.circuitBreaker = EmailReliabilityService.createCircuitBreaker(5, 60000);
   }
 
@@ -45,7 +47,7 @@ export class EmailService {
    * ベースURLを取得
    */
   private getBaseUrl(): string {
-    const url = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+    const url = config.nextAuthUrl || 'http://localhost:3000';
 
     // URLが既にプロトコルを含んでいる場合はそのまま使用
     if (url.startsWith('http://') || url.startsWith('https://')) {
@@ -54,7 +56,7 @@ export class EmailService {
 
     // プロトコルが含まれていない場合
     // 本番環境ではhttps、開発環境ではhttpを付与
-    const protocol = process.env.NODE_ENV === 'production' ? 'https://' : 'http://';
+    const protocol = settings.protocol;
     return `${protocol}${url}`;
   }
 

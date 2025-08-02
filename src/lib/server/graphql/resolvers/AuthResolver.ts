@@ -5,6 +5,8 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { Resolver, Mutation, Query, Arg, Ctx, UseMiddleware } from 'type-graphql';
 
+import { config } from '@/lib/config/environment';
+
 import { AUTH_PROVIDERS } from '../../../../types/common';
 import { I18nContext } from '../../../i18n/context';
 import { createEmailRateLimit } from '../../../security/email-rate-limit';
@@ -310,7 +312,7 @@ export class AuthResolver {
       );
     }
 
-    const jwtSecret = process.env.JWT_SECRET;
+    const jwtSecret = config.jwtSecret;
     if (!jwtSecret) {
       throw new Error(
         ctx.i18n?.messages.auth.serverError ||

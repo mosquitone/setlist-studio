@@ -1,16 +1,18 @@
+import { env, config } from '@/lib/config/environment';
+
 /**
  * アプリケーションのベースURLを取得
  * 認証やAPI通信で使用
  */
 export function getBaseUrl(): string {
   // NEXTAUTH_URLが設定されている場合はそれを使用
-  if (process.env.NEXTAUTH_URL) {
-    return process.env.NEXTAUTH_URL;
+  if (config.nextAuthUrl) {
+    return config.nextAuthUrl;
   }
 
   // Vercel環境の場合（フォールバック）
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`;
+  if (config.vercelUrl) {
+    return `https://${config.vercelUrl}`;
   }
 
   // デフォルト（ローカル開発環境）
@@ -26,12 +28,12 @@ export function getBaseUrl(): string {
  */
 export function getPublicUrl(): string {
   // 専用の環境変数が設定されている場合
-  if (process.env.NEXT_PUBLIC_SITE_URL) {
-    return process.env.NEXT_PUBLIC_SITE_URL;
+  if (config.nextPublicSiteUrl) {
+    return config.nextPublicSiteUrl;
   }
 
   // 本番環境の場合
-  if (process.env.NODE_ENV === 'production') {
+  if (env.isProduction) {
     // 警告を出力
     console.warn(
       'Warning: NEXT_PUBLIC_SITE_URL is not set. ' +

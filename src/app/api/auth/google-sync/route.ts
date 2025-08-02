@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 
 import { authOptions } from '@/lib/auth/nextauth';
+import { config } from '@/lib/config/environment';
 import { getErrorMessage } from '@/lib/i18n/api-helpers';
 import { csrfProtection } from '@/lib/security/csrf-protection';
 import { createAuthRateLimit } from '@/lib/security/rate-limit-db';
@@ -165,7 +166,7 @@ function generateAuthToken(user: { id: string; email: string; username: string }
       email: user.email,
       username: user.username,
     },
-    process.env.JWT_SECRET!,
+    config.jwtSecret,
     { expiresIn: '30d' },
   );
 }

@@ -18,10 +18,6 @@
 
 ### 🛠️ 開発ワークフロー
 
-**必須**: テストが完了してから、コミットを実施する
-
-**重要**: コミット前に、必ずCLAUDE.mdと参照先ドキュメントを更新するかを検討すること。
-
 **必須**: 更新履歴を更新する段階で日付が古いものは、[プロジェクト履歴](./docs/claude/HISTORY.md)へ移動するようにお願いします。
 
 **必須**: 変数、コンポーネント名、ファイル名全てにおいて、名が体を表す命名になっていること。
@@ -40,7 +36,17 @@
 
 ### 🔀 Git運用ルール
 
-**必須**: GitHubのmainブランチの内容は、GitLabのstagingブランチにプッシュする。
+#### コミット前に実施すること
+
+**必須**: テストが完了してから、コミットを実施する。
+
+**必須**: コミット前に、lintチェックとコンパイルチェックを行うこと。
+  - `pnpm lint` - ESLintチェック
+  - `npx tsc --noEmit` - TypeScriptコンパイルチェック
+
+**重要**: コミット前に、必ずCLAUDE.mdと参照先ドキュメントを更新するかを検討すること。
+
+#### push関連
 
 **絶対禁止**: GitLabのmainブランチへの直接pushは厳禁。必ずマージリクエスト（MR）を通じてマージすること。
 
@@ -148,6 +154,20 @@ mosquitone Emotional Setlist Studioは、音楽アーティスト向けのモダ
 ### 環境変数詳細
 
 環境変数の詳細な設定方法とテーブルは [環境変数設定ガイド](./docs/claude/deployment/ENVIRONMENT_VARIABLES.md) を参照してください。
+
+#### 環境変数管理システム
+
+**統一管理**: すべての環境変数は`/src/lib/config/environment.ts`で一元管理
+- `env`オブジェクト: 環境判定ヘルパー（isDevelopment, isProduction, isTest）
+- `config`オブジェクト: 環境変数アクセサー（型安全）
+- `settings`オブジェクト: 環境に応じた設定値
+
+**型定義**: `/src/types/environment.ts`に環境変数関連の型を集約
+- `NodeEnv`, `VercelEnv`: 環境タイプの定義
+- `RequiredEnvKeys`: 必須環境変数のキー
+- `Config`: 設定オブジェクトの型
+
+**禁止事項**: `process.env`の直接参照は禁止。必ず`config`オブジェクトを使用すること
 
 ### 実装方針
 
@@ -544,6 +564,9 @@ mosquitone Emotional Setlist Studioは、音楽アーティスト向けのモダ
 │   │   │   ├── apolloClient.ts
 │   │   │   ├── authClient.ts
 │   │   │   └── queries.ts
+│   │   ├── config/         # 設定関連
+│   │   │   ├── environment.ts  # 環境変数管理
+│   │   │   └── url.ts          # URL設定
 │   │   ├── server/         # サーバーサイドユーティリティ
 │   │   │   ├── auth/
 │   │   │   │   ├── auth.ts
@@ -562,7 +585,8 @@ mosquitone Emotional Setlist Studioは、音楽アーティスト向けのモダ
 │   │   │   │   │   └── UserResolver.ts
 │   │   │   │   ├── schema.graphql
 │   │   │   │   └── schema.ts
-│   │   │   └── prisma.ts
+│   │   │   ├── prisma.ts
+│   │   │   └── prisma-optimized.ts  # 最適化されたPrismaクライアント
 │   │   ├── security/       # セキュリティ関連ユーティリティ
 │   │   │   ├── csrf.ts
 │   │   │   ├── headers.ts
@@ -595,6 +619,7 @@ mosquitone Emotional Setlist Studioは、音楽アーティスト向けのモダ
 │   │   └── shared/         # クライアント/サーバー共有ユーティリティ
 │   │       └── types.ts
 │   └── types/              # TypeScript型定義
+│       ├── environment.ts  # 環境変数関連の型
 │       ├── graphql.ts
 │       └── index.ts
 ├── prisma/                 # データベース関連
@@ -756,6 +781,15 @@ Next.js 15のApp RouterでのCSP実装については、上記の「重要な制
 ### セキュリティレベル
 
 **バランス型セキュリティ（OWASP Top 10準拠）**：攻撃防止と利便性の最適化を実現
+
+### 直近の重要な変更（2025-08-02）
+
+#### 環境変数管理システムの統一化
+- すべての`process.env`参照を一元管理システムに置き換え
+- `/src/lib/config/environment.ts`で環境変数を管理
+- `/src/types/environment.ts`で型定義を分離
+- `env`ヘルパー、`config`オブジェクト、`settings`オブジェクトを提供
+- Vercelシステム環境変数を正確に定義
 
 ### 直近の重要な変更（2025-07-27）
 
