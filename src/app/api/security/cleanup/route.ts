@@ -1,6 +1,5 @@
 // Vercel Cron Job用：セキュリティデータベースクリーンアップ
 
-import { PrismaClient } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { cleanupExpiredRateLimits } from '../../../../lib/security/rate-limit-db';
@@ -8,8 +7,7 @@ import { cleanupOldSecurityEvents } from '../../../../lib/security/security-logg
 import { cleanupOldThreatActivities } from '../../../../lib/security/threat-detection-db';
 import { cleanupExpiredTokens } from '../../../../lib/security/token-manager';
 import { cleanupExpiredUsedTokens } from '../../../../lib/security/used-token-manager';
-
-const prisma = new PrismaClient();
+import { prisma } from '../../../../lib/server/prisma-optimized';
 
 // Vercel Cron Job: 0 2 * * * (毎日午前2時に実行)
 export async function GET(request: NextRequest) {
@@ -69,8 +67,6 @@ export async function GET(request: NextRequest) {
       },
       { status: 500 },
     );
-  } finally {
-    await prisma.$disconnect();
   }
 }
 

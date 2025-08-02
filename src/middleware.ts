@@ -143,6 +143,13 @@ function buildSecurityHeaders(
 }
 
 export function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+
+  // APIルートとNext.js内部ルートはスキップ（高速化）
+  if (pathname.startsWith('/api/') || pathname.startsWith('/_next/')) {
+    return NextResponse.next();
+  }
+
   // リクエストごとにランダムなnonceを生成
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
 
@@ -153,7 +160,6 @@ export function middleware(request: NextRequest) {
   const vercelUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '';
 
   // 現在のパスが静的ページかどうかを判定
-  const pathname = request.nextUrl.pathname;
   const isStaticPage = STATIC_PAGE_PATHS.some((path) => pathname.startsWith(path));
 
   // Vercel関連ドメインを取得

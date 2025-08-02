@@ -15,7 +15,7 @@ import { getSecureClientIP, hashIP } from '@/lib/security/security-utils';
 import { saveUsedToken, TokenType } from '@/lib/security/used-token-manager';
 import { generateSafeUsername } from '@/lib/server/auth/username-generator';
 import { emailService } from '@/lib/server/email/emailService';
-import { prisma } from '@/lib/server/prisma';
+import { prisma } from '@/lib/server/prisma-optimized';
 import { AuthProvider, AUTH_PROVIDERS } from '@/types/common';
 
 // 既存アカウント検出時の共通処理

@@ -1,7 +1,6 @@
 import 'reflect-metadata';
 import { ApolloServer } from '@apollo/server';
 import { startServerAndCreateNextHandler } from '@as-integrations/next';
-import { PrismaClient } from '@prisma/client';
 import { GraphQLSchema } from 'graphql';
 import depthLimit from 'graphql-depth-limit';
 import jwt from 'jsonwebtoken';
@@ -11,81 +10,9 @@ import { getErrorMessage } from '../../../lib/i18n/api-helpers';
 import { withI18n } from '../../../lib/i18n/context';
 import { csrfProtection } from '../../../lib/security/csrf-protection';
 import { createApiRateLimit, createAuthRateLimit } from '../../../lib/security/rate-limit-db';
-// Import pre-built schema
 import { getPreBuiltSchema } from '../../../lib/server/graphql/generated-schema';
-
-// Global Prisma Client for connection pooling and performance optimization
-declare global {
-  var prisma: PrismaClient | undefined;
-}
-
-const prisma =
-  globalThis.prisma ||
-  new PrismaClient({
-    log: process.env.NODE_ENV === 'development' ? ['query', 'error'] : ['error'],
-    datasources: {
-      db: {
-        url: process.env.DATABASE_URL,
-      },
-    },
-    // Vercel Functions + Supabase最適化設定
-    transactionOptions: {
-      maxWait: 3000, // 3秒（Vercel Functions最適化）
-      timeout: 25000, // 25秒（Vercel Function制限内）
-      isolationLevel: 'ReadCommitted', // 読み取り専用トランザクション最適化
-    },
-    // エラーフォーマット最適化
-    errorFormat: 'minimal',
-  });
-
-if (process.env.NODE_ENV !== 'production') {
-  globalThis.prisma = prisma;
-}
-
-// 接続プールとリトライ最適化
-let isConnected = false;
-let connectionPromise: Promise<void> | null = null;
-
-async function ensureConnection() {
-  if (isConnected) return;
-
-  if (!connectionPromise) {
-    connectionPromise = prisma
-      .$connect()
-      .then(() => {
-        isConnected = true;
-        console.log('✅ Prisma connected successfully');
-      })
-      .catch((error) => {
-        console.error('❌ Prisma connection failed:', error);
-        connectionPromise = null;
-        throw error;
-      });
-  }
-
-  return connectionPromise;
-}
-
-// 優雅な切断処理
-async function gracefulDisconnect() {
-  if (isConnected) {
-    await prisma.$disconnect();
-    isConnected = false;
-    console.log('🔌 Prisma disconnected');
-  }
-}
-
-// Vercel Functions終了時の処理
-if (typeof process !== 'undefined') {
-  process.on('beforeExit', gracefulDisconnect);
-  process.on('SIGINT', gracefulDisconnect);
-  process.on('SIGTERM', gracefulDisconnect);
-}
-
-// 接続確立（エラーは無視してリクエスト時に再試行）
-ensureConnection().catch(() => {
-  console.log('⚠️  Initial connection failed, will retry on request');
-});
+import { prisma } from '../../../lib/server/prisma-optimized';
+// Import pre-built schema
 
 // Use pre-built schema for better performance
 let schema: GraphQLSchema | null = null;
@@ -186,11 +113,8 @@ interface JWTPayload {
   exp: number;
 }
 
-// Context helper for secure token extraction with connection assurance
+// Context helper for secure token extraction
 async function createSecureContext(req: NextRequest) {
-  // データベース接続を確実に確立
-  await ensureConnection();
-
   // Cookiesオブジェクトを作成（認証ミドルウェア用）
   const cookies: { [key: string]: string } = {};
   req.cookies.getAll().forEach((cookie) => {

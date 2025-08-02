@@ -1,9 +1,7 @@
-import { PrismaClient } from '@prisma/client';
 import { MetadataRoute } from 'next';
 
 import { getPublicUrl } from '@/lib/config/url';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/server/prisma-optimized';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = getPublicUrl();
@@ -77,7 +75,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error('Error generating sitemap:', error);
     // エラーが発生した場合は静的ページのみ返す
     return staticPages;
-  } finally {
-    await prisma.$disconnect();
   }
 }

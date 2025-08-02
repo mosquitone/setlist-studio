@@ -18,6 +18,8 @@
 
 ### 🛠️ 開発ワークフロー
 
+**必須**: テストが完了してから、コミットを実施する
+
 **重要**: コミット前に、必ずCLAUDE.mdと参照先ドキュメントを更新するかを検討すること。
 
 **必須**: 更新履歴を更新する段階で日付が古いものは、[プロジェクト履歴](./docs/claude/HISTORY.md)へ移動するようにお願いします。
@@ -113,6 +115,8 @@ mosquitone Emotional Setlist Studioは、音楽アーティスト向けのモダ
 
 - **GitHub CLI**: `gh` コマンドが利用可能（v2.74.1）- プルリクエスト、Issue管理
 - **GitLab CLI**: `glab` コマンドが利用可能（v1.63.0）- プロジェクト管理、MRなど
+  - **GitLab Issueの確認**: `glab issue view <issue_number> --repo mosquitone8/setlist-studio`
+  - **GitLab MRの作成**: `glab mr create --title "タイトル" --description "説明"`
 - **リモートリポジトリ**:
   - `origin`: GitHub（開発用）
   - `gitlab`: GitLab（デプロイ用）

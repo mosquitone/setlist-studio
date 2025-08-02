@@ -17,6 +17,41 @@ const nextConfig: NextConfig = {
   },
   // Compress assets
   compress: true,
+
+  // ヘッダー設定でキャッシュを最適化
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'X-DNS-Prefetch-Control',
+            value: 'on',
+          },
+        ],
+      },
+      {
+        // 静的アセットに長期キャッシュを設定
+        source: '/static/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        // フォントファイルに長期キャッシュを設定
+        source: '/fonts/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+    ];
+  },
   webpack: (config) => {
     // 既存のminimizerを保持しつつ、TerserPluginを設定
     config.optimization.minimizer = [

@@ -1,8 +1,16 @@
 {
   "functions": {
     "app/api/graphql/route.ts": {
-      "maxDuration": 60,
-      "memory": 1024
+      "maxDuration": 10,
+      "memory": 512
+    },
+    "app/api/auth/route.ts": {
+      "maxDuration": 10,
+      "memory": 256
+    },
+    "app/api/csrf/route.ts": {
+      "maxDuration": 10,
+      "memory": 128
     }
   },
   "regions": ["hnd1"],
